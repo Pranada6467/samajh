@@ -1,0 +1,1053 @@
+	
+	
+	
+Government of India
+Ministry of Home Affairs		
+	
+	
+	
+	
+	
+Nationwide Emergency Response
+System( NERS) Guidelines
+Emergency Number ‘112’
+August2015
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 1 | Page
+Contents	
+1. Introduction to Nationwide Emergency Response System ................................................. 2
+2. Process flows .......................................................................................................................... 3
+3. Technical architecture............................................................................................................. 5
+3.1. Cloud enabled Data Centre ............................................................................................ 5
+3.2. Operations Centre ........................................................................................................... 6
+3.3. State/UT Call Centre/ PSAP ........................................................................................... 6
+3.4. Field .................................................................................................................................. 6
+3.5. Network ............................................................................................................................ 6
+4. Centre and State/UT responsibilities ..................................................................................... 7
+4.1. Responsibilities of MHA .................................................................................................. 7
+4.2. Responsibilities of State/UT ........................................................................................... 9
+5. Norms for resource provisioning for State/UT .................................................................... 13
+5.1. Hardware for State/UT Call Centre .............................................................................. 13
+5.2. MDT devices for the field .............................................................................................. 13
+5.3. Application at State/UT Call Centre ............................................................................. 14
+5.4. Network at State/UT Call Centre .................................................................................. 14
+5.5. Manpower ...................................................................................................................... 14
+6. Governance Structure........................................................................................................... 16
+6.1. Centre level Committee ................................................................................................ 16
+6.2. State/UT level Committee ............................................................................................. 17
+7. Quality of Service .................................................................................................................. 19
+8. Monitoring of NERS project .................................................................................................. 21
+9. Future Extension ................................................................................................................... 23
+10. Implementation of NERS .................................................................................................. 25
+11. Annexure ............................................................................................................................ 27
+11.1. Proposal submission format for State/UT ................................................................ 27
+11.2. Applications in NERS ................................................................................................ 28
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 2 | Page
+1. Introduction to Nationwide Emergency Response System
+In India historically we have had different phone numbers to call police, fire and ambulance
+services namely 100, 102, 103. This system was designed at the time of a regulated telecom
+sector with only one telecom provider across India and one in each metro. Hence any call to
+these emergency numbers were routed to a call agent/ dispatcher of that particular
+emergency service and handled by the emergency personnel themselves. The system was
+not designed for emergency response initially but as an emergency contact.
+Over time, in response to changing environment, the three services have tried to evolve the
+emergency contact into an emergency response system with mixed results. A number of
+cities have provided additional numbers for specific emergency situations which are not
+routed to a central emergency response dispatcher. This leads to confusion in the public
+about emergency contact number.
+After the incident of 16 December 2012 in Delhi, a Committee headed by Justice J.S.
+Verma, former Chief Justice of the Supreme Court of India, with Justice (retired) Leila Seth,
+and Shri Gopal Subramanian was set up on 23 December, 2012 to give recommendations
+on amending laws to provide for speedy justice and enhanced punishment for criminals in
+sexual assault cases of extreme nature. The Committee had recommended setting up of a
+public emergency response system which will have the ability to dispatch an Emergency
+Response (ER) unit to respond and close the ER calls.
+On the same, the Ministry of Home Affairs (MHA), as per the recommendation of the Justice
+Verma Committee, has been entrusted with the task of setting up a National Emergency
+Response System (NERS) comprising  an integrated Computer Aided Dispatch System for
+Emergency Response. The project is conceived to bridge the existing gaps and meet the
+current challenges being faced by major Police forces in the Country for an immediate
+emergency response system specifically inclined towards women issues. The Department of
+Telecommunications has allotted the emergency number ‘112’ for this project. If need arises,
+there may be a non-emergency number connected to this system for counselling, feedback,
+complaints etc.
+MHA appointed a consultant to design the Nationwide Emergency Response System
+(NERS) and assist in the tender process to select IT Service Provider for the same.
+MHA has invited tender for selection of IT Service Provider (ITSP) to design, configure,
+customize, implement and maintain envisaged Nationwide Emergency Response System to
+be implemented across India. For implementation of Computer Aided Dispatch (CAD)
+system, MHA would be using software developed by CDAC, an R & D institution under the
+Ministry of Information Technology, Government of India.
+These guidelines would provide clarity to the State Governments/UT Administrations on the
+implementation aspect of the entire project. It also details out the roles and responsibilities to
+be taken by the Centre and the State/UT for successful implementation of the project. It is
+expected that the State/UTwould send proposal to the MHA for implementation of NERS in
+their respective State/UT.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 3 | Page
+2. Process flows
+A centralized system leveraging input from various sources such as voice call, SMS, email,
+mobile application etc. is envisaged by the MHA.
+Overview of the process is captured in the steps below.
+1. First point of contact
+A state/UT Public Safety Answering Point (PSAP) is the State/UT call centre responsible for
+answering calls to an emergency telephone number for police, firefighting, ambulance and
+other services. A PSAP facility will run 24 hours a day, dispatching emergency services or
+passing 112 calls on to public or approved private safety agencies. Trained agents are
+responsible for dispatching the emergency services.
+Citizen can contact the emergency number through various communication channels.
+The input communication channels include:
+· Fixed landline phone
+· Mobile phone
+· SMS
+· Email
+· Chat
+· Panic button in public transport
+· VoIP
+· Mobile application
+· Internet of Things (IoT)
+2. Call/ data message taking and assessment
+Call/ data message would be distributed through the system to the available PSAP agent
+and the system would display the pre-populated fields like location, name of the caller etc.
+from the information available in the database.
+Agent will create case file in the system and based on pre-defined rules would grade the call.
+Information about the emergency case would be passed on to dispatcher for further action.
+
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 4 | Page
+3. Dispatch
+Dispatcher would have information about the case from agent and availability of emergency
+vehicles on the GIS map. Dispatcher would compile all information and dispatch the nearest
+emergency vehicle to the incident location. Also, information would be sent to the nearest
+police station. Dispatcher will have desktops with three computer screens.
+4. Arrive at Scene and call closure
+Emergency vehicle would arrive at scene and report the action taken through MDT to the
+State/UT call centre. When the case is reported to Police Station, it would be closed in the
+NERS.
+5. Feedback
+Post the event, either caller or call centre agent can connect (through call/ message/ email/
+mobile application) to receive feedback on the services. Feedback would help in improving
+the efficiency and effectiveness of the system.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 5 | Page
+3. Technical architecture
+The simplistic overview of the components of the solution is shown below and explained
+later in this clause.
+3.1. Cloud enabled Data Centre
+The selected ITSP would provide cloud enabled data centres- DC1 and DC2 in active -active
+mode. The connectivity between both the data centres should ensure that the replication
+works seamlessly without any data loss. The infrastructure provisioned in both DCs shall be
+capable to handle the 100% load at any point in time. The cloud infrastructure would be
+designed to avoid a “single point of failure” with redundant core components and other
+required elements to eliminate system outage. The proposed cloud infrastructure would have
+high availability i.e. there shall be no disruption in services on account of routine
+maintenance procedures, troubleshooting, loading hardware and software revisions,
+patches, etc.
+
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 6 | Page
+3.2. Operations Centre
+Operations centre is the hub of viewing and monitoring of performance of the emergency
+response system. It houses Network Operations Centre-NOC, Security Operations Centre-
+SOC, visitor gallery, IT helpdesk and reception. Generation of MIS reports, Business
+Intelligence (BI) reports and other analysis would also be performed at Operations Centre.
+Operations Centre would run 24 * 7 * 365 days and will be located in Delhi, Noida or
+Gurgaon.
+3.3. State/UT Call Centre/ PSAP
+States/UTs would be responsible to set up the State/UT call Centre/ PSAP at a place
+identified by them anywhere in the State/UT (preferably capital city or any other big city).All
+calls/ data messages would mature at the State/UT Call Centre, after identification of correct
+the State/UT. Voice/ data message will be assessed by the PSAP agents and appropriate
+action shall be taken through the dispatcher. Emergency vehicles would be dispatched
+based on the GIS maps used by the system. Feedback, complaints, comments etc. are also
+to be managed by the State/UT Call Centre.
+Normally, one central PSAP with adequate sizing of the infrastructure should meet the
+requirement of any state/UT, however in case any State/UT requires more than one PSAP or
+multiple dispatch centres across the State/UT, MHA would provision the same for the
+State/UT based on the justification provided. MHA would provide the additional expenses
+required on network bandwidth, hardware, application as required for the additional PSAP or
+additional dispatch centre.
+3.4. Field
+Mobile Data Terminal (MDT) devices would be provided to the police vehicles which would
+be tracked using GSM/GPRS/GPS at data centre. Information about the incident would be
+sent to the field officers through MDT devices in terms of messages, mails and calls. MDT
+may be provided in phased manner during implementation of the NERS. Call closure would
+happen through MDT. However voice communication to PSAP may also trigger call closure
+at PSAP. Message may be passed to police post as well in case of emergency.
+3.5. Network
+Network would form the key component of the entire solution. Network connectivity would be
+required between Cloud enabled DC sites, Operation Centre and the State/UT Call Centres.
+This would be provided by the ITSP. MDT will be connected using GSM/GPRS network, to
+be provided by the State/UT.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 7 | Page
+4. Centre and State/UT responsibilities
+The success of NERS depends upon the coordination between the Centre and the
+States/UTs. This section details out the responsibilities of the Centre and the States/UTs.
+The entire set up of the IT system would be at centralized location and would be monitored
+by IT team of the MHA. Operationalization of the system would happen at the State/UT level.
+States/UTs would be responsible to set up the PSAP/ call centre for handling the emergency
+calls and deploying vehicles in the field (to be fitted with MDTs provided by ITSP).
+4.1. Responsibilities of MHA
+MHA would take responsibility for interacting with the States/UTs, ITSP and other
+stakeholders of the project. States/UTs will submit a detailed proposal to the MHA about
+their requirement of hardware and software in the format as given in Section 11.1of these
+guidelines. In view of the same, the MHA would be responsible for the following:
+1. To develop overall strategy for achieving the objectives of the NERS.
+2. To provide overall guidance to the States/UTs for implementation of the NERS Project
+3. Engage ITSP and Central PMU for implementation and monitoring of the NERS Project
+respectively.
+4. Constitution of governance structures for monitoring and decision making for the NERS.
+5. Overall monitoring and evaluation of the NERS project.
+6. Appointment of central project management unit to coordinate and support
+implementation of the NERS.
+7. Hardware:
+a. MHA would receive proposal from the State/UT for the PSAP. It would include IP
+phone, desktops, MDT devices, PRI lines and UPS.
+b. Based on discussion with the State/UT,the MHA would approve the required
+quantity of hardware.
+c. The required hardware would be supplied and commissioned by the ITSP at the
+State/UT identified PSAP location
+8. Application:
+a. All applications would be centrally hosted at the DC.
+b. States/UTs would indicate the number of licenses for various applications
+required by them to the MHA in their proposal.
+c. Based on discussion with the State/UT, the MHA would approve the required
+licenses.
+d. MHA would validate and approve the periodic forecasting of call volumes
+provided by the State/UT for increase of resources.
+e. Application would support multiple vernaculars. These are Assamese, Bengali,
+Gujarati, Kannada, Malayalam, Marathi, Oriya, Punjabi, Tamil, Telugu and Urdu.
+State/UT may get their application customized to any vernacular mentioned here.
+f. Maintenance of the application would be responsibility of the ITSP and would be
+monitored by the MHA
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 8 | Page
+g. Application can be customized to route the overflowing calls from one State/UT to
+the neighboring State/UT. States/UTs need to have MoU amongst themselves for
+the same. State/UT would inform ITSP of the collaboration with other States/UTs
+and ITSP would make the provision in the system.
+h. Any solution enhancement or customization may be proposed by the State/UT
+which would be evaluated by the MHA. Based on the assessment, ITSP would
+implement the enhancement/ customization.
+9. Network:
+a. Network connecting cloud DC, operations center and PSAP would be provided by
+the MHA through ITSP and monitored by the MHA.
+b. Based on the bandwidth consumption, payment for network bandwidth would be
+made by the MHA.
+c. MDT devices would be connected to the State/UT PSAP through GSM/ CDMA
+network. This network would be provided by the State/UT and the cost for the
+same would also be borne by the State/UT.
+d. PRI lines may be provided at the Central DC or at the State/UT level depending
+on the solution design of the ITSP. PRI lines would be based on the assessment
+of the call volume at the State/UT. Cost for PRI lines (if any) would be borne by
+MHA.
+10. Data Centre
+a. DC would be provided on public cloud by ITSP. MHA would monitor the same.
+b. State/UT would not have any responsibility regarding the DC.
+11. Training
+a. Technical training would be provided by ITSP for the implemented the NERS.
+b. ITSP would also provide soft skill training to the PSAP agents.
+c. ITSP would also train one person from each Police Station on NERS and MDT
+use. Trained persons would be required to train other personnel in the respective
+police stations.
+d. State/UT needs to provide detailed standard operating procedures (SOP) to its
+agents for handling the emergency calls.
+12. Operation and maintenance
+a. MHA would maintain the project for 5 years.
+b. Annual maintenance cost of hardware and software would be borne by the MHA
+c. MHA would also maintain the network from the State/UT call center to DC.
+13. Call retention
+a. MHA would define the policies for retention of records including voice recording,
+screen recording, case details etc.
+b. Records would be deleted in consultation with the State/UT.
+14. Manpower
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 9 | Page
+a. MHA would provide staff for facility management services (FMS) to the State/UT
+call center
+b. The (FMS) staff would help the State/UT call center personnel with the IT related
+problems. FMS staff would have basic understanding of MDT, Desktop, Network,
+applications etc.
+15. National campaign
+a. MHA would take up nationwide campaign in partnership with the States/UTs to
+educate citizens about the key features of NERS and how to access the services.
+b. Nationwide campaign would focus on the national approach of ‘112’ emergency
+number to cater to all kinds of emergency.
+4.2. Responsibilities of State/UT
+MHA expects full participation of the State/UT in the NERS implementation. State/UT would
+be responsible for managing the entire operations of the PSAP. State/UT would be
+responsible for the following:
+1. Full support to the MHA and ITSP for implementation at the State/UT in a time bound
+manner.
+2. Provide proposal with appropriate requirements to the MHA.
+3. Constitute State/UT level committees as per the guidelines.
+4. Identify NERS nodal officer to interact with the MHA frequently.
+5. Ensure continuity of the officials in the NERS project
+6. Define the State/UT level SOP for responding to emergency calls by the state call centre
+as well as field units
+7. Ensure quality of service at the call center/ PSAP as well as in the field.
+8. Arrange  third party audit of the NERS project in the State/UT
+9. Take up necessary changes to rules/ processes to allow use of the NERS as primary
+system for recording the emergency calls.
+10. Provide sign off on the work done by ITSP in timely manner.
+11. Forecast the number of calls based on various parameters applicable to the State/UT
+and inform MHA in case of any additional resource requirement.
+12. Integrate with existing Dial 100 and other emergency services.
+13. Set up call center / PSAP
+a. Identify a location for setting up of the PSAP.
+b. Provide basic furniture, power, generator back up, amenities, air conditioning etc.
+at the identified location
+c. Maintain the entire PSAP and expand it if required
+d. Maintain the PSAP including space rental, alternate power supply, amenities,
+furnishing etc.
+14. Manpower
+a. Select manpower for handling the NERS including call takers, dispatchers and
+center in charge.
+b. Incentivize the manpower deployed in the NERS, if required
+c. Prepare System Operating Procedure (SOP) and train the manpower on the SOP
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 10 | Page
+d. Train the manpower on soft skills. It should also include training of different
+dialects of a State/UT, if required.
+e. Maintain back up manpower in case of leaves, attrition etc. of the deployed
+manpower.
+f. Provide manpower to collect GIS data at field level for new locations to be
+entered in GIS map.
+15. MDT
+a. Provide 2 wheelers and 4 wheelers in sufficient number for dispatch in case of
+emergency.
+b. Arrange for all vehicles at district level location for installation and commissioning
+of the MDTs.
+c. Map each MDT to a police station and vehicle by entering information through
+NERS portal.
+d. Maintain the MDT and use the same judiciously.
+e. Report any issue in the MDT to the State/UT PSAP. Bring MDT device to district
+level in case of any change or repair.
+f. Provide mobile network connectivity to MDT to connect with the DC.
+16. Call retention
+a. Identify call records, voice recording and screen recordings to be retained for
+longer duration than the defined period by the MHA
+b. Regularly update the MHA for the records to be retained.
+17. Operations and Maintenance
+a. Provide support to the MHA during the operation and management phase
+b. Timely submission of MIS reports, raising the concerns and monitoring overall
+activities of ITSP at the State/UT level.
+c. Provide suggestions and support to integrate with other departments/ ministries.
+18. State/UT Campaign
+a. Support the MHA in building awareness about NERS at the State/UT level
+b. Responsible for taking up awareness campaign within the State/UT.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 11 | Page
+The summary of key responsibilities is provided in the table below.
+Responsibility Centre State/UT
+Before Implementation
+Selection of ITSP for implementation and maintenance of
+NERS Primary -
+Selection of CAD service provider Primary -
+Selection of Central PMU for monitoring of NERS
+implementation Primary -
+Signing MoU with the State/ UT Primary Primary
+Constitution of governance structures at respective level Primary Primary
+Identify the State/UT nodal officer - Primary
+Submission of proposal for NERS and approval Secondary Primary
+Change in any process/rules at the State/UT level to allow
+use of NERS
+- Primary
+During Implementation
+Design of NERS system Primary Secondary
+Requirement gathering at the State/UT Secondary Primary
+Commissioning of application Primary Secondary
+Requirements for customization of applications Secondary Primary
+Cloud DC/ DC set up Primary -
+Network to all locations (DC, operations center, State/UT call
+center) Primary Secondary
+Supply and commissioning of IT Hardware at operations
+center, call center and field Primary Secondary
+Space for operations center Primary -
+Purchase of SIM cards for MDT with GPRS/ data services - Primary
+PRI lines (inbound and outbound) Primary Secondary
+Interaction with ITSP and TSP Primary Secondary
+Provide 2wheeler and 4 wheeler vehicles for emergency
+response - Primary
+Arrange vehicles at district level for commissioning or any
+repair of MDT - Primary
+Map MDT to police station and police personnel - Primary
+Setup call center (physical space, furniture, amenities) - Primary
+Identification of manpower (call taker, dispatcher, on-field - Primary
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 12 | Page
+Responsibility Centre State/UT
+staff)
+Identification of vehicles at district level - Primary
+Commissioning of MDT in vehicles at district level Secondary Primary
+Training (soft skills) Secondary Primary
+Training (technical skills) Secondary Primary
+SOP for the operations Secondary Primary
+Review, validate and approve implementation activities Primary Secondary
+Go-live sign off at operations center and DC Primary -
+Go-live sign off at the State/UT Call Centre along with field Secondary Primary
+Maintain power backup beyond UPS power - Primary
+Post Implementation
+National campaign Primary Secondary
+PSAP operations Secondary Primary
+Forecasting of call volume Secondary Primary
+Policies for call retention Primary Secondary
+Information for call retention - Primary
+Ensure quality of services is provided to the citizens through
+the State/UT PSAP Primary Primary
+Audit of voice, process and technology Primary -
+Maintenance of PSAP/ State/UT Call center including space
+rent, utilities, amenities etc. - Primary
+Provide reports, raise concerns and overall monitoring of the
+State/UT PSAP - Primary
+Provision for FMS staff Primary -
+Maintenance of NERS system, hardware, MDT, network etc.  Primary Secondary
+Monitoring of entire system Primary Secondary
+Update NERS system – application, hardware, network etc.
+when required Primary Secondary
+Solution enhancement to include services offered by more
+Ministries/ Departments Primary -
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 13 | Page
+5. Norms for resource provisioning for State/UT
+MHA would optimize and allocate required resources to each State/UT for operations of
+NERS. Resources such as hardware, network, MDT would be provided to the States/UTs
+through the ITSP.
+State/UT would be required to submit the resource requirement in the proposal format
+attached with the guidelines. MHA would evaluate the proposal in consultation with the
+concerned State/UT and allocate required resources to the States/UTs. Guidelines for
+allocation of the resources are provided below.
+5.1. Hardware for State/UT Call Centre
+The items provided at the State/UT would be desktops, IP phone, routers, managed access
+switch, UPS and PRI Lines. The general guidelines for hardware allocation are:
+1. Each call taker and senior call taker would be given desktop with single screen
+2. Each dispatcher and center-in-charge would be given desktop with 3 screens
+3. IP phone would be provided to all agents including call taker, senior call taker,
+dispatcher and center-in-charge.
+4. One router and one managed access switch would be provided at each State/UT to
+terminate the network at the State/UT PSAP
+5. 1 UPS would be provided to each State/UT to maintain the power back up for 1 - 2
+hours. Beyond the UPS capacity, the State/UT is required to maintain backup for
+longer power cuts through DG sets or alternate power source.
+6. PRI lines would be provided based on the number of call takers in the State/UT.
+7. Interiors, electrical wiring and LAN cabling needs to be done by the State/UT.
+5.2. MDT devices for the field
+Two kinds of MDT devices are being procured by MHA from ITSP – rugged MDT and non-
+rugged MDT. There are two sizes in non-rugged devices – 5.5 inch screen and 8 inch
+screen. 5.5 inch screen device would be used only for 2 wheelers since it can be carried in
+pocket easily. The general guidelines for MDT allocation are:
+1. Rugged devices are for areas having difficult terrain and extreme weather conditions
+in the country. Any State/UT which requires rugged devices would provide the details
+of districts where terrain/ climate are difficult.
+2. As a general rule, each State/UT would be provided on an average 6 MDTs
+(Maximum) per police station. State/UT can provide proposal as per actual number of
+vehicles available in the State/UT.
+3. State/UT may optimize the MDT devices per police station based on their
+assessment
+4. State/UT needs to define the type of vehicle as well for MDT device
+5. All 2 wheeler vehicles would be provided non-rugged 5.5 inch screen MDT device. It
+is expected that the MDT device for 2 wheelers would be carried around by the police
+personnel.
+6. State/UT would procure the SIM cards for the MDT devices to connect to the DC.
+Operational cost of the SIM cards with 3G/2G data connection would be borne by the
+State/UT.
+7. MDT can be provided in phased manner in the State/UT.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 14 | Page
+5.3. Application at State/UT Call Centre
+MHA would provide multiple applications for the NERS. The general guidelines for
+application are:
+1. All the applications would run centrally from the cloud DC.
+2. Go- live of application would be considered when state/UT can complete the entire
+cycle of process through the application. The entire cycle of process would begin with
+incoming call/ data message and would end at feedback from the citizen. Process
+flows are provided earlier in the guidelines.
+3. Access to the specific modules of the application for each role would be provided at
+the State/UT call center
+4. Records would be maintained centrally for 90 days and would be removed after that.
+State/UT would identify the records to be stored for longer duration and inform MHA
+about the same. State/UT should inform about the same by 15th of every month.
+5. MHA would generate MIS reports from the application for analysis. MHA would
+provide functionality to view MIS reports as per requirement of the State/UT.
+6. CAD application may be deployed on the existing mobile phones of senior police
+officials to track calls and action taken on various calls.
+5.4. Network at State/UT Call Centre
+MHA through ITSP would provide primary and secondary network to connect the State/UT
+call center with cloud DC. The general guidelines for network are:
+1. Network bandwidth requirement would be assessed by the ITSP based on volume of
+calls and number of call takers in the State/UT
+2. ITSP would maintain the service levels for the network
+3. In case of any latency in the network or other issues, ITSP would be required to
+upgrade the network
+4. State/UT would be responsible for the GSM/GPRS/CDMA network of MDT devices.
+All devices should be connected to the DC at all times.
+5. Network for connecting PSAP to multiple dispatch center in the State/UT would be
+provided by MHA.
+5.5. Manpower
+1. Following roles are required at the State/UT PSAP:
+· Inbound call takers: agents who will receive the incoming calls in the State/UT call
+center
+· Senior Call takers: agents who will take complicated calls and would handle
+escalations from inbound call takers
+· Outbound callers: agents who will make outgoing calls in case of missed call,
+dropped calls, follow up etc.
+· Non voice agents: agents who would manage SMS, VoIP, email, chat messenger
+etc.
+· Dispatcher: agents who would dispatch the vehicles based on the information
+received from call takers
+· Administrator & Centre In charge: would supervise the operations of entire PSAP
+2. Number of outbound agents should be approximately 5% of the inbound call takers
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 15 | Page
+3. Number of dispatchers should be approximately 15% of inbound call takers
+4. Each State/UT should have one administrator and center in charge.
+5. One FMS personnel would be allocated per 50 agents.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 16 | Page
+6. Governance Structure
+MHA would set up committee at Central level to manage the project implementation in timely
+manner. Similarly, State/UT would be required to set up the Committees at the State/UT
+level for proper monitoring of the implementation. The committees proposed below are
+indicative and may be changed later.
+6.1. Centre level Committee
+Committee Composition Responsibilities
+Empowered
+Committee
+► Home Secretary
+(Chairperson)
+► Additional Secretary (CS)
+► Additional Secretary (Disaster
+Management)
+► AS &FA, MHA
+► JS or above level
+representative of MWCD
+► JS or above level
+representative of HFW
+► JS or above level
+representative of MoRTH
+► JS(DM), MHA
+► DDG (AS-1), DoT
+► DDG (Security), DoT
+► JS or above level
+representative of DeiTY
+► DG, Cert-in
+► Head Technology, MHA
+► Any other member to be co-
+opted by Chairman
+► JS (CS) (Convener)
+► Approval for the NERS project
+► Overall direction, monitoring and
+guidance of the project
+► Decision regarding adding new services/
+helplines in the NERS project.
+► Approval of proposal from the State/UT
+► Approval of any change request of ITSP
+and CAD SP
+Steering
+Committee
+► Joint Secretary (Centre-State)
+(Chairperson)
+► Director in charge of NERS
+Project in CS division
+► Representative of NIC, MHA
+► Head Technology, MHA
+► CISO, MHA
+► Project Director of ITSP
+► Project Director of CAD SP
+► Central PMU Head
+► Representative of other
+ministries as applicable
+► Responsible for implementation of the
+project
+► Review proposal of the State/UT and
+recommend to Empowered Committee
+► Regular meeting to track the progress of
+the project
+► Take periodic update of the project and
+suggest corrective measures if project is
+not on track
+► Monitor functioning of Central PMU, ITSP,
+CAD-SP
+► Monitor contracts of ITSP and CAD-SP
+including SLA
+► Finalizing deliverables and customization
+requirements of the state/UTs
+► Technical and financial evaluation of
+change request and recommendation to
+Empowered Committee
+► Review of security audit reports
+► Review of QA reports of State/UTs
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 17 | Page
+Committee Composition Responsibilities
+Domain
+committee
+► JS (CS) (Chairperson)
+► Nodal officers of States from
+five different states on rotation
+basis
+► Director in charge of NERS in
+MHA
+► Head Technology
+► Project Director, ITSP
+► Project Director, CAD-SP
+► Collection and validation of business
+requirements
+► Review and finalize SOP submitted by
+state/UTs
+6.2. State/UT level Committee
+Committee Composition Responsibilities
+State/UTApexCommittee ► Chief Secretary
+(Chairperson)
+► Principal Secretary Home
+► DG, Police
+► Principal Secretary
+Disaster Management
+► Principal Secretary WCD
+► Principal Secretary Health
+► IT Secretary
+► Representative from NIC
+► Representative from MHA
+► Any other representative
+based on the services
+added to NERS
+► NERS Nodal officer
+(Convener)
+► Highest level of approval for
+State/UT level
+► Responsible for overall project
+implementation
+► Report any concern to Steering
+Committee at center
+► Review progress of the project
+► Finalization of state/UT level SOP
+► Decision regarding adding new
+services/ helplines in the NERS
+project at state/UT level
+► Periodic meeting to discuss the
+progress of the project, at least
+once a quarter
+State/UT Steering
+Committee
+► DG, Police (Chairperson)
+► NERS Nodal officer
+► Representative from Home
+Department
+► Representative from WCD
+► Representative from
+Health Department
+► Representative from
+Disaster Management
+► Representative from IT
+Department
+► Any other representative
+based on the services
+added to NERS
+► Overall direction, monitoring and
+guidance of the project
+► Manage implementation across all
+districts
+► Approve location of PSAP,
+manpower, operational budgets etc.
+► Monitor PSAP operations through
+MIS reports
+► Ensure proper training
+arrangements
+► Ensure deployment of appropriate
+trained manpower for NERS
+state/UT call center
+► Handle procedural issues
+► Monitor hardware and application
+roll out at call center and field
+(MDT)
+► Approve go-live at the State/UT
+► Monitor service levels at state/UT
+► Regularly communicate with
+Steering Committee at center on
+progress, challenges, requirements
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 18 | Page
+Committee Composition Responsibilities
+etc. for the project
+► Oversee and manage integration
+with other services/ ministries
+► Guidance to District Mission
+Committee
+► Regular meeting to discuss the
+project (preferably once a month)
+District Mission
+Committee
+► District Collector1/ SSP of
+District (Chairperson)
+► Representative from WCD
+► Representative from
+Health
+► Representative from
+Disaster Management
+► Representative from IT
+Department
+► Any other representative
+based on the services
+added to NERS
+► NERS nodal officer of
+district (convener)
+► Coordinate with other departments
+to ensure smooth integration with
+NERS
+► Highlight concerns to the State/UT
+Empowered Committee
+► Ensure integration of all services
+with NERS
+► Ensure SOPs are followed. Any
+deviation from SOPs should be
+acted upon
+► Ensure MDTs is deployed in
+vehicles
+► SIM cards are functional
+► Periodic reporting
+► Monitoring of cases handled
+through NERS system
+► Collecting feedback from people
+► Ensuring quality of service
+1When other emergency services are integrated with NERS, then the overall in-charge of the district would be
+with District Collector
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 19 | Page
+7. Quality of Service
+Maintenance of quality is the key to successful operation of the NERS system. MHA would
+closely monitor the quality of service provided by ITSP. States/ UTs are expected to closely
+monitor the quality of service provided by the PSAPs to the distressed citizens, which will
+also be audited by MHA appointed third party periodically. Quality of service would be
+monitored in the following areas;
+Tools for
+ensuring quality
+Actions required
+Training
+► Compliance to training schedule and requirement
+► Each and every person working for NERS to be trained
+► Feedback collected from the trainees would be evaluated
+► Evaluation test post the training may be conducted
+Voice audit
+► Random audit of the recorded voice conversation of the PSAP
+agents and distressed citizens
+► Clarity of voice, handling of situation, tone of voice would be audited
+Feedbacks
+► After the closure of call, citizen or PSAP agent can connect to
+provide the feedback on the service provided
+► This feedback would be collated and provided to the MHA for
+evaluation
+Reward system
+► Quarterly award to the best performing call taker, dispatcher and
+supervisor
+► Rewards would be given on measureable KPIs and parameters
+Availability
+► State/UT would ensure 24*7 availability of planned manpower
+► Back up manpower may be planned by the States/UTs in case of
+emergency
+Surprise visits
+► Senior officials from the State/UT and also MHA may conduct
+surprise visit to the State/UT PSAP for monitoring the operations of
+the State/UT
+Annual survey
+► MHA would develop annual survey for measuring the satisfaction
+level of the citizens assisted by the State/UT PSAP personnel
+► An incentive scheme for personnel working in the States/UTs will
+also be worked out to ensure Quality of Service
+► This would provide improvement areas to MHA
+The quality of service in the NERS project would be measured on the quality parameters.
+These parameters would be applicable for the ITSP, CAD-SP and the State/UT PSAPs. For
+monitoring the ITSP, detailed service levels are provided in the NERS RFP for selection of
+ITSP. Strict adherence to all SLAs by ITSP and CAD-SP would be monitored centrally by
+MHA. For the State/UT PSAP, quality parameters are defined below. State/UT will ensure
+adherence to the quality parameters and will submit adherence report to the Steering
+Committee every month.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 20 | Page
+Stakeholder Quality parameters Target
+Citizen
+Ease of reporting any crime/ complaint -
+Average time taken to receive the emergency
+service
+As per State/UT SOP
+State/UT
+PSAP
+► Availability of all call takers, dispatchers
+and other manpower
+95% of planned manpower
+► Number of cases closed within 3 hours of
+reporting
+80% of the cases reported
+► Every personnel of the State/UT PSAP
+should be trained on both soft skills and
+technical skills
+100%
+► Call quality score (based on voice audit
+process)
+More than 80%
+► Average satisfaction score of citizens
+collected through feedback calls/ SMS/
+other means
+More than 85%
+► Increase in number of cases reported to
+the call center
+10% increase every 6
+months
+► Any instance of unavailability of PSAP Zero
+► Average speed to respond to calls Less than 15 seconds
+► Call abandon rate Less than 5%
+► Average time taken by the call taker
+before forwarding to dispatcher
+Less than 2 min
+► Average time taken by the dispatcher to
+identify and dispatch emergency vehicle
+Less than 2 min
+► Average time taken by emergency
+vehicle to respond through MDT
+Less than 15 seconds
+Field
+► Average time taken to reach incident
+place
+As per state/UT SOP
+► Availability of MDT devices (availability is
+defined as MDT being connected to the
+State/UT PSAP)
+95%
+► Availability of all personnel managing
+MDT devices
+95%
+► Number of cases dropped/ not attended
+by emergency vehicle allotted
+Less than 5%
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 21 | Page
+8. Monitoring of NERS project
+NERS project would be closely monitored at both the Centre and the State/UT levels. At the
+centre, MHA would interact extensively with other concerned Ministries in the Government of
+India, ITSP, CAD-SP and the State/UT governments for timely and successful
+implementation of NERS Project.
+MHA would establish multiple levels of controls to monitor the project. These controls are:
+1. Centre level committee
+As illustrated in section 6.1, these committees would keep close watch on the overall
+project.
+2. State/UT level committee
+As illustrated in section 6.2, these committees would be responsible for operational
+matters with regards to state/UT.
+3. MHA- IT personnel
+MHA has appointed IT personnel to monitor various IT projects within MHA. These
+personnel would head the entire IT operations during the implementation of the
+NERS.
+4. Central project monitoring unit (CPMU)
+MHA would appoint CPMU for day-today monitoring of the project. CPMU would
+assist MHA –IT personnel and would report directly to the Steering Committee.
+5. Service level of ITSP
+Multiple service levels would be applied on ITSP to maintain high standard of
+performance. CPMU along with MHA-IT personnel would monitor the performance of
+ITSP through these SLAs.
+6. IT helpdesk
+ITSP would set up IT helpdesk for complaint resolution. MHA would monitor the
+complaints logged at IT helpdesk to monitor the health of the system.
+MHA would also establish reporting mechanism to monitor and document the progress of
+the project. Some of the indicative reports are provided in table below.
+Report Report detail Owner Reported to Frequency
+State/UT
+Report
+Progress of NERS,
+challenges, health
+status of NERS, call
+volumes
+State/UT
+Empowered
+Committee
+Steering
+committee, MHA Monthly
+Project status
+report
+Overall project
+progress CPMU Steering committee, MHA Fortnightly
+Service level
+report
+Compliance to the
+SLA by ITSP and
+details of
+shortcomings
+ITSP/ CPMU Steering committee Monthly
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 22 | Page
+Report Report detail Owner Reported to Frequency
+High level
+status
+Brief project status
+that can be circulated
+among  other
+stakeholders
+Steering
+committee
+Empowered
+committee and all
+State/UTs
+implementing
+NERS
+Once in two
+months
+Complaint
+resolution
+Report of complaints
+logged by State/UTs
+and resolution details
+ITSP – IT
+helpdesk
+Steering
+committee Weekly
+Operation
+center report
+Business intelligence
+reports that showcase
+the call volume, crime
+rate, call assessment
+reports etc.
+ITSP
+Steering
+committee, All
+States/UTs
+Monthly
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 23 | Page
+9. Future Extension
+The NERS system is designed to be scalable in the future. Scalability and extension from
+various perspectives is considered under the NERS. Some of the planned extensions are:
+1. Forecasting
+Based on the call volumes, the State/UT PSAP would increase the resource requirement
+with respect to agents, hardware, network bandwidth, application licenses etc. The State/UT
+would be required to periodically check the status of the requirement and forecast the
+increase of volume in advance. Advance reporting of any increase which results in
+augmentation of resources would help MHA to procure the resources timely through ITSP.
+Based on the forecasting submitted by the State/UT, extension on number of licenses,
+agents and hardware would be provided by the MHA. State/UT should forecast their calls
+based on the following parameters:
+► Calls received per day
+► Dispatch calls
+► Peak hour calls
+► Hoax calls
+► Information calls
+► Missed calls
+► Counselling calls
+► Any large planned event
+2. Special requirement
+In case of special requirement of the State/UT to scale up, such as religious gathering,
+natural disaster or any such unforeseen event, the State/UT may partner with neighboring
+State/UTs to attend to the incoming calls from distressed citizens. This can be temporary
+arrangement amongst the State/UTs. ITSP would route any overflowing calls to the
+neighboring State/UT PSAPs as indicated by the States/ UTs
+3. Multiple Call Centre and dispatch centre
+With the increase of the call volume, the State/UT may require multiple call centers or
+dispatch centre at different geographies in the State/UT. The same may be set up by the
+State/UT. The hardware, network and applications for the additional call centerand dispatch
+centrewould be provided by the MHA.
+4. Inclusion of other services
+As per TRAI Recommendations which have also been accepted by the DoT, other services
+like fire, medical, helplines, highway patrol etc. are to  be integrated with the ‘112’ system.
+After successful rolling out the project for assisting the women in distress, the States/UTs will
+prepare an action plan as per their local conditions for integrating other services and
+helplines with NERS (112) system.  In such scenario, hardware cost for the other services
+would be borne by the State/UTs or the line Ministry in the Government of India supporting
+such integration.
+5. Increase in dispatch vehicles
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 24 | Page
+State/UT would have to inform the MHA about any increase in the number of dispatch
+vehicles. MHA would provide approval based on the assessment. ITSP would provide extra
+MDTs to the State/UT in such cases. However, all such vehicles and MDTs will have to be in
+active mode and connect to the NERS applications. All the MDTs should be discoverable by
+the EMS system deployed in the data centers.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 25 | Page
+10. Implementation of NERS
+The step wise plan of implementation of NERS is provided below. It is expected that the
+State/UT would adhere to the following plan.
+1. Signing of MoU
+The State/UT would sign MoU with MHA. MoU details out the agreement between the
+Centre and the State/UT for implementation of NERS.
+2. Appointment of committees
+State/UT needs to appoint the committees as provided in the guidelines and notify the
+same to the MHA. Other than the committees, the State/UT would also appoint a nodal
+officer for the project. The State/UT Nodal officer should not be below rank of IG, Police.
+3. Submission of proposal
+The State/UT would submit the proposal in the given format to the MHA.
+4. Meeting with State/UT Nodal officer and evaluation of the proposal
+MHA would hold a meeting with the State/UT nodal officer to evaluate the proposal and
+approve the requirements of the State/UT. During the meeting detailed timeline for
+implementation of the project will be finalized.
+5. Set up of PSAP civil infrastructure
+State/UT would identify the space to set up the PSAP. Only after the completion of
+PSAP, ITSP can start deployment at the State/UT level. Site specific design and layout
+for PSAP will be provided by the ITSP. State/UT needs to provide completion letter for
+the PSAP to the MHA. Wiring and LAN points should be made available to ITSP.
+6. Deployment by ITSP
+Post the completion of PSAP civil infrastructure, ITSP would provide the hardware and
+network to the State/UT. ITSP would commission the application from the State/UT
+PSAP and train the identified manpower on the applications.
+7. Go-live approval
+State/UT would be required to provide go-live certificate to the ITSP for release of their
+payments.
+8. Maintenance of system
+ITSP would maintain the system centrally through the cloud DC. Facility management
+staff would also be provided at the State/UT during the contract period of ITSP. Central
+IT helpdesk would also be set up to centrally log any complaints related to the system.
+Support from the State/UT would be required throughout the implementation of NERS.
+9. Build awareness
+MHA would run national campaign for building awareness of NERS system. State/UT
+would be required to support MHA in building the awareness. States/UTs would run
+campaigns within their jurisdiction through popular media channels.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 26 | Page
+10. Addition of new service
+In case of addition of new service, the same needs to be informed to the MHA through a
+separate proposal. State/UT needs to identify the nodal officer from the added
+department. New nodal officer should be made part of committees at all levels.
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 27 | Page
+11. Annexure
+11.1. Proposal submission format for State/UT
+States/ UTs will submit the project proposal to MHA covering the points indicated in the table
+below.
+Nationwide Emergency Response Centre – Proposal  Format
+S. No. Requirement Detail
+1. State/UT Name
+2. Crime rate in  the State/UT for the past 5 years
+3. Details of Nodal officer
+4. Details of Committees constituted at State/ UT level
+5. PSAP details
+i.  Location (with complete address)
+ii.  Number of expected calls
+2015-16:
+2016-17:
+2017-18:
+iii.  Number of call takers required
+iv.  Number of dispatcher required
+v.  Number of supervisor required
+6. Field details
+i. Number of rugged device for 4W(Please provide reason for rugged devices)
+ii.  Number of non-rugged device for 4W
+iii.  Number of non-rugged device for 2W
+iv.  Number of police stations
+v.  District wise requirement of MDT Please attach separate sheet for district wise requirement of MDT
+7. Roadmap for integration of other emergency services if any
+8. Any other requirement
+Nationwide Emergency Response System – Guidelines
+Ministry of Home Affairs 28 | Page
+11.2. Applications in NERS
+The following applications would be provided under NERS:
+1. Computer aided dispatch (by CDAC)
+2. Contact center (on cloud)
+3. Case Record Management (CRM)
+4. Nirbhaya Portal
+5. Business Intelligence ( BI), Reporting & Analytics
+6. Enterprise Management System (EMS)
+7. Identity Management Software (IMS)
+8. Email Solution
+9. E-Learning Software
+10. Anti-Virus
+11. Directory Services
+12. Intranet Web Portal

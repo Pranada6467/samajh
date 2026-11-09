@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+.samajh/
+references/pilots/cache/
+references/pilots/audio/
+references/pilots/ledger.jsonl
+*.wav
+*.mp3
+!tests/fixtures/**/*.wav
+.DS_Store

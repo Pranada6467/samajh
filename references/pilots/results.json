@@ -1,0 +1,722 @@
+[
+ {
+  "id": "hi01",
+  "lang": "hi-IN",
+  "gold": 52000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "मेरे लोन से 52,000 रुपये कटे।"
+ },
+ {
+  "id": "hi01",
+  "lang": "hi-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "मेरे लोन से ₹52,000 कटे"
+ },
+ {
+  "id": "hi01",
+  "lang": "hi-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "मेरे लोन से 52,000 रुपये कटे।"
+ },
+ {
+  "id": "hi01",
+  "lang": "hi-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "मेरे लोन से बावन हज़ार रुपये कटे।"
+ },
+ {
+  "id": "hi02",
+  "lang": "hi-IN",
+  "gold": 150000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "प्रीमियम 1,50,000 रुपये था।"
+ },
+ {
+  "id": "hi02",
+  "lang": "hi-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "प्रीमियम डेढ़ लाख रुपये था"
+ },
+ {
+  "id": "hi02",
+  "lang": "hi-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "प्रीमियम 1.5 लाख रुपये था।"
+ },
+ {
+  "id": "hi02",
+  "lang": "hi-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "प्रीमियम डेढ़ लाख रुपये था।"
+ },
+ {
+  "id": "hi03",
+  "lang": "hi-IN",
+  "gold": 225000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "2,25,000 का लोन मिला।"
+ },
+ {
+  "id": "hi03",
+  "lang": "hi-IN",
+  "gold": 225000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "सवा 2,00,000 का लोन मिला"
+ },
+ {
+  "id": "hi03",
+  "lang": "hi-IN",
+  "gold": 225000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "2,25,000 का लोन मिला।"
+ },
+ {
+  "id": "hi03",
+  "lang": "hi-IN",
+  "gold": 225000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "सवा दो लाख का लोन मिला।"
+ },
+ {
+  "id": "hi04",
+  "lang": "hi-IN",
+  "gold": 3500,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "साढ़े 3,000 की किस्त है।"
+ },
+ {
+  "id": "hi04",
+  "lang": "hi-IN",
+  "gold": 3500,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "साढ़े 3,000 की किस्त है"
+ },
+ {
+  "id": "hi04",
+  "lang": "hi-IN",
+  "gold": 3500,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "साढ़े 3,000 की किस्त है।"
+ },
+ {
+  "id": "hi04",
+  "lang": "hi-IN",
+  "gold": 3500,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "साढ़े तीन हज़ार की किस्त है।"
+ },
+ {
+  "id": "hi05",
+  "lang": "hi-IN",
+  "gold": 25000000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "2.5 करोड़ का cover बताया था।"
+ },
+ {
+  "id": "hi05",
+  "lang": "hi-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "ढाई करोड़ का कवर बताया था"
+ },
+ {
+  "id": "hi05",
+  "lang": "hi-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "2.5 करोड़ का cover बताया था।"
+ },
+ {
+  "id": "hi05",
+  "lang": "hi-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "ढाई करोड़ का कवर बताया था।"
+ },
+ {
+  "id": "hi06",
+  "lang": "hi-IN",
+  "gold": 520000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "5,20,000 रुपये का लोन है।"
+ },
+ {
+  "id": "hi06",
+  "lang": "hi-IN",
+  "gold": 520000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "₹5,20,000 का लोन है"
+ },
+ {
+  "id": "hi06",
+  "lang": "hi-IN",
+  "gold": 520000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "पाँच लाख बीस हज़ार रुपये का लोन है।"
+ },
+ {
+  "id": "hi06",
+  "lang": "hi-IN",
+  "gold": 520000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "पाँच लाख बीस हज़ार रुपये का लोन है।"
+ },
+ {
+  "id": "hi07",
+  "lang": "hi-IN",
+  "gold": 38450,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "38,450 रुपये काटे गए।"
+ },
+ {
+  "id": "hi07",
+  "lang": "hi-IN",
+  "gold": 38450,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "₹38,450 काटे गए"
+ },
+ {
+  "id": "hi07",
+  "lang": "hi-IN",
+  "gold": 38450,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "38,450 रुपये काटे गए।"
+ },
+ {
+  "id": "hi07",
+  "lang": "hi-IN",
+  "gold": 38450,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "अड़तीस हज़ार चार सौ पचास रुपये काटे गए।"
+ },
+ {
+  "id": "hi08",
+  "lang": "hi-IN",
+  "gold": 175000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "पौने 2,00,000 रुपये जमा किए।"
+ },
+ {
+  "id": "hi08",
+  "lang": "hi-IN",
+  "gold": 175000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "पौने ₹2,00,000 जमा किए"
+ },
+ {
+  "id": "hi08",
+  "lang": "hi-IN",
+  "gold": 175000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "उन्होंने 2,00,000 रुपये जमा किए।"
+ },
+ {
+  "id": "hi08",
+  "lang": "hi-IN",
+  "gold": 175000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "उन्होंने दो लाख रुपये जमा किए।"
+ },
+ {
+  "id": "he01",
+  "lang": "hi-en",
+  "gold": 25000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "लोन के साथ 25,000 का इंश्योरेंस दिया।"
+ },
+ {
+  "id": "he01",
+  "lang": "hi-en",
+  "gold": 25000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "लोन के साथ 25,000 का इंश्योरेंस दिया।"
+ },
+ {
+  "id": "he01",
+  "lang": "hi-en",
+  "gold": 25000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "लोन के साथ 25,000 का इंश्योरेंस दिया।"
+ },
+ {
+  "id": "he01",
+  "lang": "hi-en",
+  "gold": 25000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "लोन के साथ ट्वेंटी फ़ाइव थाउज़ेंड का इंश्योरेंस दिया।"
+ },
+ {
+  "id": "he02",
+  "lang": "hi-en",
+  "gold": 150000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "प्रीमियम 1.5 lakh rupees था।"
+ },
+ {
+  "id": "he02",
+  "lang": "hi-en",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "प्रीमियम 1,50,000 रुपये था।"
+ },
+ {
+  "id": "he02",
+  "lang": "hi-en",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "प्रीमियम 1.5 lakh rupees था।"
+ },
+ {
+  "id": "he02",
+  "lang": "hi-en",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "प्रीमियम वन पॉइंट फ़ाइव लाख रुपीज़ था।"
+ },
+ {
+  "id": "he03",
+  "lang": "hi-en",
+  "gold": 11200,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "मेरी ईएमआई 11,200 rupees है।"
+ },
+ {
+  "id": "he03",
+  "lang": "hi-en",
+  "gold": 11200,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "मेरी ई एम आई ₹11,200 है।"
+ },
+ {
+  "id": "he03",
+  "lang": "hi-en",
+  "gold": 11200,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "मेरी ईएमआई 11,200 rupees है।"
+ },
+ {
+  "id": "he03",
+  "lang": "hi-en",
+  "gold": 11200,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "मेरी ई एम आई इलेवन थाउज़ेंड टू हंड्रेड रुपीज़ है।"
+ },
+ {
+  "id": "he04",
+  "lang": "hi-en",
+  "gold": 1000000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "कवर 10,00,000 rupees का बताया।"
+ },
+ {
+  "id": "he04",
+  "lang": "hi-en",
+  "gold": 1000000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "कवर ₹10,00,000 का बताया"
+ },
+ {
+  "id": "he04",
+  "lang": "hi-en",
+  "gold": 1000000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "कवर 10,00,000 rupees का बताया।"
+ },
+ {
+  "id": "he04",
+  "lang": "hi-en",
+  "gold": 1000000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "कवर टेन लाख रुपीज़ का बताया।"
+ },
+ {
+  "id": "ta01",
+  "lang": "ta-IN",
+  "gold": 52000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "52,000 ரூபாய் கழித்தார்கள்."
+ },
+ {
+  "id": "ta01",
+  "lang": "ta-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "₹52,000 கழித்தார்கள்"
+ },
+ {
+  "id": "ta01",
+  "lang": "ta-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "52,000 ரூபாய் கழித்தார்கள்."
+ },
+ {
+  "id": "ta01",
+  "lang": "ta-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "ஐம்பத்தி இரண்டாயிரம் ரூபாய் கழித்தார்கள்."
+ },
+ {
+  "id": "ta02",
+  "lang": "ta-IN",
+  "gold": 150000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "1,50,000 ரூபாய் பிரீமியம்."
+ },
+ {
+  "id": "ta02",
+  "lang": "ta-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "ஒன்றரை ₹1,00,000 பிரீமியம்"
+ },
+ {
+  "id": "ta02",
+  "lang": "ta-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "1.5 லட்சம் ரூபாய் premium."
+ },
+ {
+  "id": "ta02",
+  "lang": "ta-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "ஒன்றரை லட்சம் ரூபாய் ப்ரீமியம்."
+ },
+ {
+  "id": "ta03",
+  "lang": "ta-IN",
+  "gold": 320000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "3,20,000 ரூபாய் கடன்."
+ },
+ {
+  "id": "ta03",
+  "lang": "ta-IN",
+  "gold": 320000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "₹3,20,000 கடன்"
+ },
+ {
+  "id": "ta03",
+  "lang": "ta-IN",
+  "gold": 320000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "3,20,000 ரூபாய் கடன்."
+ },
+ {
+  "id": "ta03",
+  "lang": "ta-IN",
+  "gold": 320000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "மூன்று லட்சத்து இருபதாயிரம் ரூபாய் கடன்."
+ },
+ {
+  "id": "ta04",
+  "lang": "ta-IN",
+  "gold": 25000000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "2.5 கோடி ரூபாய் காப்பீடு."
+ },
+ {
+  "id": "ta04",
+  "lang": "ta-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "இரண்டரை ₹1,00,00,000 காப்பீடு"
+ },
+ {
+  "id": "ta04",
+  "lang": "ta-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "2.5 கோடி ரூபாய் காப்பீடு."
+ },
+ {
+  "id": "ta04",
+  "lang": "ta-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "இரண்டரை கோடி ரூபாய் காப்பீடு."
+ },
+ {
+  "id": "kn01",
+  "lang": "kn-IN",
+  "gold": 52000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "52,000 ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿದರು."
+ },
+ {
+  "id": "kn01",
+  "lang": "kn-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 504,
+  "transcript": "<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
+ },
+ {
+  "id": "kn01",
+  "lang": "kn-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "52,000 ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿದರು."
+ },
+ {
+  "id": "kn01",
+  "lang": "kn-IN",
+  "gold": 52000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "ಐವತ್ತೆರಡು ಸಾವಿರ ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿದರು."
+ },
+ {
+  "id": "kn02",
+  "lang": "kn-IN",
+  "gold": 150000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "1,50,000 ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ."
+ },
+ {
+  "id": "kn02",
+  "lang": "kn-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "₹1,50,000 ಪ್ರೀಮಿಯಂ"
+ },
+ {
+  "id": "kn02",
+  "lang": "kn-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "1,50,000 ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ."
+ },
+ {
+  "id": "kn02",
+  "lang": "kn-IN",
+  "gold": 150000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "ಒಂದುವರೆ ಲಕ್ಷ ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ."
+ },
+ {
+  "id": "kn03",
+  "lang": "kn-IN",
+  "gold": 320000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "3,20,000 ರೂಪಾಯಿ ಸಾಲ."
+ },
+ {
+  "id": "kn03",
+  "lang": "kn-IN",
+  "gold": 320000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 504,
+  "transcript": "<!DOCTYPE html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!--> <html class=\"no-js\" lang=\"en-US\"> <!"
+ },
+ {
+  "id": "kn03",
+  "lang": "kn-IN",
+  "gold": 320000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "3,20,000 ರೂಪಾಯಿ ಸಾಲ."
+ },
+ {
+  "id": "kn03",
+  "lang": "kn-IN",
+  "gold": 320000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "ಮೂರು ಲಕ್ಷದ ಇಪ್ಪತ್ತು ಸಾವಿರ ರೂಪಾಯಿ ಸಾಲ."
+ },
+ {
+  "id": "kn04",
+  "lang": "kn-IN",
+  "gold": 25000000,
+  "cond": "clean16k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "2,50,00,000 ರೂಪಾಯಿ ವಿಮೆ."
+ },
+ {
+  "id": "kn04",
+  "lang": "kn-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v2.5_transcribe",
+  "status": 200,
+  "transcript": "₹2,50,00,000 ವಿಮೆ"
+ },
+ {
+  "id": "kn04",
+  "lang": "kn-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v3.0_transcribe",
+  "status": 200,
+  "transcript": "2,50,00,000 ರೂಪಾಯಿ ವಿಮೆ."
+ },
+ {
+  "id": "kn04",
+  "lang": "kn-IN",
+  "gold": 25000000,
+  "cond": "phone8k",
+  "config": "v3.0_auto",
+  "status": 200,
+  "transcript": "ಎರಡೂವರೆ ಕೋಟಿ ರೂಪಾಯಿ ವಿಮೆ."
+ }
+]
