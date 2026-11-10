@@ -19,17 +19,20 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-import httpx
+import devset
+import e1
 import scenario_sets
 from scenario import Scenario
 from scoring import ANSWER_FIELDS, LIST_FIELDS, CaseScore, Summary, by_language, score_case
 
+from samajh.amounts import format_inr, spoken_amount
 from samajh.clients.errors import ClientError
 from samajh.clients.llm import LlmClient
 from samajh.extract import ExtractionFailed, Llm, SlotKind, SlotTrace, slots
-from samajh.pipeline import TextRun, run_text
+from samajh.extract._ground import comparison_form
+from samajh.pipeline import TextRun, WithoutTemperature, run_text, takes_temperature
 from samajh.rules import to_beliefs
-from samajh.types import Beliefs, GapReason, RuleId
+from samajh.types import Beliefs, CallStep, GapReason, RuleId, Speaker, Verdict
 
 RUNS = Path(__file__).parent / "runs"
 CALLS = RUNS / "calls.jsonl"
@@ -101,25 +104,6 @@ def _record_calls(traces: list[SlotTrace]) -> list[Call]:
         else:
             calls.append(Call(first["usd"] if first else None, first["seconds"] if first else None, True))
     return calls
-
-
-class WithoutTemperature:
-    """`LlmClient` for a model that rejects the `temperature` parameter."""
-
-    def __init__(self, llm: LlmClient) -> None:
-        self._llm = llm
-
-    def complete(self, schema, messages, **options):
-        return self._llm.complete(schema, messages, temperature=None, **options)
-
-
-def takes_temperature(model: str) -> bool:
-    """What OpenRouter's public model list says. True when the list cannot be read."""
-    try:
-        listed = httpx.get("https://openrouter.ai/api/v1/models", timeout=30).json()["data"]
-        return "temperature" in next(m for m in listed if m["id"] == model)["supported_parameters"]
-    except (httpx.HTTPError, KeyError, StopIteration, ValueError):
-        return True
 
 
 def run_case(scenario: Scenario, llm: Llm, model: str) -> CaseRun:
@@ -256,6 +240,125 @@ def _span_stats(runs: list[CaseRun]) -> str:
     )
 
 
+def record_values_shown(scenario: Scenario) -> Counter:
+    """Values of the lender's record that appear, as text, in a bot turn the model is shown.
+
+    Keyed by (what the bot turn asks, which record value). A lexical check: amounts as digits,
+    grouped digits and in the spoken form of the call's language, plus the provider's name.
+    """
+    record, product = scenario.record, scenario.record.products[0]
+    amounts = {
+        "premium": product.premium_inr, "cover": product.cover_inr,
+        "sanctioned": record.sanctioned_inr, "disbursed": record.disbursed_inr,
+    }  # fmt: skip
+    forms = {product.provider: "provider"}
+    for label, rupees in amounts.items():
+        for form in (
+            str(rupees),
+            format_inr(rupees),
+            f"{rupees:,}",
+            spoken_amount(rupees, scenario.language),
+        ):
+            forms[form] = label
+    shown: Counter = Counter()
+    for slot in slots(scenario.transcript, record):
+        if slot.step in (CallStep.right_party_check, CallStep.second_check):
+            continue  # never sent to the model
+        for label in {label for form, label in forms.items() if form in slot.question}:
+            shown[(slot.kind.value, label)] += 1
+    return shown
+
+
+def _leaks(runs: list[CaseRun]) -> str:
+    shown: Counter = Counter()
+    for r in runs:
+        shown += record_values_shown(r.scenario)
+    found = ", ".join(f"{label} in a `{kind}` question: {n}" for (kind, label), n in sorted(shown.items()))
+    return (
+        f"- Record values found in bot turns shown to the model: {found or 'none'}. A lexical check of "
+        "the premium, cover, sanctioned and disbursed amounts (digits and spoken form) and the "
+        "provider name. A read-back repeats the amount the customer said, so it shows the record's "
+        "premium whenever the customer's amount equals it. The two identity checks are never sent."
+    )
+
+
+def _dev_overlap(runs: list[CaseRun]) -> str:
+    """How much of this set the prompt was tuned on: replies that are word for word in the dev set."""
+    dev = {
+        comparison_form(t.text)
+        for scenario in devset.scenarios()
+        for t in scenario.transcript.turns
+        if t.speaker is Speaker.customer
+    } - {""}
+    asked = [
+        comparison_form(slot.turn.text)
+        for r in runs
+        for slot in slots(r.scenario.transcript, r.scenario.record)
+        if slot.kind is not SlotKind.other
+    ]
+    shared = [text for text in asked if text in dev]
+    longer = sum(len(text.split()) > 3 for text in shared)
+    return (
+        f"- Replies to a checked question that are word for word a reply of the development set: "
+        f"{_share(len(shared), len(asked))}; {longer} of them longer than three words. The prompt was "
+        "iterated on the development set, so the model's reading of these replies is in-sample."
+    )
+
+
+def _clusters(runs: list[CaseRun]) -> str:
+    """The four languages share a base case, so errors are also counted per base case."""
+    bases = {r.scenario.base for r in runs}
+
+    def count(wrong: list[CaseRun]) -> str:
+        names = sorted({r.scenario.base for r in wrong})
+        return f"{len(wrong)} calls in {len(names)} of {len(bases)} base cases" + (
+            f" ({', '.join(names)})" if names else ""
+        )
+
+    not_clear = [r for r in runs if r.score.gold_verdict is not Verdict.clear]
+    clear = [r for r in runs if r.score.gold_verdict is Verdict.clear]
+    lines = [
+        f"- False clears: {count([r for r in not_clear if r.score.false_clear])}.",
+        (
+            f"- False alarms: {count([r for r in clear if r.score.verdict is not Verdict.clear])}; "
+            f"gold-clear base cases: {len({r.scenario.base for r in clear})}."
+        ),
+        f"- Any wrong call verdict: {count([r for r in runs if r.score.verdict is not r.score.gold_verdict])}.",
+        f"- Any wrong field: {count([r for r in runs if any(not f.ok for f in r.score.fields)])}.",
+    ]
+    reading = [
+        f for r in runs if r.scenario.consent_reading for f in r.score.fields if f.name == "consent_given"
+    ]
+    others = [
+        f for r in runs if not r.scenario.consent_reading for f in r.score.fields if f.name == "consent_given"
+    ]
+    if reading:
+        lines.append(
+            "- `consent_given` where the customer agreed to a misdescribed product "
+            f"({', '.join(sorted(scenario_sets.CONSENT_READING))}; the set expects true and calls false a "
+            f"defensible reading): {sum(f.ok for f in reading)}/{len(reading)} match the set. "
+            f"All other calls: {sum(f.ok for f in others)}/{len(others)}."
+        )
+    return "\n".join(lines)
+
+
+def _e1(runs: list[CaseRun]) -> str:
+    rows = [
+        e1.E1Row(
+            base=r.scenario.base or r.scenario.id,
+            stratum=r.scenario.yes_no.stratum,
+            gold_clear=r.score.gold_verdict is Verdict.clear,
+            yes_no_caught=not r.scenario.yes_no.confirmed,
+            teach_back_caught=r.score.verdict is not Verdict.clear,
+            target_flagged=any(rule is r.scenario.yes_no.target_rule for _, rule in r.score.flags),
+            ceiling_caught=r.scenario.perfect is not None and r.scenario.perfect.verdict is not Verdict.clear,
+        )
+        for r in runs
+        if r.scenario.yes_no
+    ]
+    return e1.table(rows)
+
+
 @dataclass(frozen=True)
 class Cost:
     calls: int
@@ -381,6 +484,7 @@ def report(set_name: str, note: str, model: str, runs: list[CaseRun], cost: Cost
         "## Spans and grounding",
         "",
         _span_stats(runs),
+        _leaks(runs),
         "",
         "## Cost and latency",
         "",
@@ -395,10 +499,26 @@ def report(set_name: str, note: str, model: str, runs: list[CaseRun], cost: Cost
             f"p90 {_secs(cost.p90_s)} (wall time of the client call, retries included, one network)."
         ),
         "",
-        "## Failures",
-        _failures(runs),
-        "",
     ]
+    if any(r.scenario.base for r in runs):
+        head += ["## By base case", "", _clusters(runs), _dev_overlap(runs), ""]
+    if any(r.scenario.yes_no for r in runs):
+        head += [
+            "## E1: teach-back call against the yes/no call, by stratum",
+            "",
+            _e1(runs),
+            "",
+            (
+                "Caught: the call did not end as a pass (yes/no: not confirmed; teach-back: verdict not "
+                "clear, which includes unclear and an extractor error). The yes/no arm is the set's "
+                "scripted outcome with no LLM; coached and acquiescent customers say yes to it by "
+                "assumption, and never_asked is the coverage of a five-question script. The strata are "
+                "the set author's mix, so no pooled rate is given. For a clear-gold row, caught is a "
+                "false alarm."
+            ),
+            "",
+        ]
+    head += ["## Failures", _failures(runs), ""]
     return "\n".join(head)
 
 

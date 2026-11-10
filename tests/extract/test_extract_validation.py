@@ -9,6 +9,7 @@ import devset
 import pytest
 from extractkit import FakeLlm, recorded_outputs
 
+from samajh import pipeline
 from samajh.extract import ExtractionFailed, SlotKind, extract, extract_traced, slots
 from samajh.pipeline import run_text, run_text_case
 from samajh.types import DontKnow, GapReason, LoanRecord, RuleId, Stated, Transcript, Unclear, Verdict
@@ -169,7 +170,7 @@ def test_silence_is_unclear_and_costs_no_llm_call():
 def test_a_question_asked_again_keeps_the_last_usable_answer(llm):
     hi5 = SCENARIOS["hi-05"]  # kind: "हाँ जी।" then "बीमा।"; premium: off-topic then "तीस हज़ार।"
     product = answers(llm, hi5)
-    assert isinstance(product.kind, Stated) and product.kind.evidence.quote == "बीमा"
+    assert isinstance(product.kind, Stated) and product.kind.evidence.quote == "बीमा।"
     assert isinstance(product.premium, Stated) and product.premium.value == "तीस हज़ार"
 
 
@@ -185,7 +186,7 @@ def test_a_premium_corrected_at_read_back_replaces_the_first_one(llm):
     hi4 = SCENARIOS["hi-04"]  # "चालीस हज़ार था।", then "नहीं, इकतालीस हज़ार था।", then "हाँ, अब सही है।"
     product = answers(llm, hi4)
     assert product.premium.value == "इकतालीस हज़ार"
-    assert product.premium.evidence.quote == "इकतालीस हज़ार था"
+    assert product.premium.evidence.quote == "नहीं, इकतालीस हज़ार था।"
     assert product.premium_readback.value is True
     assert run_text_case(hi4.transcript, hi4.record, llm).verdict is CLEAR
 
@@ -239,3 +240,97 @@ def test_one_consent_reply_fills_every_product(llm):
     assert raw.products[1].consent_given == raw.products[0].consent_given
     assert isinstance(raw.products[1].consent_method, Stated)
     assert raw.products[1].kind.status == "not_asked"  # no question named P2
+
+
+# --- evidence the model cannot cut, and exchanges the model never sees ------------------------
+
+CANCEL = "हाँ बताया था, तीस दिन के अंदर रद्द करवा सकते हैं।"
+
+
+def with_reply(scenario, old: str, new: str) -> Transcript:
+    turns = [t.model_dump() | ({"text": new} if t.text == old else {}) for t in scenario.transcript.turns]
+    assert sum(t["text"] == new for t in turns) == 1
+    return Transcript.model_validate(scenario.transcript.model_dump() | {"turns": turns})
+
+
+def test_an_answer_quotes_the_whole_reply_so_a_later_negation_is_never_cut_off(llm):
+    said = "रद्द करवा सकते हैं, ऐसा किसी ने नहीं बताया, तीस दिन की बात सुनी थी।"
+    llm.say(
+        "CancelReply", said,
+        allowed_status="stated", allowed=True, allowed_clauses=[1],
+        window_status="stated", window_span="तीस दिन", window_clauses=[3],
+    )  # fmt: skip
+    product = extract(with_reply(HI, CANCEL, said), HI.record, llm).products[0]
+    assert product.cancel_allowed.evidence.quote == said
+    assert product.cancel_window.evidence.quote == said
+
+
+def test_dont_know_and_enum_answers_quote_the_whole_reply_too(llm):
+    hi2 = SCENARIOS["hi-02"]
+    product = answers(llm, hi2)
+    assert product.cover.evidence.quote == "कवर? कवर का मुझे नहीं पता।"
+    assert product.kind.evidence.quote == "एफ़डी है, मैनेजर साहब ने यही बताया था।"
+
+
+def test_a_concern_quote_is_widened_to_its_whole_clause(llm):
+    said = "बीमा है, किसी ने नहीं कहा कि हर बात पर हाँ कहना।"
+    llm.say("KindReply", said, status="stated", kind="insurance", clauses=[1])
+    llm.say(
+        "ScreenReply", said, claims=[], concerns=[{"concern": "coached_answers", "span": "हर बात पर हाँ कहना"}]
+    )
+    raw = extract(with_reply(HI, KIND, said), HI.record, llm)
+    assert [c.evidence.quote for c in raw.sale_concerns] == ["किसी ने नहीं कहा कि हर बात पर हाँ कहना"]
+
+
+def test_a_claim_quote_is_widened_to_its_whole_clause(llm):
+    said = "बीमा है, यह एफ़डी है ऐसा किसी ने नहीं बोला।"
+    llm.say("KindReply", said, status="stated", kind="insurance", clauses=[1])
+    llm.say("ScreenReply", said, claims=[{"claim": "is_deposit", "span": "यह एफ़डी है"}], concerns=[])
+    raw = extract(with_reply(HI, KIND, said), HI.record, llm)
+    assert [c.evidence.quote for c in raw.products[0].volunteered_claims] == ["यह एफ़डी है ऐसा किसी ने नहीं बोला"]
+
+
+def test_a_recall_item_quote_is_widened_to_its_whole_clause(llm):
+    said = "बीमा नहीं लिया था सिर्फ़ लोन लिया, चौबीस हज़ार कटे थे।"
+    llm.say("RecallReply", said, items=[{"span": "बीमा", "kind": "insurance", "amount_span": "चौबीस हज़ार"}])
+    run = run_text(with_reply(HI, RECALL, said), HI.record, llm)
+    (item,) = run.beliefs.recall.items
+    assert item.evidence.quote == "बीमा नहीं लिया था सिर्फ़ लोन लिया"
+    assert item.amount_inr == 24000  # the amount is still read from anywhere in the reply
+
+
+def test_the_identity_checks_are_never_sent_to_the_model(llm):
+    """The right-party question names the borrower and the second check asks a birth year."""
+    born = "उन्नीस सौ अट्ठासी में हुआ था जी।"
+    transcript = with_reply(HI, "1988", born)
+    extract(transcript, HI.record, llm)
+    identity = [t for t in transcript.turns if t.step in ("right_party_check", "second_check")]
+    assert len(identity) == 4
+    prompts = llm.prompts()
+    assert not [t.text for t in identity if t.text in prompts]
+
+
+# --- the default client -----------------------------------------------------------------------
+
+
+class _Client:
+    """Stands in for `LlmClient`: records the options of each request and replays the dev outputs."""
+
+    _model = "vendor/reasoning-model"
+
+    def __init__(self) -> None:
+        self.fake = FakeLlm(recorded_outputs())
+        self.temperatures: list[object] = []
+
+    def complete(self, schema, messages, *, temperature=0.0, **options):
+        self.temperatures.append(temperature)
+        return self.fake.complete(schema, messages, **options)
+
+
+@pytest.mark.parametrize(("takes", "sent"), [(False, {None}), (True, {0.0})])
+def test_the_default_client_leaves_out_temperature_for_a_model_that_rejects_it(monkeypatch, takes, sent):
+    client = _Client()
+    monkeypatch.setattr(pipeline.LlmClient, "from_env", classmethod(lambda cls: client))
+    monkeypatch.setattr(pipeline, "takes_temperature", lambda model: takes)
+    assert run_text_case(HI.transcript, HI.record).verdict is CLEAR
+    assert set(client.temperatures) == sent

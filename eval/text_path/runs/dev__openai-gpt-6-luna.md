@@ -1,6 +1,6 @@
 # Text path on the `dev` set, model `openai/gpt-6-luna`
 
-Run at 2026-11-10T04:07:27+00:00. Development set: 20 hand-written calls (5 each hi, hi-en, ta, kn), typed text, one author for replies, gold and prompt. Tamil and Kannada not human-reviewed. Gold verdicts and flags are the rule engine run on the hand-labelled extraction. Used for prompt iteration, so these numbers are in-sample.
+Run at 2026-11-10T05:37:01+00:00. Development set: 20 hand-written calls (5 each hi, hi-en, ta, kn), typed text, one author for replies, gold and prompt. Tamil and Kannada not human-reviewed. Gold verdicts and flags are the rule engine run on the hand-labelled extraction. Used for prompt iteration, so these numbers are in-sample.
 
 ## Headline
 
@@ -64,19 +64,20 @@ False clear: gold is flag_for_review or unclear_needs_human and the pipeline say
 
 ## Spans and grounding
 
-- Spans the model copied (amounts, durations, recall items, claims, concerns) that were not in the reply: 0 of 107 (0.00%). By field: none.
+- Spans the model copied (amounts, durations, recall items, claims, concerns) that were not in the reply: 0 of 105 (0.00%). By field: none.
 - Answers whose clause numbers were missing or out of range: 0 of 169 (0.00%). By field: none.
 - Both kinds are dropped to `unclear` (answers) or left for the rule engine to record as an evidence gap (recall items, claims, concerns). None is kept as an answer.
 - Answers marked stated with no value or no span, kept as unclear: 0. By field: none.
 - Gaps the rule engine raised with reason `quote_not_grounded`: 0 (with the gold extraction: 0).
 - Gaps with reason `value_not_parsed`: 0 (with the gold extraction: 0).
+- Record values found in bot turns shown to the model: premium in a `readback` question: 16. A lexical check of the premium, cover, sanctioned and disbursed amounts (digits and spoken form) and the provider name. A read-back repeats the amount the customer said, so it shows the record's premium whenever the customer's amount equals it. The two identity checks are never sent.
 
 ## Cost and latency
 
-- LLM calls: 417 for 20 calls (417 served from the cache in this run).
-- Spent in this run: $0.00000.
-- Cost of these calls with nothing cached: $0.03242 ($0.00162 per transcript, $0.00008 per LLM call).
-- Latency per LLM call when first made: median 1.70 s, p90 3.22 s (wall time of the client call, retries included, one network).
+- LLM calls: 403 for 20 calls (11 served from the cache in this run).
+- Spent in this run: $0.03011.
+- Cost of these calls with nothing cached: $0.03066 ($0.00153 per transcript, $0.00008 per LLM call).
+- Latency per LLM call when first made: median 1.87 s, p90 3.37 s (wall time of the client call, retries included, one network).
 
 ## Failures
 

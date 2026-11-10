@@ -7,6 +7,11 @@ Code, not the model, decides which question a reply answers, which turn a quote 
 which product an answer belongs to. The model sees one question and one reply and returns enums,
 clause numbers and spans (`samajh.extract._wire`). Each one is resolved against that reply
 (`_ground`); a field whose clause number or span is not there becomes `Unclear(quote_not_grounded)`.
+
+The model never chooses the words kept as evidence. An answer quotes the customer's whole reply,
+and a recall item, a claim or a concern quotes the whole clauses around its span, so no quote can
+stop short of a "not" that the model left out. The two identity checks are never sent to the
+model: the right-party question names the borrower and the second check asks a birth year.
 """
 
 import time
@@ -63,12 +68,16 @@ from samajh.types import (
 
 T = TypeVar("T", bound=BaseModel)
 
-_MAX_TOKENS = 800
+# Room for a reasoning model to think before it answers. At 800 a hard reply ("ज़रूरी था, ऐसा तो
+# किसी ने नहीं कहा।") came back from openai/gpt-6-luna cut off and empty, which fails the whole call;
+# the same request used 863 completion tokens when allowed 4000 (measured 2026-11-10).
+_MAX_TOKENS = 4000
 # A reply this short cannot state a belief or a concern, so it is not screened.
 _SCREEN_MIN_WORDS = 3
 # A customer who misdescribes the one product on record still named it: these kinds may be
 # matched to a product that no recall item describes correctly.
 _MISDESCRIBED = frozenset({KindClaim.deposit, KindClaim.investment, KindClaim.other})
+_IDENTITY = frozenset({CallStep.right_party_check, CallStep.second_check})
 
 
 class Llm(Protocol):
@@ -100,6 +109,7 @@ class Slot:
     question: str
     kind: SlotKind
     products: tuple[ProductId, ...]  # the product asked about; every product when none was named
+    step: CallStep | None = None  # the step of the bot turn; None when the customer spoke first
 
 
 @dataclass
@@ -157,7 +167,8 @@ def slots(transcript: Transcript, record: LoanRecord) -> tuple[Slot, ...]:
         kind = _slot_kind(prompt, on_record)
         asked_about = prompt.product_id if prompt and prompt.product_id else None
         products = (asked_about,) if asked_about and kind is not SlotKind.other else on_record
-        found.append(Slot(turn, prompt.text if prompt else "", kind, products))
+        step = prompt.step if prompt else None
+        found.append(Slot(turn, prompt.text if prompt else "", kind, products, step))
     return tuple(found)
 
 
@@ -182,7 +193,11 @@ class _Grounder:
         return Evidence(quote=quote, turn_id=self.turn_id)
 
     def pointed(self, name: str, status: Status, value: object, clauses: tuple[int, ...]) -> Answer:
-        """An enum or yes/no answer, or an "I do not know". Its evidence is the clauses pointed at."""
+        """An enum or yes/no answer, or an "I do not know".
+
+        The model must point at a clause of the reply that carries the answer. The evidence kept
+        is the whole reply, not the clause the model picked.
+        """
         whole = self.evidence(self.reply.whole())
         if status is Status.unclear:
             return Unclear(evidence=whole)
@@ -190,13 +205,12 @@ class _Grounder:
             self.trace.inconsistent.append(name)
             return Unclear(evidence=whole)
         self.trace.pointers += 1
-        quote = self.reply.cover(clauses)
-        if quote is None:
+        if self.reply.cover(clauses) is None:
             self.trace.bad_pointers.append(name)
             return Unclear(reason=GapReason.quote_not_grounded)
         if status is Status.dont_know:
-            return DontKnow(evidence=self.evidence(quote))
-        return Stated(value=value, evidence=self.evidence(quote))
+            return DontKnow(evidence=whole)
+        return Stated(value=value, evidence=whole)
 
     def spoken(
         self, name: str, status: Status, span: str | None, clauses: tuple[int, ...], read: Reader
@@ -210,7 +224,7 @@ class _Grounder:
         found = self.find(name, span)
         if found is None:
             return Unclear(reason=GapReason.quote_not_grounded)
-        return Stated(value=tighten(found.words, read), evidence=self.evidence(found.clauses))
+        return Stated(value=tighten(found.words, read), evidence=self.evidence(self.reply.whole()))
 
 
 def _usable(answer: Answer) -> bool:
@@ -240,18 +254,19 @@ class _Assembly:
     def screen(self, slot: Slot, wire: ScreenReply, g: _Grounder) -> None:
         """Claims and concerns voiced in passing.
 
-        A span that is not in the reply stays as the model wrote it: the rule engine then
-        records an evidence gap, so a concern the model garbled can never end in `clear`.
+        A span that is in the reply is kept as the whole clauses around it. A span that is not
+        in the reply stays as the model wrote it: the rule engine then records an evidence gap,
+        so a concern the model garbled can never end in `clear`.
         """
         for concern in wire.concerns:
             found = g.find("concerns", concern.span)
-            quote = found.words if found else concern.span
+            quote = found.clauses if found else concern.span
             self._add(self.concerns, ConcernEvidence(concern=concern.concern, evidence=g.evidence(quote)))
         if slot.kind is SlotKind.features:
             return  # the money-back probe already has the customer's beliefs as its answer
         for claim in wire.claims:
             found = g.find("claims", claim.span)
-            quote = found.words if found else claim.span
+            quote = found.clauses if found else claim.span
             for pid in slot.products:
                 self._add(self.claims[pid], ClaimEvidence(claim=claim.claim, evidence=g.evidence(quote)))
 
@@ -317,7 +332,7 @@ class _Assembly:
             found = g.find("items", item.span)
             amount = g.find("items.amount_span", item.amount_span) if found else None
             raw = RawRecallItem(
-                evidence=g.evidence(found.words if found else item.span),
+                evidence=g.evidence(found.clauses if found else item.span),
                 kind=item.kind,
                 amount_text=tighten(amount.words, rupees) if amount else None,
             )
@@ -427,6 +442,8 @@ def extract_traced(
     assembly = _Assembly(on_record)
     traces: list[SlotTrace] = []
     for slot in slots(transcript, record):
+        if slot.step in _IDENTITY:
+            continue
         reply = Reply(slot.turn.text)
         if reply.blank:
             assembly.blank(slot)

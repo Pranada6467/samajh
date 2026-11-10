@@ -34,6 +34,15 @@ class GoldLabels:
 
 
 @dataclass(frozen=True)
+class YesNoArm:
+    """The scripted yes/no confirmation call on the same facts (experiment E1, `e1.py`)."""
+
+    stratum: str
+    confirmed: bool  # the confirmation call ended "confirmed": every answer was yes
+    target_rule: RuleId  # the rule the scenario was written to exercise
+
+
+@dataclass(frozen=True)
 class Scenario:
     """One call with its record and gold.
 
@@ -49,6 +58,9 @@ class Scenario:
     gold_raw: RawExtraction | None = None
     perfect: CaseResult | None = None
     note: str = ""
+    base: str | None = None  # the base case this scenario is one language version of
+    yes_no: YesNoArm | None = None
+    consent_reading: bool = False  # see `scenario_sets.CONSENT_READING`
 
     @property
     def language(self) -> Language:

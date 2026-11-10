@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 
+import httpx
+
 from samajh.clients.llm import LlmClient
 from samajh.extract import Extraction, Llm, extract_traced
 from samajh.rules import evaluate, to_beliefs
@@ -17,6 +19,31 @@ class TextRun:
     result: CaseResult
 
 
+class WithoutTemperature:
+    """`LlmClient` for a model that rejects the `temperature` parameter (OpenRouter answers 404)."""
+
+    def __init__(self, llm: LlmClient) -> None:
+        self._llm = llm
+
+    def complete(self, schema, messages, **options):
+        return self._llm.complete(schema, messages, temperature=None, **options)
+
+
+def takes_temperature(model: str) -> bool:
+    """What OpenRouter's public model list says. True when the list cannot be read."""
+    try:
+        listed = httpx.get("https://openrouter.ai/api/v1/models", timeout=30).json()["data"]
+        return "temperature" in next(m for m in listed if m["id"] == model)["supported_parameters"]
+    except (httpx.HTTPError, KeyError, StopIteration, ValueError):
+        return True
+
+
+def default_llm() -> Llm:
+    """The OpenRouter client from the environment, asked at temperature 0 where the model allows it."""
+    client = LlmClient.from_env()
+    return client if takes_temperature(client._model) else WithoutTemperature(client)
+
+
 def run_text(transcript: Transcript, record: LoanRecord, llm: Llm, *, model: str | None = None) -> TextRun:
     extraction = extract_traced(transcript, record, llm, model=model)
     beliefs = to_beliefs(extraction.raw, record, transcript)
@@ -24,5 +51,5 @@ def run_text(transcript: Transcript, record: LoanRecord, llm: Llm, *, model: str
 
 
 def run_text_case(transcript: Transcript, record: LoanRecord, llm: Llm | None = None) -> CaseResult:
-    """The verdict for one transcribed call. `llm` defaults to the OpenRouter client from the environment."""
-    return run_text(transcript, record, llm or LlmClient.from_env()).result
+    """The verdict for one transcribed call. `llm` defaults to `default_llm()`."""
+    return run_text(transcript, record, llm or default_llm()).result

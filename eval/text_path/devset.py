@@ -1,13 +1,16 @@
 """Development set for the extractor: 20 hand-written calls, 5 each in hi, hi-en, ta, kn.
 
 Used to iterate on the prompt and to compare models. It is NOT the frozen gold set in
-`data/scenarios/` and shares no text with it or with the examples inside the prompt.
+`data/scenarios/` and shares no text with the examples inside the prompt. It does share some
+replies with the frozen set word for word (measured on version 3: 70 of 1,604 replies to a
+checked question, 28 of them longer than three words, among them "बस एक एफ़डी करवाई थी लोन की
+सिक्योरिटी के लिए, बावन हज़ार की।"). The frozen report counts them (`run.py`, "By base case").
 
 Limits: one author wrote the customer replies, the gold labels and the prompt, so the labels
 share the prompt author's reading of borderline replies. The text is typed, not speech-to-text
 output. Tamil and Kannada are not human-reviewed. All names, ids and amounts are synthetic.
 
-Every case states the verdict and the flagged rules it expects; `tests/extract/test_devset.py`
+Every case states the verdict and the flagged rules it expects; `tests/extract/test_text_path_devset.py`
 checks them by running the gold extraction through the rule engine, with no LLM.
 """
 

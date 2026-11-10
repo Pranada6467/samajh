@@ -4,10 +4,12 @@ Units and gold standards:
   * field: one answer field of one product in one call, compared after `to_beliefs` (status,
     and for a stated answer its value: an enum, a bool, rupees, months or days). Gold is the
     hand-labelled extraction passed through the same `to_beliefs`. A field the call never asked
-    is not counted. List fields (open recall, volunteered claims, sale concerns) count once per
-    call and are right only when the whole set matches. A volunteered "it is a deposit" claim
-    is ignored on both sides when the gold already has the customer calling that product a
-    deposit: the rules read the same belief from the kind, so the repeat changes nothing.
+    is not counted (the rule engine turns an answer to an unasked question into `unclear`, so
+    none can hide there). A call the extractor failed on counts every gold field as wrong.
+    List fields (open recall, volunteered claims, sale concerns) count once per call and are
+    right only when the whole set matches. A volunteered "it is a deposit" claim is ignored on
+    both sides when the gold already has the customer calling that product a deposit: the
+    rules read the same belief from the kind, so the repeat changes nothing.
   * flag: one (call, product, rule) triple. Gold is the rule engine run on the gold extraction,
     or the flags a scenario set states.
   * verdict: per product and per call, three-way.
@@ -107,16 +109,22 @@ def _list_fields(beliefs: Beliefs, deposits: set[ProductId]) -> dict[str, tuple]
     }
 
 
-def field_scores(gold: Beliefs, got: Beliefs) -> tuple[FieldScore, ...]:
+NO_EXTRACTION = ("no extraction", None)
+
+
+def field_scores(gold: Beliefs, got: Beliefs | None) -> tuple[FieldScore, ...]:
+    """`got` is None when the extractor raised: every gold field then counts as wrong."""
     scores: list[FieldScore] = []
     for gold_product in gold.products:
-        got_product = got.for_product(gold_product.product_id)
+        got_product = got.for_product(gold_product.product_id) if got else None
         for name in ANSWER_FIELDS:
             wanted = comparable(getattr(gold_product, name))
             if wanted[0] != "not_asked":
-                scores.append(FieldScore(name, wanted, comparable(getattr(got_product, name))))
+                found = comparable(getattr(got_product, name)) if got_product else NO_EXTRACTION
+                scores.append(FieldScore(name, wanted, found))
     deposits = _called_a_deposit(gold)
-    gold_lists, got_lists = _list_fields(gold, deposits), _list_fields(got, deposits)
+    gold_lists = _list_fields(gold, deposits)
+    got_lists = _list_fields(got, deposits) if got else dict.fromkeys(LIST_FIELDS, NO_EXTRACTION)
     scores += [FieldScore(name, gold_lists[name], got_lists[name]) for name in LIST_FIELDS]
     return tuple(scores)
 
@@ -130,7 +138,7 @@ def score_case(
     got_beliefs: Beliefs | None,
     error: str | None = None,
 ) -> CaseScore:
-    """`got` is None when the extractor raised. Fields are scored only when both beliefs exist."""
+    """`got` is None when the extractor raised: no verdict, and every gold field counts as wrong."""
     labels = GoldLabels.of(got) if got else None
     got_products = dict(labels.products) if labels else {}
     return CaseScore(
@@ -139,7 +147,7 @@ def score_case(
         gold_verdict=gold.verdict,
         verdict=labels.verdict if labels else None,
         error=error,
-        fields=field_scores(gold_beliefs, got_beliefs) if gold_beliefs and got_beliefs else (),
+        fields=field_scores(gold_beliefs, got_beliefs) if gold_beliefs and (got_beliefs or error) else (),
         gold_flags=gold.flags,
         flags=labels.flags if labels else frozenset(),
         product_verdicts=tuple((verdict, got_products.get(pid)) for pid, verdict in gold.products),

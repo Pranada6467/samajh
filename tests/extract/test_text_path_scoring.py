@@ -1,6 +1,7 @@
 """The evaluation's own arithmetic: what counts as a false clear, a field, a flag."""
 
 import devset
+import e1
 from scenario import GoldLabels
 from scoring import Tally, by_language, score_case, summarise
 
@@ -125,3 +126,45 @@ def test_gold_labels_come_from_a_case_result():
     assert labels.verdict is Verdict.flag_for_review
     assert ("P1", RuleId.kind) in labels.flags
     assert labels.products == (("P1", Verdict.flag_for_review),)
+
+
+def test_an_extractor_error_counts_every_gold_field_as_wrong():
+    """A call with no extraction must not drop out of the field accuracy."""
+    scenario = SCENARIOS["hi-01"]
+    fine, failed = scored(scenario), scored(scenario, error="ExtractionFailed: boom")
+    assert [f.name for f in failed.fields] == [f.name for f in fine.fields]
+    assert not any(f.ok for f in failed.fields)
+    summary = summarise([fine, failed])
+    assert (summary.all_fields.hits, summary.all_fields.n) == (len(fine.fields), 2 * len(fine.fields))
+
+
+# --- E1: strata and counts --------------------------------------------------------------------
+
+
+def test_e1_strata_follow_the_customer_and_the_scripted_yes_no_outcome():
+    assert e1.stratum(True, "truthful", True) == "informed"
+    assert e1.stratum(False, "coached", True) == "coached"
+    assert e1.stratum(False, "acquiescent", True) == "acquiescent"
+    assert e1.stratum(False, "truthful", True) == "never_asked"
+    assert e1.stratum(False, "truthful", False) == "asked"
+
+
+def test_e1_reports_each_stratum_apart_and_counts_whole_base_cases():
+    def row(base, stratum, yes_no, teach_back, gold_clear=False):
+        return e1.E1Row(base, stratum, gold_clear, yes_no, teach_back, teach_back, True)
+
+    rows = [
+        row("C01", "coached", False, True),
+        row("C01", "coached", False, False),  # one language of C01 missed by the teach-back call
+        row("C02", "coached", False, True),
+        row("U03", "asked", True, True),
+        row("N01", "informed", False, True, gold_clear=True),
+    ]
+    lines = e1.table(rows).splitlines()
+    assert len(lines) == 2 + 3  # header, rule, one line per stratum present: nothing pooled
+    coached = next(line for line in lines if line.startswith("| coached"))
+    assert "| 3 (2) |" in coached
+    assert "| 0/3 calls (0/2 base cases in every language) |" in coached
+    assert "| 2/3 calls (1/2 base cases in every language) |" in coached
+    informed = next(line for line in lines if line.startswith("| informed"))
+    assert "| clear |" in informed and "1/1 calls" in informed
