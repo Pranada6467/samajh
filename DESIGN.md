@@ -67,7 +67,7 @@ Insurance sold with a loan is a "third-party product or service" that the bank s
 - Deciding whether something *is* mis-selling: we only flag cases for human review.
 - Testing whether the product was suitable or appropriate for the customer (4(20A)(i)).
 - Re-teaching: Samajh assesses understanding and does not explain the product.
-- Live streaming STT (we use REST per turn; see §8). Whether to adopt it for iteration 2 is open decision 12 in §15.
+- Live streaming STT (we use REST per turn with a browser end-of-speech detector at 700 ms; decision 12 in §15, closed by measurement).
 
 ## 5. The call
 
@@ -108,7 +108,7 @@ LOAN RECORD (synthetic)  ──►  SCRIPT BUILDER  ──►  bot prompts (Timb
                                 │
                      PRISMA REST (v3.0 transcribe; on amount turns v2.5 transcribe too)
                                 │
-                     AMOUNT NORMALISER (fraction-aware; gaps being fixed; two readings compared, see Amounts below)
+                     AMOUNT NORMALISER (fraction-aware; two readings compared by `cross_check`, see Amounts below)
                                 │
                      EXTRACTOR (LLM via OpenRouter → strict schema, with a quoted span for each field)
                                 │
@@ -186,9 +186,20 @@ The sketch matches `samajh/types.py`; the code wins if they differ. Rule ids are
 - **Two readings that agree are almost always right.** On phone audio, v2.5 and v3.0 gave the same amount for 200 of 240 sentences and 199 of those 200 were right (the one miss is a sentence whose written form is suspect). In the other 40, where they differed or one gave no answer, at least one was right 37 times. Prisma returns no confidence score; agreement is a measured stand-in, at this n and on TTS audio only.
 - **Noise.** The phone channel cost nothing measurable: mu-law 8 kHz against clean 16 kHz gave 214 against 216 of 240 on v2.5 and 221 against 221 on v3.0. The band-limit, street noise at 10 and 5 dB, and babble at 10 dB each stayed within 4 sentences of phone audio on the same sentences (112 to 128 sentences per cell). Only babble at 5 dB hurt: v3.0 fell from 102 to 93 of 112 (12 lost, 3 gained, p = 0.035, before any correction for the ten comparisons in that table) and v2.5 from 102 to 97 (p = 0.27). The noise is synthetic.
 
-*Design consequence, adopted (coordinator decision, 2026-11-10; §15 item 16).* Each amount-bearing customer turn is transcribed by both Prisma v2.5 and v3.0. If the two readings give the same amount, that is the amount. If they differ, or either gives no reading, the bot always reads the amount back and the customer confirms. The read-back stays for every critical amount regardless of agreement. v3.0 alone is not enough: its wrong amounts come with no warning.
+*Design consequence, adopted (coordinator decision, 2026-11-10; §15 item 16).* Each amount-bearing customer turn is transcribed by both Prisma v2.5 and v3.0, and `samajh.amounts.cross_check(first, second)` compares the two parsed readings (it returns `Agreed(rupees)` or `ReadBackNeeded(readings)`). If the two readings give the same amount, that is the amount. If they differ, or either gives no reading, the bot always reads the amount back and the customer confirms. The read-back stays for every critical amount regardless of agreement. v3.0 alone is not enough: its wrong amounts come with no warning.
 
-*Status of the parser.* The report lists 14 parser gaps and 12 partly formatted shapes (Kannada spellings, English "X and a half" written in Devanagari, composition of partly formatted v2.5 output), with the ones that return a wrong amount to be fixed first. They are being fixed. The 240-sentence set is now a development set: scores after the fixes are tuned on it, so **a fresh held-out set (a new seed, frozen the same way) is needed before any headline amount number**. A full word-to-number parser is needed beyond this only if we use `indic-auto`.
+*Status of the parser.* The numbers above describe the parser as evaluated on 2026-11-10. The parser was fixed afterwards against the same 240 sentences and rescored offline (no new audio, no new Gnani calls; TTS audio only, exact match, n = 240):
+
+| Reading (240 sentences, TTS audio, exact match on the rupee amount) | Before the parser fix | After |
+|---|---|---|
+| v2.5 `transcribe`, phone | 214 (6 wrong amounts) | 224 (1 wrong amount) |
+| v2.5 `transcribe`, clean | 216 | 225 |
+| v2.5 `literal`, phone | 219 | 238 |
+| v3.0 `transcribe`, phone | 221 | 222 |
+| v3.0 `transcribe`, clean | 221 | 221 |
+| v2.5 and v3.0 agree on phone: right / agreeing | 199 of 200 | 208 of 209 |
+
+**These after-fix numbers are tuned on the same set the fixes were written against. They are not a held-out result and are not a claim about real callers.** A fresh held-out set (a new seed, frozen the same way) is still needed before any headline amount number. v3.0's skipped-group mis-formatting ("three lakh two hundred" read as 3,02,000) cannot be detected from one transcript, so the v3.0 count barely moves and the second reading is what catches it. Shapes the parser deliberately still refuses (it returns no amount, which triggers a read-back): a number word directly before digits, clock times beside amounts, Kannada ondu kaalu and ondu mukkaalu before a unit (needs a fluent Kannada reader) and "3/4 lakh" in Tamil. Details and the before-fix report: `eval/amounts/REPORT.md` and `references/pilots/W1-core-report.md` §3. A full word-to-number parser is needed beyond this only if we use `indic-auto`.
 
 ## 7. Gnani models used
 
@@ -203,11 +214,12 @@ The sketch matches `samajh/types.py`; the code wins if they differ. Rule ids are
 
 ## 8. Engineering constraints
 
-- **Concurrency 1** (429 "Only 1 active request", seen in a burst test on 2026-11-10): one queue for all requests, exponential backoff, no parallel REST calls. Bot audio is pre-generated, so a live call only uses STT. In the probe a WebSocket streaming session did not occupy that slot; v1 still uses REST per turn, and streaming is open decision 12 in §15.
+- **Concurrency 1** (429 "Only 1 active request", seen in a burst test on 2026-11-10): one queue for all requests, exponential backoff, no parallel REST calls. Bot audio is pre-generated, so a live call only uses STT. In the probe a WebSocket streaming session did not occupy that slot, but streaming was measured against REST per turn and is not shipped (decision 12 in §15, closed). A live turn waits 5 s for the key lock and then fails with `gnani_busy`, so nothing else may use the key during a call (§13). Read-backs of an amount the customer just said cannot be pre-generated: they are synthesised on the turn path (about 0.7 s of Timbre, `references/pilots/voice-loop-iter1.md` §8), while fixed prompts are cache hits.
 - **Caching:** key = sha256(model, params, audio/text). Noise and 8 kHz variants are made offline, and only STT is re-run per condition.
 - **Measured cost** (pilot): about 0.02 credits per 3-second STT call (n = 78) and 0.06 per short TTS sentence (n = 20), from one dashboard reading with no saved screenshot. The four-language plan (~1,350 TTS + ~7,400 STT) is about 230 to 265 credits, which is about a quarter of the 1,000-credit project cap.
 - **Latency:** STT about 0.2 to 0.3 s and TTS about 0.6 to 0.8 s on short clips (pilot and client probe). Pre-generated prompts keep the bot responsive. In the amounts run (one run, one machine, not a benchmark) STT median was 0.21 s with p95 0.37 s on v2.5 and 0.33 s on v3.0. The second reading on an amount turn adds a call of about that size, and with concurrency 1 the two calls run one after the other.
-- **Backend proxy** (FastAPI): browsers can't set `X-API-Key-ID`. The Gnani and OpenRouter keys live in environment variables only.
+- **Latency, phone end to end** (headless Chrome with a WAV as the microphone, real server, real Prisma v3.0; TTS clips only, no human speech): from the last voiced frame to the transcript in the page, a median 1.18 s (min 1.09, max 1.26; n = 12 turns from 5 Timbre clips and 1 stub answer, key lightly used and never idle). That is about 0.70 s of end-of-speech wait, 0.08 to 0.12 s of resampling and a 0.35 s median STT step. The 700 ms detector median was 685 ms on 20 clips plus silence (clean TTS against digital silence; a noisy room will differ). Streaming at its default 500 ms silence returned the transcript a median 0.78 s after the end of speech (n = 20), against about 0.71 s for the detector at 500 ms plus a REST call (n = 20 each). Source: `references/pilots/voice-loop-iter1.md` §3.
+- **Backend proxy** (FastAPI, `samajh/server/`): browsers can't set `X-API-Key-ID`. The Gnani and OpenRouter keys live in environment variables only. The server resamples uploads to the 8 or 16 kHz line rate with ffmpeg; it binds 127.0.0.1, refuses other Host and Origin values, and has no login.
 - **LLM hosting:** v1 sends only synthetic transcripts to OpenRouter. A real lender must check where transcripts may go first: for digital lenders, the Digital Lending Directions require storage in India and deletion within 24 hours of processing abroad (E2.9).
 - **Synthetic data only:** obviously fake names, loan IDs, years of birth and numbers. Ombudsman cases are re-created with invented parties, never quoted with real names.
 
@@ -294,7 +306,9 @@ Unknowns: banks may build it in-house or adapt survey bots, and we found no publ
 | No human voice recordings and no fluent Tamil/Kannada reviewer yet | Every language is reported as "TTS-only, not human-tested" and Tamil/Kannada text as "not human-reviewed" until the §4 bar is met |
 | Tamil/Kannada amounts and phone-line misses | Fraction-aware parser; two readings (v2.5 and v3.0) on amount turns with a read-back on any disagreement; read-back on every critical amount; v2.5 vs v3.0 reported. Measured on TTS audio only (§6, Amounts) |
 | Dual reading doubles STT calls on amount turns, and v2.5 returned 504 on 15 of 1,184 calls (1.3%; 14 of the 15 Tamil or Kannada) in the 2026-11-10 amounts run, each succeeding on a second attempt after a wait of about 30 s (inferred from ledger times; the header was not read). v3.0 returned 504 once in 1,456 calls | A short per-call timeout on the second reading, and a missing reading counts as a disagreement, so the turn falls back to the read-back instead of waiting out the retry. The timeout value is not set or measured yet |
-| Streaming STT: billing unknown, session cap undocumented | Measured 2026-11-10 (`references/pilots/api-probe-iter1.md` §5): an open streaming session does not occupy the one active-request slot, because REST STT returned 200 while a session was open, mid-audio and after close. Streaming was probed, not built. v1 uses REST per turn; adopting streaming is open decision 12 in §15 |
+| Streaming STT: billing unknown, session cap undocumented | Measured 2026-11-10 (`references/pilots/api-probe-iter1.md` §5): an open streaming session does not occupy the one active-request slot, because REST STT returned 200 while a session was open, mid-audio and after close. Then measured against REST per turn (`references/pilots/voice-loop-iter1.md` §3, TTS clips only, no human speech) and not shipped: v1 uses REST per turn. Decision 12 in §15 is closed |
+| A live demo shares the one Gnani key with a running evaluation: 3 of 12 live phone turns failed with `gnani_busy` (503, after the 5 s lock wait) while the amounts evaluation was running. The key is one slot for the whole account | Never run an evaluation, probe or other Gnani job during a demo or a rehearsal. The phone shows the code and offers "Send again", and a resend after the key is free took 0.31 s (n = 1), but a demo should not depend on that. Giving live calls priority in the client's lock is a possible fix, not built |
+| No human has used the phone yet: it was driven only by headless Chrome with a WAV file as the microphone, with TTS clips only and no human speech. Real microphones, speaker-to-microphone echo, noisy rooms, Safari, Firefox and mobile browsers are untested, and the 700 ms detector was tuned on clean audio only (steady noise above its threshold produces one false turn before the floor adapts, builder's test) | Before any claim about the phone, record human turns and rerun the detector and the phone path on them; decide the 700 ms threshold on that data. Until then say "tested with synthetic voices in headless Chrome" and nothing about real callers or noisy rooms |
 | Judges know the adjacent vendors (SquadStack, Edesy, Ringg, NuSummit) | Name them ourselves and say what Samajh adds (§12) |
 | Regulatory wording drifts | Recheck RBI's notifications for amendments dated after 6 August 2026 before submission; quote text, not summaries |
 | Four documents were read in copies the issuer does not host (FREE-AI report, SPDI Rules 2011, IRDAI circular 274/11/2020, Baramulla order) | Check each against the official copy before quoting it to judges |
@@ -322,9 +336,9 @@ From the claims check. These are judgement calls, so design v2 does not adopt th
 10. **The dark-pattern quote on a slide** (Annex IIA, "loan protection insurance by default"). It is a related pattern, not the hero case.
 11. **A retention setting.** RBI fixes one year after contract end for consent records and nothing for feedback audio; the DPDP Rules set a one-year floor for logs from 13 May 2027.
 
-From the API probe (`references/pilots/api-probe-iter1.md`). Not adopted:
+From the API probe (`references/pilots/api-probe-iter1.md`) and the voice-loop report (`references/pilots/voice-loop-iter1.md`):
 
-12. **Live streaming STT for iteration 2.** A WebSocket streaming session did not occupy the one active-request slot (REST STT returned 200 while a session was open, mid-audio and after close), and two sessions could be open at once. The per-organisation session cap is undocumented, partial results and billing were not checked, and nothing is built. v1 stays with REST per turn.
+12. ~~Live streaming STT for iteration 2.~~ **Closed by measurement, 2026-11-10: REST per turn with a browser end-of-speech detector at 700 ms is the default and the only shipped path; streaming is not shipped.** All numbers are TTS clips only, no human speech. (a) Streaming was not faster at the same silence threshold: median 0.78 s from the end of speech to the transcript at its default 500 ms (n = 20), against about 0.71 s for the detector at 500 ms plus a REST call (0.485 s + 0.224 s, a sum of two medians, n = 20 each). (b) At that default it cut all 4 clips with a spliced 600 or 900 ms pause into two segments; REST returned each as one transcript, and the 700 ms detector split only the 900 ms one. (c) Its billing is unknown (61 sessions and 234 s of audio were sent; the ledger books them at the REST rate), it has no cache, and it rejects a comma-separated `language_code` on v3.0 (13 of 13 attempts). Reopen only if human callers pause past 700 ms often enough that turns are cut, or barge-in is needed; test `x-min-silence-ms` near 1,000 first.
 
 From the core report (`references/pilots/W1-core-report.md` §7). **Adopted** by the coordinator, 2026-11-10:
 

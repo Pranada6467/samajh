@@ -53,6 +53,16 @@ samajh.amounts.NOT_HUMAN_REVIEWED: frozenset[Language]   # {ta, kn}
 
 `to_beliefs` raises `ValueError` when the three inputs are not the same call or the extraction names a product that is not on the record. `evaluate` raises `ValueError` for beliefs about another loan or an unknown product.
 
+**Note, 2026-11-10 (after the amounts parser fix; the signatures above are otherwise unchanged).** `samajh.amounts` also exports, as of this note (checked in `samajh/amounts/__init__.py`; `uv run pytest tests/core -q` gives 1223 passed):
+
+```python
+samajh.amounts.cross_check(first: AmountResult, second: AmountResult) -> Agreed | ReadBackNeeded
+samajh.amounts.Agreed          # status "agreed", rupees: int
+samajh.amounts.ReadBackNeeded  # status "read_back_needed", readings: tuple[int | None, int | None]
+```
+
+`cross_check` compares two already-parsed readings of one turn (the Prisma v2.5 and v3.0 transcripts, each through `parse_amount`). The same `Parsed` amount twice gives `Agreed`; a difference, or either reading not being a single `Parsed` amount, gives `ReadBackNeeded` (DESIGN.md §15 item 16). Agreement is a stand-in for a confidence score, not a proof: both readings can share an error. The 240-sentence evidence for it is TTS audio only, and the after-fix numbers are tuned on that set (`eval/amounts/REPORT.md`, note at the top). The test count in this report (1100) is now 1223.
+
 ### Enums (values)
 
 | Enum | Values |

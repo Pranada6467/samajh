@@ -72,17 +72,17 @@ Goal: everything that needs no audio loop. At the end, a transcript goes in and 
 
 | WP | Scope | Owns | Wave | Status |
 |---|---|---|---|---|
-| W1 core | types, amount normaliser, rule engine | `samajh/types.py`, `samajh/amounts/`, `samajh/rules/`, `tests/core/` | A | W1 and W1b (which replaced W1 after a usage-limit stall): done. 1,100 core tests pass, ruff clean. The post-review fixes have not had a second independent review. Report: `references/pilots/W1-core-report.md` |
+| W1 core | types, amount normaliser, rule engine | `samajh/types.py`, `samajh/amounts/`, `samajh/rules/`, `tests/core/` | A | W1 and W1b (which replaced W1 after a usage-limit stall): done. 1,223 core tests pass (after the amounts parser fix, which added `cross_check`), ruff clean. The post-review fixes have not had a second independent review. Report: `references/pilots/W1-core-report.md` |
 | W2 clients | Gnani client (STT/TTS, lock, backoff, cache, ledger, cap) and OpenRouter client | `samajh/clients/`, `tests/clients/` | A | Done |
 | W3 claims | Verify regulatory and Gnani-API claims against primary sources | `references/claims/` | A | Done |
 | W4 scenarios | 96 scenarios, gold verdicts, hash freeze | `samajh/scenarios/`, `data/scenarios/`, `tests/scenarios/` | B (after W1) | In progress (Wave B) |
 | W5 extractor | LLM extraction to strict schema with quoted spans, text-path eval | `samajh/extract/`, `tests/extract/`, `eval/text_path/` | B (after W1, W2) | In progress (Wave B) |
-| W7 voice transport | FastAPI proxy, browser phone, turn-taking measured REST vs streaming | `samajh/server/`, `web/`, `tests/server/` | A2 (started early, independent of the core) | In progress |
+| W7 voice transport | FastAPI proxy, browser phone, turn-taking measured REST vs streaming | `samajh/server/`, `web/`, `tests/server/` | A2 (started early, independent of the core) | Done. 183 offline tests and 1 live test; about 10 estimated credits. The reviewer's 11 findings are fixed but not re-reviewed. REST per turn with a 700 ms browser end-of-speech detector is the shipped path; streaming was measured and not built (TTS clips only, no human speech; no human has used the phone). Report: `references/pilots/voice-loop-iter1.md` |
 | W8 audio eval harness | phone-line transforms, resumable voicing/STT runner, amounts test set at scale | `samajh/audio/`, `samajh/evalkit/`, `tests/audio/`, `tests/evalkit/`, `eval/amounts/`, `data/amounts/` | A2 (started early, independent of the core) | Done. 417 tests; 2,640 transcriptions; 93.74 estimated credits. The reviewer's 8 findings are fixed but not re-reviewed. Report: `eval/amounts/REPORT.md` (TTS audio only) |
 | W9 dialogue | call state machine and prompt scripts in four languages | `samajh/dialogue/`, `tests/dialogue/`, `data/prompts/` | — | In progress |
 
 W7 and W8 have live Gnani access, through the shared client lock (`samajh/clients/gnani`).
 
-Estimated Gnani credits used so far: about 105 of the 1,000 cap (W2 11.58, W8 93.74; W7 not yet reported). The ledger itself read 113.80 estimated credits when the W8 report was written, other workers included. The figures are client estimates, not dashboard readings.
+Estimated Gnani credits used so far: about 115 of the 1,000 cap (W2 11.58, W7 about 10, W8 93.74). The ledger itself read 113.80 estimated credits when the W8 report was written and 114 when the W7 report was written, other workers included. The figures are client estimates, not dashboard readings.
 
 Then: independent verifier and judge review the iteration before iteration 2 (voice path and browser phone) is planned.

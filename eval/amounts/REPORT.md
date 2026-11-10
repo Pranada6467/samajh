@@ -2,6 +2,19 @@
 
 Run date 2026-11-10. Work package W8. Every number below comes from `eval/amounts/run/stt.jsonl` through `eval/amounts/analyze.py`; the tables between `BEGIN`/`END` markers are generated, not typed.
 
+**Note, 2026-11-10 (added after the parser fix; nothing below was regenerated or altered).** The amounts parser (`samajh/amounts/`) changed after this report was written. **Every table and figure below describes the parser before the fix.** The parser was then fixed against these same 240 sentences and the saved transcripts were rescored offline (no new audio, no new Gnani calls). Before and after, TTS audio only, exact match on the rupee amount, n = 240:
+
+| Reading (240 sentences, TTS audio, exact match on the rupee amount) | Before the parser fix | After |
+|---|---|---|
+| v2.5 `transcribe`, phone | 214 (6 wrong amounts) | 224 (1 wrong amount) |
+| v2.5 `transcribe`, clean | 216 | 225 |
+| v2.5 `literal`, phone | 219 | 238 |
+| v3.0 `transcribe`, phone | 221 | 222 |
+| v3.0 `transcribe`, clean | 221 | 221 |
+| v2.5 and v3.0 agree on phone: right / agreeing | 199 of 200 | 208 of 209 |
+
+**The after-fix numbers are tuned on the set the fixes were written against. They are not a held-out result.** A fresh frozen set with a new seed is still needed before any headline amount number. v3.0's skipped-group mis-formatting is not detectable from one transcript. The parser deliberately still refuses (returns no amount, which triggers a read-back): a number word directly before digits, clock times beside amounts, Kannada ondu kaalu and ondu mukkaalu before a unit (needs a fluent Kannada reader) and "3/4 lakh" in Tamil. The two readings are now compared by `samajh.amounts.cross_check`. Core tests: 1,223 pass.
+
 **Read this first: every clip is a Timbre TTS voice. No human speech was used. Clean TTS flatters a recogniser, so these numbers are an upper bound on what a real caller would get, and the Tamil and Kannada sentences are `not human-reviewed`.**
 
 ## Summary
