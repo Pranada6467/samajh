@@ -1,13 +1,13 @@
 # Text path on the `frozen` set, model `openai/gpt-6-luna`
 
-Run at 2026-11-10T10:31:09+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
+Run at 2026-11-10T11:11:13+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
 
 ## Headline
 
 | group | calls | false clear | false alarm | call verdict | product verdict | fields |
 |---|---|---|---|---|---|---|
-| all | 144 | 0.9% (1/108) | 0.0% (0/36) | 99.3% (143/144) | 99.3% (143/144) | 99.2% (2163/2180) |
-| hi | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.1% (540/545) |
+| all | 144 | 0.9% (1/108) | 0.0% (0/36) | 99.3% (143/144) | 99.3% (143/144) | 99.4% (2166/2180) |
+| hi | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.6% (543/545) |
 | hi-en | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.6% (543/545) |
 | ta | 36 | 3.7% (1/27) | 0.0% (0/9) | 97.2% (35/36) | 97.2% (35/36) | 98.9% (539/545) |
 | kn | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.3% (541/545) |
@@ -19,39 +19,31 @@ False clear: gold is flag_for_review or unclear_needs_human and the pipeline say
 
 | group | languages | calls (base cases) | tiers | misses, calls | misses, base cases | referrals, calls | referrals, base cases | misses on the set's own extraction, calls |
 |---|---|---|---|---|---|---|---|---|
-| problem | hi + hi-en | 38 (19) | refer 30, incomplete 4, understanding_gap 4 | 11 per 100 (4/38; 95% 4 to 24) | 11 per 100 (2/19; 95% 3 to 31) | 79 per 100 (30/38; 95% 64 to 89) | 79 per 100 (15/19; 95% 57 to 91) | 11 per 100 (4/38; 95% 4 to 24) |
-| problem | hi | 19 (19) | refer 15, incomplete 2, understanding_gap 2 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 11 per 100 (2/19; 95% 3 to 31) |
-| problem | hi-en | 19 (19) | refer 15, incomplete 2, understanding_gap 2 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 11 per 100 (2/19; 95% 3 to 31) |
-| problem | ta (experimental) | 19 (19) | refer 14, incomplete 2, understanding_gap 2, clear 1 | 16 per 100 (3/19; 95% 6 to 38) | 16 per 100 (3/19; 95% 6 to 38) | 74 per 100 (14/19; 95% 51 to 88) | 74 per 100 (14/19; 95% 51 to 88) | 11 per 100 (2/19; 95% 3 to 31) |
-| problem | kn (experimental) | 19 (19) | refer 15, incomplete 2, understanding_gap 2 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 11 per 100 (2/19; 95% 3 to 31) |
+| problem | hi + hi-en | 38 (19) | refer 30, incomplete 6, understanding_gap 2 | 5 per 100 (2/38; 95% 1 to 17) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (30/38; 95% 64 to 89) | 79 per 100 (15/19; 95% 57 to 91) | 5 per 100 (2/38; 95% 1 to 17) |
+| problem | hi | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 5 per 100 (1/19; 95% 1 to 25) |
+| problem | hi-en | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 5 per 100 (1/19; 95% 1 to 25) |
+| problem | ta (experimental) | 19 (19) | refer 14, incomplete 3, understanding_gap 1, clear 1 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 74 per 100 (14/19; 95% 51 to 88) | 74 per 100 (14/19; 95% 51 to 88) | 5 per 100 (1/19; 95% 1 to 25) |
+| problem | kn (experimental) | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 5 per 100 (1/19; 95% 1 to 25) |
 | informed_clear | hi + hi-en | 18 (9) | clear 18 | 100 per 100 (18/18; 95% 82 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/18; 95% 0 to 18) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (18/18; 95% 82 to 100) |
 | informed_clear | hi | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
 | informed_clear | hi-en | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
 | informed_clear | ta (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
 | informed_clear | kn (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
-| informed_flagged | hi + hi-en | 16 (8) | refer 8, incomplete 2, understanding_gap 6 | 38 per 100 (6/16; 95% 18 to 61) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (8/16; 95% 28 to 72) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (6/16; 95% 18 to 61) |
-| informed_flagged | hi | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | hi-en | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | ta (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | kn (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | hi + hi-en | 16 (8) | refer 10, incomplete 2, understanding_gap 4 | 25 per 100 (4/16; 95% 10 to 49) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (10/16; 95% 39 to 82) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (6/16; 95% 18 to 61) |
+| informed_flagged | hi | 8 (8) | refer 5, incomplete 1, understanding_gap 2 | 25 per 100 (2/8; 95% 7 to 59) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (5/8; 95% 31 to 86) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | hi-en | 8 (8) | refer 5, incomplete 1, understanding_gap 2 | 25 per 100 (2/8; 95% 7 to 59) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (5/8; 95% 31 to 86) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | ta (experimental) | 8 (8) | refer 5, incomplete 1, understanding_gap 2 | 25 per 100 (2/8; 95% 7 to 59) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (5/8; 95% 31 to 86) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | kn (experimental) | 8 (8) | refer 5, incomplete 1, understanding_gap 2 | 25 per 100 (2/8; 95% 7 to 59) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (5/8; 95% 31 to 86) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (3/8; 95% 14 to 69) |
 
-Misses (a customer with a problem ends `clear` or `understanding_gap`): 9.
-- U06-hi: tier `understanding_gap`
-  - understanding_gap: Customer did not know, or gave a different answer about: the cover; the term. | record: cover ₹3,00,000; term 36 months | quote: "कवर... दस लाख रुपये का बताया था।"
-- U06-hi-en: tier `understanding_gap`
-  - understanding_gap: Customer did not know, or gave a different answer about: the cover; the term. | record: cover ₹3,00,000; term 36 months | quote: "Cover... ten lakh rupees का बताया था।"
-- U06-ta: tier `understanding_gap`
-  - understanding_gap: Customer did not know, or gave a different answer about: the cover; the term. | record: cover ₹3,00,000; term 36 months | quote: "கவர் பத்து லட்சம் ரூபாய்னு சொன்னாங்க."
-- U06-kn: tier `understanding_gap`
-  - understanding_gap: Customer did not know, or gave a different answer about: the cover; the term. | record: cover ₹3,00,000; term 36 months | quote: "ಕವರ್ ಹತ್ತು ಲಕ್ಷ ರೂಪಾಯಿ ಅಂತ ಹೇಳಿದ್ರು."
+Misses (a customer with a problem ends `clear` or `understanding_gap`): 5.
 - U07-hi: tier `understanding_gap`
-  - understanding_gap: Customer did not know, or gave a different answer about: the cancellation window; the cover. | record: cancellation window 30 days; cover ₹3,00,000 | quote: "बताया था, पंद्रह दिन का टाइम होता है कैंसल करने का।"
+  - understanding_gap: Customer gave a different figure for the cancellation window (customer said it can be cancelled within 15 days). | record: cancellation window 30 days | quote: "बताया था, पंद्रह दिन का टाइम होता है कैंसल करने का।"
 - U07-hi-en: tier `understanding_gap`
-  - understanding_gap: Customer did not know, or gave a different answer about: the cancellation window. | record: cancellation window 30 days | quote: "हाँ, बोला था fifteen days के अंदर cancel कर सकते हैं।"
+  - understanding_gap: Customer gave a different figure for the cancellation window (customer said it can be cancelled within 15 days). | record: cancellation window 30 days | quote: "हाँ, बोला था fifteen days के अंदर cancel कर सकते हैं।"
 - U07-ta: tier `understanding_gap`
-  - understanding_gap: Customer did not know, or gave a different answer about: the cancellation window. | record: cancellation window 30 days | quote: "ஆமா, பதினைந்து நாள் டைம் இருக்கு, அதுக்குள்ள கேன்சல் பண்ணலாம்னு சொன்னாங்க."
+  - understanding_gap: Customer gave a different figure for the cancellation window (customer said it can be cancelled within 15 days). | record: cancellation window 30 days | quote: "ஆமா, பதினைந்து நாள் டைம் இருக்கு, அதுக்குள்ள கேன்சல் பண்ணலாம்னு சொன்னாங்க."
 - U07-kn: tier `understanding_gap`
-  - understanding_gap: Customer did not know, or gave a different answer about: the cancellation window. | record: cancellation window 30 days | quote: "ಹೌದು, ಹದಿನೈದು ದಿನ ಟೈಮ್ ಇದೆ, ಅಷ್ಟರೊಳಗೆ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಬಹುದು ಅಂತ ಹೇಳಿದ್ರು."
+  - understanding_gap: Customer gave a different figure for the cancellation window (customer said it can be cancelled within 15 days). | record: cancellation window 30 days | quote: "ಹೌದು, ಹದಿನೈದು ದಿನ ಟೈಮ್ ಇದೆ, ಅಷ್ಟರೊಳಗೆ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಬಹುದು ಅಂತ ಹೇಳಿದ್ರು."
 - B03-ta: tier `clear`
 
 False referrals (an informed customer on a compliant record ends `refer`): 0.
@@ -73,9 +65,9 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 |---|---|---|
 | clear | clear | 36 |
 | flag_for_review | clear | 1 |
-| flag_for_review | incomplete | 4 |
-| flag_for_review | refer | 75 |
-| flag_for_review | understanding_gap | 20 |
+| flag_for_review | incomplete | 8 |
+| flag_for_review | refer | 79 |
+| flag_for_review | understanding_gap | 12 |
 | unclear_needs_human | incomplete | 8 |
 
 ## Extraction accuracy per field
@@ -88,7 +80,7 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 | payment_source | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | required_for_loan | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | provider_choice_offered | 100.0% (32/32) | 100.0% (8/8) | 100.0% (8/8) | 100.0% (8/8) | 100.0% (8/8) |
-| cover_inr | 97.9% (141/144) | 91.7% (33/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
+| cover_inr | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | term_months | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | cancel_allowed | 99.3% (143/144) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) | 100.0% (36/36) |
 | cancel_window_days | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
@@ -123,7 +115,7 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 - Both kinds are dropped to `unclear` (answers) or left for the rule engine to record as an evidence gap (recall items, claims, concerns). None is kept as an answer.
 - Answers marked stated with no value or no span, kept as unclear: 0. By field: none.
 - Gaps the rule engine raised with reason `quote_not_grounded`: 0 (with the gold extraction: 0).
-- Gaps with reason `value_not_parsed`: 3 (with the gold extraction: 0).
+- Gaps with reason `value_not_parsed`: 0 (with the gold extraction: 0).
 - Record values found in bot turns shown to the model: premium in a `readback` question: 120. A lexical check of the premium, cover, sanctioned and disbursed amounts (digits and spoken form) and the provider name. A read-back repeats the amount the customer said, so it shows the record's premium whenever the customer's amount equals it. The two identity checks are never sent.
 
 ## Cost and latency
@@ -138,7 +130,7 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 - False clears: 1 calls in 1 of 36 base cases (B03).
 - False alarms: 0 calls in 0 of 36 base cases; gold-clear base cases: 9.
 - Any wrong call verdict: 1 calls in 1 of 36 base cases (B03).
-- Any wrong field: 16 calls in 8 of 36 base cases (B02, B03, G01, G02, R01, U07, U08, U10).
+- Any wrong field: 13 calls in 5 of 36 base cases (B03, G01, G02, U08, U10).
 - `consent_given` where the customer agreed to a misdescribed product (C02, U08, V04, V06; the set expects true and calls false a defensible reading): 16/16 match the set. All other calls: 128/128.
 - Replies to a checked question that are word for word a reply of the development set: 70 of 1604 (4.36%); 28 of them longer than three words. The prompt was iterated on the development set, so the model's reading of these replies is in-sample.
 
@@ -156,12 +148,6 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 Caught: the call did not end as a pass (yes/no: not confirmed; teach-back: verdict not clear, which includes unclear and an extractor error). The yes/no arm is the set's scripted outcome with no LLM; coached and acquiescent customers say yes to it by assumption, and never_asked is the coverage of a five-question script. The strata are the set author's mix, so no pooled rate is given. For a clear-gold row, caught is a false alarm.
 
 ## Failures
-
-### U07-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `understanding_gap`
-Scenario: Customer was told 15 days to cancel; the record says 30 [violating, target rule cancel_window]
-- field `cover_inr`: gold `('stated', 300000)`, pipeline `('unclear', None)`
-  - turn 20 [cover] bot: "उसमें कितनी रकम का कवर है?" customer: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।"
-  - pipeline kept: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।" (turn 20)
 
 ### U08-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Customer believes the cover is an investment plan that grows [violating, target rule kind]
@@ -242,21 +228,9 @@ Scenario: Signed consent on file; the customer says they agreed only to the loan
   - turn 28 [consent] bot: "ಲೋನ್ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಒಪ್ಪಿಗೆ ಹೇಗೆ ಕೊಟ್ಟಿರಿ?" customer: "ಲೋನ್ ಮಾತ್ರ. ಇನ್ಶೂರೆನ್ಸ್ ತಗೊಳ್ಳೋಕೆ ನಾನು ಯಾವತ್ತೂ ಒಪ್ಪಿಲ್ಲ. ತುಂಬಾ ಪೇಪರಿಗೆ ಸಹಿ ಹಾಕಿಸ್ಕೊಂಡ್ರು, ಯಾವುದು ಯಾವುದಕ್ಕೆ ಅಂತ ಯಾರೂ ಹೇಳಿಲ್ಲ."
   - pipeline kept: "ಲೋನ್ ಮಾತ್ರ. ಇನ್ಶೂರೆನ್ಸ್ ತಗೊಳ್ಳೋಕೆ ನಾನು ಯಾವತ್ತೂ ಒಪ್ಪಿಲ್ಲ. ತುಂಬಾ ಪೇಪರಿಗೆ ಸಹಿ ಹಾಕಿಸ್ಕೊಂಡ್ರು, ಯಾವುದು ಯಾವುದಕ್ಕೆ ಅಂತ ಯಾರೂ ಹೇಳಿಲ್ಲ." (turn 28)
 
-### B02-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
-Scenario: Knows it is insurance; believes the premium comes back grown, guaranteed [violating, target rule belief_mismatch]
-- field `cover_inr`: gold `('stated', 300000)`, pipeline `('unclear', None)`
-  - turn 20 [cover] bot: "उसमें कितनी रकम का कवर है?" customer: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।"
-  - pipeline kept: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।" (turn 20)
-
 ### B03-ta (ta): gold `flag_for_review`, pipeline `clear`, tier `clear` **FALSE CLEAR**
 Scenario: Believes the premium is paid only once; the record shows a regular-premium product [violating, target rule belief_mismatch]
 - field `volunteered_claims`: gold `(('P1', <FeatureClaim.one_time_payment: 'one_time_payment'>),)`, pipeline `()`
   - pipeline kept: -
   - gold has: one_time_payment:"ஒரே தடவைதான், ஐம்பத்திரண்டாயிரம் ரூபாய்."
 - missed flag: `belief_mismatch` on P1
-
-### R01-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `understanding_gap`
-Scenario: Informed customer who does not mention the insurance until asked about it [violating, target rule recall]
-- field `cover_inr`: gold `('stated', 300000)`, pipeline `('unclear', None)`
-  - turn 20 [cover] bot: "उसमें कितनी रकम का कवर है?" customer: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।"
-  - pipeline kept: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।" (turn 20)

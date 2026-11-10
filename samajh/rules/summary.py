@@ -83,7 +83,8 @@ FROM_RECORD = frozenset(
 
 def _key(index: int, o: Flag | Gap) -> tuple:
     if isinstance(o, Gap) or o.tier is not Tier.refer:
-        return (o.tier,)
+        # One line per rule for a product; the case-level gaps share one line.
+        return (o.tier,) if o.product_id is None else (o.tier, o.rule_id)
     if o.reason is R.feature_contradicted:
         if o.claim is FeatureClaim.is_deposit:
             return ("kind",)
@@ -239,10 +240,40 @@ BUNDLING_TITLE: dict[FlagReason, str] = {
 }
 
 
+# A flag that says the customer's figure is not the record's.
+FIGURE = frozenset(
+    {
+        R.premium_differs, R.premium_approximate, R.cover_differs, R.cover_differs_unconfirmed,
+        R.term_differs, R.cancel_window_differs,
+    }
+)  # fmt: skip
+
+
+def _rule_title(outcomes: list[Flag | Gap]) -> str:
+    """One rule's incomplete or understanding-gap line: not knowing and a different figure apart."""
+    parts = []
+    for o in outcomes:
+        topic = _topic(o)
+        if isinstance(o, Gap):
+            parts.append(f"the call left {topic} undecided")
+        elif o.reason is R.answers_conflict:
+            answers = ", ".join(f'"{q}"' for q in (o.quote, *(e.quote for e in o.also)))
+            parts.append(f"customer gave differing answers about {topic}: {answers}")
+        elif o.reason.value.endswith("_dont_know"):
+            parts.append(f"customer did not know {topic}")
+        elif o.reason in FIGURE:
+            parts.append(f"customer gave a different figure for {topic} ({o.heard})")
+        else:
+            parts.append(o.heard)
+    return "; ".join(_unique(parts))
+
+
 def _title(key: tuple, record: LoanRecord, p: Product | None, outcomes: list[Flag | Gap]) -> str:
     flags = [o for o in outcomes if isinstance(o, Flag)]
     issue = key[0]
     topics = "; ".join(_unique(map(_topic, outcomes)))
+    if issue in (Tier.incomplete, Tier.understanding_gap) and len(key) > 1:
+        return _rule_title(outcomes)
     if issue is Tier.incomplete:
         return f"the call left these questions undecided: {topics}"
     if issue is Tier.understanding_gap:

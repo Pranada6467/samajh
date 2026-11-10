@@ -74,3 +74,23 @@ Spend: OpenRouter 0.053 USD in this pass (ledger 0.5763 to 0.6297 USD, all chat 
 - `DESIGN.md:405` "Hedged amounts and two amounts in one reply are not taken": the parser now reads hedged amounts and narrow ranges (`parse_approx_amount`). The dialogue side belongs to P2.
 - `DESIGN.md:461` (open item 23): decided. One bad output makes only that field `unclear`.
 - `references/pilots/W5-extractor-report.md:442` "One invalid output fails the whole call": superseded.
+
+## 6. Second pass: the iteration-2 verifier's faults (2026-11-10)
+
+| # | Fix | Evidence (probes under `references/reviews/iter2/probes/`) |
+|---|---|---|
+| 1 | A failed model call on any asking of a question makes its fields `Unclear(extraction_failed)` | `p3a_extractor.py` cases 2 and 3: were `clear`, now `incomplete` |
+| 2 | A conflict is two stated, incompatible answers. "I don't know" before or after an answer, a restatement, an approximate figure and an exact one inside it, and amounts within tolerance (1%, or 10% when either is hedged or a range) are not. The other replies are kept in the new `Stated.also` | tests in `tests/extract/test_extract_answers.py` |
+| 3 | Every open-recall reply counts and a denial in any of them stays; `recall_denied` is refer whatever follows | cases 11 and 12: were `understanding_gap`, now `refer` |
+| 4 | Fraction and multiplier words: an edit distance on a reduced form of the word (`samajh/amounts/_lexicon.py`), not a list of spellings, with a short list of everyday words (`ORDINARY`). Normalisation reads the span with one more word on each side within its clause (`samajh.rules.normalise.widen`). Span, widened span and whole reply must all read the same | sweep `p3a_fraction_sweep.py`: Devanagari 54 wrong, 24 refused, 30 right → 0 wrong, 78 refused, 30 right; Latin 1,095 wrong, 327 refused → 0 wrong, 1,422 refused. Distinct spellings dropped: Devanagari 0 of 36, Latin 0 of 474 |
+| 5 | "तीन लाख तक", "चौबीस हज़ार रुपये लगे" read again | B02-hi, R01-hi, U07-hi: no gap |
+| 6 | One bound on range width (`samajh.amounts.MAX_RANGE_RATIO = 2`): the parser refuses wider ranges and the rules never pass one (`not_comparable` gap) | tests in `tests/core/test_rules_triage.py` |
+| 7 | Summary: one line per rule for incomplete and understanding-gap lines; "did not know", "gave a different figure" and "left undecided" are separate titles | judge's misled call: 2 refer lines, 4 incomplete, 3 understanding |
+| 8 | `LlmClient` holds a per-cache-key file lock: one request per key at a time across threads and processes; waiters read the cache | `tests/clients/test_llm_single_flight.py` (8 callers, 2 clients, a transport that answers each request differently: 1 request) |
+| 9 | Cover read-back (coordinator decision), `cover_differs_confirmed` / `cover_differs_unconfirmed` | `p3a_tier_attacks.py`: 48 cases, the 1 outside the verifier's reading is this decision |
+
+Frozen set, Hindi + Hinglish, from the cache (0 USD, 3,391 requests, all cache hits):
+- Customers with a problem: misses 4 of 38 calls (2 of 19 base cases) → 2 of 38 (1 of 19: U07, wrong cancellation window, still `understanding_gap` by design). U06 (wrong cover, not read back) is now `incomplete`.
+- Informed, compliant record: referrals 0 of 18 → 0 of 18.
+- Informed, fault on the record: referrals 8 of 16 → 10 of 16. The two new ones are R01 (an informed customer who says "only the loan" in recall, then names the insurance): the denial rule of item 3.
+- Strict verdicts 143 of 144; fields 2,166 of 2,180 (was 2,163: U07-hi's cover reads again).

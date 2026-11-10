@@ -31,6 +31,15 @@ from samajh.amounts._parse import (
 from samajh.amounts._text import Tok, scan
 from samajh.types import Frozen
 
+# A range whose high end is more than this many times its low end says too little to compare
+# with a record. The parser refuses it and the rules never pass it: this is the one place.
+MAX_RANGE_RATIO = 2
+
+
+def too_wide(low: int, high: int) -> bool:
+    """A spoken range too wide to be compared with the record: "दो से पांच लाख"."""
+    return high > MAX_RANGE_RATIO * low
+
 
 class Approximate(Frozen):
     """An amount said as "about X" (`low == high`) or as a narrow range "X to Y" (`low < high`)."""
@@ -169,7 +178,7 @@ def _range_of(low: list[Atom], high: list[Atom], dash: bool, juxtaposed: bool) -
     if lv.value is None or lv.unit_missing or lv.value != lv.value.to_integral_value():
         return None
     lo, hi = int(lv.value), int(hv.value)
-    return (lo, hi) if 0 < lo < hi <= 2 * lo else None
+    return (lo, hi) if 0 < lo < hi and not too_wide(lo, hi) else None
 
 
 def _stretch_range(text: str, toks: list[Tok]) -> tuple[int, int] | None:

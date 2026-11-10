@@ -87,14 +87,13 @@ def test_a_rewritten_amount_is_not_accepted(llm, span):
     assert answers(llm).premium == Unclear(reason=GapReason.quote_not_grounded)
 
 
-def test_an_amount_copied_with_a_word_too_many_is_passed_on_whole_and_refused(llm):
-    """No trimming (verifier finding 3): the word next to a number may be part of it."""
+def test_an_amount_copied_with_a_word_too_many_is_passed_on_whole_and_still_reads(llm):
+    """No trimming, and no refusal of a harmless verb: the parser reads it (verifier iter2)."""
     llm.say("SpanReply", PREMIUM, span="चौबीस हज़ार रुपये लगे")
     premium = answers(llm).premium
     assert isinstance(premium, Stated)
     assert premium.value == "चौबीस हज़ार रुपये लगे"
-    run = run_text(HI.transcript, HI.record, llm)
-    assert (RuleId.premium, GapReason.value_not_parsed) in gaps(run)
+    assert run_text_case(HI.transcript, HI.record, llm).verdict is CLEAR
 
 
 def test_real_words_that_are_not_the_amount_cannot_pass_as_the_premium(llm):

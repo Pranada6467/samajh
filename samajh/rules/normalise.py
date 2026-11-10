@@ -25,6 +25,7 @@ What the rules can rely on afterwards:
    their quotes are in the call; a quote that is not becomes an evidence gap.
 """
 
+import re
 import unicodedata
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -145,6 +146,35 @@ def _said(evidence: Evidence, replies: dict[TurnId, _Reply], whole_clauses: bool
     return reply if reply and reply.says(evidence.quote, whole_clauses) else None
 
 
+_TOKEN = re.compile(r"\S+")
+
+
+def widen(reply: str, span: str) -> str:
+    """The span as it stands in the reply, with one more word on each side within its clause.
+
+    What the amount and duration parsers read: a fraction word ("सारहे") or a unit word the model
+    left out of its span is still seen, and makes the parse refuse instead of being dropped. A span
+    that is not a run of whole words of the reply is returned as it is.
+    """
+    ends = [m.start() for m in CLAUSE_END.finditer(reply)]
+    words = [
+        (m.start(), m.end(), w, sum(e < m.start() for e in ends))
+        for m in _TOKEN.finditer(reply)
+        for w in _norm(m.group()).split()
+    ]
+    wanted = _norm(span).split()
+    forms = [w for _, _, w, _ in words]
+    for k in range(len(forms) - len(wanted) + 1):
+        if wanted and forms[k : k + len(wanted)] == wanted:
+            first, last = k, k + len(wanted) - 1
+            if first > 0 and words[first - 1][3] == words[first][3]:
+                first -= 1
+            if last + 1 < len(words) and words[last + 1][3] == words[last][3]:
+                last += 1
+            return reply[words[first][0] : words[last][1]]
+    return span
+
+
 def _rupees(text: str, exact: bool) -> int | None:
     result = parse_amount(text, exact=exact)
     return result.rupees if isinstance(result, Parsed) else None
@@ -167,10 +197,12 @@ def _read_amount(answer: Answer[str], replies: dict[TurnId, _Reply]) -> Answer[i
     50,000. Hedged and approximate are markers: the rules decide what they may change.
     """
     match answer:
-        case Stated(value=span, evidence=ev, hedged=hedged):
-            heard = _ends(replies[ev.turn_id].text, False)
-            said = _ends(span, True)
-            if heard is None or said is None or heard[:2] != said[:2]:
+        case Stated(value=span, evidence=ev, hedged=hedged, also=also):
+            reply = replies[ev.turn_id].text
+            heard = _ends(reply, False)
+            # The span, the span with its neighbours, and the whole reply must all read the same.
+            said = [_ends(text, False) for text in (span, widen(reply, span))]
+            if heard is None or any(r is None or r[:2] != heard[:2] for r in said):
                 return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
             low, high, approximate = heard
             return Stated[int](
@@ -179,6 +211,7 @@ def _read_amount(answer: Answer[str], replies: dict[TurnId, _Reply]) -> Answer[i
                 hedged=hedged,
                 approximate=approximate,
                 low=low if low < high else None,
+                also=also,
             )
         case _:
             return answer
@@ -192,11 +225,8 @@ def _read_term(answer: Answer[str], tenure: int | None, replies: dict[TurnId, _R
             return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
         if tenure is None:
             return Unclear(reason=GapReason.not_comparable, evidence=ev)
-        return Stated[int](value=tenure, evidence=ev, hedged=answer.hedged)
-    read = _read(answer, _months, replies)
-    if isinstance(read, Stated) and isinstance(answer, Stated):
-        return read.model_copy(update={"hedged": answer.hedged})
-    return read
+        return Stated[int](value=tenure, evidence=ev, hedged=answer.hedged, also=answer.also)
+    return _read(answer, _months, replies)
 
 
 def _months(text: str, exact: bool) -> int | None:
@@ -208,19 +238,34 @@ def _days(text: str, exact: bool) -> int | None:
 
 
 def _ground(
-    answer: Answer, accepted: frozenset[_Asks], was_asked: bool, replies: dict[TurnId, _Reply]
+    answer: Answer,
+    accepted: frozenset[_Asks],
+    was_asked: bool,
+    replies: dict[TurnId, _Reply],
+    ungrounded: list[Evidence],
 ) -> Answer:
-    """Keep an answer only when it quotes whole clauses of a reply to one of the `accepted` questions."""
+    """Keep an answer only when it quotes whole clauses of a reply to one of the `accepted` questions.
+
+    The other replies a stated answer stands over (`also`) are held to the same test; one that
+    fails is dropped from `also` and listed as ungrounded.
+    """
+
+    def grounded(ev: Evidence) -> bool:
+        reply = _said(ev, replies, whole_clauses=True)
+        return bool(reply and reply.asked & accepted)
+
     match answer:
         case NotAsked():
             return Unclear() if was_asked else answer
         case Unclear():
             return answer
         case DontKnow(evidence=ev) | Stated(evidence=ev):
-            reply = _said(ev, replies, whole_clauses=True)
-            if reply and reply.asked & accepted:
-                return answer
-            return Unclear(reason=GapReason.quote_not_grounded, evidence=ev)
+            if not grounded(ev):
+                return Unclear(reason=GapReason.quote_not_grounded, evidence=ev)
+            if isinstance(answer, Stated) and answer.also:
+                ungrounded += [e for e in answer.also if not grounded(e)]
+                return answer.model_copy(update={"also": tuple(e for e in answer.also if grounded(e))})
+            return answer
     raise TypeError(f"not an Answer: {answer!r}")
 
 
@@ -228,12 +273,34 @@ def _read(answer: Answer[str], read: _Reader, replies: dict[TurnId, _Reply]) -> 
     """Read the number from the customer's whole reply; the LLM's span must agree with it."""
     match answer:
         case Stated(value=span, evidence=ev):
-            heard = read(replies[ev.turn_id].text, False)
-            if heard is None or heard != read(span, True):
+            reply = replies[ev.turn_id].text
+            heard = read(reply, False)
+            if heard is None or heard != read(span, False) or heard != read(widen(reply, span), False):
                 return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
-            return Stated[int](value=heard, evidence=ev, hedged=answer.hedged)
+            return Stated[int](value=heard, evidence=ev, hedged=answer.hedged, also=answer.also)
         case _:
             return answer
+
+
+def _confirm(figure: Answer, readback: Answer, replies: dict[TurnId, _Reply]) -> tuple[Answer, Answer]:
+    """A "yes" confirms an amount only when the bot read back that same amount (for a range, the
+    same two ends) after the customer gave it. A "no" leaves the amount unusable."""
+    if not (isinstance(figure, Stated) and isinstance(readback, Stated)):
+        return figure, readback
+    if not readback.value:
+        return Unclear(reason=GapReason.readback_rejected, evidence=readback.evidence), readback
+    read_back_turn = replies[readback.evidence.turn_id].prompt
+    read = _ends(read_back_turn.text, False) if read_back_turn is not None else None
+    if (
+        readback.evidence.turn_id <= figure.evidence.turn_id
+        or read is None
+        or read[:2] != (figure.low or figure.value, figure.value)
+    ):
+        # The customer confirmed some other amount, or confirmed before giving this one:
+        # neither the amount nor the "yes" can be relied on.
+        mismatch = Unclear(reason=GapReason.readback_mismatch, evidence=readback.evidence)
+        return mismatch, mismatch
+    return figure, readback
 
 
 def _conflicts(
@@ -261,28 +328,18 @@ def _product_beliefs(
 ) -> ProductBeliefs:
     def ground(answer: Answer, question: Question, read_back: bool = False) -> Answer:
         asks = (raw.product_id, question, read_back)
-        return _ground(answer, frozenset({asks}), asks in asked, replies)
+        return _ground(answer, frozenset({asks}), asks in asked, replies, ungrounded)
 
-    premium_asked = (raw.product_id, Question.premium, False)
-    premium_read_back = (raw.product_id, Question.premium, True)
-    premium = _ground(
-        raw.premium, frozenset({premium_asked, premium_read_back}), premium_asked in asked, replies
-    )
-    premium = _read_amount(premium, replies)
-    readback = ground(raw.premium_readback, Question.premium, read_back=True)
-    if isinstance(premium, Stated) and isinstance(readback, Stated):
-        read_back_turn = replies[readback.evidence.turn_id].prompt
-        if not readback.value:
-            premium = Unclear(reason=GapReason.readback_rejected, evidence=readback.evidence)
-        elif (
-            readback.evidence.turn_id <= premium.evidence.turn_id
-            or read_back_turn is None
-            or _ends(read_back_turn.text, False) is None
-            or _ends(read_back_turn.text, False)[:2] != (premium.low or premium.value, premium.value)
-        ):
-            # The customer confirmed some other amount, or confirmed before giving this one:
-            # neither the amount nor the "yes" can be relied on.
-            premium = readback = Unclear(reason=GapReason.readback_mismatch, evidence=readback.evidence)
+    def amount(answer: Answer[str], readback: Answer[bool], question: Question) -> tuple[Answer, Answer]:
+        """An amount and the reply to its read-back: the premium, or the cover. The amount may also
+        come from a correction made in reply to the read-back."""
+        own, again = (raw.product_id, question, False), (raw.product_id, question, True)
+        figure = _read_amount(_ground(answer, frozenset({own, again}), own in asked, replies, ungrounded), replies)
+        readback = ground(readback, question, read_back=True)
+        return _confirm(figure, readback, replies)
+
+    premium, readback = amount(raw.premium, raw.premium_readback, Question.premium)
+    cover, cover_readback = amount(raw.cover, raw.cover_readback, Question.cover)
 
     claims: list[ClaimEvidence] = []
     for claim in raw.volunteered_claims:
@@ -306,7 +363,8 @@ def _product_beliefs(
         volunteered_claims=tuple(claims),
         conflicts=_conflicts(raw, ungrounded, replies),
         premium_inr=premium,
-        cover_inr=_read_amount(ground(raw.cover, Question.cover), replies),
+        cover_readback=cover_readback,
+        cover_inr=cover,
         term_months=_read_term(ground(raw.term, Question.term), tenure, replies),
         cancel_window_days=_read(ground(raw.cancel_window, Question.cancel_window), _days, replies),
         ungrounded=tuple(ungrounded),

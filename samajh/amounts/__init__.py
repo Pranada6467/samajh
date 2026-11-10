@@ -18,7 +18,14 @@ reads what `parse_amount` refuses as hedged ("करीब पचास हज�
 `Approximate` range; `has_doubt_word` and `is_loan_tenure` mark answers that carry no number.
 """
 
-from samajh.amounts._approx import Approximate, has_doubt_word, is_loan_tenure, parse_approx_amount
+from samajh.amounts._approx import (
+    MAX_RANGE_RATIO,
+    Approximate,
+    has_doubt_word,
+    is_loan_tenure,
+    parse_approx_amount,
+    too_wide,
+)
 from samajh.amounts._parse import (
     CLAUSE_END,
     Agreed,
@@ -38,6 +45,7 @@ from samajh.amounts._speak import NOT_HUMAN_REVIEWED, format_inr, spoken_amount
 
 __all__ = [
     "CLAUSE_END",
+    "MAX_RANGE_RATIO",
     "NOT_HUMAN_REVIEWED",
     "Agreed",
     "AmbiguityReason",
@@ -57,4 +65,5 @@ __all__ = [
     "parse_duration_days",
     "parse_duration_months",
     "spoken_amount",
+    "too_wide",
 ]

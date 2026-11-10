@@ -389,16 +389,67 @@ _add(KN, "ಸೊನ್ನೆ", Morph((n(0),)))
 _add(KN, "ಪಾಯಿಂಟ್", Morph((PT,)))
 
 # --- near misses of fraction and unit words ------------------------------------------
-# A word the lexicon does not know that is one or two letters from सवा/साढ़े/पौने or from a unit
-# word may be that word misspelt: "सारे तीन लाख", "pauney 2 lakh", "दो लाख पचास हजर". Dropping
-# it would give a confident wrong amount, so the parser refuses the number next to it.
-# Keys are `norm_key` forms (no nukta, chandrabindu as anusvara). Our spellings: whether
-# Prisma writes any of them is not known.
-_NEAR_FRACTION = re.compile(
-    r"सा[ढडदर][ेैीिं]*|स्?व(्व)?[ाे]ं?|प[ौो]न[ाीेैि]?ं?"
-    r"|s[au]+[vw]+a+|sa+(r|d|dd)h?[aeiy]*[eiy][aeiy]*|p(au|aw|av|ou|ow|o)[vw]?n[aeiy]*[eiy][aeiy]*"
+# A word the lexicon does not know, standing directly before a number or a unit word, that is a
+# small edit away from a fraction or multiplier word may be that word misheard or misspelt:
+# "सारे तीन लाख" (साढ़े), "pauney 2 lakh" (paune), "लख पचास हज़ार". Dropping it would give a
+# confident wrong amount, so the parser refuses. The rule is structural, not a list of
+# misspellings: both words are reduced to a skeleton (no nukta or nasal mark, long vowels as
+# short, sounds that speech-to-text confuses merged, for Latin every vowel run as one vowel) and
+# compared by edit distance. A word in `ORDINARY` (an everyday word that happens to be close) is
+# not refused. Hindi and Latin only; Tamil and Kannada are not covered (not human-reviewed).
+
+_DEVA_TARGETS = ("सवा", "साढ़े", "पौने", "डेढ़", "ढाई", "अढ़ाई", "आधा", "लाख", "हज़ार", "करोड़")
+_LATIN_TARGETS = (
+    "sawa", "sadhe", "paune", "dedh", "dhai", "adhai", "adha", "lakh", "hazaar", "thousand", "crore", "karod",
+    "hundred",
+)  # fmt: skip
+# Everyday words a small edit from a target. Not a list of misspellings: the opposite.
+ORDINARY = frozenset(
+    norm_key(w)
+    for w in ["भाई", "सब", "पूरे", "बाद", "said", "side", "one", "done", "gone", "none", "phone", "open", "upon", "loan", "yaani", "yani", "yaane"]
 )
-_NEAR_UNITS = tuple(norm_key(w) for w in ("lakh", "thousand", "hazaar", "crore", "hundred", "million", "लाख", "हज़ार", "करोड़"))
+_DEVA_MERGE = str.maketrans(
+    {
+        "\u093c": None, "\u0901": None, "\u0902": None, "\u094d": None,  # nukta, nasal marks, virama
+        "ी": "ि", "ू": "ु", "ै": "े", "ौ": "ो", "ॉ": "ो", "ई": "इ", "ऊ": "उ", "ऐ": "ए", "औ": "ओ",
+        "ढ": "ड", "र": "ड", "ध": "ड", "ठ": "ड", "ण": "न", "श": "स", "ष": "स", "ब": "व",
+    }
+)  # fmt: skip
+_DEVA_CONSONANT = re.compile("[\u0915-\u0939]")
+
+
+def _deva_skeleton(word: str) -> str:
+    key = unicodedata.normalize("NFD", norm_key(word)).replace("ाउ", "ो").replace("उ", "ो")
+    key = unicodedata.normalize("NFC", key).translate(_DEVA_MERGE)
+    out: list[str] = []
+    for ch in key:
+        if ch == "ह" and out and _DEVA_CONSONANT.fullmatch(out[-1]):
+            continue  # aspiration written apart: सारहे is साढ़े
+        if not out or out[-1] != ch:
+            out.append(ch)
+    return "".join(out)
+
+
+def _latin_skeleton(word: str) -> str:
+    key = norm_key(word).replace("ph", "f").replace("sh", "s")
+    key = re.sub(r"(?<=[aeiou])w(?![aeiou])", "u", key).replace("w", "v").replace("r", "d")  # paw-n: a vowel
+    key = re.sub(r"(?<=[^aeiouy])h", "", key)  # dh, rh, kh: aspiration
+    key = re.sub(r"h$", "", key)
+    key = re.sub(r"[aeiouy]+", "a", key)  # vowels vary freely in romanised Hindi
+    return re.sub(r"(.)\1+", r"\1", key)
+
+
+# Edits allowed by the length of the reduced target: a short target must match exactly. A
+# Devanagari form counts vowel signs as letters, so its targets are longer for the same word.
+_ALLOWED_LATIN = {1: -1, 2: 0, 3: 0, 4: 1, 5: 1, 6: 2}
+_ALLOWED_DEVA = {1: -1, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2}
+_NEAR_UNITS = tuple(
+    norm_key(w) for w in ("lakh", "thousand", "hazaar", "crore", "hundred", "million", "लाख", "हज़ार", "करोड़")
+)
+_TARGETS = (
+    (_deva_skeleton, tuple(_deva_skeleton(w) for w in _DEVA_TARGETS)),
+    (_latin_skeleton, tuple(_latin_skeleton(w) for w in _LATIN_TARGETS)),
+)
 
 
 def _distance(a: str, b: str) -> int:
@@ -412,8 +463,19 @@ def _distance(a: str, b: str) -> int:
 
 
 def near_fraction(word: str) -> bool:
-    """`word` looks like a misspelt सवा, साढ़े or पौने: "सारे", "पौना", "sarhe", "pauney"."""
-    return _NEAR_FRACTION.fullmatch(norm_key(word)) is not None
+    """`word` may be a fraction or multiplier word misheard or misspelt: "सारे", "पौना", "sarhe",
+    "pauney", "लख". Compared with the targets of its own script after reduction: a short target
+    must match exactly, a middling one within one edit, a long one within two (`_ALLOWED_*`). The word
+    must be at least three letters after reduction (two in Devanagari) and not in `ORDINARY`."""
+    if norm_key(word) in ORDINARY:
+        return False
+    latin = word.isascii()
+    skeleton, targets = _TARGETS[1] if latin else _TARGETS[0]
+    form = skeleton(word)
+    if len(form) < (3 if latin else 2):
+        return False
+    allowed = _ALLOWED_LATIN if latin else _ALLOWED_DEVA
+    return any(_distance(form, t) <= allowed[min(len(t), 6)] for t in targets)
 
 
 def near_unit(word: str) -> bool:

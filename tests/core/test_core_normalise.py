@@ -949,7 +949,7 @@ def test_a_grounded_denial_in_recall_is_a_referral():
     beliefs = to_beliefs(extraction, record(), call)
     assert beliefs.recall.denial == Evidence(**said)
     reasons = [f.reason.value for f in judge(extraction, call, record()).all_flags()]
-    assert reasons == ["recall_not_named"]  # named later, at the kind question: see checks.recall
+    assert reasons == ["recall_denied"]  # naming it later, at the kind question, does not undo it
     unnamed = raw(recall={"asked": True, "answer": said, "items": [], "denial": said}, kind=dont_know("यह बीमा है", 4))
     result = judge(unnamed, call)
     assert "recall_denied" in [f.reason.value for f in result.all_flags()]
@@ -971,3 +971,58 @@ def test_an_unscreened_reply_is_a_case_gap_and_the_call_is_incomplete():
     result = evaluate(record(), beliefs)
     assert {(g.rule_id, g.reason) for g in result.case_gaps} == {(RuleId.evidence, GapReason.extraction_failed)}
     assert result.tier.value == "incomplete"
+
+
+# --- iteration-2 verifier fixes ----------------------------------------------------------
+
+
+def cover_read_back_call(reply: str, read_back: str, answer: str = "हाँ, सही है।") -> Transcript:
+    turns = [*[(i, w, st, reply if i == 14 else t, a) for i, w, st, t, a in TURNS],
+             (25, BOT, "read_back", read_back, "cover"), (26, CUSTOMER, "read_back", answer, None)]  # fmt: skip
+    return transcript(turns)
+
+
+def test_a_plain_cover_figure_confirmed_at_its_read_back_is_a_referral():
+    call = cover_read_back_call("10,00,000 का कवर है।", "दस लाख, यानी 10,00,000, सही है?")
+    extraction = raw(cover=stated("10,00,000", "10,00,000 का कवर है।", 14), cover_readback=stated(True, "हाँ, सही है।", 26))
+    result = judge(extraction, call)
+    assert [f.reason.value for f in result.all_flags()] == ["cover_differs_confirmed"]
+    assert result.tier.value == "refer"
+    unconfirmed = judge(raw(cover=stated("10,00,000", "10,00,000 का कवर है।", 14)), call)
+    assert [f.reason.value for f in unconfirmed.all_flags()] == ["cover_differs_unconfirmed"]
+    assert unconfirmed.tier.value == "incomplete"
+
+
+def test_a_cover_read_back_of_another_figure_confirms_nothing():
+    call = cover_read_back_call("10,00,000 का कवर है।", "पाँच लाख, यानी 5,00,000, सही है?")
+    extraction = raw(cover=stated("10,00,000", "10,00,000 का कवर है।", 14), cover_readback=stated(True, "हाँ, सही है।", 26))
+    result = judge(extraction, call)
+    assert (RuleId.cover, GapReason.readback_mismatch) in product_gaps(result)
+    assert result.tier.value != "refer"
+
+
+@pytest.mark.parametrize(
+    ("turn", "reply", "field", "span"),
+    [
+        (14, "पाँच लाख तक का कवर है।", "cover", "पाँच लाख तक"),  # "up to five lakh"
+        (6, "बावन हज़ार रुपये लगे।", "premium", "बावन हज़ार रुपये लगे"),
+        (16, "पाँच साल तक चलेगा।", "term", "पाँच साल तक"),
+    ],
+)
+def test_a_harmless_word_next_to_the_number_in_the_span_still_reads(turn, reply, field, span):
+    extraction = raw(**{field: stated(span, reply, turn)})
+    assert judge(extraction, swap({turn: reply})).verdict is CLEAR
+
+
+def test_the_parser_sees_the_word_the_model_left_out_of_its_span():
+    """The span is widened by one word each side in the reply: "सारहे" is seen, not dropped."""
+    call = swap({14: "सारहे पाँच लाख का कवर है।"})
+    result = judge(raw(cover=stated("पाँच लाख", "सारहे पाँच लाख का कवर है।", 14)), call)
+    assert (RuleId.cover, GapReason.value_not_parsed) in product_gaps(result)
+
+
+def test_an_earlier_reply_kept_with_an_answer_must_be_in_the_call():
+    extraction = raw(kind={**stated("insurance", "यह बीमा है।", 4), "also": [{"quote": "पता नहीं", "turn_id": 4}]})
+    beliefs = to_beliefs(extraction, record(), transcript())
+    assert beliefs.for_product("P1").kind.also == ()
+    assert Evidence(quote="पता नहीं", turn_id=4) in beliefs.for_product("P1").ungrounded

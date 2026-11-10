@@ -10,6 +10,7 @@ A flag's triage tier follows from its reason (`samajh.types.FLAG_TIER`), not fro
 from collections.abc import Callable
 from typing import NamedTuple, TypeVar
 
+from samajh.amounts import too_wide
 from samajh.rules.clauses import KIND_ON_RECORD
 from samajh.types import (
     REFER_RULES,
@@ -64,6 +65,8 @@ SEVERITY: dict[Why, Severity] = {
     Why.premium_differs: Severity.medium,
     Why.premium_dont_know: Severity.medium,
     Why.cover_differs: Severity.low,
+    Why.cover_differs_confirmed: Severity.high,
+    Why.cover_differs_unconfirmed: Severity.medium,
     Why.cover_dont_know: Severity.low,
     Why.term_differs: Severity.low,
     Why.term_dont_know: Severity.low,
@@ -304,6 +307,11 @@ def _near(a: Stated[int], on_record: int) -> bool:
     )
 
 
+def _too_wide(a: Stated[int]) -> bool:
+    """A range too wide to compare with the record: never a pass, never a flag. Same bound as the parser."""
+    return a.low is not None and too_wide(a.low, a.value)
+
+
 def _heard_amount(a: Stated[int]) -> str:
     if a.low is not None:
         return f"customer said {rupees(a.low)} to {rupees(a.value)}"
@@ -328,6 +336,8 @@ def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     def stated(a: Stated[int]) -> Outcomes:
         if isinstance(readback, Stated) and not readback.value:
             return (_gap(rule, p.id, GapReason.readback_rejected, readback.evidence),)
+        if _too_wide(a):
+            return (_gap(rule, p.id, GapReason.not_comparable, a.evidence),)
         confirmed = isinstance(readback, Stated)
         exact, near = _exact(a, p.premium_inr), _near(a, p.premium_inr)
         if confirmed and exact:
@@ -350,16 +360,31 @@ def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
 
 
 def cover(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
-    """One figure must be within the exact tolerance; an answer given as approximate may be near."""
+    """One figure within the exact tolerance passes; an answer given as approximate may be near.
+
+    Off the record (coordinator decision 2026-11-10): a hedged or approximate answer is an
+    understanding gap. A plain figure is a referral once the customer confirmed a read-back of it,
+    and incomplete until then: speech recognition may have changed it. A range too wide to compare
+    is a gap.
+    """
+    b = beliefs.for_product(p.id)
+    readback = b.cover_readback
     expected = f"cover of {rupees(p.cover_inr)}"
 
     def stated(a: Stated[int]) -> Outcomes:
+        if _too_wide(a):
+            return (_gap(rule, p.id, GapReason.not_comparable, a.evidence),)
         if _exact(a, p.cover_inr) or (a.approximate and _near(a, p.cover_inr)):
             return _passed(rule, p.id)
-        return (_flag(rule, p.id, Why.cover_differs, expected, _heard_amount(a), a.evidence),)
+        if a.hedged or a.approximate:
+            why = Why.cover_differs
+        elif isinstance(readback, Stated) and readback.value:
+            why = Why.cover_differs_confirmed
+        else:
+            why = Why.cover_differs_unconfirmed
+        return (_flag(rule, p.id, why, expected, _heard_amount(a), a.evidence),)
 
-    answer = beliefs.for_product(p.id).cover_inr
-    return _decide(rule, p.id, answer, stated=stated, dont_know=Why.cover_dont_know, expected=expected)
+    return _decide(rule, p.id, b.cover_inr, stated=stated, dont_know=Why.cover_dont_know, expected=expected)
 
 
 def term(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
@@ -423,17 +448,17 @@ def cancel_window(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
 
 
 def recall(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
+    """A customer who said they took nothing, while the record holds this product, is a referral
+    whatever they say afterwards: naming it later, or at the kind question, does not undo it."""
     if not beliefs.recall.asked:
         return (_gap(rule, p.id, GapReason.not_asked),)
-    if _matched(p, beliefs):
-        return _passed(rule, p.id)
     expected = "customer names this product when asked what they took with the loan"
     denial = beliefs.recall.denial
-    answer = beliefs.for_product(p.id).kind
-    named_later = isinstance(answer, Stated) and answer.value is KIND_ON_RECORD[p.kind]
-    if denial is not None and not named_later:
+    if denial is not None:
         heard = "customer said they took nothing with the loan"
         return (_flag(rule, p.id, Why.recall_denied, expected, heard, denial),)
+    if _matched(p, beliefs):
+        return _passed(rule, p.id)
     heard = "customer did not name this product unprompted"
     return (_flag(rule, p.id, Why.recall_not_named, expected, heard, beliefs.recall.answer),)
 

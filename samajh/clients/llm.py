@@ -1,6 +1,8 @@
 """OpenRouter chat client with strict JSON-schema output validated into a caller's pydantic model.
 
 Every call is cached by its exact request body, so the same request is never paid for twice.
+One request per cache key is in flight at a time, across threads and processes: a second caller
+waits on a per-key file lock and then reads the first caller's answer from the cache.
 Every HTTP attempt and every cache hit writes one ledger row. A USD cap per client instance stops
 a run before it overspends.
 """
@@ -24,7 +26,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from samajh.clients import _runtime
-from samajh.clients._runtime import Attempt, Cache, Ledger, LedgerEntry, RetryPolicy
+from samajh.clients._runtime import Attempt, Cache, Ledger, LedgerEntry, RetryPolicy, single_flight
 from samajh.clients.errors import BadResponse, CapExceeded, ConfigError, LlmOutputInvalid
 
 T = TypeVar("T", bound=BaseModel)
@@ -232,6 +234,7 @@ class LlmClient:
         self._rng = rng if rng is not None else random.Random()
         self._sampling = _load_sampling()
         self._cache = Cache(state / "cache" / "openrouter")
+        self._locks = state / "locks" / "openrouter"
         self._ledger = Ledger(state / "ledger.jsonl")
         self._lock = threading.Lock()
         self._spent = 0.0
@@ -300,6 +303,23 @@ class LlmClient:
         key = _runtime.cache_key(_NAMESPACE, {"base_url": self._base_url, "body": body}, b"")
 
         started = time.monotonic()
+        cached = self._cached(schema, key, model, started)
+        if cached is not None:
+            return cached
+        # One request per key: whoever holds the lock asks; the others then read its answer.
+        # The wait is bounded by the longest a whole call with its retries can take.
+        with single_flight(self._locks / f"{key}.lock", timeout=self._lock_timeout(max_output_retries)):
+            cached = self._cached(schema, key, model, started)
+            if cached is not None:
+                return cached
+            return self._ask(schema, body, original, key, model, max_output_retries)
+
+    def _lock_timeout(self, max_output_retries: int) -> float:
+        attempts = self._retry.max_attempts
+        per_send = attempts * self._timeout + attempts * self._retry.max_delay
+        return per_send * (max_output_retries + 1)
+
+    def _cached(self, schema: type[T], key: str, model: str, started: float) -> LlmResult[T] | None:
         cached = self._from_cache(schema, key, model)
         if cached is not None:
             self._ledger.append(
@@ -309,8 +329,17 @@ class LlmClient:
                     prompt_tokens=cached.prompt_tokens, completion_tokens=cached.completion_tokens,
                 )
             )
-            return cached
+        return cached
 
+    def _ask(
+        self,
+        schema: type[T],
+        body: dict[str, Any],
+        original: list[dict[str, Any]],
+        key: str,
+        model: str,
+        max_output_retries: int,
+    ) -> LlmResult[T]:
         usd = 0.0
 
         def on_attempt(attempt: Attempt) -> None:

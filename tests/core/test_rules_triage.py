@@ -116,7 +116,7 @@ def test_the_approximate_tolerance_uses_exact_integer_arithmetic(heard, reason):
         (40_000, 47_272, R.premium_differs_confirmed),
         (57_777, 70_000, R.premium_approximate),
         (57_778, 70_000, R.premium_differs_confirmed),
-        (30_000, 90_000, R.premium_approximate),
+        (30_000, 60_000, R.premium_approximate),  # the widest range the rules compare: 2x
     ],
 )
 def test_a_range_is_near_when_the_record_lies_inside_it_widened_by_the_tolerance(low, high, reason):
@@ -183,16 +183,39 @@ def test_an_approximate_cover_near_the_record_passes(answer):
 @pytest.mark.parametrize(
     "answer",
     [
-        said(480_000),
         Stated(value=480_000, evidence=ev(), hedged=True),
         about(400_000),
         about(440_000, low=400_000),
         about(700_000, low=600_000, hedged=True),
     ],
 )
-def test_a_plain_cover_keeps_the_one_percent_rule_and_a_far_approximate_one_flags(answer):
+def test_a_hedged_or_approximate_cover_far_from_the_record_is_an_understanding_gap(answer):
     flag = one_flag(run(belief_changes={"cover_inr": answer}), RuleId.cover)
-    assert (flag.reason, flag.severity) == (R.cover_differs, LOW)
+    assert (flag.reason, flag.severity, flag.tier) == (R.cover_differs, LOW, Tier.understanding_gap)
+
+
+def test_a_plain_cover_figure_off_the_record_is_incomplete_until_a_read_back_confirms_it():
+    """Coordinator decision 2026-11-10: confirmed -> refer; not confirmed -> incomplete."""
+    unconfirmed = one_flag(run(belief_changes={"cover_inr": said(480_000)}), RuleId.cover)
+    assert (unconfirmed.reason, unconfirmed.tier) == (R.cover_differs_unconfirmed, Tier.incomplete)
+    confirmed = run(belief_changes={"cover_inr": said(1_000_000), "cover_readback": said(True)})
+    flag = one_flag(confirmed, RuleId.cover)
+    assert (flag.reason, flag.severity, flag.tier) == (R.cover_differs_confirmed, HIGH, Tier.refer)
+    assert confirmed.tier is Tier.refer
+
+
+def test_a_cover_said_as_a_range_wider_than_twice_its_low_end_never_passes():
+    result = run(belief_changes={"cover_inr": about(1_000_000, low=300_000)})
+    assert RuleId.cover not in result.products[0].passed
+    (gap,) = gaps(result, RuleId.cover)
+    assert gap.reason is GapReason.not_comparable
+
+
+def test_a_confirmed_premium_range_wider_than_twice_its_low_end_is_a_gap():
+    result = run(belief_changes={"premium_inr": about(120_000, low=50_000)})
+    assert not flags(result, RuleId.premium)
+    (gap,) = gaps(result, RuleId.premium)
+    assert gap.reason is GapReason.not_comparable
 
 
 # --- conflicting answers ---------------------------------------------------------
@@ -284,15 +307,16 @@ def test_denying_any_product_in_recall_is_a_high_flag_quoting_the_denial(kind):
     assert result.tier is Tier.refer
 
 
-def test_a_denial_followed_by_the_kind_on_record_is_only_not_named():
+def test_a_denial_stays_a_referral_when_the_kind_on_record_is_named_afterwards():
+    """Verifier iter2 case 12."""
     result = run(recall=denied())
     flag = one_flag(result, RuleId.recall)
-    assert (flag.reason, flag.severity, flag.tier) == (R.recall_not_named, LOW, Tier.understanding_gap)
+    assert (flag.reason, flag.severity, flag.tier) == (R.recall_denied, HIGH, Tier.refer)
 
 
-def test_a_denial_does_not_touch_a_product_the_customer_named():
-    result = run(recall=OpenRecall(asked=True, items=(named(P1),), denial=DENIAL), belief_changes={"kind": dont_know()})
-    assert RuleId.recall in result.products[0].passed
+def test_a_denial_stays_a_referral_even_when_a_later_recall_reply_names_the_product():
+    result = run(recall=OpenRecall(asked=True, items=(named(P1),), denial=DENIAL))
+    assert one_flag(result, RuleId.recall).reason is R.recall_denied
 
 
 # --- payment frequency ------------------------------------------------------------
@@ -395,7 +419,9 @@ FLAG_CASES: dict[FlagReason, tuple[dict, dict, dict]] = {
     R.premium_differs: ({}, {"premium_inr": said(70_000), "premium_readback": NotAsked()}, {}),
     R.premium_dont_know: ({}, {"premium_inr": dont_know()}, {}),
     R.premium_approximate: ({}, {"premium_inr": about(50_000)}, {}),
-    R.cover_differs: ({}, {"cover_inr": said(1)}, {}),
+    R.cover_differs: ({}, {"cover_inr": about(100_000)}, {}),
+    R.cover_differs_confirmed: ({}, {"cover_inr": said(1), "cover_readback": said(True)}, {}),
+    R.cover_differs_unconfirmed: ({}, {"cover_inr": said(1)}, {}),
     R.cover_dont_know: ({}, {"cover_inr": dont_know()}, {}),
     R.term_differs: ({}, {"term_months": said(1)}, {}),
     R.term_dont_know: ({}, {"term_months": dont_know()}, {}),
@@ -427,13 +453,13 @@ FLAG_CASES: dict[FlagReason, tuple[dict, dict, dict]] = {
 }
 
 REFER_REASONS = {
-    R.kind_differs, R.kind_dont_know, R.premium_differs_confirmed, R.recall_denied, R.recall_off_record,
+    R.kind_differs, R.kind_dont_know, R.premium_differs_confirmed, R.cover_differs_confirmed, R.recall_denied, R.recall_off_record,
     R.consent_no_record, R.consent_not_recognised, R.consent_method_differs, R.consent_dont_know,
     R.funded_no_consent, R.funded_says_separately, R.funded_dont_know, R.unfunded_says_deducted,
     R.bundled_not_mitigant, R.bundled_described_as_deposit, R.bundled_no_choice_on_record,
     R.bundled_no_choice_told, R.feature_contradicted, R.sale_concern,
 }  # fmt: skip
-INCOMPLETE_REASONS = {R.premium_differs}
+INCOMPLETE_REASONS = {R.premium_differs, R.cover_differs_unconfirmed}
 
 
 def test_the_tier_table_covers_every_flag_reason():

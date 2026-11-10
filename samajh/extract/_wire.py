@@ -26,7 +26,8 @@ class SlotKind(StrEnum):
     recall = "recall"
     kind = "kind"
     premium = "premium"
-    readback = "readback"
+    readback = "readback"  # the read-back of the premium
+    cover_readback = "cover_readback"  # the read-back of the cover: step read_back, asks=cover
     payment_source = "payment_source"
     payment_frequency = "payment_frequency"
     required_for_loan = "required_for_loan"
@@ -160,6 +161,7 @@ SCHEMA: dict[SlotKind, type[WireReply]] = {
     SlotKind.kind: KindReply,
     SlotKind.premium: SpanReply,
     SlotKind.readback: ReadbackReply,
+    SlotKind.cover_readback: ReadbackReply,
     SlotKind.payment_source: PaymentReply,
     SlotKind.payment_frequency: FrequencyReply,
     SlotKind.required_for_loan: YesNoReply,

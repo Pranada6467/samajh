@@ -6,6 +6,8 @@ full lists (55 and 170 spellings) were not saved, so `DEVANAGARI` and `ROMANISED
 written here in the same shapes. They are our spellings: whether Prisma writes any is not known.
 """
 
+from itertools import product
+
 import pytest
 
 from samajh.amounts import AmbiguityReason, Ambiguous, Parsed, parse_amount, parse_approx_amount
@@ -131,3 +133,53 @@ def test_a_misspelt_unit_word_after_a_number_is_refused(text):
 
 def test_a_misspelt_fraction_before_a_duration_is_not_an_amount_question():
     assert parse_amount("सारे तीन साल").status == "none"
+
+
+# --- structural refusal (verifier iter2): no list of misspellings ---------------------------
+# Spellings generated the way the verifier's sweep generated them. The rule is an edit distance
+# on a normalised form, so these are a check of the rule, not entries in it.
+
+LATIN_GENERATED = {
+    0.25: ["".join(p) for p in product(["s", "sh"], ["a", "aa", "u", "o", ""], ["v", "w", "vv", "ww"], ["a", "aa", "ah", "e"])],
+    0.5: ["".join(p) for p in product(["s", "sh"], ["a", "aa", "e"], ["dh", "d", "rh", "r", "dd", "ddh"], ["e", "ey", "ay", "i", "ai", "a"])],
+    -0.25: ["".join(p) for p in product(["p"], ["au", "aw", "o", "ou", "ow", "a", "u"], ["n", "nn"], ["e", "ey", "ay", "i", "a", "ai", ""])],
+}
+DEVA_GENERATED = {
+    0.25: ["सवा", "स्वा", "सव्वा", "सवाह", "सवां", "सबा", "शवा", "सौवा", "स्वाँ", "सावा", "सोवा"],
+    0.5: ["साढ़े", "साढे", "साडे", "साड़े", "सारे", "सारहे", "साढ़ें", "सढ़े", "सड़े", "साधे", "साठे", "शाढ़े", "सार्हे", "साड़ें"],
+    -0.25: ["पौने", "पोने", "पौन", "पौना", "पौनें", "पउने", "पाउने", "पवने", "पोणे", "पैने", "पूने"],
+}
+
+
+def _bare_reads(table: dict) -> list[str]:
+    """Texts where a fraction-like word before the number was dropped: read as the bare number."""
+    dropped = []
+    for words in table.values():
+        for word in dict.fromkeys(words):
+            for base, bare in (("2 lakh", 200_000), ("दो लाख", 200_000), ("3,00,000", 300_000)):
+                for parse in (parse_amount, parse_approx_amount):
+                    result = parse(f"{word} {base}")
+                    value = result.rupees if isinstance(result, Parsed) else getattr(result, "low", None)
+                    if value == bare and getattr(result, "high", bare) == bare:
+                        dropped.append(f"{word} {base}")
+    return dropped
+
+
+def test_no_generated_devanagari_fraction_spelling_is_dropped():
+    assert _bare_reads(DEVA_GENERATED) == []
+
+
+def test_no_generated_latin_fraction_spelling_is_dropped():
+    assert _bare_reads(LATIN_GENERATED) == []
+
+
+@pytest.mark.parametrize("word", ["लख", "हजर", "करोर", "lak", "hazr", "thousnd"])
+def test_a_word_near_a_multiplier_before_a_number_is_refused(word):
+    assert refused(f"{word} पचास हज़ार")
+
+
+def test_a_misspelt_fraction_before_a_range_is_never_read_as_the_range():
+    """Kills the surviving mutant of the near-fraction check before a range in _approx.py."""
+    for text in ("सारे तीन चार लाख", "सारहे तीन से चार लाख", "sarhe 3-4 lakh"):
+        result = parse_approx_amount(text)
+        assert isinstance(result, Ambiguous), (text, result)

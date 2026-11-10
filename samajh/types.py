@@ -249,7 +249,9 @@ class FlagReason(StrEnum):
     premium_differs = "premium_differs"  # a differing amount that no read-back confirmed
     premium_dont_know = "premium_dont_know"
     premium_approximate = "premium_approximate"  # within the approximate tolerance, not the exact one
-    cover_differs = "cover_differs"
+    cover_differs = "cover_differs"  # hedged or approximate, and not near the record
+    cover_differs_confirmed = "cover_differs_confirmed"  # a plain figure the customer confirmed at a read-back
+    cover_differs_unconfirmed = "cover_differs_unconfirmed"  # a plain figure no read-back confirmed
     cover_dont_know = "cover_dont_know"
     term_differs = "term_differs"
     term_dont_know = "term_dont_know"
@@ -306,6 +308,7 @@ FLAG_TIER: dict[FlagReason, Tier] = {
             _R.kind_differs,
             _R.kind_dont_know,
             _R.premium_differs_confirmed,
+            _R.cover_differs_confirmed,  # coordinator decision 2026-11-10
             _R.recall_denied,
             _R.recall_off_record,
             _R.consent_no_record,
@@ -327,6 +330,7 @@ FLAG_TIER: dict[FlagReason, Tier] = {
     ),
     # The amount differs but the customer never confirmed it: it may be a mis-hearing.
     _R.premium_differs: Tier.incomplete,
+    _R.cover_differs_unconfirmed: Tier.incomplete,
     **dict.fromkeys(
         (
             _R.premium_dont_know,
@@ -509,6 +513,8 @@ class Stated(Frozen, Generic[T]):
     `hedged`: said with a word of doubt ("शायद", "I think"). `approximate`: an amount said as
     "about X" or as a range; for a range `low` is its lower end and `value` its upper end.
     These are markers. No rule lets one turn a wrong answer into a pass.
+    `also`: the customer's other replies to the same question that this answer stands over, in
+    call order: an earlier "I don't know", or a restatement consistent with it.
     """
 
     status: Literal["stated"] = "stated"
@@ -517,7 +523,8 @@ class Stated(Frozen, Generic[T]):
     hedged: bool = False
     approximate: bool = False
     low: StrictInt | None = None
-    added_later: ClassVar[frozenset[str]] = frozenset({"hedged", "approximate", "low"})
+    also: tuple[Evidence, ...] = ()
+    added_later: ClassVar[frozenset[str]] = frozenset({"hedged", "approximate", "low", "also"})
 
     @model_validator(mode="after")
     def _a_range_is_an_approximate_amount(self) -> "Stated[T]":
@@ -569,7 +576,11 @@ class _ProductAnswers(Frozen):
     own account of what they agreed to buy include this product, and how do they say they agreed.
     `feature_probe` is the reply to the open question about getting the money back: the claims made, or ().
     `payment_frequency`: "do you pay for it once, or again and again?" Checked only when asked.
-    Each field holds the last usable answer; `conflicts` holds a question whose answers differed.
+    `cover_readback` is the reply to the last read-back of the cover figure, like `premium_readback`:
+    a bot turn with step `read_back` and `asks=cover`.
+    Each field holds the last stated answer (else the last "I don't know"); `conflicts` holds a
+    question whose stated answers are incompatible. A failed model call on any asking of a
+    question makes its fields `Unclear(extraction_failed)`.
     """
 
     product_id: ProductId
@@ -583,9 +594,10 @@ class _ProductAnswers(Frozen):
     consent_method: Answer[ConsentMethod] = NotAsked()
     feature_probe: Answer[tuple[FeatureClaim, ...]] = NotAsked()
     payment_frequency: Answer[PaymentFrequency] = NotAsked()
+    cover_readback: Answer[StrictBool] = NotAsked()
     volunteered_claims: tuple[ClaimEvidence, ...] = ()
     conflicts: tuple[AnswerConflict, ...] = ()
-    added_later: ClassVar[frozenset[str]] = frozenset({"payment_frequency", "conflicts"})
+    added_later: ClassVar[frozenset[str]] = frozenset({"payment_frequency", "cover_readback", "conflicts"})
 
 
 class _OpenRecall(Frozen):

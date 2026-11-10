@@ -27,12 +27,21 @@ Every flag and gap is still in `flags` and `gaps`. The tier is derived from them
 
 | Tier | Flags (by `Flag.reason`) | Gaps (by `Gap.rule_id`) |
 |---|---|---|
-| `refer` | `kind_*`, `premium_differs_confirmed`, `recall_denied`, `recall_off_record`, `consent_*`, `funded_*`, `unfunded_says_deducted`, `bundled_*`, `feature_contradicted`, `sale_concern`, `answers_conflict` on a refer-tier rule | none |
-| `incomplete` | `premium_differs` (a differing amount the customer never confirmed at a read-back) | `kind`, `premium`, `consent`, `loan_funded`, `bundling`, `belief_mismatch`, `recall_unmatched`, `sale_conduct`, `evidence` |
-| `understanding_gap` | `premium_dont_know`, `premium_approximate`, `cover_*`, `term_*`, `cancel_*`, `recall_not_named`, `feature_dont_know`, `frequency_recurring_on_single`, `frequency_dont_know`, `answers_conflict` on cover, term or cancel window | `cover`, `term`, `cancel_window`, `recall` |
+| `refer` | `kind_*`, `premium_differs_confirmed`, `cover_differs_confirmed`, `recall_denied`, `recall_off_record`, `consent_*`, `funded_*`, `unfunded_says_deducted`, `bundled_*`, `feature_contradicted`, `sale_concern`, `answers_conflict` on a refer-tier rule | none |
+| `incomplete` | `premium_differs`, `cover_differs_unconfirmed` (a differing plain figure the customer never confirmed at a read-back) | `kind`, `premium`, `consent`, `loan_funded`, `bundling`, `belief_mismatch`, `recall_unmatched`, `sale_conduct`, `evidence` |
+| `understanding_gap` | `premium_dont_know`, `premium_approximate`, `cover_differs` (hedged or approximate), `cover_dont_know`, `term_*`, `cancel_*`, `recall_not_named`, `feature_dont_know`, `frequency_recurring_on_single`, `frequency_dont_know`, `answers_conflict` on cover, term or cancel window | `cover`, `term`, `cancel_window`, `recall` |
 | `clear` | no flag and no gap | |
 
 Silence is never a pass: a refer-tier question with no usable answer is a gap, so the product is `incomplete`.
+
+Changed 2026-11-10 after the iteration-2 verifier (additive):
+- Cover (coordinator decision): a plain, unhedged cover figure outside the 1% tolerance is
+  `cover_differs_confirmed` (refer) once the customer confirmed a read-back of that figure, and
+  `cover_differs_unconfirmed` (incomplete) until then. Hedged or approximate stays `cover_differs`
+  (understanding_gap); "I don't know" stays `cover_dont_know`. Term and window are unchanged.
+- `recall_denied` is refer whatever the customer says afterwards, including naming the product.
+- A confirmed range wider than `MAX_RANGE_RATIO` (2) times its low end never passes: a
+  `not_comparable` gap on premium or cover.
 
 ## 2. Flag and Gap
 
@@ -84,6 +93,18 @@ RawExtraction.unscreened: tuple[Evidence, ...] = ()  # NEW: replies whose screen
 Beliefs.unscreened: tuple[Evidence, ...] = ()
 ```
 
+**Cover read-back (new, for the dialogue).** No new `Question` value: tag the bot turn exactly like
+the premium read-back, with `step=read_back`, `asks=cover` and the `product_id`. Its reply fills
+the new field `cover_readback: Answer[StrictBool] = NotAsked()` on `RawProductAnswers` and
+`ProductBeliefs` (`SlotKind.cover_readback` in the extractor). The bot line must carry the
+customer's figure (or both ends of a range), as for the premium; a correction in reply replaces
+the cover.
+
+`Stated.also: tuple[Evidence, ...] = ()` (new): the other replies to the same question that the
+answer stands over, such as an earlier "I don't know". Conflicts are only stated answers that
+are incompatible (amounts beyond tolerance of each other, different enums or durations); a
+failed model call on any asking of a question makes its fields `Unclear(extraction_failed)`.
+
 Payment frequency is checked only when the transcript has a bot turn tagged `asks=payment_frequency`.
 "Paid once" on a product without `one_time_payment` in `features` is a `feature_contradicted` flag
 under `belief_mismatch` (refer). A transcript that never asks it gets no flag and no gap from it.
@@ -99,6 +120,7 @@ class Approximate(Frozen):          # NEW
     span: Span
 parse_approx_amount(text, *, exact=False) -> Parsed | Approximate | Ambiguous | NoAmount   # NEW
 has_doubt_word(text) -> bool        # NEW: a word of doubt or approximation is in the text
+MAX_RANGE_RATIO = 2; too_wide(low, high) -> bool   # NEW: the one bound on range width, for parser and rules
 is_loan_tenure(text) -> bool        # NEW: a duration given relative to the loan ("जब तक लोन चलेगा")
 ```
 
@@ -149,7 +171,8 @@ class CaseSummary(Frozen):
     loan_id: str
     call_id: str
     tier: Tier
-    lines: tuple[IssueLine, ...]    # refer first, then incomplete, then understanding gaps; one per distinct issue
+    lines: tuple[IssueLine, ...]    # refer first, then incomplete, then understanding gaps; one per distinct
+                                    # refer issue, and one per rule for incomplete and understanding-gap lines
 
 summarise(record: LoanRecord, result: CaseResult) -> CaseSummary      # pure
 ```

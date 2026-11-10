@@ -240,7 +240,7 @@ ANSWER_FIELDS = {
 }
 # Read only in some cases: the read-back with the premium, the choice of provider when the
 # product was required, the way of agreeing when the customer says they agreed.
-CONDITIONAL_FIELDS = {"premium_readback", "provider_choice_offered", "consent_method"}
+CONDITIONAL_FIELDS = {"premium_readback", "cover_readback", "provider_choice_offered", "consent_method"}
 # Checked only when the call asks it: never asked is neither a gap nor a pass.
 OPTIONAL_FIELDS = {"payment_frequency"}
 RULES_NEEDING_AN_ANSWER = {rule for rule, _ in ANSWER_FIELDS.values()}
@@ -415,8 +415,9 @@ def test_cover_within_one_percent_passes(heard):
 
 
 @pytest.mark.parametrize("heard, heard_text", [(505_001, "₹5,05,001"), (494_999, "₹4,94,999")])
-def test_cover_more_than_one_percent_off_flags_low(heard, heard_text):
-    flag = assert_one_flag(run(belief_changes={"cover_inr": said(heard)}), RuleId.cover, LOW)
+def test_cover_more_than_one_percent_off_flags(heard, heard_text):
+    """Not confirmed by a read-back: medium, incomplete (coordinator decision 2026-11-10)."""
+    flag = assert_one_flag(run(belief_changes={"cover_inr": said(heard)}), RuleId.cover, MEDIUM)
     assert "₹5,00,000" in flag.expected
     assert heard_text in flag.heard
 

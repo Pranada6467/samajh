@@ -24,7 +24,6 @@ from samajh.extract import SlotKind, extract, extract_traced
 from samajh.pipeline import run_text
 from samajh.types import (
     AnswerConflict,
-    DontKnow,
     Evidence,
     GapReason,
     PaymentFrequency,
@@ -117,7 +116,7 @@ def test_the_same_answer_twice_is_no_conflict():
     assert answers.kind.evidence.quote == "हाँ, बीमा ही है।"
 
 
-def test_an_answer_and_then_i_do_not_know_is_a_conflict():
+def test_an_answer_and_then_i_do_not_know_is_no_conflict_and_the_answer_stands():
     rows = swap(
         BASE,
         "kind",
@@ -125,8 +124,47 @@ def test_an_answer_and_then_i_do_not_know_is_a_conflict():
         kind_row("पता नहीं।", KIND_AGAIN, status="dont_know", kind=None, clauses=[1]),
     )
     answers = product(rows)
-    assert isinstance(answers.kind, DontKnow)
-    assert [quotes(c) for c in answers.conflicts] == [["एफ़डी है।", "पता नहीं।"]]
+    assert answers.kind.value == "deposit"
+    assert [e.quote for e in answers.kind.also] == ["पता नहीं।"]
+    assert answers.conflicts == ()
+
+
+def test_i_do_not_know_and_then_an_answer_is_no_conflict_and_keeps_the_earlier_reply():
+    rows = swap(
+        BASE,
+        "kind",
+        kind_row("पता नहीं।", status="dont_know", kind=None, clauses=[1]),
+        kind_row("अच्छा, बीमा है।", KIND_AGAIN, status="stated", kind="insurance", clauses=[1]),
+    )
+    transcript, llm = build(rows)
+    run = run_text(transcript, record(), llm)
+    answers = run.extraction.raw.products[0]
+    assert answers.kind.value == "insurance"
+    assert [e.quote for e in answers.kind.also] == ["पता नहीं।"]
+    assert answers.conflicts == ()
+    assert run.result.tier is Tier.clear
+
+
+@pytest.mark.parametrize(
+    ("first", "first_span", "second", "second_span"),
+    [
+        ("करीब इकतालीस हज़ार।", "करीब इकतालीस हज़ार", "41,300 रुपये।", "41,300"),  # approximate, then exact inside it
+        ("इकतालीस हज़ार रुपये।", "इकतालीस हज़ार", "41,300 रुपये।", "41,300"),  # within one percent
+        ("चालीस बयालीस हज़ार के आसपास।", "चालीस बयालीस हज़ार के आसपास", "41,300।", "41,300"),
+    ],
+)
+def test_amounts_consistent_with_each_other_are_no_conflict(first, first_span, second, second_span):
+    """The dialogue re-asks an amount whenever its two speech readings disagree."""
+    rows = swap(
+        BASE,
+        "premium",
+        premium_row(first, status="stated", span=first_span, clauses=[1]),
+        premium_row(second, PREMIUM_AGAIN, status="stated", span=second_span, clauses=[1]),
+    )
+    transcript, llm = build(rows)
+    run = run_text(transcript, record(), llm)
+    assert run.extraction.raw.products[0].conflicts == ()
+    assert run.result.tier is Tier.clear
 
 
 def test_an_unusable_reply_neither_replaces_an_answer_nor_conflicts_with_it():
@@ -252,12 +290,13 @@ def test_a_word_next_to_the_number_is_never_trimmed_from_the_span():
     assert run.result.tier is not Tier.clear
 
 
-def test_a_verb_copied_into_the_span_is_passed_on_and_refused_by_the_rules():
+def test_a_verb_copied_into_the_span_is_passed_on_and_still_reads():
+    """Verifier iter2: "चौबीस हज़ार रुपये लगे" must parse. The parser reads the span with its neighbours."""
     rows = answered(BASE, "premium", "इकतालीस हज़ार तीन सौ कटे थे।", span="इकतालीस हज़ार तीन सौ कटे")
     transcript, llm = build(rows)
     run = run_text(transcript, record(), llm)
     assert run.extraction.raw.products[0].premium.value == "इकतालीस हज़ार तीन सौ कटे"
-    assert not isinstance(run.beliefs.products[0].premium_inr, Stated)
+    assert run.beliefs.products[0].premium_inr.value == 41300
 
 
 def test_a_recall_amount_is_passed_on_untrimmed():
@@ -312,18 +351,37 @@ def test_a_failed_call_fills_every_field_of_its_question():
         assert isinstance(answer, Unclear) and answer.reason is GapReason.extraction_failed
 
 
-def test_a_failed_call_does_not_replace_an_earlier_answer():
+def test_a_failed_call_on_a_re_ask_makes_the_field_unclear_whatever_came_before():
+    """Verifier iter2 cases 2 and 3: a failed re-ask must never be dropped."""
     rows = swap(
         BASE,
         "kind",
-        kind_row("एफ़डी है।", status="stated", kind="deposit", clauses=[1]),
-        kind_row("अच्छा, बीमा।", KIND_AGAIN, status="stated", kind="insurance", clauses=[2]),
+        kind_row("बीमा है।", status="stated", kind="insurance", clauses=[1]),
+        kind_row("अच्छा, एफ़डी।", KIND_AGAIN, status="stated", kind="deposit", clauses=[2]),
     )
     transcript, llm = build(rows)
-    llm.errors[("KindReply", "अच्छा, बीमा।")] = BadResponse("no choices")
-    answers = extract(transcript, record(), llm).products[0]
-    assert answers.kind.value == "deposit"
-    assert answers.conflicts == ()
+    llm.errors[("KindReply", "अच्छा, एफ़डी।")] = BadResponse("no choices")
+    run = run_text(transcript, record(), llm)
+    kind = run.extraction.raw.products[0].kind
+    assert isinstance(kind, Unclear) and kind.reason is GapReason.extraction_failed
+    assert kind.evidence.quote == "अच्छा, एफ़डी।"
+    assert run.result.tier is Tier.incomplete
+
+
+def test_a_failed_first_asking_is_not_hidden_by_a_later_answer():
+    rows = swap(
+        BASE,
+        "payment_source",
+        ("teach_back", "payment_source", "वह रकम कैसे चुकाई गई?", "अलग से नकद दिया था।", {}),
+        ("teach_back", "payment_source", "फिर से बताइए?", "लोन में से।",
+         {"status": "stated", "source": "from_loan", "clauses": [1]}),
+    )  # fmt: skip
+    transcript, llm = build(rows)
+    llm.errors[("PaymentReply", "अलग से नकद दिया था।")] = TransportError("reset")
+    run = run_text(transcript, record(), llm)
+    source = run.extraction.raw.products[0].payment_source
+    assert isinstance(source, Unclear) and source.reason is GapReason.extraction_failed
+    assert run.result.tier is Tier.incomplete
 
 
 def test_a_failed_read_back_call_replaces_an_earlier_yes():
@@ -525,6 +583,24 @@ def test_not_remembering_is_not_a_denial():
     transcript, llm = build(swap(BASE, None, recall_row("याद नहीं।")))
     recall = extract(transcript, record(), llm).recall
     assert recall.denial is None and recall.answer.quote == "याद नहीं।"
+
+
+def test_a_denial_survives_a_re_asked_recall():
+    """Verifier iter2 case 11."""
+    first = recall_row("कुछ नहीं लिया, बस लोन।", took_nothing=True)
+    again = ("open_recall", None, "और कुछ लिया था लोन के साथ?", "याद नहीं आ रहा।", {"items": [], "took_nothing": False})
+    transcript, llm = build([first, again, *BASE[1:]])
+    run = run_text(transcript, record(), llm)
+    assert run.extraction.raw.recall.denial.quote == "कुछ नहीं लिया, बस लोन।"
+    assert "recall_denied" in [f.reason.value for f in run.result.all_flags()]
+    assert run.result.tier is Tier.refer
+
+
+def test_a_denial_stays_a_referral_after_the_customer_names_the_kind():
+    """Verifier iter2 case 12: the rest of the call is informed."""
+    transcript, llm = build(swap(BASE, None, recall_row("कुछ नहीं लिया, बस लोन।", took_nothing=True)))
+    run = run_text(transcript, record(), llm)
+    assert run.result.tier is Tier.refer
 
 
 def test_a_denial_next_to_a_named_item_is_not_kept():

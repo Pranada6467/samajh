@@ -14,9 +14,12 @@ stop short of a "not" that the model left out. The two identity checks are never
 model: the right-party question names the borrower and the second check asks a birth year.
 
 The calls for one transcript run in parallel threads and are assembled in call order. A call that
-fails makes the fields of its reply `Unclear(extraction_failed)`, never the whole call a failure.
-A question asked more than once keeps its last usable answer, and differing answers are kept as
-an `AnswerConflict`.
+fails makes the fields of its reply `Unclear(extraction_failed)`, never the whole call a failure,
+and that holds whichever asking of a question failed: a failure is never hidden by another reply.
+A question asked more than once keeps its last stated answer (the other usable replies go in its
+`also`); only stated answers that are incompatible are kept as an `AnswerConflict`: an "I don't
+know" before or after an answer, a restatement, and amounts within tolerance of each other are not.
+Every open-recall reply counts, and a denial in any of them is kept.
 """
 
 import time
@@ -27,10 +30,10 @@ from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
-from samajh.amounts import has_doubt_word
+from samajh.amounts import has_doubt_word, is_loan_tenure
 from samajh.clients.errors import BadResponse, LlmOutputInvalid, RateLimited, ServerError, TransportError
 from samajh.clients.llm import LlmResult, Message
-from samajh.extract._ground import Found, Reply, comparison_form, days, months, rupees
+from samajh.extract._ground import Found, Reply, amount_reading, days, months
 from samajh.extract._prompt import messages, screen_messages
 from samajh.extract._wire import (
     SCHEMA,
@@ -48,6 +51,11 @@ from samajh.extract._wire import (
     Status,
     WireReply,
     YesNoReply,
+)
+from samajh.rules.checks import (
+    AMOUNT_TOLERANCE_PERCENT,
+    APPROX_AMOUNT_TOLERANCE_PERCENT,
+    CANCEL_TOLERANCE_DAYS,
 )
 from samajh.rules.clauses import KIND_ON_RECORD
 from samajh.types import (
@@ -169,7 +177,8 @@ def _slot_kind(prompt: Turn | None, on_record: Sequence[ProductId]) -> SlotKind:
     if prompt.product_id not in on_record:
         raise ValueError(f"turn {prompt.id} asks about {prompt.product_id}, which is not on the record")
     if prompt.step is CallStep.read_back:
-        return SlotKind.readback if prompt.asks is Question.premium else SlotKind.other
+        read_back = {Question.premium: SlotKind.readback, Question.cover: SlotKind.cover_readback}
+        return read_back.get(prompt.asks, SlotKind.other)
     return SlotKind(prompt.asks.value)
 
 
@@ -248,43 +257,80 @@ class _Grounder:
 
 
 Usable = Stated | DontKnow
-
-# What a spoken value reads to, used only to tell whether two answers to one question differ.
-_READ: dict[str, Callable[[str], object]] = {
-    "premium": rupees,
-    "cover": rupees,
-    "term": months,
-    "cancel_window": days,
-}
+_FAILED = GapReason.extraction_failed
 
 
-def _said(name: str, answer: Usable) -> object:
-    """Two usable answers to one question differ when this differs."""
-    if isinstance(answer, DontKnow):
-        return DontKnow
-    value = answer.value
-    if name in _READ:
-        reading = _READ[name](value)
-        return comparison_form(value) if reading is None else reading
-    return frozenset(value) if isinstance(value, tuple) else value
+def _amount(text: str) -> tuple[int, int, int] | None:
+    """(low, high, tolerance percent) of a spoken amount: the approximate tolerance for a hedge or range."""
+    reading = amount_reading(text)
+    if reading is None:
+        return None
+    low, high, approximate = reading
+    return low, high, APPROX_AMOUNT_TOLERANCE_PERCENT if approximate else AMOUNT_TOLERANCE_PERCENT
 
 
-def _changes(name: str, heard: Sequence[Usable]) -> list[Evidence]:
-    """The answers that differ from the one before them, the first included. One entry: no conflict."""
-    kept: list[Usable] = []
+def _term(text: str) -> object:
+    return "loan" if is_loan_tenure(text) else months(text)
+
+
+def _compatible(name: str, a: Stated, b: Stated) -> bool:
+    """Two stated answers to one question that a reviewer would not call contradictory.
+
+    Amounts: within tolerance of each other (10% when either is hedged or a range, else 1%).
+    Durations: the same number of months, or of days within a day. An amount or duration that
+    cannot be read is never a conflict: the rules refuse it on its own. Anything else: equal.
+    """
+    if name in ("premium", "cover"):
+        x, y = _amount(a.value), _amount(b.value)
+        if x is None or y is None:
+            return True
+        tol = max(x[2], y[2])
+        return x[0] * (100 - tol) <= y[1] * 100 and y[0] * (100 - tol) <= x[1] * 100
+    if name == "term":
+        x, y = _term(a.value), _term(b.value)
+        return x is None or y is None or "loan" in (x, y) or x == y
+    if name == "cancel_window":
+        x, y = days(a.value), days(b.value)
+        return x is None or y is None or abs(x - y) <= CANCEL_TOLERANCE_DAYS
+    if isinstance(a.value, tuple):
+        return frozenset(a.value) == frozenset(b.value)
+    return a.value == b.value
+
+
+def _changes(name: str, heard: Sequence[Answer]) -> list[Evidence]:
+    """Stated answers incompatible with the one before them, the first included. One entry: no conflict."""
+    kept: list[Stated] = []
     for answer in heard:
-        if not kept or _said(name, answer) != _said(name, kept[-1]):
+        if isinstance(answer, Stated) and (not kept or not _compatible(name, answer, kept[-1])):
             kept.append(answer)
     return [answer.evidence for answer in kept]
+
+
+def _resolve(heard: Sequence[Answer]) -> Answer:
+    """The field's answer from every reply to every asking, in call order.
+
+    A failed model call on any asking -> `Unclear(extraction_failed)`: never dropped. Else the
+    last stated answer, holding the other usable replies in `also`; else the last "I don't know";
+    else the last unusable reply.
+    """
+    failed = next((a for a in heard if isinstance(a, Unclear) and a.reason is _FAILED), None)
+    if failed is not None:
+        return failed
+    stated = [a for a in heard if isinstance(a, Stated)]
+    if stated:
+        last = stated[-1]
+        also = tuple(a.evidence for a in heard if isinstance(a, Usable) and a is not last)
+        return last.model_copy(update={"also": also}) if also else last
+    dont_know = [a for a in heard if isinstance(a, DontKnow)]
+    return dont_know[-1] if dont_know else heard[-1]
 
 
 class _Assembly:
     """Collects grounded answers for the whole call."""
 
     def __init__(self, on_record: Sequence[ProductId]) -> None:
-        self.answers: dict[ProductId, dict[str, Answer]] = {pid: {} for pid in on_record}
-        # Every usable answer to a field, in call order, since the field was last replaced.
-        self.heard: dict[ProductId, dict[str, list[Usable]]] = {pid: {} for pid in on_record}
+        # Every reply to each field, in call order, since a read-back last replaced it.
+        self.heard: dict[ProductId, dict[str, list[Answer]]] = {pid: {} for pid in on_record}
         self.claims: dict[ProductId, list[ClaimEvidence]] = {pid: [] for pid in on_record}
         self.concerns: list[ConcernEvidence] = []
         self.recall_answer: Evidence | None = None
@@ -293,24 +339,22 @@ class _Assembly:
         self.unscreened: list[Evidence] = []
 
     def put(self, slot: Slot, name: str, answer: Answer, replace: bool = False) -> None:
-        """A question asked twice keeps its last usable answer, and every usable answer is remembered.
-
-        `replace` is the read-back: the new answer is taken whatever it is, and the earlier ones
-        are forgotten, so a premium corrected at the read-back is not a conflict.
-        """
+        """Remember a reply to a field. `replace` is the read-back: the new reply is taken whatever
+        it is and the earlier ones are forgotten, so a premium corrected at the read-back is not a
+        conflict and the last read-back reply stands alone."""
         for pid in slot.products:
             heard = self.heard[pid].setdefault(name, [])
             if replace:
                 heard.clear()
-            if isinstance(answer, Usable):
-                heard.append(answer)
-            if replace or isinstance(answer, Usable) or not isinstance(self.answers[pid].get(name), Usable):
-                self.answers[pid][name] = answer
+            heard.append(answer)
+
+    def answers(self, pid: ProductId) -> dict[str, Answer]:
+        return {name: _resolve(heard) for name, heard in self.heard[pid].items()}
 
     def conflicts(self, pid: ProductId) -> tuple[AnswerConflict, ...]:
         found = []
         for kind, names in _FIELDS.items():
-            if kind is SlotKind.readback:
+            if kind in (SlotKind.readback, SlotKind.cover_readback):
                 continue  # the last read-back reply stands alone
             differing: set[Evidence] = set()
             for name in names:
@@ -367,7 +411,7 @@ class _Assembly:
 
     def _no_answer(self, slot: Slot, answer: Unclear) -> None:
         for name in _FIELDS[slot.kind]:
-            self.put(slot, name, answer, replace=name == "premium_readback")
+            self.put(slot, name, answer, replace=name.endswith("_readback"))
 
     def _kind(self, slot: Slot, wire: KindReply, g: _Grounder) -> None:
         self.put(slot, "kind", g.pointed("kind", wire.status, wire.kind, wire.clauses))
@@ -388,12 +432,18 @@ class _Assembly:
         self.put(slot, name, g.spoken("span", wire.status, wire.span, wire.clauses))
 
     def _readback(self, slot: Slot, wire: ReadbackReply, g: _Grounder) -> None:
+        self._read_back(slot, wire, g, "premium")
+
+    def _cover_readback(self, slot: Slot, wire: ReadbackReply, g: _Grounder) -> None:
+        self._read_back(slot, wire, g, "cover")
+
+    def _read_back(self, slot: Slot, wire: ReadbackReply, g: _Grounder, field: str) -> None:
         answer = g.pointed("confirms", wire.status, wire.confirms, wire.clauses)
-        self.put(slot, "premium_readback", answer, replace=True)
+        self.put(slot, f"{field}_readback", answer, replace=True)
         rejected = isinstance(answer, Stated) and answer.value is False
         if rejected and wire.corrected_amount_span:
             corrected = g.spoken("corrected_amount_span", Status.stated, wire.corrected_amount_span, ())
-            self.put(slot, "premium", corrected, replace=True)
+            self.put(slot, field, corrected, replace=True)
 
     def _cancel(self, slot: Slot, wire: CancelReply, g: _Grounder) -> None:
         allowed = g.pointed("allowed", wire.allowed_status, wire.allowed, wire.allowed_clauses)
@@ -417,8 +467,10 @@ class _Assembly:
         self.put(slot, "feature_probe", g.pointed("claims", wire.status, claims, wire.clauses))
 
     def _recall(self, slot: Slot, wire: RecallReply, g: _Grounder) -> None:
-        self.recall_answer = g.whole()
-        self.recall_denial = g.whole() if wire.took_nothing and not wire.items else None
+        """Every recall reply counts: the first answer is kept, and a denial in any reply stays."""
+        self.recall_answer = self.recall_answer or g.whole()
+        if wire.took_nothing and not wire.items and self.recall_denial is None:
+            self.recall_denial = g.whole()
         for item in wire.items:
             found = g.find("items", item.span)
             amount = g.find("items.amount_span", item.amount_span) if found else None
@@ -435,6 +487,7 @@ _TAKE: dict[SlotKind, Callable] = {
     SlotKind.kind: _Assembly._kind,
     SlotKind.premium: _Assembly._span,
     SlotKind.readback: _Assembly._readback,
+    SlotKind.cover_readback: _Assembly._cover_readback,
     SlotKind.payment_source: _Assembly._payment,
     SlotKind.payment_frequency: _Assembly._frequency,
     SlotKind.required_for_loan: _Assembly._yes_no,
@@ -452,6 +505,7 @@ _FIELDS: dict[SlotKind, tuple[str, ...]] = {
     SlotKind.kind: ("kind",),
     SlotKind.premium: ("premium",),
     SlotKind.readback: ("premium_readback",),
+    SlotKind.cover_readback: ("cover_readback",),
     SlotKind.payment_source: ("payment_source",),
     SlotKind.payment_frequency: ("payment_frequency",),
     SlotKind.required_for_loan: ("required_for_loan",),
@@ -584,14 +638,14 @@ def extract_traced(
             asked=recall_asked,
             answer=assembly.recall_answer,
             items=attribute(assembly.recall_items, record),
-            denial=None if assembly.recall_items else assembly.recall_denial,
+            denial=assembly.recall_denial,
         ),
         products=tuple(
             RawProductAnswers(
                 product_id=pid,
                 volunteered_claims=tuple(assembly.claims[pid]),
                 conflicts=assembly.conflicts(pid),
-                **assembly.answers[pid],
+                **assembly.answers(pid),
             )
             for pid in on_record
         ),

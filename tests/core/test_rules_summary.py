@@ -150,7 +150,7 @@ def test_a_confirmed_differing_premium_is_one_refer_line():
 def test_a_denial_in_recall_is_one_line():
     denial = ev("kuch nahin liya", 3)
     summary = summary_of({}, {"kind": said(KindClaim.insurance)}, recall=OpenRecall(asked=True, denial=denial))
-    assert not lines(summary, REFER)  # named the right kind afterwards: only not named unprompted
+    assert len(lines(summary, REFER)) == 1  # naming the right kind afterwards does not undo a denial
     summary = summary_of({}, {"kind": NotAsked()}, recall=OpenRecall(asked=True, denial=denial))
     line = one_line(summary)
     assert line.rule_ids == (RuleId.recall,) and line.quote == "kuch nahin liya"
@@ -171,24 +171,26 @@ def test_each_kind_of_sale_concern_is_one_case_level_line():
     assert "LN-TEST-0000" in coached.record_value
 
 
-def test_every_understanding_gap_of_a_product_is_one_line_that_lists_them():
+def test_each_understanding_gap_of_a_product_is_one_line_per_rule():
+    """Verifier iter2: one line per rule, never several rules under one quote."""
     changes = {
         "cover_inr": dont_know(),
-        "term_months": said(12),
+        "term_months": said(12, "ek saal", 16),
         "cancel_window_days": NotAsked(),
         "premium_inr": Stated(value=55_000, evidence=ev(), approximate=True, low=50_000),
     }
     summary = summary_of({}, changes, recall=recall_of())
     assert summary.tier is UNDERSTANDING
-    line = one_line(summary, UNDERSTANDING)
-    assert summary.lines == (line,)
-    assert set(line.rule_ids) == {RuleId.premium, RuleId.cover, RuleId.term, RuleId.cancel_window, RuleId.recall}
-    for words in ("premium", "cover", "term", "cancellation window", "unprompted"):
-        assert words in line.title
-    assert "cover ₹5,00,000" in line.record_value and "term 36 months" in line.record_value
+    by_rule = {line.rule_ids: line for line in lines(summary, UNDERSTANDING)}
+    assert set(by_rule) == {(r,) for r in (RuleId.premium, RuleId.cover, RuleId.term, RuleId.cancel_window, RuleId.recall)}
+    assert by_rule[(RuleId.cover,)].title.startswith("Customer did not know the cover")
+    term = by_rule[(RuleId.term,)]
+    assert term.title.startswith("Customer gave a different figure for the term")
+    assert term.quote == "ek saal" and term.record_value == "term 36 months"
+    assert "undecided" in by_rule[(RuleId.cancel_window,)].title
 
 
-def test_every_incomplete_finding_of_a_product_is_one_line_that_lists_the_undecided_questions():
+def test_each_incomplete_finding_of_a_product_is_one_line_per_rule():
     changes = {
         "kind": NotAsked(),
         "payment_source": NotAsked(),
@@ -198,12 +200,12 @@ def test_every_incomplete_finding_of_a_product_is_one_line_that_lists_the_undeci
     }
     summary = summary_of({}, changes)
     assert summary.tier is INCOMPLETE
-    line = one_line(summary, INCOMPLETE)
-    assert summary.lines == (line,)
-    assert set(line.rule_ids) == {RuleId.kind, RuleId.premium, RuleId.loan_funded, RuleId.evidence}
-    assert line.quote == "sattar hazaar"  # the unconfirmed amount is the customer's; the ungrounded quote may not be
-    for words in ("what the product is", "premium", "how it was paid for"):
-        assert words in line.title
+    by_rule = {line.rule_ids: line for line in lines(summary, INCOMPLETE)}
+    assert set(by_rule) == {(RuleId.kind,), (RuleId.premium,), (RuleId.loan_funded,), (RuleId.evidence,)}
+    premium = by_rule[(RuleId.premium,)]
+    assert premium.quote == "sattar hazaar"  # the unconfirmed amount is the customer's
+    assert "premium" in premium.title and "₹52,000" in premium.record_value
+    assert "how it was paid for" in by_rule[(RuleId.loan_funded,)].title
 
 
 def test_case_level_gaps_are_one_incomplete_line():
@@ -212,7 +214,7 @@ def test_case_level_gaps_are_one_incomplete_line():
     rec = record()
     line = one_line(summarise(rec, evaluate(rec, bel)), INCOMPLETE)
     assert line.product_id is None
-    assert line.rule_ids == (RuleId.recall_unmatched, RuleId.evidence)
+    assert line.rule_ids == (RuleId.recall_unmatched, RuleId.evidence)  # case level: one line
 
 
 def test_lines_are_ordered_refer_then_incomplete_then_understanding_gap():
@@ -229,7 +231,7 @@ def test_lines_are_ordered_refer_then_incomplete_then_understanding_gap():
         (INCOMPLETE, P1),
         (UNDERSTANDING, P1),
         (UNDERSTANDING, P2),
-    ]
+    ]  # one rule each here
     assert summary.tier is REFER
 
 
@@ -251,7 +253,8 @@ def test_the_demo_case_is_two_refer_lines_and_one_line_per_other_tier():
         (RuleId.kind, RuleId.belief_mismatch),
         (RuleId.consent, RuleId.loan_funded),
     ]
-    assert [line.tier for line in summary.lines[2:]] == [INCOMPLETE, UNDERSTANDING]  # what the call never asked
+    rest = [line.tier for line in summary.lines[2:]]  # what the call never asked: one line per rule
+    assert set(rest) == {INCOMPLETE, UNDERSTANDING} and rest == sorted(rest, key=list(Tier).index)
 
 
 BANNED = re.compile(r"mis-?sell|refund", re.IGNORECASE)
@@ -304,5 +307,7 @@ def test_every_flag_and_gap_is_in_exactly_one_line_of_its_tier(case):
             want = {o.rule_id for o in found if o.tier is tier}
             got = {rule for line in own if line.tier is tier for rule in line.rule_ids}
             assert got == want, (product_id, tier)
-        assert len([line for line in own if line.tier is INCOMPLETE]) <= 1
-        assert len([line for line in own if line.tier is UNDERSTANDING]) <= 1
+        for tier in (INCOMPLETE, UNDERSTANDING):
+            rules = [line.rule_ids for line in own if line.tier is tier]
+            if product_id is not None:
+                assert all(len(r) == 1 for r in rules) and len(set(rules)) == len(rules)  # one line per rule

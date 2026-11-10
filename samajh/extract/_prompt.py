@@ -409,6 +409,10 @@ def _user(language: Language, question: str, reply: str, numbered: bool) -> str:
     return text
 
 
+# The read-back of the cover is the same question about another amount: one prompt for both.
+_QUESTION[SlotKind.cover_readback] = _QUESTION[SlotKind.readback]
+
+
 def messages(kind: SlotKind, language: Language, question: str, reply: str) -> list[Message]:
     """The request that records the answer to one checked question. Inputs: words spoken on the call."""
     system = f"{_GENERAL}\n{_QUESTION[kind]}\nReply with one JSON object and nothing else."

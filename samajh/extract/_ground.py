@@ -130,6 +130,16 @@ def rupees(text: str) -> tuple[int, int] | None:
     return None
 
 
+def amount_reading(text: str) -> tuple[int, int, bool] | None:
+    """(low, high, approximate): approximate for a hedged amount or a range."""
+    result = parse_approx_amount(text)
+    if isinstance(result, Parsed):
+        return result.rupees, result.rupees, False
+    if isinstance(result, Approximate):
+        return result.low, result.high, True
+    return None
+
+
 def months(text: str) -> int | None:
     return parse_duration_months(text)
 

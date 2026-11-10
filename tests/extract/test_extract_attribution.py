@@ -81,10 +81,11 @@ def test_what_a_reply_answers_follows_the_tags_of_the_bot_turn_before_it():
         *pair(8, "read_back", asks="premium", product_id="P1"),
         *pair(10, "teach_back", asks="cover"),  # no product: the engine does not count it as asked
         *pair(12, "consent_check", asks="consent"),
-        *pair(14, "read_back", asks="cover", product_id="P1"),  # only the premium has a read-back
-        {"id": 16, "speaker": "customer", "step": "close", "text": "one more thing"},
+        *pair(14, "read_back", asks="cover", product_id="P1"),  # the cover read-back
+        *pair(16, "read_back", asks="term", product_id="P1"),  # no read-back for the term
+        {"id": 18, "speaker": "customer", "step": "close", "text": "one more thing"},
     ]
     assert _slot_kinds(turns) == [
         SlotKind.other, SlotKind.other, SlotKind.recall, SlotKind.kind, SlotKind.readback, SlotKind.other,
-        SlotKind.consent, SlotKind.other, SlotKind.other,
+        SlotKind.consent, SlotKind.cover_readback, SlotKind.other, SlotKind.other,
     ]  # fmt: skip
