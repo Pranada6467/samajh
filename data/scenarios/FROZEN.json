@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "frozen_on": "2026-11-10",
+  "count": 144,
+  "files": {
+    "gold.jsonl": {
+      "sha256": "d002423a32eeb7c020526e01cf0b21083566ad2e593a67a30e1c9d7f0154f152",
+      "count": 144
+    },
+    "calls.jsonl": {
+      "sha256": "b10111dfc64e5dd74061f553cdbf666db916491f9ce3ef647ae3d0778fad29f5",
+      "count": 144
+    }
+  },
+  "history": [
+    {
+      "frozen_on": "2026-11-10",
+      "reason": "First freeze: 36 base cases x 4 languages, gold written by hand before any engine run",
+      "sha256": {
+        "gold.jsonl": "08b147008d07c0ec917bee3ee16f16e77fa9abd24a5defbee014b6b712264405",
+        "calls.jsonl": "c41b56f65555e04e93f3f7dac3875db5aaded3ddc18b4cc6512a9c3533c4a198"
+      },
+      "count": 144
+    },
+    {
+      "frozen_on": "2026-11-10",
+      "reason": "Version 2: gold corrected for U10 and G01 and scripts fixed after the independent audit; see CHANGELOG.md",
+      "sha256": {
+        "gold.jsonl": "d002423a32eeb7c020526e01cf0b21083566ad2e593a67a30e1c9d7f0154f152",
+        "calls.jsonl": "b10111dfc64e5dd74061f553cdbf666db916491f9ce3ef647ae3d0778fad29f5"
+      },
+      "count": 144
+    }
+  ]
+}

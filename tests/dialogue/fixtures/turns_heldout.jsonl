@@ -1,0 +1,408 @@
+{"id": "df8ec0a336", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "जी हाँ, मैं ही हूँ।"}
+{"id": "19079a4899", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "हाँ, बोलिए।"}
+{"id": "a0f39bbf55", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "हाँ, रमेश ही बोल रहा हूँ।"}
+{"id": "6bf528551b", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "जी हाँ, सही है।"}
+{"id": "7a93d50f97", "fold": 1, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "हाँ, आप मुझसे ही बात कर रहे हैं।"}
+{"id": "d2c622f1bb", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "हाँ, मैं ही रमेश हूँ।"}
+{"id": "78cb22e3b0", "fold": 1, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "जी नहीं, वो यहाँ नहीं हैं।"}
+{"id": "630b8ccac5", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "माफ़ कीजिये, ये नंबर गलत है।"}
+{"id": "1cdbc985df", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "मैं रमेश नहीं हूँ।"}
+{"id": "7e400584e4", "fold": 1, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "नहीं, वो तो घर पर नहीं है।"}
+{"id": "683d61caa2", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "ये किसका नंबर है? गलत लग गया।"}
+{"id": "d0e46995d3", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "आपसे गलत नंबर लग गया है।"}
+{"id": "4682c0d9cc", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "जी नहीं, कौन बोल रहा है?"}
+{"id": "6d6faca889", "fold": 1, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "मैं रमेश नहीं हूँ, आप कौन?"}
+{"id": "7a96f74bc5", "fold": 1, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "यह किसका नंबर है?"}
+{"id": "3481ee0394", "fold": 1, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "माफ़ कीजिये, आप कौन?"}
+{"id": "3968510fac", "fold": 0, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "क्या काम है?"}
+{"id": "9bb2ab6fbe", "fold": 1, "language": "hi", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "मैं रमेश नहीं हूँ, क्या मतलब?"}
+{"id": "30b1bf64ee", "fold": 0, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "हाँ, चलिए।"}
+{"id": "cb225ee81a", "fold": 0, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "हाँ, आगे बढ़िए।"}
+{"id": "44b5fd6e19", "fold": 1, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ठीक है, जारी रखिए।"}
+{"id": "c244bb652f", "fold": 0, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "हाँ, बिल्कुल।"}
+{"id": "ecc38d86f3", "fold": 1, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "जी हाँ, कृपया आगे बढ़ें।"}
+{"id": "8f41673d36", "fold": 1, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "हाँ, मुझे कोई दिक्कत नहीं है।"}
+{"id": "c7b6e3d769", "fold": 1, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "नहीं, अभी नहीं।"}
+{"id": "e821e2ef7a", "fold": 1, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "मैं अभी व्यस्त हूँ। बाद में फ़ोन करें।"}
+{"id": "82c780b39c", "fold": 0, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "मुझे अभी बात नहीं करनी।"}
+{"id": "ca977aa033", "fold": 1, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "मैं बाद में बात करूँगा।"}
+{"id": "bd8f0d3b2e", "fold": 1, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "अभी संभव नहीं है।"}
+{"id": "d806e18894", "fold": 1, "language": "hi", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "नहीं, धन्यवाद। अभी रहने दीजिए।"}
+{"id": "df7f474ee0", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "मुझे लगता है यह एक जमा राशि है।"}
+{"id": "cefef81059", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "मेरे हिसाब से ये बीमा है।"}
+{"id": "5b1b7243c7", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "यह कुछ शुल्क जैसा लगता है।"}
+{"id": "e42f3d2f4b", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "मेरे ख्याल से यह एक कागज़ है जिस पर मैंने हस्ताक्षर किए थे।"}
+{"id": "2fe64faf59", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "मैं समझती हूँ कि यह एक जमा है।"}
+{"id": "3d33d91ce9", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "यह एक प्रकार का बीमा होना चाहिए।"}
+{"id": "f6989b214e", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "मुझे याद नहीं आ रहा है।"}
+{"id": "3ed837d45c", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "मैं अभी नहीं बता सकता।"}
+{"id": "9038bffa7b", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "माफ़ कीजिये, मुझे कुछ याद नहीं है।"}
+{"id": "18e03bb17b", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "मुझे बिलकुल नहीं पता।"}
+{"id": "a847511465", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "यह तो मेरे ज़हन में नहीं है।"}
+{"id": "503009971d", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "मैं ठीक से याद नहीं कर पा रहा हूँ।"}
+{"id": "b923544467", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "माफ़ कीजिए, क्या आप दोहरा सकते हैं?"}
+{"id": "8db850e239", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "मैं समझा नहीं, क्या आप फिर से पूछेंगे?"}
+{"id": "80f15239b6", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "यह सवाल मुझे सुनाई नहीं दिया, कृपया फिर से कहें।"}
+{"id": "780391e2a2", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "क्षमा करें, मैंने वो नहीं सुना। क्या आप दोहराएँगे?"}
+{"id": "ac486514fc", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "आप क्या कह रहे हैं, मुझे समझ नहीं आया।"}
+{"id": "b439c1e838", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "माफ़ करना, एक बार फिर से बोलिए।"}
+{"id": "8cfa9d4125", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "मैं अभी व्यस्त हूँ, बाद में बात करते हैं।"}
+{"id": "7063ebfda3", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "मुझे अभी बात नहीं करनी, आप बाद में कॉल करें।"}
+{"id": "71e940c0cd", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "मुझे मत कॉल करो, मैं बात नहीं करना चाहता।"}
+{"id": "e87cf3ca48", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "अभी नहीं, मैं बहुत व्यस्त हूँ।"}
+{"id": "22e6ba7608", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "मैं अभी उपलब्ध नहीं हूँ, कृपया बाद में कॉल करें।"}
+{"id": "95ff207d2a", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "मुझे अभी बात करने का मन नहीं है, कॉल काट दीजिये।"}
+{"id": "e6bc716dd2", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "मुझे किसी इंसान से बात करनी है।"}
+{"id": "f7b5c59443", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "क्या मैं किसी स्टाफ से बात कर सकता हूँ?"}
+{"id": "e64eadbc7e", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "कृपया मुझे किसी अधिकारी से मिलवाएँ।"}
+{"id": "46b5ab9627", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "मैं किसी आदमी से बात करना चाहता हूँ।"}
+{"id": "4c2c94030e", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "मुझे एक असली आदमी से बात करनी है, इस मशीन से नहीं।"}
+{"id": "41f6768ef7", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "क्या आप मुझे किसी और से जोड़ सकते हैं?"}
+{"id": "1bb8f52d43", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "आज मौसम बहुत अच्छा है।"}
+{"id": "c37b91d5f8", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "मुझे आज खरीदारी करने जाना है।"}
+{"id": "fc62046591", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "क्या तुम मेरे लिए चाय बना सकते हो?"}
+{"id": "f56d6fb4b0", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "मुझे कल बैंक जाना है।"}
+{"id": "10556ddfc9", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "खाना कब बनेगा?"}
+{"id": "d82cd8b728", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "यह बहुत सुंदर है, लेकिन मुझे देर हो रही है।"}
+{"id": "d4ead2c5f6", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "मुझे ये तो चाहिए ही नहीं था।"}
+{"id": "af53f16bab", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "मैंने मना किया था, फिर भी डाल दिया।"}
+{"id": "cf2324b928", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "समझने का मौका ही नहीं मिला।"}
+{"id": "ccb9c296aa", "fold": 1, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "बाद में पता चला मुझे इसका।"}
+{"id": "bbc7532e08", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "मैंने मैनेजर साहब से बात की थी।"}
+{"id": "5b563e352c", "fold": 0, "language": "hi", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "ये तो जबरदस्ती बेचा गया है मुझे।"}
+{"id": "89dedb638d", "fold": 1, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "मैंने उसके लिए 50000 रुपये दिए।"}
+{"id": "ead50367b5", "fold": 1, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "यह 25000 रुपये का था।"}
+{"id": "c9898f9701", "fold": 0, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "मैंने 15000 रुपये का भुगतान किया।"}
+{"id": "12070388b0", "fold": 0, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "कुल 75000 रुपये लगे।"}
+{"id": "9339ea1e43", "fold": 1, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "मैंने 40000 रुपये दिए थे।"}
+{"id": "ef32b5a98d", "fold": 1, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "यह 90000 रुपये का था।"}
+{"id": "88d8897594", "fold": 0, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "मुझे याद नहीं है।"}
+{"id": "f57db27e65", "fold": 1, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "मैं भूल गया हूँ, माफ़ करना।"}
+{"id": "d74e9a9b66", "fold": 1, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "मुझे ठीक से याद नहीं आ रहा है।"}
+{"id": "244707b392", "fold": 0, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "कितने पैसे दिए थे, ये मुझे याद नहीं है।"}
+{"id": "63b00a74a1", "fold": 0, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "पैसे कितने दिए थे, ये तो अब याद नहीं है।"}
+{"id": "89b22a019f", "fold": 0, "language": "hi", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "मुझे याद ही नहीं आ रहा है कि कितने पैसे दिए थे।"}
+{"id": "dd5a960906", "fold": 1, "language": "hi", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "हाँ, बताया गया था, तीन दिन में।"}
+{"id": "89a1d0d5f8", "fold": 1, "language": "hi", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "नहीं, मुझे कुछ नहीं बताया गया।"}
+{"id": "4a849d1ec4", "fold": 0, "language": "hi", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "हाँ, मुझे पता है, एक हफ़्ते का टाइम है।"}
+{"id": "6d91335d73", "fold": 1, "language": "hi", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "नहीं, किसी ने कुछ नहीं कहा।"}
+{"id": "798e81021b", "fold": 0, "language": "hi", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "हाँ, एक महीने का वक्त दिया गया था।"}
+{"id": "847b8224a4", "fold": 0, "language": "hi", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "नहीं, मुझे इसकी जानकारी नहीं है।"}
+{"id": "4e2a36abb6", "fold": 1, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "हाँ, बिल्कुल सही।"}
+{"id": "94a73ae2f5", "fold": 1, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "जी हाँ, वही राशि।"}
+{"id": "4d61d5b4d1", "fold": 0, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "सही है।"}
+{"id": "97e5375127", "fold": 0, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "हाँ, पचास हज़ार दो सौ।"}
+{"id": "1d3461da14", "fold": 1, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "हाँ, वही है।"}
+{"id": "eec90fdb14", "fold": 0, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "हाँ, आपने बिल्कुल ठीक कहा।"}
+{"id": "457deb2618", "fold": 0, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "नहीं, वो गलत है।"}
+{"id": "01cdc9be46", "fold": 1, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "जी नहीं, वो पचास हज़ार नहीं था।"}
+{"id": "e2ea37c1ce", "fold": 0, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "नहीं, वो सही नहीं है।"}
+{"id": "0c17558f0e", "fold": 0, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "नहीं, वो अलग था।"}
+{"id": "efcb64c48d", "fold": 1, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "नहीं, आपने गलत सुना।"}
+{"id": "dc3c2a6693", "fold": 1, "language": "hi", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "नहीं, वो रकम गलत है।"}
+{"id": "60d44b8d30", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "Haan ji, Ramesh bol raha hoon."}
+{"id": "e518c619b3", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "Yes, this is Ramesh."}
+{"id": "03c7b8a917", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "Haan, Ramesh hi."}
+{"id": "d12710fd9a", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "Haan ji, main Ramesh hoon."}
+{"id": "b5699677b1", "fold": 0, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "Bol raha hoon, kaun Ramesh?"}
+{"id": "a77c22679e", "fold": 0, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "Yes, Ramesh speaking."}
+{"id": "8bf0fe29cb", "fold": 0, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "Nahi, main Ramesh nahi hoon."}
+{"id": "104936c76e", "fold": 0, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "Sorry, wrong number hai."}
+{"id": "bc6a45548a", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "Ramesh ji yahan nahi rehte hain."}
+{"id": "05964a9b93", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "Aap galat number dial kar rahe hain."}
+{"id": "514e2d332e", "fold": 0, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "Main unki behen hoon, Ramesh ji abhi nahi hain."}
+{"id": "e2a238cf40", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "No, this is not Ramesh. Who is this?"}
+{"id": "7913ce772e", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "Hello? Kaun bol rahe hain?"}
+{"id": "835715c6af", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "Ji, kaun? Kya kaam hai?"}
+{"id": "f031ae11b0", "fold": 0, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "Haan? Kon hain aap?"}
+{"id": "e19a8e8313", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "Hello? Who is this?"}
+{"id": "081f411c71", "fold": 0, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "Kaun? Kya baat hai?"}
+{"id": "0e09a7f2ec", "fold": 1, "language": "hi-en", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "Hello? Kisko chahiye?"}
+{"id": "e993f85ba1", "fold": 0, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "Haanji, please continue."}
+{"id": "e5a1d0913d", "fold": 1, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "Yes, go ahead."}
+{"id": "d67922834c", "fold": 1, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "Okay, bolo."}
+{"id": "c0f20d5f76", "fold": 1, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "Haan, aage badhiye."}
+{"id": "9e5dc3086e", "fold": 0, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "Sure, please proceed."}
+{"id": "23a7bd9720", "fold": 1, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "Ji, kijiye continue."}
+{"id": "b605d050fe", "fold": 1, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "Nah, I'm busy right now, call me later."}
+{"id": "3a3f6e4b4a", "fold": 0, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "Abhi nahi, baad mein karna."}
+{"id": "6ad8497ae5", "fold": 1, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "No thanks, I don't want to talk."}
+{"id": "f07be31645", "fold": 0, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "Aaj nahi ho payega, baad mein baat karte hain."}
+{"id": "b18903c950", "fold": 0, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "Sorry, I'm not available to talk currently."}
+{"id": "9b938fb8f3", "fold": 1, "language": "hi-en", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "Later, please. I am occupied."}
+{"id": "12cddcbfff", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "Mujhe lagta hai yeh ek deposit hai, sir."}
+{"id": "f701f2712d", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "I think it's an insurance policy, right?"}
+{"id": "9dd3e3e28d", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "Ye ek fee hogi shayad."}
+{"id": "1111555792", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "Lagta hai yeh koi paper hai jo maine sign kiya tha."}
+{"id": "08e10ca0a4", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "Aapke hisaab se yeh kya hai?"}
+{"id": "663f506da1", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "I believe it's some kind of fee."}
+{"id": "82d177001f", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "Mujhe nahi pata."}
+{"id": "6209dd5e5f", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "Yaar, yaad nahi aa raha hai."}
+{"id": "94d3882232", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "I don't remember."}
+{"id": "c62014543e", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "Kya tha woh? Pata nahi."}
+{"id": "cb866503db", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "Honestly, I have no clue."}
+{"id": "295accd4e0", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "Nahin, yaad nahi hai mujhe."}
+{"id": "b18b8dc373", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "Kya bola aapne? Please repeat."}
+{"id": "45ed6d0b1a", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "Sorry, I didn't catch that. Can you say it again?"}
+{"id": "420abf7143", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "Maaf kijiye, ek baar phir bataenge?"}
+{"id": "1e3d5b2a3f", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "What was that? Please repeat."}
+{"id": "2154534b51", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "Mujhe samajh nahi aaya. Dobara bolenge please?"}
+{"id": "454c46de0b", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "Could you repeat the question?"}
+{"id": "6ca2d10e8e", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "Mujhe abhi baat nahi karni hai, baad mein call karna."}
+{"id": "b221884c6e", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "Sorry, I'm busy right now. Please call later."}
+{"id": "0f978826a3", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "I don't want to talk. Stop calling me."}
+{"id": "9b00ce51c4", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "Abhi time nahi hai, baad mein baat karenge."}
+{"id": "c6832c1937", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "Call cut karo, mujhe nahi baat karni."}
+{"id": "3bbbdd846d", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "Please disconnect the call, I'm not interested."}
+{"id": "d2d64b8cd9", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "Mujhe ek human se baat karni hai."}
+{"id": "bfa8e02edd", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "Please connect me to a staff member."}
+{"id": "ffa8c0adaf", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "Can I please talk to an officer?"}
+{"id": "eb6c757615", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "Kya main kisi insaan se baat kar sakta hoon?"}
+{"id": "3e5e67a07b", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "I need to speak with someone from your team."}
+{"id": "09766b5536", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "Mujhe representative se baat karni hai, please."}
+{"id": "c47c5dafbc", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "Kaise ho? Weather to bilkul theek hai aaj."}
+{"id": "4d5bfb9b47", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "Hey, kal market jana hai, sochna hai."}
+{"id": "e8a68f722a", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "Arey, suno, woh TV ka remote kidhar hai?"}
+{"id": "b1f2f55442", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "Yeah, I'm good. Just need to pick up groceries later."}
+{"id": "1c51b5228f", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "Kya chal raha hai? Mujhe lagta hai baarish hogi."}
+{"id": "df52af41f4", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "Um, I'm not sure. Did you see my keys anywhere?"}
+{"id": "bc5c6d1ca3", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "Mujhe yaad nahi hai sir, maine toh mana kiya tha."}
+{"id": "772056a958", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "Arre, yeh toh maine liya hi nahi tha, pata nahi kaise add ho gaya."}
+{"id": "05c4ddb7ee", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "Maine sign toh kar diya tha par time nahi mila padhne ka."}
+{"id": "d500316490", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "Iske baare mein toh mujhe baad mein pata chala."}
+{"id": "24892395cc", "fold": 0, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "Maine branch manager se baat ki thi is baare mein."}
+{"id": "7b688f6023", "fold": 1, "language": "hi-en", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "Jab maine bola nahi, toh yeh add kyun kiya?"}
+{"id": "41ce6ad9bf", "fold": 1, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "Maine 50,000 rupees pay kiya."}
+{"id": "47e83cc457", "fold": 1, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "Around 25,000 I think."}
+{"id": "f91e2f6799", "fold": 0, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "Umm, 15,500 kiya tha."}
+{"id": "b6a9306e73", "fold": 0, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "I paid 75,000 rupees for that."}
+{"id": "41636deafd", "fold": 0, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "Lagbhag 8,000 rupees."}
+{"id": "f2eb1314e5", "fold": 1, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "Mere 42,000 rupees gaye the."}
+{"id": "406b460705", "fold": 0, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "Mujhe yaad nahi hai kitna amount pay kiya tha."}
+{"id": "2c1c91b25a", "fold": 1, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "I don't remember the exact amount."}
+{"id": "4e56acc6e9", "fold": 0, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "Amount toh yaad nahi hai sir."}
+{"id": "a63164e0f4", "fold": 1, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "Honestly, I can't recall the amount."}
+{"id": "23c650f8a6", "fold": 1, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "Kitna pay kiya, woh mere dhyan mein nahi hai."}
+{"id": "29ddae486f", "fold": 1, "language": "hi-en", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "No idea about the amount paid."}
+{"id": "577481d5c6", "fold": 1, "language": "hi-en", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "Haan, bataya tha, 15 din ka time tha."}
+{"id": "5a84242ea2", "fold": 1, "language": "hi-en", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "No, I wasn't told anything about cancellation."}
+{"id": "61af18627f", "fold": 1, "language": "hi-en", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "Yaar, kuch nahi bataya cancellation ke baare mein."}
+{"id": "172704070b", "fold": 0, "language": "hi-en", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "Yes, they told me. It was within a week."}
+{"id": "6341177b3a", "fold": 1, "language": "hi-en", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "Nahi, mujhe nahi pata tha ki cancel ho sakta hai."}
+{"id": "2697ebbc26", "fold": 0, "language": "hi-en", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "Haan, it was mentioned. Till end of the month."}
+{"id": "698353b726", "fold": 0, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "Haanji, fifty two thousand, bilkul sahi hai."}
+{"id": "793a68a1d3", "fold": 0, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "Yes, that's correct. 52,000."}
+{"id": "5eb8faf291", "fold": 0, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "Haan, wohi amount hai, 52,000."}
+{"id": "40e1d1be2d", "fold": 0, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "Right, fifty two thousand, everything is correct."}
+{"id": "95f457a04f", "fold": 1, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "Haan, sahi hai, 52,000."}
+{"id": "54b5c11662", "fold": 1, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "Yes, you got it right, fifty two thousand."}
+{"id": "f4080f794a", "fold": 1, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "Nahi, woh galat hai."}
+{"id": "3156f8647b", "fold": 0, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "Fifty two thousand nahi tha."}
+{"id": "50d8b6d529", "fold": 1, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "No, that's not right."}
+{"id": "87341bd1b8", "fold": 0, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "Aap galat sun rahe hain."}
+{"id": "ba10462bbd", "fold": 1, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "Incorrect, woh amount sahi nahi hai."}
+{"id": "6b41b9f006", "fold": 1, "language": "hi-en", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "That's not the figure I gave."}
+{"id": "8a6c51dc94", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ஆமாங்க, நான்தான்."}
+{"id": "2148b7ef7c", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "சொல்லுங்க, நான்தான்."}
+{"id": "8f20bddfdb", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ஆமா, நான்தான் பேசுறேன். என்ன விஷயம்?"}
+{"id": "827820944c", "fold": 1, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ஆமாங்க. யார் இது?"}
+{"id": "2a2f6d15a5", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "பேசுறது நான்தான். என்ன வேணும்?"}
+{"id": "f01123c513", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ஆம், நான்தான். சொல்லுங்க."}
+{"id": "9b08070d63", "fold": 1, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "இல்லை, தப்பா கூப்பிட்டீங்க."}
+{"id": "f011f16afc", "fold": 1, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "இங்க அப்படி யாரும் இல்லையே."}
+{"id": "9eaa8a45a1", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "நான் அவங்க சொந்தம், இல்ல."}
+{"id": "9c7f36f229", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "மன்னிக்கணும், நீங்க தப்பான நம்பருக்கு கால் பண்ணிட்டீங்க."}
+{"id": "fcbeeb957d", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "அவர் இப்போ வீட்டில் இல்ல."}
+{"id": "eaff530af0", "fold": 1, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "யாரு? யாருன்னு கேட்டீங்க?"}
+{"id": "678fffd0ed", "fold": 1, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "யாரு பேசுறீங்க?"}
+{"id": "c4cced4ff0", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "சொல்லுங்க, யாரு?"}
+{"id": "6fd192f0b3", "fold": 1, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "என்ன விஷயம்?"}
+{"id": "199e1c174f", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "யார் சார்?"}
+{"id": "3dfcfcfcf3", "fold": 0, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "யாரு பேசுறீங்க, என்ன வேணும்?"}
+{"id": "41f939b9fb", "fold": 1, "language": "ta", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "ஹலோ, யார் இது?"}
+{"id": "f1ff3c2391", "fold": 1, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ஆமா, சொல்லுங்க."}
+{"id": "07162dfea8", "fold": 1, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ம்ம், தொடரலாம்."}
+{"id": "24e91b3be2", "fold": 1, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "சரி, கேக்கறேன்."}
+{"id": "24f7ffaabe", "fold": 0, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ஓகே, பேசுங்க."}
+{"id": "bcf200f08e", "fold": 1, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ஆமா, கேக்குறேன், சொல்லுங்க."}
+{"id": "05b834ac08", "fold": 1, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "சரிங்க, சொல்லுங்க."}
+{"id": "4cae616a1c", "fold": 1, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "இல்ல, அப்புறம் கூப்பிடுங்க."}
+{"id": "ea2927f658", "fold": 0, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "இப்போ வேண்டாம், நான் கொஞ்சம் வேலையா இருக்கேன்."}
+{"id": "f6949b849d", "fold": 0, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "நான் ஃப்ரீ இல்ல, வேற டைம்ல பேசுவோமா?"}
+{"id": "3ff53a17c1", "fold": 1, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "இன்னைக்கு முடியாது, நாளைக்கு கூப்பிடுங்க."}
+{"id": "df9dc7b834", "fold": 0, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "இப்போ என்னால பேச முடியாது."}
+{"id": "413d13777b", "fold": 1, "language": "ta", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "வேண்டாம், எனக்கு இப்போ விருப்பம் இல்ல."}
+{"id": "01fa03be47", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "அது ஒரு டெபாசிட் மாதிரி இருக்கு."}
+{"id": "0cfb0a1ded", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "எனக்கு தெரிஞ்சு இது ஒரு இன்சூரன்ஸ்."}
+{"id": "52d21d62aa", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "அது ஒரு கட்டணம்னு நினைக்கிறேன்."}
+{"id": "e9b3d98201", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "நான் கையெழுத்து போட்ட ஒரு பேப்பர் அது."}
+{"id": "a14acae875", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "இது ஒரு இன்சூரன்ஸ் பாலிசி போல."}
+{"id": "78b4019a3c", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "அது ஒரு ஃபிக்ஸட் டெபாசிட்னு நினைக்கிறேன்."}
+{"id": "47a494f4ae", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "எனக்கு சரியா ஞாபகம் இல்ல."}
+{"id": "c097de4de6", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "தெரியலையே, மறந்துட்டேன்."}
+{"id": "587a466448", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "அது என்னன்னு எனக்கு தெரியாது."}
+{"id": "531c1327a0", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "எனக்கு ஒன்னும் புரியல."}
+{"id": "9693d310f4", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "அது என்னன்னு நான் பாக்கணும்."}
+{"id": "618160e70c", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "சரியான பதில் சொல்ல தெரியல."}
+{"id": "3a5badbf73", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "மன்னிக்கணும், என்ன சொன்னீங்க?"}
+{"id": "cff403b258", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "திரும்ப சொல்ல முடியுமா?"}
+{"id": "79a01ecf61", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "புரியல, ஒரு தடவை ரிப்பீட் பண்ணுங்க."}
+{"id": "806302340d", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "என்ன கேட்டீங்கன்னு சரியா கேக்கல, ப்ளீஸ் ரிப்பீட்."}
+{"id": "5962238ee6", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "என்னைக்கு என்ன கேட்டீங்க? மறுபடியும் சொல்லுங்க."}
+{"id": "1c3fcacb16", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "கொஞ்சம் சத்தமா, என்ன கேட்டீங்க?"}
+{"id": "acec1ca062", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "இப்போ பேச முடியாது, அப்புறம் கூப்பிடுங்க."}
+{"id": "442b5eeb9a", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "எனக்கு நேரம் இல்ல, அப்புறமா கூப்பிடுங்க."}
+{"id": "0006e58cc1", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "இந்த நம்பருக்கு இனிமே கூப்பிடாதீங்க."}
+{"id": "1a33b654bb", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "இப்ப எனக்கு பேச முடியாது."}
+{"id": "eb7d1a4089", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "வேற ஒரு நாள் கூப்பிடுங்க."}
+{"id": "aa41772c7c", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "நான் இப்ப பேச விரும்பல, கால் கட் பண்ணுங்க."}
+{"id": "2c56338e30", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "சார், ஒரு ஆள் கிட்ட பேசணும்."}
+{"id": "b9011a7366", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "மேடம், எனக்கு இது புரியல, யாராவது மனுஷன் கிட்ட பேச முடியுமா?"}
+{"id": "1a2302e33b", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "நான் ஒரு ஆபீசர்ட்ட பேசணும்."}
+{"id": "6f815072e5", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "தயவுசெஞ்சு ஒரு ஸ்டாஃபை கூப்பிடுங்க."}
+{"id": "33762e5a4e", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "இது என்னன்னு எனக்கு தெரியல, வேற யாராவது ஹெல்ப் பண்ண முடியுமா?"}
+{"id": "ad1ced0cf2", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "எனக்கு இது வேணாம், லைவ் ஏஜென்ட் கிட்ட பேசணும்."}
+{"id": "2d18f56fdd", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "வெளியே மழை பெய்து கொண்டே இருக்கிறது."}
+{"id": "de943c04d0", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "நான் கடைக்குச் செல்ல வேண்டும்."}
+{"id": "88d9bf380a", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "ஏய், அங்கு என்ன சத்தம்?"}
+{"id": "b2be2a31f6", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "மதிய உணவுக்காக என்ன இருக்கிறது?"}
+{"id": "dfb70cef16", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "குழந்தை என்ன செய்கிறது?"}
+{"id": "08e63a8fed", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "இந்த வார இறுதியில் வானிலை எப்படி இருக்கும்?"}
+{"id": "77d8964c6c", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "அது யாருமே என்கிட்ட கேக்காம போட்டதுங்க."}
+{"id": "58d1993bf8", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "வேண்டாம்னு சொன்னாலும் அத போட்டும் போதுங்க."}
+{"id": "ac623f9d39", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "சும்மா ஏதோ சைன் பண்ண சொன்னாங்க, படிக்குறதுக்கு நேரம் இல்லங்க."}
+{"id": "7e27a7534d", "fold": 1, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "அது பத்தி நான் அப்புறம் தான் தெரிஞ்சுகிட்டேங்க."}
+{"id": "38d973e7c6", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "நான் கிளை மேலாளர்ட்ட பேசிட்டேங்க அதை பத்தி."}
+{"id": "646b28d926", "fold": 0, "language": "ta", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "எனக்கு அது தேவையில்லை, அது எப்படி வந்துச்சுன்னே தெரியலங்க."}
+{"id": "6c416d33d8", "fold": 1, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "நான் ஒரு லட்சத்தி ஐம்பதாயிரம் ரூபாய் கொடுத்தேன்."}
+{"id": "bb67dec04d", "fold": 0, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "கிட்டத்தட்ட ஐம்பதாயிரம் ரூபாய் செலுத்தினேன்."}
+{"id": "c5b6e6ce07", "fold": 0, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "எனக்கு நினைவிருக்கிற வரை, ஐம்பத்தி ஐயாயிரம் ரூபாய் கொடுத்தேன்."}
+{"id": "3fe7b08576", "fold": 1, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "அது ஒரு இருபத்தி ஐயாயிரம் ரூபாய் இருக்கும்."}
+{"id": "871e74b3f8", "fold": 0, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "சுமார் பத்தாயிரம் ரூபாய் கொடுத்திருப்பேன்."}
+{"id": "5bbb85fb31", "fold": 1, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "நான் முப்பத்தையாயிரம் ரூபாய் கொடுத்தேன்."}
+{"id": "5e3d5ecc36", "fold": 1, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "எனக்கு ஞாபகம் இல்ல."}
+{"id": "103268e0ef", "fold": 0, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "சரியாக எவ்வளவுன்னு எனக்கு நினைவில்ல."}
+{"id": "bc99b133bc", "fold": 1, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "எவ்வளவுன்னு எனக்கு இப்ப தெரியல."}
+{"id": "72aadc5c42", "fold": 1, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "அளவு என்னன்னு எனக்கு ஞாபகம் வரல."}
+{"id": "e352b29685", "fold": 1, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "அது எனக்கு ஞாபகம் இல்லைங்க."}
+{"id": "651df60765", "fold": 0, "language": "ta", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "எவ்வளவுன்னு சரியா தெரியல பாஸ்."}
+{"id": "fecf9e4001", "fold": 0, "language": "ta", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ஆமா, சொன்னாங்க, அதுக்குள்ள முடிஞ்சுடும்னு."}
+{"id": "e1435f3241", "fold": 1, "language": "ta", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "இல்ல, யாரும் எதுவும் சொல்லல."}
+{"id": "0bea866d37", "fold": 0, "language": "ta", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "முடியாதுன்னு தான் சொன்னாங்க."}
+{"id": "743eea50b4", "fold": 0, "language": "ta", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ஆமா, குறிப்பிட்ட தேதி வரைக்கும் முடியும்னு சொன்னாங்க."}
+{"id": "c2ad10e909", "fold": 0, "language": "ta", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "அப்படி எதுவும் என்கிட்ட சொல்லல."}
+{"id": "93997dde4d", "fold": 1, "language": "ta", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ஆமா, நாளைக்குள்ள முடிக்கணும்னு சொன்னாங்க."}
+{"id": "717437bff3", "fold": 0, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ஆமா, சரிதான்."}
+{"id": "2a992a3cf5", "fold": 0, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ஆமா, கரெக்ட்."}
+{"id": "28fd2f4ee1", "fold": 0, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "அதுதான். சரி."}
+{"id": "4d20063255", "fold": 1, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ஆமா, நீங்க சொன்னது சரி."}
+{"id": "b39596f964", "fold": 1, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ஆமா, 52,000 தான்."}
+{"id": "e723b96853", "fold": 0, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ஆமா, அந்த அமௌன்ட் தான்."}
+{"id": "2d963b037b", "fold": 0, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "இல்லை, அது தப்பு."}
+{"id": "bb593ec176", "fold": 1, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "அது சரியில்லையே."}
+{"id": "60d891eacf", "fold": 1, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "அவ்வளவு இல்ல."}
+{"id": "c4c27f4515", "fold": 0, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "சொன்னது தப்பு."}
+{"id": "3b8da68109", "fold": 0, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "ஐம்பத்தி ரெண்டாயிரம் இல்ல."}
+{"id": "765b12ba01", "fold": 1, "language": "ta", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "நான் சொன்னது அது இல்ல."}
+{"id": "dac4c1c589", "fold": 1, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ಹೌದು ನಾನೇ."}
+{"id": "ed4f29fb65", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ಯಾರು ಕೇಳ್ತಿದೀರಾ?"}
+{"id": "42d100cb37", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ಹೇಳಿ."}
+{"id": "3e630256ff", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ಹೌದು, ನಾನೇ ರಮೇಶ್."}
+{"id": "eec0726b54", "fold": 1, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ನಾನೇ ಮಾತಾಡ್ತಿದ್ದೀನಿ."}
+{"id": "e48129864f", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "confirmed", "cell": 0, "text": "ಹೌದು, ಹೇಳಿ."}
+{"id": "3bc3400cf0", "fold": 1, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "ಇಲ್ಲ, ನೀವು ತಪ್ಪಾದ ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಿದ್ದೀರಿ."}
+{"id": "15b6835a71", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "ಕ್ಷಮಿಸಿ, ಈ ಹೆಸರಿನ ಯಾರೂ ಇಲ್ಲಿಲ್ಲ."}
+{"id": "e4dbe96f33", "fold": 1, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "ನಾನು ರಮೇಶ್ ಅವರ ಸಂಬಂಧಿ, ಮಾತನಾಡಬಹುದೇ?"}
+{"id": "071542a187", "fold": 1, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "ನಮಸ್ಕಾರ, ರಮೇಶ್ ಇಲ್ಲಿಲ್ಲ. ನೀವು ಯಾರು?"}
+{"id": "39c2759cc5", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "ಯಾರನ್ನು ಹುಡುಕುತ್ತಿದ್ದೀರಿ? ಇದು ತಪ್ಪಾದ ನಂಬರ್."}
+{"id": "9d321c4eef", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "wrong_party", "cell": 1, "text": "ನಾನು ರಮೇಶ್ ಅಲ್ಲ, ನೀವು ಯಾರನ್ನು ಸಂಪರ್ಕಿಸಲು ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದೀರಿ?"}
+{"id": "4566821b03", "fold": 1, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "ಯಾರು ನೀವು?"}
+{"id": "ce2db24c69", "fold": 1, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "ಹೇಳಿ, ಯಾರು ಮಾತಾಡ್ತಾ ಇದ್ದೀರಾ?"}
+{"id": "da313bf6b3", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "ಏನು ಬೇಕಿತ್ತು?"}
+{"id": "5cc011fc6a", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "ಯಾರದು?"}
+{"id": "4cfdbaabc4", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "ಏನಾಯ್ತು?"}
+{"id": "6278814d13", "fold": 0, "language": "kn", "expecting": "identity", "question_key": "right_party.ask", "gold": "reask", "cell": 2, "text": "ಏನು ವಿಷಯ?"}
+{"id": "6c6b094dd1", "fold": 1, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ಹೌದು, ಮುಂದುವರಿಸಿ"}
+{"id": "44b9594834", "fold": 1, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ಸರಿ, ಹೇಳಿ"}
+{"id": "37edd5920c", "fold": 0, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ಓಕೆ, ಮುಂದೆ ಹೋಗಿ"}
+{"id": "ad5d8207b0", "fold": 0, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ಹೌದು, ಹೇಳಿ ಕೇಳೋಣ"}
+{"id": "b8d5f8c972", "fold": 1, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ಆಗಲಿ, ಏನು ವಿಷಯ?"}
+{"id": "8fb654e123", "fold": 0, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "go", "cell": 3, "text": "ಹೌದು, ನಾನು ಸಿದ್ಧನಿದ್ದೇನೆ"}
+{"id": "519bbcfe7d", "fold": 0, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "ಇಲ್ಲ, ಈಗ ಬೇಡ. ಆಮೇಲೆ ಕರೀರಿ."}
+{"id": "501cddea97", "fold": 1, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "ನನಗೆ ಈಗ ಸಮಯ ಇಲ್ಲ, ನಾಳೆ ಕರೀರಿ."}
+{"id": "8ef9d32663", "fold": 1, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "ಕ್ಷಮಿಸಿ, ನಾನು ಈಗ ಮಾತಾಡೋ ಸ್ಥಿತಿಯಲ್ಲಿಲ್ಲ."}
+{"id": "d75e0053aa", "fold": 0, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "ನನಗೆ ಆಸಕ್ತಿ ಇಲ್ಲ, ದಯವಿಟ್ಟು ಫೋನ್ ಇಡಿ."}
+{"id": "a276525f84", "fold": 1, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "ಇನ್ನೊಂದು ಸಾರಿ ಕರೀಬಹುದೇ? ಈಗ ಆಗಲ್ಲ."}
+{"id": "86572c96c1", "fold": 0, "language": "kn", "expecting": "go_ahead", "question_key": "disclosure.go_ahead", "gold": "decline", "cell": 4, "text": "ಬೇಡ, ಈಗ ಬೇರೆ ಕೆಲಸ ಇದೆ."}
+{"id": "f6ded45777", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "ಅದು ಒಂದು ಠೇವಣಿ ಅನ್ಸುತ್ತೆ."}
+{"id": "a435415ccb", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "ಏನೋ ವಿಮೆ ತರಹ ಇದೆ."}
+{"id": "c25332840c", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "ಒಂದು ಫೀಸ್ ತರಹ ಕಾಣ್ತಾ ಇದೆ."}
+{"id": "ecbef0d824", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "ಸಹಿ ಮಾಡಿರುವ ಪೇಪರ್ ಅಂತ ಅನ್ಸುತ್ತೆ."}
+{"id": "37c9e28809", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "ನನಗೆ ಅದು ಒಂದು ಠೇವಣಿ ಅಂತ ಅನ್ಸುತ್ತೆ."}
+{"id": "e0253cfa3e", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 5, "text": "ಇದು ಯಾವುದೋ ಡೆಪಾಸಿಟ್ ತರಹ ಇದೆ."}
+{"id": "e86016029a", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "ಯಾವುದೂ ನನಗೆ ಗೊತ್ತಿಲ್ಲ."}
+{"id": "ba3409f3f4", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "ಅದು ನನಗೆ ನೆನಪಿಲ್ಲ."}
+{"id": "6193e1f70f", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "ನನಗೆ ಏನು ಅಂತ ಗೊತ್ತಿಲ್ಲ."}
+{"id": "b5b127b7d9", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "ಏನೂ ನೆನಪಾಗ್ತಿಲ್ಲ."}
+{"id": "404c1bf3b5", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "ಕ್ಷಮಿಸಿ, ನನಗೆ ಐಡಿಯಾ ಇಲ್ಲ."}
+{"id": "4e51a1f881", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 6, "text": "ನನಗೇನು ಹೇಳಬೇಕು ಅಂತ ಗೊತ್ತಾಗ್ತಿಲ್ಲ."}
+{"id": "c17c776b70", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "ಏನ್ ಹೇಳಿದ್ರಿ, ಗೊತ್ತಾಗ್ಲಿಲ್ಲ, ಇನ್ನೊಂದು ಸಾರಿ ಹೇಳಿ."}
+{"id": "97d7bb2b16", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "ಕ್ಷಮಿಸಿ, ಸರಿಯಾಗಿ ಕೇಳಿಸಲಿಲ್ಲ, ದಯವಿಟ್ಟು ಮತ್ತೆ ಹೇಳುತ್ತೀರಾ?"}
+{"id": "83ac73f3a3", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "ನನಗೇನು ಅರ್ಥ ಆಗ್ಲಿಲ್ಲ, ದಯವಿಟ್ಟು ರಿಪೀಟ್ ಮಾಡ್ತೀರಾ?"}
+{"id": "c3766b3256", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "ಒಂದ್ಸಲ ಮತ್ತೆ ಹೇಳಿ, ಕೇಳಿಸಲಿಲ್ಲ."}
+{"id": "989471778d", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "ಏನ್ ಕೇಳಿದ್ರಿ? ನನಗೆ ಅರ್ಥ ಆಗಲಿಲ್ಲ, ದಯವಿಟ್ಟು ಪುನರಾವರ್ತನೆ ಮಾಡಿ."}
+{"id": "70bd5ac6fd", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 7, "text": "ದಯವಿಟ್ಟು ಇನ್ನೊಂದು ಸಾರಿ ಹೇಳಿ, ನನಗೆ ಕೇಳಿಸಲಿಲ್ಲ."}
+{"id": "caddd3f499", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "ನಾನು ಈಗ ಮಾತನಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ, ದಯವಿಟ್ಟು ನಂತರ ಕರೆ ಮಾಡಿ."}
+{"id": "658306ef15", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "ನನಗೆ ಈಗ ಮಾತನಾಡಲು ಸಮಯವಿಲ್ಲ, ಬೇರೆ ಸಮಯಕ್ಕೆ ಕರೆ ಮಾಡಿ."}
+{"id": "472210782f", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "ಈಗ ಬೇಡ, ನಾನು ನಂತರ ಮಾತನಾಡುತ್ತೇನೆ."}
+{"id": "8b9a35de38", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "ಈ ಸಂಖ್ಯೆಗೆ ಮತ್ತೆ ಕರೆ ಮಾಡಬೇಡಿ."}
+{"id": "d39f322765", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "ನನಗೆ ಆಸಕ್ತಿಯಿಲ್ಲ, ಕರೆ ಮಾಡುವುದನ್ನು ನಿಲ್ಲಿಸಿ."}
+{"id": "a75f0df588", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "decline", "cell": 8, "text": "ಇಲ್ಲ, ನನಗೆ ಈಗ ಮಾತನಾಡಲು ಇಷ್ಟವಿಲ್ಲ."}
+{"id": "3a94184d76", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "ದಯವಿಟ್ಟು ಒಬ್ಬ ವ್ಯಕ್ತಿಯೊಂದಿಗೆ ಮಾತನಾಡಲು ನನಗೆ ಸಹಾಯ ಮಾಡಿ."}
+{"id": "0cbfb57757", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "ನಾನು ಮನುಷ್ಯನೊಂದಿಗೆ ಮಾತನಾಡಲು ಬಯಸುತ್ತೇನೆ."}
+{"id": "e452e790a7", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "ನಾನು ಒಬ್ಬ ಅಧಿಕಾರಿಯೊಂದಿಗೆ ಮಾತನಾಡಬೇಕು."}
+{"id": "c86e49ee68", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "ನಾನು ರೋಬೋಟ್‌ನೊಂದಿಗೆ ಮಾತನಾಡಲು ಬಯಸುವುದಿಲ್ಲ. ದಯವಿಟ್ಟು ಯಾರನ್ನಾದರೂ ಕರೆಯಿರಿ."}
+{"id": "f0f0b3eeb2", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "ದಯವಿಟ್ಟು ಒಬ್ಬ ಸಿಬ್ಬಂದಿಯನ್ನು ನನಗೆ ಸಂಪರ್ಕಿಸಿ."}
+{"id": "af3280a872", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "human", "cell": 9, "text": "ಯಾರಾದರೂ ಮನುಷ್ಯನನ್ನು ನನಗೆ ನೀಡಬಹುದೇ?"}
+{"id": "03fe2157eb", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "ಹೊರಗಡೆ ತುಂಬಾ ಬಿಸಿಲಿದೆ."}
+{"id": "2a47cfe375", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "ನಾನು ಈಗಲೇ ಹೊರಡಬೇಕು."}
+{"id": "511a736b90", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "ಅವನು ಏನು ಮಾಡುತ್ತಿದ್ದಾನೆಂದು ನೋಡೋಣ."}
+{"id": "475e179e4e", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "ಬೇಗ ಬಂದು ಊಟ ಮಾಡು."}
+{"id": "2a3e02caf1", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "ಇಲ್ಲ, ನಾನು ಆಮೇಲೆ ಬರುತ್ತೇನೆ."}
+{"id": "bb8d529765", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "reask", "cell": 10, "text": "ಅದನ್ನು ಅಲ್ಲಿಗೆ ಇಡು."}
+{"id": "a79603c464", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "ನಾನು ಬೇಡ ಅಂದಿದ್ದೆ, ಆದ್ರೂ ಹಾಕಿದ್ರು."}
+{"id": "62f82798c5", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "ಯಾವಾಗ ಅಪ್ರೂವ್ ಮಾಡಿದೆ ಅಂತಾನೇ ಗೊತ್ತಿಲ್ಲ."}
+{"id": "8aa191b3bf", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "ಇದರ ಬಗ್ಗೆ ಯಾರಿಗೂ ಹೇಳಿಲ್ಲವಲ್ಲ."}
+{"id": "913b0252f7", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "ನೋಡೋಕೆ ಟೈಮ್ ಕೊಟ್ಟಿಲ್ಲ, ಇವಾಗ ಹೇಳ್ತಿದ್ದಾರೆ."}
+{"id": "16c14b731e", "fold": 1, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "ಬ್ರಾಂಚ್ ಮ್ಯಾನೇಜರ್ ಹತ್ರ ಮಾತಾಡಿದ್ದೆ."}
+{"id": "60dc378571", "fold": 0, "language": "kn", "expecting": "open", "question_key": "kind.ask", "gold": "answered", "cell": 11, "text": "ನನಗೆ ಇದರ ಬಗ್ಗೆ ಈಗ ತಾನೇ ಗೊತ್ತಾಗ್ತಿದೆ."}
+{"id": "7ae94a424c", "fold": 0, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "ನಾನು ಐವತ್ತು ಸಾವಿರ ರೂಪಾಯಿ ಕೊಟ್ಟಿರುವೆ."}
+{"id": "ec20b1fef2", "fold": 0, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "ಇಪ್ಪತ್ತು ಸಾವಿರ ರೂಪಾಯಿ ಕೊಟ್ಟೆ."}
+{"id": "2f5488e984", "fold": 1, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "ಅದಕ್ಕೆ ನಾನು 15,500 ರೂಪಾಯಿ ಕೊಟ್ಟೆ."}
+{"id": "e1e2e1a5e9", "fold": 1, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "ಸುಮಾರು ಎಪ್ಪತ್ತು ಸಾವಿರ ರೂಪಾಯಿ ಕೊಟ್ಟಿರಬಹುದು."}
+{"id": "cb6f0c2b90", "fold": 1, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "ಇಲ್ಲ, ನಾನು 8,200 ರೂಪಾಯಿ ಕೊಟ್ಟೆ."}
+{"id": "f513344371", "fold": 0, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 12, "text": "ಒಂದು ಲಕ್ಷದ ಒಳಗೆ, 95,000 ರೂಪಾಯಿ ಕೊಟ್ಟಿದ್ದೆ."}
+{"id": "141d8ec6a6", "fold": 0, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "ನನಗೆ ಸರಿಯಾಗಿ ನೆನಪಿಲ್ಲ."}
+{"id": "e1da8a9b3c", "fold": 0, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "ಅದು ಎಷ್ಟು ಅಂತ ನನಗೆ ನೆನಪಿಲ್ಲ."}
+{"id": "3cadd56564", "fold": 0, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "ಹಣ ಎಷ್ಟು ಅಂತ ನೆನಪಿಲ್ಲ ಬಿಡಿ."}
+{"id": "3611559264", "fold": 1, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "ಕ್ಷಮಿಸಿ, ನನಗೆ ನೆನಪಿಲ್ಲ."}
+{"id": "4f499134b0", "fold": 1, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "ಎಷ್ಟು ಅಂತ ನೆನಪಿಲ್ಲ."}
+{"id": "539fd5fd67", "fold": 0, "language": "kn", "expecting": "amount", "question_key": "premium.ask", "gold": "answered", "cell": 13, "text": "ಆ ಮೊತ್ತ ನೆನಪಾಗ್ತಿಲ್ಲ."}
+{"id": "fa493e7bd6", "fold": 0, "language": "kn", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ಹೌದು, ಹೇಳಿದ್ರು, ನಾಳೆ ಸಂಜೆಯೊಳಗೆ ಅಂದಿದ್ರು."}
+{"id": "1f3781bc17", "fold": 0, "language": "kn", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ಇಲ್ಲ, ಯಾರು ಏನು ಹೇಳಿಲ್ಲ."}
+{"id": "14166783c0", "fold": 1, "language": "kn", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ಹೇಳಿದ್ರು, ನಾಡಿದ್ದು ಬೆಳಗಿನವರೆಗೂ ಅಂದಿದ್ರು."}
+{"id": "42fe950e55", "fold": 0, "language": "kn", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ಇಲ್ಲ, ಅಂತಹ ಯಾವುದೇ ಮಾಹಿತಿ ಕೊಟ್ಟಿಲ್ಲ."}
+{"id": "fbd80232ee", "fold": 0, "language": "kn", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ಹೌದು, ಆದ್ರೆ ಸಮಯ ಹೇಳಲಿಲ್ಲ."}
+{"id": "adedc92324", "fold": 1, "language": "kn", "expecting": "told", "question_key": "cancel_window.ask", "gold": "answered", "cell": 14, "text": "ಯಾವುದೇ ಡೆಡ್ಲೈನ್ ಹೇಳಿಲ್ಲ."}
+{"id": "0cb709c117", "fold": 0, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ಹೌದು, ಸರಿ."}
+{"id": "2d3a1cf0d4", "fold": 0, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ಅದೇ ಅಮೌಂಟ್."}
+{"id": "e29c74189a", "fold": 0, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ಯೆಸ್, ಕರೆಕ್ಟ್."}
+{"id": "c11865089a", "fold": 0, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ಸರಿ ಹೇಳಿದ್ರಿ."}
+{"id": "6f3bc3eec5", "fold": 0, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ಹೌದು, ಐವತ್ತೆರಡು ಸಾವಿರ."}
+{"id": "de39ab0128", "fold": 1, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "confirmed", "cell": 15, "text": "ಕರೆಕ್ಟ್, ಅದೇ ಅಮೌಂಟ್."}
+{"id": "33bb0c4d6b", "fold": 1, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "ಇಲ್ಲ, ಅದು ತಪ್ಪಾಗಿದೆ."}
+{"id": "6867a1ee3c", "fold": 0, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "ಸರಿ ಇಲ್ಲ, ನೀವು ಹೇಳಿದ್ದು ತಪ್ಪು."}
+{"id": "877868b5fc", "fold": 1, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "ಅಲ್ಲ, ಅಷ್ಟು ಅಲ್ಲ."}
+{"id": "e777114b05", "fold": 0, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "ಇಲ್ಲ, ಆ ಮೊತ್ತ ತಪ್ಪು."}
+{"id": "551376e436", "fold": 1, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "ಇಲ್ಲ, ಅದು ಸರಿಯಾಗಿಲ್ಲ."}
+{"id": "6d22d04b40", "fold": 1, "language": "kn", "expecting": "confirmation", "question_key": "read_back.confirm", "gold": "rejected", "cell": 16, "text": "ನೀವು ಹೇಳಿದ್ದರಲ್ಲ, ಅದು ತಪ್ಪು."}

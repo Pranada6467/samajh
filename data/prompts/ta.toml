@@ -1,0 +1,213 @@
+# Samajh bot lines, Tamil. NOT HUMAN-REVIEWED: written by the build agent, with no fluent
+# reader yet. Data, not code: samajh/dialogue/prompts.py loads and checks this file.
+# Slots: {first_name}, {lender}, {ordinal}; the read_back.* lines also take {amount_words} and
+# {amount_digits}, which carry the figure the customer said, never a figure from the record.
+# `design` names the DESIGN.md paragraph the line implements.
+
+language = "ta"
+review = "not human-reviewed"
+ordinals = ["முதல்", "இரண்டாவது", "மூன்றாவது", "நான்காவது", "ஐந்தாவது"]
+
+[lines."right_party.ask"]
+design = "§5 step 1: confirm the first name; nothing else is said yet"
+text = "வணக்கம். நான் {first_name} அவர்களிடம் பேசுகிறேனா?"
+
+[lines."right_party.reask"]
+design = "§5 step 1 and the one-re-ask rule (§5, A20): no lender, no loan"
+text = "இது ஒரு தானியங்கி அழைப்பு. {first_name} அவர்கள் லைனில் இருக்கிறார்களா?"
+
+[lines."end.neutral"]
+design = "§5 step 1: wrong person or no confirmation, the bot ends and says nothing about a loan"
+text = "பரவாயில்லை. தொந்தரவுக்கு மன்னிக்கவும். வணக்கம்."
+
+[lines."disclosure.who"]
+design = "§5 step 2: the bank's name, customer-care team, automated AI assistant (recommended: FREE-AI report para 4.4.54)"
+text = "நன்றி. இந்த அழைப்பு {lender} வாடிக்கையாளர் சேவைக் குழுவிடமிருந்து வருகிறது. நான் ஒரு தானியங்கி ஏ-ஐ உதவியாளர், மனிதர் அல்ல."
+
+[lines."disclosure.not_sales"]
+design = "§5 step 2: not a sales call, nothing will be offered (TCCCPR: promotional content would make it a promotional call)"
+text = "இது விற்பனை அழைப்பு அல்ல. இந்த அழைப்பில் உங்களுக்கு எதுவும் விற்கப்படாது."
+
+[lines."disclosure.recording"]
+design = "§5 step 2: feedback purpose, recorded to keep an accurate record (our choice), written notice (DPDP Act sections 5 and 6)"
+text = "இது உங்கள் கருத்தைக் கேட்பதற்கான அழைப்பு மட்டுமே. உங்கள் கருத்து சரியாகப் பதிவாக இருக்க, இந்த அழைப்பு பதிவு செய்யப்படுகிறது. உங்கள் தகவல் எப்படிப் பயன்படுத்தப்படும் என்பது {lender} எழுத்துப்பூர்வ அறிவிப்பில் உள்ளது."
+
+[lines."disclosure.rights"]
+design = "§5 step 2: the customer can decline, stop at any time, or ask for a human"
+text = "நீங்கள் விரும்பினால் மறுக்கலாம், எப்போது வேண்டுமானாலும் அழைப்பை நிறுத்தலாம், அல்லது ஒரு மனிதரிடம் பேச வேண்டும் என்று கேட்கலாம்."
+
+[lines."disclosure.verify"]
+design = "§5 step 2: hang up and call the customer-care number on the papers to check the call is genuine (the loan is not named before step 4)"
+text = "இந்த அழைப்பு உண்மையானதா என்று சரிபார்க்க, நீங்கள் போனை வைத்துவிட்டு, {lender} ஆவணங்களில் அச்சிடப்பட்ட வாடிக்கையாளர் சேவை எண்ணுக்கு அழைக்கலாம்."
+
+[lines."disclosure.never_ask"]
+design = "§5 step 2: the bot will never ask for an OTP, PIN, password or account number"
+text = "இந்த அழைப்பில் உங்களிடம் ஓ-டி-பி, பின், கடவுச்சொல் அல்லது கணக்கு எண் ஒருபோதும் கேட்கப்படாது."
+
+[lines."disclosure.go_ahead"]
+design = "§5 step 2: the customer can decline, so the bot asks before going on"
+text = "தொடரலாமா?"
+
+[lines."disclosure.reask"]
+design = "§5 step 2 and the one-re-ask rule (§5, A20)"
+text = "இது {lender} வாடிக்கையாளர் சேவைக் குழுவின் தானியங்கி கருத்துக் கேட்பு அழைப்பு, விற்பனை அழைப்பு அல்ல. தொடரலாமா? ஆம் அல்லது இல்லை என்று சொல்லுங்கள்."
+
+[lines."second_check.ask"]
+design = "§5 step 3: one low-sensitivity fact, the year of birth; never account digits"
+text = "நன்றி. உறுதிப்படுத்த, நீங்கள் பிறந்த வருடத்தை மட்டும் சொல்லுங்கள். முழு தேதி வேண்டாம்."
+
+[lines."second_check.reask"]
+design = "§5 step 3 and the one-re-ask rule; the same line whether the year was unclear or did not match"
+text = "மன்னிக்கவும், சரியாகக் கேட்கவில்லை. நீங்கள் பிறந்த வருடத்தை இன்னொரு முறை சொல்லுங்கள்."
+
+[lines."end.check_failed"]
+design = "§5 step 3: the check did not pass, so the loan is never mentioned"
+text = "மன்னிக்கவும், இப்போது உறுதிப்படுத்த முடியவில்லை, அதனால் இந்த அழைப்பு இத்துடன் முடிகிறது. தேவைப்பட்டால் {lender} வாடிக்கையாளர் சேவையைத் தொடர்பு கொள்ளலாம். நன்றி."
+
+[lines."context.loan"]
+design = "§5 step 4: only now does the bot mention the loan"
+text = "நன்றி. நீங்கள் சமீபத்தில் {lender} இடம் வாங்கிய கடன் பற்றியது இந்த அழைப்பு."
+
+[lines."open_recall.ask"]
+design = "§5 step 5: open recall before any product is named"
+text = "கடனுடன் சேர்த்து வேறு என்னென்ன வாங்கினீர்கள், எவ்வளவு தொகைக்கு? உங்கள் சொந்த வார்த்தைகளில் சொல்லுங்கள்."
+
+[lines."open_recall.reask"]
+design = "§5 step 5 and the one-re-ask rule: simpler words, still no product named"
+text = "அதாவது, கடன் வாங்கும்போது அதனுடன் வேறு ஏதாவது உங்களுக்குக் கொடுக்கப்பட்டதா? நினைவில் இருப்பதைச் சொல்லுங்கள்."
+
+[lines."teach_back.intro"]
+design = "§5 step 6: the product is referred to without naming what it is"
+text = "நன்றி. இப்போது கடனுடன் வாங்கிய பொருளைப் பற்றி சில சிறிய கேள்விகள்."
+
+[lines."teach_back.intro_nth"]
+design = "§5 step 6, for a record with several products: an ordinal, not a name"
+text = "இப்போது கடனுடன் பதிவாகியுள்ள {ordinal} பொருளைப் பற்றி சில சிறிய கேள்விகள்."
+
+[lines."kind.ask"]
+design = "§5 step 6 'Is this insurance, FD or something else?', asked open so no kind is suggested"
+text = "உங்கள் புரிதலில் அது என்ன?"
+
+[lines."kind.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "அதாவது, கடனுடன் உங்களுக்குக் கிடைத்த அந்தப் பொருளை நீங்கள் என்னவென்று சொல்வீர்கள்?"
+
+[lines."premium.ask"]
+design = "§5 step 6 'How much did it cost?'"
+text = "அதற்கு நீங்கள் எவ்வளவு பணம் கொடுத்தீர்கள்?"
+
+[lines."premium.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "அதாவது, அந்தப் பொருளின் தொகை எவ்வளவு? நினைவில் இருக்கும் அளவு சொல்லுங்கள்."
+
+[lines."payment_source.ask"]
+design = "§5 step 6 'How was it paid?', asked open so neither source is suggested"
+text = "அந்தப் பணம் எங்கிருந்து, எப்படிச் செலுத்தப்பட்டது?"
+
+[lines."payment_source.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "அதாவது, அந்தப் பொருளுக்கான பணத்தை நீங்கள் எப்படிக் கட்டினீர்கள்?"
+
+[lines."required_for_loan.ask"]
+design = "§5 step 6 'Was it required for the loan?': both possibilities named, then what the customer was told"
+text = "கடன் கிடைக்க அதை வாங்குவது கட்டாயமா, அல்லது உங்கள் விருப்பமா? உங்களிடம் என்ன சொல்லப்பட்டது?"
+
+[lines."required_for_loan.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "அதாவது, அதை வாங்காவிட்டால் கடன் பற்றி உங்களிடம் என்ன சொல்லப்பட்டது?"
+
+[lines."provider_choice.ask"]
+design = "§5 step 6 'Were you told you could buy this from another company?', asked open"
+text = "அதை எங்கிருந்து வாங்க வேண்டும் என்பது பற்றி உங்களிடம் என்ன சொல்லப்பட்டது?"
+
+[lines."provider_choice.reask"]
+design = "§5 step 6 and the one-re-ask rule: both possibilities named"
+text = "அதாவது, அதை வேறு இடத்திலும் வாங்கலாமா கூடாதா என்று யாராவது சொன்னார்களா?"
+
+[lines."cover.ask"]
+design = "§5 step 6 'What does it cover?', without the word that would name the product"
+text = "அதனால் உங்களுக்கு என்ன கிடைக்கும், எவ்வளவு தொகை வரை?"
+
+[lines."cover.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "அதாவது, அந்தப் பொருள் உங்களுக்கு எதற்குப் பயன்படும்? புரிந்ததைச் சொல்லுங்கள்."
+
+[lines."term.ask"]
+design = "§5 step 6 '... and for how long?'"
+text = "அது எவ்வளவு காலத்துக்கு?"
+
+[lines."term.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "அதாவது, அது எதுவரை நீடிக்கும்? மாதம் அல்லது வருடத்தில் சொல்லுங்கள்."
+
+[lines."cancel_window.ask"]
+design = "§5 step 6 'Were you told whether you can cancel, and by when?'; the bot never states a right (correction 11)"
+text = "அதை ரத்து செய்ய முடியுமா முடியாதா என்று உங்களிடம் சொல்லப்பட்டதா? முடியும் என்றால், எதுவரை?"
+
+[lines."cancel_window.reask"]
+design = "§5 step 6 and the one-re-ask rule; still states no right"
+text = "அதாவது, அதை நிறுத்துவது அல்லது திருப்பிக் கொடுப்பது பற்றி உங்களிடம் என்ன சொல்லப்பட்டது?"
+
+[lines."features.ask"]
+design = "the money-back probe the rule engine needs (W1 report §7 decision 1; award BNG-L-041-1617-0797)"
+text = "இந்தப் பணத்தை நீங்கள் திரும்பப் பெற விரும்பினால், என்ன நடக்கும்? உங்கள் புரிதலில் சொல்லுங்கள்."
+
+[lines."features.reask"]
+design = "the money-back probe and the one-re-ask rule"
+text = "அதாவது, அதில் போட்ட பணத்துக்கு இனிமேல் என்ன ஆகும்? உங்களுக்குத் தெரிந்ததைச் சொல்லுங்கள்."
+
+[lines."consent.ask"]
+design = "§5 step 7: what the customer agreed to buy and how (correction 12); the call never captures consent"
+text = "கடன் வாங்கும்போது எவற்றை வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புதல் கொடுத்தீர்கள்?"
+
+[lines."consent.reask"]
+design = "§5 step 7 and the one-re-ask rule"
+text = "அதாவது, எவற்றுக்கு நீங்கள் சரி என்று சொன்னீர்கள், அந்தச் சரியை எந்த முறையில் சொன்னீர்கள்?"
+
+[lines."read_back.intro_nth"]
+design = "§5 step 8, for a record with several products"
+text = "இப்போது {ordinal} பொருளின் தொகை."
+
+[lines."read_back.confirm"]
+design = "§5 step 8: the amount the customer said is read back in words and digits"
+text = "நீங்கள் சொன்ன தொகை: {amount_words}, அதாவது {amount_digits}. இது சரியா?"
+
+[lines."read_back.reconfirm"]
+design = "§5 step 8 after an unclear reply"
+text = "இன்னொரு முறை: {amount_words}, அதாவது {amount_digits}. இது சரியா, இல்லையா?"
+
+[lines."read_back.restate"]
+design = "§5 step 8: the customer said the figure is wrong and gave no other"
+text = "சரி. அப்படியென்றால் சரியான தொகை என்ன?"
+
+[lines."bridge.moving_on"]
+design = "§5: an answer still unclear after one re-ask is recorded and the call moves on; the bot never argues"
+text = "பரவாயில்லை, அடுத்ததற்குப் போகலாம்."
+
+[lines."stop_check.decline"]
+design = "§5 step 2: the customer can stop at any time; a weak signal is checked with one question, never argued with"
+text = "இந்த அழைப்பை இத்துடன் நிறுத்த விரும்புகிறீர்களா?"
+
+[lines."stop_check.human"]
+design = "§5 step 2: the customer can ask for a human; a weak signal is checked with one question"
+text = "எங்கள் குழுவில் ஒருவர் உங்களிடம் பேச வேண்டும் என்று விரும்புகிறீர்களா?"
+
+[lines."end.declined"]
+design = "§5 step 2: the customer can decline or stop at any time; no persuasion"
+text = "சரி, பரவாயில்லை. உங்கள் நேரத்திற்கு நன்றி. வணக்கம்."
+
+[lines."end.human"]
+design = "§5 step 2: the customer can ask for a human"
+text = "சரி. இது குறித்து வைக்கப்பட்டது. எங்கள் குழுவில் ஒருவர் உங்களைத் தொடர்பு கொள்வார். நன்றி, வணக்கம்."
+
+[lines."close.thanks"]
+design = "§5 step 9: thank you; no other product is mentioned"
+text = "உங்கள் நேரத்திற்கும் பதில்களுக்கும் நன்றி."
+
+[lines."close.may_call_back"]
+design = "§5 step 9: the team may call back; no finding and no promise of money is stated"
+text = "தேவைப்பட்டால் எங்கள் குழு உங்களை மீண்டும் அழைக்கலாம்."
+
+[lines."close.bye"]
+design = "§5 step 9"
+text = "வணக்கம்."

@@ -1,0 +1,213 @@
+# Samajh bot lines, Kannada. NOT HUMAN-REVIEWED: written by the build agent, with no fluent
+# reader yet. Data, not code: samajh/dialogue/prompts.py loads and checks this file.
+# Slots: {first_name}, {lender}, {ordinal}; the read_back.* lines also take {amount_words} and
+# {amount_digits}, which carry the figure the customer said, never a figure from the record.
+# `design` names the DESIGN.md paragraph the line implements.
+
+language = "kn"
+review = "not human-reviewed"
+ordinals = ["ಮೊದಲ", "ಎರಡನೇ", "ಮೂರನೇ", "ನಾಲ್ಕನೇ", "ಐದನೇ"]
+
+[lines."right_party.ask"]
+design = "§5 step 1: confirm the first name; nothing else is said yet"
+text = "ನಮಸ್ಕಾರ. ನಾನು {first_name} ಅವರ ಜೊತೆ ಮಾತನಾಡುತ್ತಿದ್ದೇನೆಯೇ?"
+
+[lines."right_party.reask"]
+design = "§5 step 1 and the one-re-ask rule (§5, A20): no lender, no loan"
+text = "ಇದು ಒಂದು ಸ್ವಯಂಚಾಲಿತ ಕರೆ. {first_name} ಅವರು ಲೈನಿನಲ್ಲಿ ಇದ್ದಾರೆಯೇ?"
+
+[lines."end.neutral"]
+design = "§5 step 1: wrong person or no confirmation, the bot ends and says nothing about a loan"
+text = "ಪರವಾಗಿಲ್ಲ. ತೊಂದರೆ ಕೊಟ್ಟಿದ್ದಕ್ಕೆ ಕ್ಷಮಿಸಿ. ನಮಸ್ಕಾರ."
+
+[lines."disclosure.who"]
+design = "§5 step 2: the bank's name, customer-care team, automated AI assistant (recommended: FREE-AI report para 4.4.54)"
+text = "ಧನ್ಯವಾದ. ಈ ಕರೆ {lender} ಗ್ರಾಹಕ ಸೇವಾ ತಂಡದಿಂದ ಬಂದಿದೆ. ನಾನು ಒಂದು ಸ್ವಯಂಚಾಲಿತ ಎ-ಐ ಸಹಾಯಕ, ಮನುಷ್ಯ ಅಲ್ಲ."
+
+[lines."disclosure.not_sales"]
+design = "§5 step 2: not a sales call, nothing will be offered (TCCCPR: promotional content would make it a promotional call)"
+text = "ಇದು ಮಾರಾಟದ ಕರೆ ಅಲ್ಲ. ಈ ಕರೆಯಲ್ಲಿ ನಿಮಗೆ ಏನನ್ನೂ ಮಾರುವುದಿಲ್ಲ."
+
+[lines."disclosure.recording"]
+design = "§5 step 2: feedback purpose, recorded to keep an accurate record (our choice), written notice (DPDP Act sections 5 and 6)"
+text = "ಇದು ನಿಮ್ಮ ಅಭಿಪ್ರಾಯ ಕೇಳಲು ಮಾತ್ರ ಮಾಡಿರುವ ಕರೆ. ನಿಮ್ಮ ಅಭಿಪ್ರಾಯ ಸರಿಯಾಗಿ ದಾಖಲಾಗಲಿ ಎಂದು ಈ ಕರೆಯನ್ನು ರೆಕಾರ್ಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ. ನಿಮ್ಮ ಮಾಹಿತಿಯನ್ನು ಹೇಗೆ ಬಳಸಲಾಗುತ್ತದೆ ಎಂಬುದು {lender} ಲಿಖಿತ ಸೂಚನೆಯಲ್ಲಿ ಇದೆ."
+
+[lines."disclosure.rights"]
+design = "§5 step 2: the customer can decline, stop at any time, or ask for a human"
+text = "ನೀವು ಬಯಸಿದರೆ ನಿರಾಕರಿಸಬಹುದು, ಯಾವಾಗ ಬೇಕಾದರೂ ಕರೆ ನಿಲ್ಲಿಸಬಹುದು, ಅಥವಾ ಒಬ್ಬ ಮನುಷ್ಯರ ಜೊತೆ ಮಾತನಾಡಬೇಕು ಎಂದು ಕೇಳಬಹುದು."
+
+[lines."disclosure.verify"]
+design = "§5 step 2: hang up and call the customer-care number on the papers to check the call is genuine (the loan is not named before step 4)"
+text = "ಈ ಕರೆ ನಿಜವೇ ಎಂದು ಪರಿಶೀಲಿಸಲು, ನೀವು ಫೋನ್ ಇಟ್ಟು, {lender} ದಾಖಲೆಗಳಲ್ಲಿ ಮುದ್ರಿಸಿರುವ ಗ್ರಾಹಕ ಸೇವಾ ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಬಹುದು."
+
+[lines."disclosure.never_ask"]
+design = "§5 step 2: the bot will never ask for an OTP, PIN, password or account number"
+text = "ಈ ಕರೆಯಲ್ಲಿ ನಿಮ್ಮಿಂದ ಒ-ಟಿ-ಪಿ, ಪಿನ್, ಪಾಸ್ವರ್ಡ್ ಅಥವಾ ಖಾತೆ ಸಂಖ್ಯೆಯನ್ನು ಎಂದಿಗೂ ಕೇಳುವುದಿಲ್ಲ."
+
+[lines."disclosure.go_ahead"]
+design = "§5 step 2: the customer can decline, so the bot asks before going on"
+text = "ಮುಂದುವರಿಯಬಹುದೇ?"
+
+[lines."disclosure.reask"]
+design = "§5 step 2 and the one-re-ask rule (§5, A20)"
+text = "ಇದು {lender} ಗ್ರಾಹಕ ಸೇವಾ ತಂಡದ ಸ್ವಯಂಚಾಲಿತ ಅಭಿಪ್ರಾಯ ಕರೆ, ಮಾರಾಟದ ಕರೆ ಅಲ್ಲ. ಮುಂದುವರಿಯಬಹುದೇ? ಹೌದು ಅಥವಾ ಇಲ್ಲ ಎಂದು ಹೇಳಿ."
+
+[lines."second_check.ask"]
+design = "§5 step 3: one low-sensitivity fact, the year of birth; never account digits"
+text = "ಧನ್ಯವಾದ. ಖಚಿತಪಡಿಸಲು, ನೀವು ಹುಟ್ಟಿದ ವರ್ಷವನ್ನು ಮಾತ್ರ ಹೇಳಿ. ಪೂರ್ತಿ ದಿನಾಂಕ ಬೇಡ."
+
+[lines."second_check.reask"]
+design = "§5 step 3 and the one-re-ask rule; the same line whether the year was unclear or did not match"
+text = "ಕ್ಷಮಿಸಿ, ಸರಿಯಾಗಿ ಕೇಳಿಸಲಿಲ್ಲ. ನೀವು ಹುಟ್ಟಿದ ವರ್ಷವನ್ನು ಇನ್ನೊಮ್ಮೆ ಹೇಳಿ."
+
+[lines."end.check_failed"]
+design = "§5 step 3: the check did not pass, so the loan is never mentioned"
+text = "ಕ್ಷಮಿಸಿ, ಈಗ ಖಚಿತಪಡಿಸಲು ಆಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ಈ ಕರೆ ಇಲ್ಲಿಗೆ ಮುಗಿಯುತ್ತದೆ. ಬೇಕಿದ್ದರೆ ನೀವು {lender} ಗ್ರಾಹಕ ಸೇವೆಯನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು. ಧನ್ಯವಾದ."
+
+[lines."context.loan"]
+design = "§5 step 4: only now does the bot mention the loan"
+text = "ಧನ್ಯವಾದ. ನೀವು ಇತ್ತೀಚೆಗೆ {lender} ಇಂದ ಪಡೆದ ಸಾಲದ ಬಗ್ಗೆ ಈ ಕರೆ."
+
+[lines."open_recall.ask"]
+design = "§5 step 5: open recall before any product is named"
+text = "ಸಾಲದ ಜೊತೆಗೆ ನೀವು ಬೇರೆ ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟು ಮೊತ್ತಕ್ಕೆ? ನಿಮ್ಮದೇ ಮಾತಿನಲ್ಲಿ ಹೇಳಿ."
+
+[lines."open_recall.reask"]
+design = "§5 step 5 and the one-re-ask rule: simpler words, still no product named"
+text = "ಅಂದರೆ, ಸಾಲ ಪಡೆಯುವಾಗ ಅದರ ಜೊತೆ ಬೇರೆ ಏನಾದರೂ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದರೇ? ನೆನಪಿರುವುದನ್ನು ಹೇಳಿ."
+
+[lines."teach_back.intro"]
+design = "§5 step 6: the product is referred to without naming what it is"
+text = "ಧನ್ಯವಾದ. ಈಗ ಸಾಲದ ಜೊತೆ ತೆಗೆದುಕೊಂಡ ವಸ್ತುವಿನ ಬಗ್ಗೆ ಕೆಲವು ಚಿಕ್ಕ ಪ್ರಶ್ನೆಗಳು."
+
+[lines."teach_back.intro_nth"]
+design = "§5 step 6, for a record with several products: an ordinal, not a name"
+text = "ಈಗ ಸಾಲದ ಜೊತೆ ದಾಖಲಾಗಿರುವ {ordinal} ವಸ್ತುವಿನ ಬಗ್ಗೆ ಕೆಲವು ಚಿಕ್ಕ ಪ್ರಶ್ನೆಗಳು."
+
+[lines."kind.ask"]
+design = "§5 step 6 'Is this insurance, FD or something else?', asked open so no kind is suggested"
+text = "ನಿಮ್ಮ ತಿಳುವಳಿಕೆಯಲ್ಲಿ ಅದು ಏನು?"
+
+[lines."kind.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "ಅಂದರೆ, ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಸಿಕ್ಕ ಆ ವಸ್ತುವನ್ನು ನೀವು ಏನೆಂದು ಕರೆಯುತ್ತೀರಿ?"
+
+[lines."premium.ask"]
+design = "§5 step 6 'How much did it cost?'"
+text = "ಅದಕ್ಕೆ ನೀವು ಎಷ್ಟು ಹಣ ಕೊಟ್ಟಿರಿ?"
+
+[lines."premium.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "ಅಂದರೆ, ಆ ವಸ್ತುವಿನ ಮೊತ್ತ ಎಷ್ಟು? ನೆನಪಿರುವಷ್ಟು ಹೇಳಿ."
+
+[lines."payment_source.ask"]
+design = "§5 step 6 'How was it paid?', asked open so neither source is suggested"
+text = "ಆ ಹಣವನ್ನು ಎಲ್ಲಿಂದ, ಹೇಗೆ ಕಟ್ಟಲಾಯಿತು?"
+
+[lines."payment_source.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "ಅಂದರೆ, ಆ ವಸ್ತುವಿನ ಹಣವನ್ನು ನೀವು ಹೇಗೆ ಕಟ್ಟಿದಿರಿ?"
+
+[lines."required_for_loan.ask"]
+design = "§5 step 6 'Was it required for the loan?': both possibilities named, then what the customer was told"
+text = "ಸಾಲ ಸಿಗಲು ಅದನ್ನು ತೆಗೆದುಕೊಳ್ಳುವುದು ಕಡ್ಡಾಯವೇ, ಅಥವಾ ನಿಮ್ಮ ಇಷ್ಟವೇ? ನಿಮಗೆ ಏನು ಹೇಳಿದ್ದರು?"
+
+[lines."required_for_loan.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "ಅಂದರೆ, ಅದನ್ನು ತೆಗೆದುಕೊಳ್ಳದಿದ್ದರೆ ಸಾಲದ ಬಗ್ಗೆ ನಿಮಗೆ ಏನು ಹೇಳಿದ್ದರು?"
+
+[lines."provider_choice.ask"]
+design = "§5 step 6 'Were you told you could buy this from another company?', asked open"
+text = "ಅದನ್ನು ಎಲ್ಲಿಂದ ತೆಗೆದುಕೊಳ್ಳಬೇಕು ಎಂಬ ಬಗ್ಗೆ ನಿಮಗೆ ಏನು ಹೇಳಿದ್ದರು?"
+
+[lines."provider_choice.reask"]
+design = "§5 step 6 and the one-re-ask rule: both possibilities named"
+text = "ಅಂದರೆ, ಅದನ್ನು ಬೇರೆ ಕಡೆಯಿಂದಲೂ ತೆಗೆದುಕೊಳ್ಳಬಹುದೇ ಇಲ್ಲವೇ ಎಂದು ಯಾರಾದರೂ ಹೇಳಿದ್ದರೇ?"
+
+[lines."cover.ask"]
+design = "§5 step 6 'What does it cover?', without the word that would name the product"
+text = "ಅದರಿಂದ ನಿಮಗೆ ಏನು ಸಿಗುತ್ತದೆ, ಎಷ್ಟು ಮೊತ್ತದವರೆಗೆ?"
+
+[lines."cover.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "ಅಂದರೆ, ಆ ವಸ್ತು ನಿಮಗೆ ಯಾವುದಕ್ಕೆ ಉಪಯೋಗ? ಅರ್ಥವಾದದ್ದನ್ನು ಹೇಳಿ."
+
+[lines."term.ask"]
+design = "§5 step 6 '... and for how long?'"
+text = "ಅದು ಎಷ್ಟು ಸಮಯಕ್ಕೆ?"
+
+[lines."term.reask"]
+design = "§5 step 6 and the one-re-ask rule"
+text = "ಅಂದರೆ, ಅದು ಎಲ್ಲಿಯವರೆಗೆ ಇರುತ್ತದೆ? ತಿಂಗಳು ಅಥವಾ ವರ್ಷದಲ್ಲಿ ಹೇಳಿ."
+
+[lines."cancel_window.ask"]
+design = "§5 step 6 'Were you told whether you can cancel, and by when?'; the bot never states a right (correction 11)"
+text = "ಅದನ್ನು ರದ್ದು ಮಾಡಬಹುದೇ ಇಲ್ಲವೇ ಎಂದು ನಿಮಗೆ ಹೇಳಿದ್ದರೇ? ಮಾಡಬಹುದು ಎಂದಿದ್ದರೆ, ಯಾವಾಗಿನವರೆಗೆ?"
+
+[lines."cancel_window.reask"]
+design = "§5 step 6 and the one-re-ask rule; still states no right"
+text = "ಅಂದರೆ, ಅದನ್ನು ನಿಲ್ಲಿಸುವ ಅಥವಾ ವಾಪಸ್ ಕೊಡುವ ಬಗ್ಗೆ ನಿಮಗೆ ಏನು ಹೇಳಿದ್ದರು?"
+
+[lines."features.ask"]
+design = "the money-back probe the rule engine needs (W1 report §7 decision 1; award BNG-L-041-1617-0797)"
+text = "ಈ ಹಣವನ್ನು ನೀವು ವಾಪಸ್ ಪಡೆಯಲು ಬಯಸಿದರೆ, ಏನಾಗುತ್ತದೆ? ನಿಮ್ಮ ತಿಳುವಳಿಕೆಯಲ್ಲಿ ಹೇಳಿ."
+
+[lines."features.reask"]
+design = "the money-back probe and the one-re-ask rule"
+text = "ಅಂದರೆ, ಅದರಲ್ಲಿ ಹಾಕಿದ ಹಣ ಮುಂದೆ ಏನಾಗುತ್ತದೆ? ನಿಮಗೆ ಗೊತ್ತಿರುವುದನ್ನು ಹೇಳಿ."
+
+[lines."consent.ask"]
+design = "§5 step 7: what the customer agreed to buy and how (correction 12); the call never captures consent"
+text = "ಸಾಲ ಪಡೆಯುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಮತ್ತು ಹೇಗೆ ಒಪ್ಪಿಗೆ ಕೊಟ್ಟಿರಿ?"
+
+[lines."consent.reask"]
+design = "§5 step 7 and the one-re-ask rule"
+text = "ಅಂದರೆ, ಯಾವುದಕ್ಕೆಲ್ಲ ನೀವು ಸರಿ ಎಂದಿರಿ, ಮತ್ತು ಆ ಸರಿಯನ್ನು ಯಾವ ರೀತಿಯಲ್ಲಿ ಹೇಳಿದಿರಿ?"
+
+[lines."read_back.intro_nth"]
+design = "§5 step 8, for a record with several products"
+text = "ಈಗ {ordinal} ವಸ್ತುವಿನ ಮೊತ್ತ."
+
+[lines."read_back.confirm"]
+design = "§5 step 8: the amount the customer said is read back in words and digits"
+text = "ನೀವು ಹೇಳಿದ ಮೊತ್ತ: {amount_words}, ಅಂದರೆ {amount_digits}. ಇದು ಸರಿಯೇ?"
+
+[lines."read_back.reconfirm"]
+design = "§5 step 8 after an unclear reply"
+text = "ಇನ್ನೊಮ್ಮೆ: {amount_words}, ಅಂದರೆ {amount_digits}. ಇದು ಸರಿಯೇ, ಇಲ್ಲವೇ?"
+
+[lines."read_back.restate"]
+design = "§5 step 8: the customer said the figure is wrong and gave no other"
+text = "ಸರಿ. ಹಾಗಾದರೆ ಸರಿಯಾದ ಮೊತ್ತ ಎಷ್ಟು?"
+
+[lines."bridge.moving_on"]
+design = "§5: an answer still unclear after one re-ask is recorded and the call moves on; the bot never argues"
+text = "ಪರವಾಗಿಲ್ಲ, ಮುಂದೆ ಹೋಗೋಣ."
+
+[lines."stop_check.decline"]
+design = "§5 step 2: the customer can stop at any time; a weak signal is checked with one question, never argued with"
+text = "ಈ ಕರೆಯನ್ನು ಇಲ್ಲಿಗೇ ನಿಲ್ಲಿಸಲು ಬಯಸುತ್ತೀರಾ?"
+
+[lines."stop_check.human"]
+design = "§5 step 2: the customer can ask for a human; a weak signal is checked with one question"
+text = "ನಮ್ಮ ತಂಡದ ಒಬ್ಬರು ನಿಮ್ಮ ಜೊತೆ ಮಾತನಾಡಬೇಕು ಎಂದು ಬಯಸುತ್ತೀರಾ?"
+
+[lines."end.declined"]
+design = "§5 step 2: the customer can decline or stop at any time; no persuasion"
+text = "ಸರಿ, ಪರವಾಗಿಲ್ಲ. ನಿಮ್ಮ ಸಮಯಕ್ಕೆ ಧನ್ಯವಾದ. ನಮಸ್ಕಾರ."
+
+[lines."end.human"]
+design = "§5 step 2: the customer can ask for a human"
+text = "ಸರಿ. ಇದನ್ನು ಗುರುತು ಮಾಡಿಕೊಳ್ಳಲಾಗಿದೆ. ನಮ್ಮ ತಂಡದ ಒಬ್ಬರು ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತಾರೆ. ಧನ್ಯವಾದ, ನಮಸ್ಕಾರ."
+
+[lines."close.thanks"]
+design = "§5 step 9: thank you; no other product is mentioned"
+text = "ನಿಮ್ಮ ಸಮಯ ಮತ್ತು ಉತ್ತರಗಳಿಗೆ ಧನ್ಯವಾದ."
+
+[lines."close.may_call_back"]
+design = "§5 step 9: the team may call back; no finding and no promise of money is stated"
+text = "ಅಗತ್ಯ ಬಿದ್ದರೆ ನಮ್ಮ ತಂಡ ನಿಮಗೆ ಮತ್ತೆ ಕರೆ ಮಾಡಬಹುದು."
+
+[lines."close.bye"]
+design = "§5 step 9"
+text = "ನಮಸ್ಕಾರ."

@@ -1,0 +1,470 @@
+"""Transcript -> RawExtraction: two small LLM calls per customer reply, then deterministic assembly.
+
+The first call records the answer to the question the bot asked. The second screens the same
+reply for things said in passing: beliefs about the product and concerns about the sale.
+
+Code, not the model, decides which question a reply answers, which turn a quote comes from and
+which product an answer belongs to. The model sees one question and one reply and returns enums,
+clause numbers and spans (`samajh.extract._wire`). Each one is resolved against that reply
+(`_ground`); a field whose clause number or span is not there becomes `Unclear(quote_not_grounded)`.
+"""
+
+import time
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass, field
+from typing import Protocol, TypeVar
+
+from pydantic import BaseModel
+
+from samajh.clients.errors import LlmOutputInvalid
+from samajh.clients.llm import LlmResult, Message
+from samajh.extract._ground import Found, Reader, Reply, days, months, rupees, tighten
+from samajh.extract._prompt import messages, screen_messages
+from samajh.extract._wire import (
+    SCHEMA,
+    CancelReply,
+    ConsentReply,
+    FeaturesReply,
+    KindReply,
+    PaymentReply,
+    ReadbackReply,
+    RecallReply,
+    ScreenReply,
+    SlotKind,
+    SpanReply,
+    Status,
+    WireReply,
+    YesNoReply,
+)
+from samajh.rules.clauses import KIND_ON_RECORD
+from samajh.types import (
+    Answer,
+    CallStep,
+    ClaimEvidence,
+    ConcernEvidence,
+    DontKnow,
+    Evidence,
+    GapReason,
+    KindClaim,
+    LoanRecord,
+    ProductId,
+    Question,
+    RawExtraction,
+    RawOpenRecall,
+    RawProductAnswers,
+    RawRecallItem,
+    Speaker,
+    Stated,
+    Transcript,
+    Turn,
+    TurnId,
+    Unclear,
+)
+
+T = TypeVar("T", bound=BaseModel)
+
+_MAX_TOKENS = 800
+# A reply this short cannot state a belief or a concern, so it is not screened.
+_SCREEN_MIN_WORDS = 3
+# A customer who misdescribes the one product on record still named it: these kinds may be
+# matched to a product that no recall item describes correctly.
+_MISDESCRIBED = frozenset({KindClaim.deposit, KindClaim.investment, KindClaim.other})
+
+
+class Llm(Protocol):
+    """The part of `samajh.clients.llm.LlmClient` the extractor uses."""
+
+    def complete(
+        self,
+        schema: type[T],
+        messages: Sequence[Message],
+        *,
+        model: str | None = None,
+        max_tokens: int = 1024,
+    ) -> LlmResult[T]: ...
+
+
+class ExtractionFailed(Exception):
+    """The model gave no schema-valid output for one reply. The call has no extraction at all."""
+
+    def __init__(self, call_id: str, turn_id: TurnId, kind: SlotKind, reason: str) -> None:
+        self.call_id, self.turn_id, self.kind = call_id, turn_id, kind
+        super().__init__(f"call {call_id}, turn {turn_id} ({kind}): {reason}")
+
+
+@dataclass(frozen=True)
+class Slot:
+    """One customer reply and what the bot turn before it asked."""
+
+    turn: Turn
+    question: str
+    kind: SlotKind
+    products: tuple[ProductId, ...]  # the product asked about; every product when none was named
+
+
+@dataclass
+class SlotTrace:
+    """What one LLM call cost and how its spans fared. `fields` name wire fields of that call."""
+
+    turn_id: TurnId
+    kind: SlotKind
+    screen: bool  # the screening call for this reply, not the answer call
+    model: str
+    usd: float
+    seconds: float
+    cache_hit: bool
+    generation_id: str | None
+    prompt_tokens: int
+    completion_tokens: int
+    spans: int = 0  # spans the model returned
+    not_in_reply: list[str] = field(default_factory=list)  # fields whose span was not in the reply
+    pointers: int = 0  # answers the model backed with clause numbers
+    bad_pointers: list[str] = field(default_factory=list)  # fields with no clause number, or one out of range
+    inconsistent: list[str] = field(default_factory=list)  # "stated" without a value or a span
+
+
+@dataclass(frozen=True)
+class Extraction:
+    raw: RawExtraction
+    slots: tuple[SlotTrace, ...]
+
+
+def _slot_kind(prompt: Turn | None, on_record: Sequence[ProductId]) -> SlotKind:
+    if prompt is None:
+        return SlotKind.other
+    if prompt.step is CallStep.open_recall:
+        return SlotKind.recall
+    if prompt.asks is None:
+        return SlotKind.other
+    if prompt.product_id is None:
+        return SlotKind.consent if prompt.asks is Question.consent else SlotKind.other
+    if prompt.product_id not in on_record:
+        raise ValueError(f"turn {prompt.id} asks about {prompt.product_id}, which is not on the record")
+    if prompt.step is CallStep.read_back:
+        return SlotKind.readback if prompt.asks is Question.premium else SlotKind.other
+    return SlotKind(prompt.asks.value)
+
+
+def slots(transcript: Transcript, record: LoanRecord) -> tuple[Slot, ...]:
+    """Every customer turn, paired with the bot turn it replies to, as the rule engine pairs them."""
+    on_record = tuple(p.id for p in record.products)
+    found: list[Slot] = []
+    prompt: Turn | None = None
+    for turn in transcript.turns:
+        if turn.speaker is Speaker.bot:
+            prompt = turn
+            continue
+        kind = _slot_kind(prompt, on_record)
+        asked_about = prompt.product_id if prompt and prompt.product_id else None
+        products = (asked_about,) if asked_about and kind is not SlotKind.other else on_record
+        found.append(Slot(turn, prompt.text if prompt else "", kind, products))
+    return tuple(found)
+
+
+class _Grounder:
+    """Turns the wire fields of one call into answers, counting every span and clause pointer."""
+
+    def __init__(self, slot: Slot, trace: SlotTrace) -> None:
+        self.reply = Reply(slot.turn.text)
+        self.turn_id = slot.turn.id
+        self.trace = trace
+
+    def find(self, name: str, span: str | None) -> Found | None:
+        if span is None or not span.strip():
+            return None
+        self.trace.spans += 1
+        found = self.reply.find(span)
+        if found is None:
+            self.trace.not_in_reply.append(name)
+        return found
+
+    def evidence(self, quote: str) -> Evidence:
+        return Evidence(quote=quote, turn_id=self.turn_id)
+
+    def pointed(self, name: str, status: Status, value: object, clauses: tuple[int, ...]) -> Answer:
+        """An enum or yes/no answer, or an "I do not know". Its evidence is the clauses pointed at."""
+        whole = self.evidence(self.reply.whole())
+        if status is Status.unclear:
+            return Unclear(evidence=whole)
+        if status is Status.stated and value is None:
+            self.trace.inconsistent.append(name)
+            return Unclear(evidence=whole)
+        self.trace.pointers += 1
+        quote = self.reply.cover(clauses)
+        if quote is None:
+            self.trace.bad_pointers.append(name)
+            return Unclear(reason=GapReason.quote_not_grounded)
+        if status is Status.dont_know:
+            return DontKnow(evidence=self.evidence(quote))
+        return Stated(value=value, evidence=self.evidence(quote))
+
+    def spoken(
+        self, name: str, status: Status, span: str | None, clauses: tuple[int, ...], read: Reader
+    ) -> Answer:
+        """An amount or a duration: the value is a span of the reply, read by `read`."""
+        if status is not Status.stated:
+            return self.pointed(name, status, None, clauses)
+        if not (span and span.strip()):
+            self.trace.inconsistent.append(name)
+            return Unclear(evidence=self.evidence(self.reply.whole()))
+        found = self.find(name, span)
+        if found is None:
+            return Unclear(reason=GapReason.quote_not_grounded)
+        return Stated(value=tighten(found.words, read), evidence=self.evidence(found.clauses))
+
+
+def _usable(answer: Answer) -> bool:
+    return isinstance(answer, (Stated, DontKnow))
+
+
+class _Assembly:
+    """Collects grounded answers for the whole call."""
+
+    def __init__(self, on_record: Sequence[ProductId]) -> None:
+        self.answers: dict[ProductId, dict[str, Answer]] = {pid: {} for pid in on_record}
+        self.claims: dict[ProductId, list[ClaimEvidence]] = {pid: [] for pid in on_record}
+        self.concerns: list[ConcernEvidence] = []
+        self.recall_answer: Evidence | None = None
+        self.recall_items: list[tuple[RawRecallItem, bool]] = []  # item, was its span in the reply
+
+    def put(self, slot: Slot, name: str, answer: Answer, replace: bool = False) -> None:
+        """A question asked twice keeps its last usable answer. `replace` always takes the new one."""
+        for pid in slot.products:
+            old = self.answers[pid].get(name)
+            if replace or old is None or _usable(answer) or not _usable(old):
+                self.answers[pid][name] = answer
+
+    def take(self, slot: Slot, wire: WireReply, g: _Grounder) -> None:
+        _TAKE[slot.kind](self, slot, wire, g)
+
+    def screen(self, slot: Slot, wire: ScreenReply, g: _Grounder) -> None:
+        """Claims and concerns voiced in passing.
+
+        A span that is not in the reply stays as the model wrote it: the rule engine then
+        records an evidence gap, so a concern the model garbled can never end in `clear`.
+        """
+        for concern in wire.concerns:
+            found = g.find("concerns", concern.span)
+            quote = found.words if found else concern.span
+            self._add(self.concerns, ConcernEvidence(concern=concern.concern, evidence=g.evidence(quote)))
+        if slot.kind is SlotKind.features:
+            return  # the money-back probe already has the customer's beliefs as its answer
+        for claim in wire.claims:
+            found = g.find("claims", claim.span)
+            quote = found.words if found else claim.span
+            for pid in slot.products:
+                self._add(self.claims[pid], ClaimEvidence(claim=claim.claim, evidence=g.evidence(quote)))
+
+    @staticmethod
+    def _add(items: list, item: object) -> None:
+        if item not in items:
+            items.append(item)
+
+    def blank(self, slot: Slot) -> None:
+        """Silence: asked, and nothing was said."""
+        for name in _FIELDS[slot.kind]:
+            self.put(slot, name, Unclear(), replace=name == "premium_readback")
+
+    def _kind(self, slot: Slot, wire: KindReply, g: _Grounder) -> None:
+        self.put(slot, "kind", g.pointed("kind", wire.status, wire.kind, wire.clauses))
+
+    def _payment(self, slot: Slot, wire: PaymentReply, g: _Grounder) -> None:
+        self.put(slot, "payment_source", g.pointed("source", wire.status, wire.source, wire.clauses))
+
+    def _yes_no(self, slot: Slot, wire: YesNoReply, g: _Grounder) -> None:
+        (name,) = _FIELDS[slot.kind]
+        self.put(slot, name, g.pointed("yes", wire.status, wire.yes, wire.clauses))
+
+    def _span(self, slot: Slot, wire: SpanReply, g: _Grounder) -> None:
+        (name,) = _FIELDS[slot.kind]
+        read = months if slot.kind is SlotKind.term else rupees
+        self.put(slot, name, g.spoken("span", wire.status, wire.span, wire.clauses, read))
+
+    def _readback(self, slot: Slot, wire: ReadbackReply, g: _Grounder) -> None:
+        answer = g.pointed("confirms", wire.status, wire.confirms, wire.clauses)
+        self.put(slot, "premium_readback", answer, replace=True)
+        rejected = isinstance(answer, Stated) and answer.value is False
+        if rejected and wire.corrected_amount_span:
+            corrected = g.spoken(
+                "corrected_amount_span", Status.stated, wire.corrected_amount_span, (), rupees
+            )
+            self.put(slot, "premium", corrected, replace=True)
+
+    def _cancel(self, slot: Slot, wire: CancelReply, g: _Grounder) -> None:
+        allowed = g.pointed("allowed", wire.allowed_status, wire.allowed, wire.allowed_clauses)
+        self.put(slot, "cancel_allowed", allowed)
+        window = g.spoken("window_span", wire.window_status, wire.window_span, wire.window_clauses, days)
+        self.put(slot, "cancel_window", window)
+
+    def _consent(self, slot: Slot, wire: ConsentReply, g: _Grounder) -> None:
+        given = g.pointed("given", wire.given_status, wire.given, wire.given_clauses)
+        self.put(slot, "consent_given", given)
+        method = g.pointed("method", wire.method_status, wire.method, wire.method_clauses)
+        self.put(slot, "consent_method", method)
+
+    def _features(self, slot: Slot, wire: FeaturesReply, g: _Grounder) -> None:
+        claims = tuple(dict.fromkeys(wire.claims))
+        if wire.status is not Status.stated and claims:
+            # "I do not know" together with a belief is two answers: neither is kept.
+            g.trace.inconsistent.append("claims")
+            self.put(slot, "feature_probe", Unclear(evidence=g.evidence(g.reply.whole())))
+            return
+        self.put(slot, "feature_probe", g.pointed("claims", wire.status, claims, wire.clauses))
+
+    def _recall(self, slot: Slot, wire: RecallReply, g: _Grounder) -> None:
+        self.recall_answer = g.evidence(g.reply.whole())
+        for item in wire.items:
+            found = g.find("items", item.span)
+            amount = g.find("items.amount_span", item.amount_span) if found else None
+            raw = RawRecallItem(
+                evidence=g.evidence(found.words if found else item.span),
+                kind=item.kind,
+                amount_text=tighten(amount.words, rupees) if amount else None,
+            )
+            self.recall_items.append((raw, found is not None))
+
+
+_TAKE: dict[SlotKind, Callable] = {
+    SlotKind.recall: _Assembly._recall,
+    SlotKind.kind: _Assembly._kind,
+    SlotKind.premium: _Assembly._span,
+    SlotKind.readback: _Assembly._readback,
+    SlotKind.payment_source: _Assembly._payment,
+    SlotKind.required_for_loan: _Assembly._yes_no,
+    SlotKind.provider_choice: _Assembly._yes_no,
+    SlotKind.cover: _Assembly._span,
+    SlotKind.term: _Assembly._span,
+    SlotKind.cancel_window: _Assembly._cancel,
+    SlotKind.features: _Assembly._features,
+    SlotKind.consent: _Assembly._consent,
+}
+
+# The RawProductAnswers fields each question fills.
+_FIELDS: dict[SlotKind, tuple[str, ...]] = {
+    SlotKind.recall: (),
+    SlotKind.kind: ("kind",),
+    SlotKind.premium: ("premium",),
+    SlotKind.readback: ("premium_readback",),
+    SlotKind.payment_source: ("payment_source",),
+    SlotKind.required_for_loan: ("required_for_loan",),
+    SlotKind.provider_choice: ("provider_choice_offered",),
+    SlotKind.cover: ("cover",),
+    SlotKind.term: ("term",),
+    SlotKind.cancel_window: ("cancel_allowed", "cancel_window"),
+    SlotKind.features: ("feature_probe",),
+    SlotKind.consent: ("consent_given", "consent_method"),
+    SlotKind.other: (),
+}
+
+
+def attribute(items: Sequence[tuple[RawRecallItem, bool]], record: LoanRecord) -> tuple[RawRecallItem, ...]:
+    """Decide which product on record each thing named in open recall is. Deterministic.
+
+    The model never sees the record, so it cannot do this. An item the customer describes as the
+    kind on record takes the first product not yet named, one item per product. After that, if
+    exactly one product is still unnamed and exactly one remaining item is a misdescription
+    (deposit, investment, other), they are paired: the customer named the product under another
+    name. Everything else stays unmatched, and the rules treat it as off the record. An item
+    whose span was not in the reply is never matched.
+    """
+    unnamed = list(record.products)
+    matched: dict[int, ProductId] = {}
+    for k, (item, grounded) in enumerate(items):
+        product = next((p for p in unnamed if grounded and item.kind is KIND_ON_RECORD[p.kind]), None)
+        if product is not None:
+            matched[k] = product.id
+            unnamed.remove(product)
+    misdescribed = [
+        k
+        for k, (item, grounded) in enumerate(items)
+        if grounded and k not in matched and item.kind in _MISDESCRIBED
+    ]
+    if len(misdescribed) == 1 and len(unnamed) == 1:
+        matched[misdescribed[0]] = unnamed[0].id
+    return tuple(item.model_copy(update={"product_id": matched.get(k)}) for k, (item, _) in enumerate(items))
+
+
+def _ask(llm: Llm, slot: Slot, transcript: Transcript, model: str | None, screen: bool) -> tuple:
+    """One LLM call about one reply: the answer call, or the screening call."""
+    language, question, reply = transcript.language, slot.question, slot.turn.text
+    schema = ScreenReply if screen else SCHEMA[slot.kind]
+    request = (
+        screen_messages(language, question, reply)
+        if screen
+        else messages(slot.kind, language, question, reply)
+    )
+    started = time.monotonic()
+    try:
+        result = llm.complete(schema, request, model=model, max_tokens=_MAX_TOKENS)
+    except LlmOutputInvalid as exc:
+        raise ExtractionFailed(transcript.call_id, slot.turn.id, slot.kind, str(exc)) from exc
+    trace = SlotTrace(
+        turn_id=slot.turn.id,
+        kind=slot.kind,
+        screen=screen,
+        model=result.model,
+        usd=result.usd,
+        seconds=time.monotonic() - started,
+        cache_hit=result.cache_hit,
+        generation_id=result.generation_id,
+        prompt_tokens=result.prompt_tokens,
+        completion_tokens=result.completion_tokens,
+    )
+    return result.value, trace
+
+
+def extract_traced(
+    transcript: Transcript, record: LoanRecord, llm: Llm, *, model: str | None = None
+) -> Extraction:
+    """`extract`, plus what each LLM call cost and which spans were not in the reply.
+
+    Raises ValueError when the transcript is not a call about this loan, and `ExtractionFailed`
+    when the model gives no schema-valid output for a reply.
+    """
+    if transcript.loan_id != record.loan_id:
+        raise ValueError(f"transcript is for loan {transcript.loan_id}, record is {record.loan_id}")
+    on_record = tuple(p.id for p in record.products)
+    assembly = _Assembly(on_record)
+    traces: list[SlotTrace] = []
+    for slot in slots(transcript, record):
+        reply = Reply(slot.turn.text)
+        if reply.blank:
+            assembly.blank(slot)
+            continue
+        if slot.kind is not SlotKind.other:
+            wire, trace = _ask(llm, slot, transcript, model, screen=False)
+            assembly.take(slot, wire, _Grounder(slot, trace))
+            traces.append(trace)
+        if reply.word_count >= _SCREEN_MIN_WORDS:
+            wire, trace = _ask(llm, slot, transcript, model, screen=True)
+            assembly.screen(slot, wire, _Grounder(slot, trace))
+            traces.append(trace)
+
+    recall_asked = any(t.speaker is Speaker.bot and t.step is CallStep.open_recall for t in transcript.turns)
+    raw = RawExtraction(
+        call_id=transcript.call_id,
+        recall=RawOpenRecall(
+            asked=recall_asked,
+            answer=assembly.recall_answer,
+            items=attribute(assembly.recall_items, record),
+        ),
+        products=tuple(
+            RawProductAnswers(
+                product_id=pid, volunteered_claims=tuple(assembly.claims[pid]), **assembly.answers[pid]
+            )
+            for pid in on_record
+        ),
+        sale_concerns=tuple(assembly.concerns),
+    )
+    return Extraction(raw=raw, slots=tuple(traces))
+
+
+def extract(
+    transcript: Transcript, record: LoanRecord, llm: Llm, *, model: str | None = None
+) -> RawExtraction:
+    """What the customer said on the call, as enums and their own words. The one LLM step.
+
+    The model is shown one bot question and one customer reply at a time, and nothing from the
+    lender's record. A quote that is not in the reply never becomes an answer.
+    """
+    return extract_traced(transcript, record, llm, model=model).raw

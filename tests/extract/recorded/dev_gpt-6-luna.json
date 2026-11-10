@@ -1,0 +1,4606 @@
+{
+ "model": "openai/gpt-6-luna",
+ "note": "Real outputs of the model above for every reply of the development set, recorded through LlmClient on 2026-11-10. Replayed by tests/extract; never edited by hand.",
+ "calls": [
+  {
+   "schema": "ScreenReply",
+   "question": "नमस्ते, क्या मेरी बात देव जी से हो रही है?",
+   "reply": "हाँ जी, बोल रहा हूँ।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "मैं नमूना बैंक की ग्राहक सेवा टीम की ओर से एक स्वचालित एआई सहायक बोल रही हूँ। यह बिक्री की कॉल नहीं है। आपकी राय दर्ज करने के लिए यह कॉल रिकॉर्ड हो रही है। क्या हम आगे बढ़ें?",
+   "reply": "ठीक है, पूछिए।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "लोन के साथ एक बीमा भी लिया था, चौबीस हज़ार का।",
+   "output": {
+    "items": [
+     {
+      "span": "एक बीमा",
+      "kind": "insurance",
+      "amount_span": "चौबीस हज़ार"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "लोन के साथ एक बीमा भी लिया था, चौबीस हज़ार का।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "बीमा है, लोन वाला बीमा।",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "बीमा है, लोन वाला बीमा।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसकी कीमत कितनी थी?",
+   "reply": "चौबीस हज़ार रुपये लगे थे।",
+   "output": {
+    "status": "stated",
+    "span": "चौबीस हज़ार",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "उसकी कीमत कितनी थी?",
+   "reply": "चौबीस हज़ार रुपये लगे थे।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "चौबीस हज़ार, यानी 24,000, सही है?",
+   "reply": "हाँ जी, बिल्कुल ठीक।",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1,
+     2
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "चौबीस हज़ार, यानी 24,000, सही है?",
+   "reply": "हाँ जी, बिल्कुल ठीक।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "लोन की रकम में से ही कट गया था।",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "लोन की रकम में से ही कट गया था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "नहीं, ज़रूरी नहीं था, मैंने अपनी मर्ज़ी से लिया।",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "नहीं, ज़रूरी नहीं था, मैंने अपनी मर्ज़ी से लिया।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का कवर है?",
+   "reply": "चार लाख का कवर है।",
+   "output": {
+    "status": "stated",
+    "span": "चार लाख",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "इसमें कितने का कवर है?",
+   "reply": "चार लाख का कवर है।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "यह कितने समय के लिए है?",
+   "reply": "तीन साल के लिए है।",
+   "output": {
+    "status": "stated",
+    "span": "तीन साल",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "यह कितने समय के लिए है?",
+   "reply": "तीन साल के लिए है।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ बताया था, तीस दिन के अंदर रद्द करवा सकते हैं।",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "stated",
+    "window_span": "तीस दिन",
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ बताया था, तीस दिन के अंदर रद्द करवा सकते हैं।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "नहीं, यह तो बीमा है, इसका पैसा वापस नहीं आता।",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "नहीं, यह तो बीमा है, इसका पैसा वापस नहीं आता।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "बीमा के लिए हाँ की थी, फ़ोन पर ओटीपी आया था वो बताया था।",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "otp",
+    "method_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "बीमा के लिए हाँ की थी, फ़ोन पर ओटीपी आया था वो बताया था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "आपका समय देने के लिए धन्यवाद।",
+   "reply": "ठीक है, धन्यवाद।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "बस एक एफ़डी करवाई थी लोन की सिक्योरिटी के लिए, बावन हज़ार की।",
+   "output": {
+    "items": [
+     {
+      "span": "एक एफ़डी",
+      "kind": "deposit",
+      "amount_span": "बावन हज़ार"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "बस एक एफ़डी करवाई थी लोन की सिक्योरिटी के लिए, बावन हज़ार की।",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "एक एफ़डी"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "एफ़डी है, मैनेजर साहब ने यही बताया था।",
+   "output": {
+    "status": "stated",
+    "kind": "deposit",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "एफ़डी है, मैनेजर साहब ने यही बताया था।",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "एफ़डी है"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसकी कीमत कितनी थी?",
+   "reply": "बावन हज़ार।",
+   "output": {
+    "status": "stated",
+    "span": "बावन हज़ार",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "बावन हज़ार, यानी 52,000, सही है?",
+   "reply": "हाँ।",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "लोन में से ही काट लिए थे, हाथ में कम पैसे आए।",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "लोन में से ही काट लिए थे, हाथ में कम पैसे आए।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "हाँ, बोला था कि एफ़डी के बिना लोन नहीं मिलेगा।",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "हाँ, बोला था कि एफ़डी के बिना लोन नहीं मिलेगा।",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "एफ़डी"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या आपको बताया गया था कि यह किसी और कंपनी से भी ले सकते हैं?",
+   "reply": "नहीं, ऐसा कुछ नहीं बताया।",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि यह किसी और कंपनी से भी ले सकते हैं?",
+   "reply": "नहीं, ऐसा कुछ नहीं बताया।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का कवर है?",
+   "reply": "कवर? कवर का मुझे नहीं पता।",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "इसमें कितने का कवर है?",
+   "reply": "कवर? कवर का मुझे नहीं पता।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "यह कितने समय के लिए है?",
+   "reply": "पाँच साल की है।",
+   "output": {
+    "status": "stated",
+    "span": "पाँच साल",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "यह कितने समय के लिए है?",
+   "reply": "पाँच साल की है।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "नहीं, रद्द करने की कोई बात नहीं हुई।",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": false,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "नहीं, रद्द करने की कोई बात नहीं हुई।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "हाँ, एक साल बाद निकाल सकते हैं, ब्याज भी मिलेगा।",
+   "output": {
+    "status": "stated",
+    "claims": [
+     "withdrawable_after_period",
+     "guaranteed_return"
+    ],
+    "clauses": [
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "हाँ, एक साल बाद निकाल सकते हैं, ब्याज भी मिलेगा।",
+   "output": {
+    "claims": [
+     {
+      "claim": "withdrawable_after_period",
+      "span": "एक साल बाद निकाल सकते हैं"
+     },
+     {
+      "claim": "guaranteed_return",
+      "span": "ब्याज भी मिलेगा"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "एफ़डी के फ़ॉर्म पर साइन किया था।",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "signed_form",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "एफ़डी के फ़ॉर्म पर साइन किया था।",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "एफ़डी के फ़ॉर्म"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "कुछ नहीं लिया, बस लोन लिया था।",
+   "output": {
+    "items": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "कुछ नहीं लिया, बस लोन लिया था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "पता नहीं जी, क्या दिया था।",
+   "output": {
+    "status": "dont_know",
+    "kind": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "पता नहीं जी, क्या दिया था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ज़रा आसान शब्दों में फिर पूछती हूँ। उसकी कीमत कितनी थी?",
+   "reply": "याद नहीं है कितना था।",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ज़रा आसान शब्दों में फिर पूछती हूँ। उसकी कीमत कितनी थी?",
+   "reply": "याद नहीं है कितना था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "देखिए मेरी किस्त तो हर महीने पाँच तारीख को जाती है।",
+   "output": {
+    "status": "unclear",
+    "source": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "देखिए मेरी किस्त तो हर महीने पाँच तारीख को जाती है।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "ये मुझे नहीं मालूम।",
+   "output": {
+    "status": "dont_know",
+    "yes": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "ये मुझे नहीं मालूम।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का कवर है?",
+   "reply": "हैलो? आवाज़ कट रही है।",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "इसमें कितने का कवर है?",
+   "reply": "हैलो? आवाज़ कट रही है।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "यह कितने समय के लिए है?",
+   "reply": "दो साल शायद, पक्का नहीं पता।",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "यह कितने समय के लिए है?",
+   "reply": "दो साल शायद, पक्का नहीं पता।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "किसी ने कुछ नहीं बताया इसके बारे में।",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": false,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "किसी ने कुछ नहीं बताया इसके बारे में।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "इसका मुझे कोई अंदाज़ा नहीं है।",
+   "output": {
+    "status": "dont_know",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "इसका मुझे कोई अंदाज़ा नहीं है।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "जहाँ बोला वहाँ साइन कर दिए, किसी ने समझाया नहीं कि किस चीज़ के कागज़ हैं।",
+   "output": {
+    "given_status": "unclear",
+    "given": null,
+    "given_clauses": [],
+    "method_status": "stated",
+    "method": "signed_form",
+    "method_clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "जहाँ बोला वहाँ साइन कर दिए, किसी ने समझाया नहीं कि किस चीज़ के कागज़ हैं।",
+   "output": {
+    "claims": [],
+    "concerns": [
+     {
+      "concern": "signed_without_explanation",
+      "span": "किसी ने समझाया नहीं कि किस चीज़ के कागज़ हैं"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "एक एफ़डी... नहीं नहीं, बीमा था, बीमा लिया था इकतालीस हज़ार का।",
+   "output": {
+    "items": [
+     {
+      "span": "बीमा",
+      "kind": "insurance",
+      "amount_span": "इकतालीस हज़ार"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "एक एफ़डी... नहीं नहीं, बीमा था, बीमा लिया था इकतालीस हज़ार का।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "डिपॉज़िट... अरे नहीं, बीमा है, बीमा।",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "डिपॉज़िट... अरे नहीं, बीमा है, बीमा।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसकी कीमत कितनी थी?",
+   "reply": "चालीस हज़ार था।",
+   "output": {
+    "status": "stated",
+    "span": "चालीस हज़ार",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "उसकी कीमत कितनी थी?",
+   "reply": "चालीस हज़ार था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "चालीस हज़ार, यानी 40,000, सही है?",
+   "reply": "नहीं, इकतालीस हज़ार था।",
+   "output": {
+    "status": "stated",
+    "confirms": false,
+    "clauses": [
+     1,
+     2
+    ],
+    "corrected_amount_span": "इकतालीस हज़ार"
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "चालीस हज़ार, यानी 40,000, सही है?",
+   "reply": "नहीं, इकतालीस हज़ार था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "इकतालीस हज़ार, यानी 41,000, सही है?",
+   "reply": "हाँ, अब सही है।",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1,
+     2
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "इकतालीस हज़ार, यानी 41,000, सही है?",
+   "reply": "हाँ, अब सही है।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "अलग से दिया था, यूपीआई से।",
+   "output": {
+    "status": "stated",
+    "source": "separately",
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "अलग से दिया था, यूपीआई से।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "हाँ, लोन के लिए ज़रूरी बताया था।",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "हाँ, लोन के लिए ज़रूरी बताया था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या आपको बताया गया था कि यह किसी और कंपनी से भी ले सकते हैं?",
+   "reply": "हाँ, बताया था कि किसी भी कंपनी से ले सकते हैं।",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि यह किसी और कंपनी से भी ले सकते हैं?",
+   "reply": "हाँ, बताया था कि किसी भी कंपनी से ले सकते हैं।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का कवर है?",
+   "reply": "छह लाख।",
+   "output": {
+    "status": "stated",
+    "span": "छह लाख",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "यह कितने समय के लिए है?",
+   "reply": "चार साल।",
+   "output": {
+    "status": "stated",
+    "span": "चार साल",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ, एक महीने के अंदर रद्द कर सकते हैं।",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "stated",
+    "window_span": "एक महीने",
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ, एक महीने के अंदर रद्द कर सकते हैं।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "पैसा वापस नहीं मिलेगा, बस शुरू के तीस दिन में रद्द करें तो मिलता है।",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "पैसा वापस नहीं मिलेगा, बस शुरू के तीस दिन में रद्द करें तो मिलता है।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "बीमे के लिए टैबलेट पर टिक किया था।",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "digital_click",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "बीमे के लिए टैबलेट पर टिक किया था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "मैं नमूना बैंक की ग्राहक सेवा टीम की ओर से एक स्वचालित एआई सहायक बोल रही हूँ। यह बिक्री की कॉल नहीं है। आपकी राय दर्ज करने के लिए यह कॉल रिकॉर्ड हो रही है। क्या हम आगे बढ़ें?",
+   "reply": "हाँ हाँ, ब्रांच वालों ने बताया था कि कॉल आएगा तो सब में हाँ बोल देना।",
+   "output": {
+    "claims": [],
+    "concerns": [
+     {
+      "concern": "coached_answers",
+      "span": "कॉल आएगा तो सब में हाँ बोल देना"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "लोन के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "हाँ।",
+   "output": {
+    "items": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "हाँ जी।",
+   "output": {
+    "status": "unclear",
+    "kind": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "ज़रा आसान शब्दों में फिर पूछती हूँ। लोन के साथ जो चीज़ आपको दी गई, वह बीमा है, एफ़डी है या कुछ और?",
+   "reply": "बीमा।",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसकी कीमत कितनी थी?",
+   "reply": "हाँ, लोन में से कटा था।",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "उसकी कीमत कितनी थी?",
+   "reply": "हाँ, लोन में से कटा था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ज़रा आसान शब्दों में फिर पूछती हूँ। उसकी कीमत कितनी थी?",
+   "reply": "तीस हज़ार।",
+   "output": {
+    "status": "stated",
+    "span": "तीस हज़ार",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "तीस हज़ार, यानी 30,000, सही है?",
+   "reply": "हाँ।",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "लोन में से।",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "यह पैसा कैसे दिया गया, लोन की रकम में से या अलग से?",
+   "reply": "लोन में से।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या यह लोन के लिए ज़रूरी था?",
+   "reply": "हाँ।",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या आपको बताया गया था कि यह किसी और कंपनी से भी ले सकते हैं?",
+   "reply": "हाँ।",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का कवर है?",
+   "reply": "हाँ।",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "यह कितने समय के लिए है?",
+   "reply": "तीन साल।",
+   "output": {
+    "status": "stated",
+    "span": "तीन साल",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे रद्द कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ।",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "हाँ, जब चाहें तब मिल जाएगा।",
+   "output": {
+    "status": "stated",
+    "claims": [
+     "refundable_anytime"
+    ],
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप यह पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "हाँ, जब चाहें तब मिल जाएगा।",
+   "output": {
+    "claims": [
+     {
+      "claim": "refundable_anytime",
+      "span": "जब चाहें तब मिल जाएगा"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "हाँ, ओटीपी दिया था।",
+   "output": {
+    "given_status": "unclear",
+    "given": null,
+    "given_clauses": [],
+    "method_status": "stated",
+    "method": "otp",
+    "method_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "लोन लेते समय आपने क्या-क्या लेने की सहमति दी थी, और कैसे?",
+   "reply": "हाँ, ओटीपी दिया था।",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Hello, क्या मैं देव जी से बात कर रही हूँ?",
+   "reply": "Yes, बोल रही हूँ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "Loan के साथ एक insurance policy भी ली थी, 12,500 की.",
+   "output": {
+    "items": [
+     {
+      "span": "एक insurance policy",
+      "kind": "insurance",
+      "amount_span": "12,500"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "Loan के साथ एक insurance policy भी ली थी, 12,500 की.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "Loan के साथ जो product आपको दिया गया, वो insurance है, FD है या कुछ और?",
+   "reply": "Insurance है, loan protection वाला.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan के साथ जो product आपको दिया गया, वो insurance है, FD है या कुछ और?",
+   "reply": "Insurance है, loan protection वाला.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसका cost कितना था?",
+   "reply": "12,500 rupees.",
+   "output": {
+    "status": "stated",
+    "span": "12,500",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "twelve thousand five hundred, यानी 12,500, सही है?",
+   "reply": "Yes, correct है.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1,
+     2
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "twelve thousand five hundred, यानी 12,500, सही है?",
+   "reply": "Yes, correct है.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "मैंने अलग से pay किया था, अपने account से.",
+   "output": {
+    "status": "stated",
+    "source": "separately",
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "मैंने अलग से pay किया था, अपने account से.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "नहीं, compulsory नहीं था, मेरी choice थी.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "नहीं, compulsory नहीं था, मेरी choice थी.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का cover है?",
+   "reply": "2 लाख का cover है.",
+   "output": {
+    "status": "stated",
+    "span": "2 लाख",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "इसमें कितने का cover है?",
+   "reply": "2 लाख का cover है.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ये कितने time के लिए है?",
+   "reply": "2 साल का है.",
+   "output": {
+    "status": "stated",
+    "span": "2 साल",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ये कितने time के लिए है?",
+   "reply": "2 साल का है.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "नहीं, cancel के बारे में कुछ नहीं बताया.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": false,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "नहीं, cancel के बारे में कुछ नहीं बताया.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "Refund नहीं मिलता, pure insurance है.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "Refund नहीं मिलता, pure insurance है.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "Insurance के लिए phone पे yes बोला था, call record हो रही थी.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "recorded_call",
+    "method_clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "Insurance के लिए phone पे yes बोला था, call record हो रही थी.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "आपके time के लिए thank you.",
+   "reply": "OK, thank you.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "Insurance लिया था, 20,000 का, और processing fee भी लगी थी.",
+   "output": {
+    "items": [
+     {
+      "span": "Insurance",
+      "kind": "insurance",
+      "amount_span": "20,000"
+     },
+     {
+      "span": "processing fee",
+      "kind": "fee",
+      "amount_span": null
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "Insurance लिया था, 20,000 का, और processing fee भी लगी थी.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "Loan के साथ जो product आपको दिया गया, वो insurance है, FD है या कुछ और?",
+   "reply": "Insurance.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसका cost कितना था?",
+   "reply": "20,000 के आसपास था.",
+   "output": {
+    "status": "stated",
+    "span": "20,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "उसका cost कितना था?",
+   "reply": "20,000 के आसपास था.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "twenty thousand, यानी 20,000, सही है?",
+   "reply": "हाँ, 20,000.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1,
+     2
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "Loan amount से ही deduct हुआ था.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "Loan amount से ही deduct हुआ था.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "नहीं, मैंने खुद choose किया.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "नहीं, मैंने खुद choose किया.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का cover है?",
+   "reply": "5 lakh.",
+   "output": {
+    "status": "stated",
+    "span": "5 lakh",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ये कितने time के लिए है?",
+   "reply": "5 years.",
+   "output": {
+    "status": "stated",
+    "span": "5 years",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ, 30 days के अंदर cancel कर सकते हैं.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "stated",
+    "window_span": "30 days",
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ, 30 days के अंदर cancel कर सकते हैं.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "नहीं, पैसा वापस नहीं आता.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "नहीं, पैसा वापस नहीं आता.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "Insurance के form पे sign किया था branch में.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "signed_form",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "Insurance के form पे sign किया था branch में.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "कुछ खास नहीं, बस loan, बाद में statement में देखा कि 28,000 का insurance कटा है.",
+   "output": {
+    "items": [
+     {
+      "span": "insurance",
+      "kind": "insurance",
+      "amount_span": "28,000"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "कुछ खास नहीं, बस loan, बाद में statement में देखा कि 28,000 का insurance कटा है.",
+   "output": {
+    "claims": [],
+    "concerns": [
+     {
+      "concern": "learned_after_sale",
+      "span": "बाद में statement में देखा कि 28,000 का insurance कटा है"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "Loan के साथ जो product आपको दिया गया, वो insurance है, FD है या कुछ और?",
+   "reply": "Insurance है, ऐसा statement में लिखा था.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan के साथ जो product आपको दिया गया, वो insurance है, FD है या कुछ और?",
+   "reply": "Insurance है, ऐसा statement में लिखा था.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसका cost कितना था?",
+   "reply": "28,000.",
+   "output": {
+    "status": "stated",
+    "span": "28,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "twenty eight thousand, यानी 28,000, सही है?",
+   "reply": "हाँ.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "Loan में से कटा, मुझे तो पूरा amount मिला ही नहीं.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "Loan में से कटा, मुझे तो पूरा amount मिला ही नहीं.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "Agent ने बोला था compulsory है, इसके बिना loan approve नहीं होगा.",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "Agent ने बोला था compulsory है, इसके बिना loan approve नहीं होगा.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या आपको बताया गया था कि ये किसी और company से भी ले सकते हैं?",
+   "reply": "नहीं, बोला यही company का लेना पड़ेगा.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि ये किसी और company से भी ले सकते हैं?",
+   "reply": "नहीं, बोला यही company का लेना पड़ेगा.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का cover है?",
+   "reply": "Cover कितना है वो नहीं पता.",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "इसमें कितने का cover है?",
+   "reply": "Cover कितना है वो नहीं पता.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ये कितने time के लिए है?",
+   "reply": "शायद 3 साल.",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ये कितने time के लिए है?",
+   "reply": "शायद 3 साल.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "पता नहीं, याद नहीं कि बताया था या नहीं.",
+   "output": {
+    "allowed_status": "dont_know",
+    "allowed": null,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "पता नहीं, याद नहीं कि बताया था या नहीं.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "Loan close होने के बाद ये amount वापस मिल जाएगा, ऐसा बोला था.",
+   "output": {
+    "status": "stated",
+    "claims": [
+     "withdrawable_after_period"
+    ],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "Loan close होने के बाद ये amount वापस मिल जाएगा, ऐसा बोला था.",
+   "output": {
+    "claims": [
+     {
+      "claim": "withdrawable_after_period",
+      "span": "Loan close होने के बाद ये amount वापस मिल जाएगा"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "App पे accept button दबाया था, उसी में insurance भी था.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     2
+    ],
+    "method_status": "stated",
+    "method": "digital_click",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "App पे accept button दबाया था, उसी में insurance भी था.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "एक insurance लिया 15,000 का, और एक mutual fund SIP भी शुरू करवाई थी.",
+   "output": {
+    "items": [
+     {
+      "span": "एक insurance",
+      "kind": "insurance",
+      "amount_span": "15,000"
+     },
+     {
+      "span": "एक mutual fund SIP",
+      "kind": "investment",
+      "amount_span": null
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "एक insurance लिया 15,000 का, और एक mutual fund SIP भी शुरू करवाई थी.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "Loan के साथ जो product आपको दिया गया, वो insurance है, FD है या कुछ और?",
+   "reply": "Insurance ही है.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan के साथ जो product आपको दिया गया, वो insurance है, FD है या कुछ और?",
+   "reply": "Insurance ही है.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसका cost कितना था?",
+   "reply": "Fifteen thousand.",
+   "output": {
+    "status": "stated",
+    "span": "Fifteen thousand",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "fifteen thousand, यानी 15,000, सही है?",
+   "reply": "जी हाँ.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "Loan amount से cut हुआ.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "Loan amount से cut हुआ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "नहीं नहीं, ज़बरदस्ती नहीं थी.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "नहीं नहीं, ज़बरदस्ती नहीं थी.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का cover है?",
+   "reply": "डेढ़ लाख.",
+   "output": {
+    "status": "stated",
+    "span": "डेढ़ लाख",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ये कितने time के लिए है?",
+   "reply": "1 साल.",
+   "output": {
+    "status": "stated",
+    "span": "1 साल",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "Cancel हो सकता है ये बताया था, लेकिन कितने दिन में वो याद नहीं.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "dont_know",
+    "window_span": null,
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "Cancel हो सकता है ये बताया था, लेकिन कितने दिन में वो याद नहीं.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "नहीं मिलेगा वापस.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "नहीं मिलेगा वापस.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "Insurance और SIP दोनों के forms sign किए थे.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "signed_form",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "Insurance और SIP दोनों के forms sign किए थे.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "Loan protection insurance लिया था, 22,000 का.",
+   "output": {
+    "items": [
+     {
+      "span": "Loan protection insurance",
+      "kind": "insurance",
+      "amount_span": "22,000"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan के साथ आपने क्या-क्या लिया, और कितने का?",
+   "reply": "Loan protection insurance लिया था, 22,000 का.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "उसका cost कितना था?",
+   "reply": "22,000 या 25,000, इन दोनों में से कुछ था.",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "उसका cost कितना था?",
+   "reply": "22,000 या 25,000, इन दोनों में से कुछ था.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "एक बार फिर simple words में पूछती हूँ। उसका cost कितना था?",
+   "reply": "22,000 ही था.",
+   "output": {
+    "status": "stated",
+    "span": "22,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "एक बार फिर simple words में पूछती हूँ। उसका cost कितना था?",
+   "reply": "22,000 ही था.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "twenty two thousand, यानी 22,000, सही है?",
+   "reply": "Right.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "Loan से ही कटा था.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ये payment कैसे हुआ, loan amount में से या अलग से?",
+   "reply": "Loan से ही कटा था.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "क्या ये loan के लिए ज़रूरी था?",
+   "reply": "Optional था.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "इसमें कितने का cover है?",
+   "reply": "एक minute, network issue है... हाँ बोलिए.",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "इसमें कितने का cover है?",
+   "reply": "एक minute, network issue है... हाँ बोलिए.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ये कितने time के लिए है?",
+   "reply": "36 months.",
+   "output": {
+    "status": "stated",
+    "span": "36 months",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ, 30 दिन के अंदर.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "stated",
+    "window_span": "30 दिन",
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "क्या आपको बताया गया था कि इसे cancel कर सकते हैं या नहीं, और कब तक?",
+   "reply": "हाँ, 30 दिन के अंदर.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "नहीं, वापस नहीं मिलता, सिर्फ death होने पे family को claim मिलता है.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "अगर आप ये पैसा वापस लेना चाहें, तो क्या वापस मिल सकता है, और कब?",
+   "reply": "नहीं, वापस नहीं मिलता, सिर्फ death होने पे family को claim मिलता है.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "Insurance के लिए OTP share किया था.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "otp",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "Loan लेते time आपने क्या-क्या लेने के लिए agree किया था, और कैसे?",
+   "reply": "Insurance के लिए OTP share किया था.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "வணக்கம், நான் Dev அவர்களிடம் பேசுகிறேனா?",
+   "reply": "ஆமா, நான் தான்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "கடனோட ஒரு இன்சூரன்ஸ் எடுத்தேன், 18,000 ரூபாய்.",
+   "output": {
+    "items": [
+     {
+      "span": "ஒரு இன்சூரன்ஸ்",
+      "kind": "insurance",
+      "amount_span": "18,000"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "கடனோட ஒரு இன்சூரன்ஸ் எடுத்தேன், 18,000 ரூபாய்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "அது இன்சூரன்ஸ் தான்.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "அது இன்சூரன்ஸ் தான்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "அதன் விலை எவ்வளவு?",
+   "reply": "18,000 ரூபாய்.",
+   "output": {
+    "status": "stated",
+    "span": "18,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "பதினெட்டாயிரம், அதாவது 18,000, சரியா?",
+   "reply": "ஆமா, சரிதான்.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1,
+     2
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "அந்தப் பணம் எப்படி செலுத்தப்பட்டது, கடன் தொகையிலிருந்தா அல்லது தனியாகவா?",
+   "reply": "கடன் தொகையிலிருந்தே பிடிச்சுக்கிட்டாங்க.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "அந்தப் பணம் எப்படி செலுத்தப்பட்டது, கடன் தொகையிலிருந்தா அல்லது தனியாகவா?",
+   "reply": "கடன் தொகையிலிருந்தே பிடிச்சுக்கிட்டாங்க.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "இல்லை, கட்டாயம் இல்லை, நானே விரும்பி எடுத்தேன்.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "இல்லை, கட்டாயம் இல்லை, நானே விரும்பி எடுத்தேன்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இதில் எவ்வளவு கவர் உள்ளது?",
+   "reply": "3 லட்சம் கவர்.",
+   "output": {
+    "status": "stated",
+    "span": "3 லட்சம்",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இதில் எவ்வளவு கவர் உள்ளது?",
+   "reply": "3 லட்சம் கவர்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இது எவ்வளவு காலத்துக்கு?",
+   "reply": "2 வருஷம்.",
+   "output": {
+    "status": "stated",
+    "span": "2 வருஷம்",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "ஆமா, 30 நாள் உள்ள ரத்து பண்ணலாம்னு சொன்னாங்க.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "stated",
+    "window_span": "30 நாள்",
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "ஆமா, 30 நாள் உள்ள ரத்து பண்ணலாம்னு சொன்னாங்க.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "இல்லை, அது இன்சூரன்ஸ், பணம் திரும்ப வராது.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "இல்லை, அது இன்சூரன்ஸ், பணம் திரும்ப வராது.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "இன்சூரன்ஸ்க்கு ஃபார்ம்ல கையெழுத்து போட்டேன்.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "signed_form",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "இன்சூரன்ஸ்க்கு ஃபார்ம்ல கையெழுத்து போட்டேன்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "நகைக்கடனுக்கு பாதுகாப்புன்னு ஒரு எஃப்டி போட்டாங்க, 45,000 ரூபாய்.",
+   "output": {
+    "items": [
+     {
+      "span": "ஒரு எஃப்டி",
+      "kind": "deposit",
+      "amount_span": "45,000"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "நகைக்கடனுக்கு பாதுகாப்புன்னு ஒரு எஃப்டி போட்டாங்க, 45,000 ரூபாய்.",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "ஒரு எஃப்டி போட்டாங்க"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "எஃப்டி தான், பேங்க்ல அப்படித்தான் சொன்னாங்க.",
+   "output": {
+    "status": "stated",
+    "kind": "deposit",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "எஃப்டி தான், பேங்க்ல அப்படித்தான் சொன்னாங்க.",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "எஃப்டி தான்"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "அதன் விலை எவ்வளவு?",
+   "reply": "45,000.",
+   "output": {
+    "status": "stated",
+    "span": "45,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "நாற்பத்தையாயிரம், அதாவது 45,000, சரியா?",
+   "reply": "ஆமா.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "அந்தப் பணம் எப்படி செலுத்தப்பட்டது, கடன் தொகையிலிருந்தா அல்லது தனியாகவா?",
+   "reply": "லோன் பணத்துல இருந்து கழிச்சுட்டாங்க.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "அந்தப் பணம் எப்படி செலுத்தப்பட்டது, கடன் தொகையிலிருந்தா அல்லது தனியாகவா?",
+   "reply": "லோன் பணத்துல இருந்து கழிச்சுட்டாங்க.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "ஆமா, இது இல்லாம லோன் கிடைக்காதுன்னு சொன்னாங்க.",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "ஆமா, இது இல்லாம லோன் கிடைக்காதுன்னு சொன்னாங்க.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "இதை வேறு நிறுவனத்திலும் வாங்கலாம் என்று உங்களிடம் சொன்னார்களா?",
+   "reply": "வேற கம்பெனி பத்தி ஒண்ணும் சொல்லலை.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இதை வேறு நிறுவனத்திலும் வாங்கலாம் என்று உங்களிடம் சொன்னார்களா?",
+   "reply": "வேற கம்பெனி பத்தி ஒண்ணும் சொல்லலை.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இதில் எவ்வளவு கவர் உள்ளது?",
+   "reply": "கவர்னா என்னன்னே தெரியாது.",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இதில் எவ்வளவு கவர் உள்ளது?",
+   "reply": "கவர்னா என்னன்னே தெரியாது.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இது எவ்வளவு காலத்துக்கு?",
+   "reply": "5 வருஷம்.",
+   "output": {
+    "status": "stated",
+    "span": "5 வருஷம்",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "ரத்து பண்றது பத்தி யாரும் சொல்லலை.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": false,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "ரத்து பண்றது பத்தி யாரும் சொல்லலை.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "தேவைப்பட்டா எந்த நேரத்துலயும் பணத்த திரும்ப வாங்கிக்கலாம்னு சொன்னாங்க.",
+   "output": {
+    "status": "stated",
+    "claims": [
+     "refundable_anytime"
+    ],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "தேவைப்பட்டா எந்த நேரத்துலயும் பணத்த திரும்ப வாங்கிக்கலாம்னு சொன்னாங்க.",
+   "output": {
+    "claims": [
+     {
+      "claim": "refundable_anytime",
+      "span": "எந்த நேரத்துலயும் பணத்த திரும்ப வாங்கிக்கலாம்னு"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "எஃப்டிக்குன்னு சொல்லி பேப்பர்ல கையெழுத்து வாங்கினாங்க.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "signed_form",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "எஃப்டிக்குன்னு சொல்லி பேப்பர்ல கையெழுத்து வாங்கினாங்க.",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "எஃப்டிக்குன்னு சொல்லி"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "ஒண்ணும் எடுக்கலை, லோன் மட்டும் தான்.",
+   "output": {
+    "items": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "ஒண்ணும் எடுக்கலை, லோன் மட்டும் தான்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "அது என்னன்னு எனக்கு புரியலை, தெரியாது.",
+   "output": {
+    "status": "dont_know",
+    "kind": null,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "அது என்னன்னு எனக்கு புரியலை, தெரியாது.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "அதன் விலை எவ்வளவு?",
+   "reply": "எவ்வளவுன்னு நினைவில்லை.",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "ஹலோ, கொஞ்சம் சத்தமா பேசுங்க.",
+   "output": {
+    "status": "unclear",
+    "yes": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "ஹலோ, கொஞ்சம் சத்தமா பேசுங்க.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இதில் எவ்வளவு கவர் உள்ளது?",
+   "reply": "தெரியாது.",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இது எவ்வளவு காலத்துக்கு?",
+   "reply": "ஒரு வருஷம்னு நினைக்கிறேன், சரியா தெரியலை.",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இது எவ்வளவு காலத்துக்கு?",
+   "reply": "ஒரு வருஷம்னு நினைக்கிறேன், சரியா தெரியலை.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "அப்படி ஒண்ணும் சொல்லலை.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": false,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "அப்படி ஒண்ணும் சொல்லலை.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "அத பத்தி எனக்கு எதுவும் தெரியாது.",
+   "output": {
+    "status": "dont_know",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "அத பத்தி எனக்கு எதுவும் தெரியாது.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "லோனுக்கு மட்டும் தான் ஒத்துக்கிட்டேன், வேற எதுக்கும் இல்லை, OTP சொன்னேன்.",
+   "output": {
+    "given_status": "stated",
+    "given": false,
+    "given_clauses": [
+     1,
+     2
+    ],
+    "method_status": "stated",
+    "method": "otp",
+    "method_clauses": [
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "லோனுக்கு மட்டும் தான் ஒத்துக்கிட்டேன், வேற எதுக்கும் இல்லை, OTP சொன்னேன்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "ஒரு இன்சூரன்ஸ் பாலிசி, 27,500 ரூபாய் கட்டினேன்.",
+   "output": {
+    "items": [
+     {
+      "span": "ஒரு இன்சூரன்ஸ் பாலிசி",
+      "kind": "insurance",
+      "amount_span": "27,500"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "ஒரு இன்சூரன்ஸ் பாலிசி, 27,500 ரூபாய் கட்டினேன்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "நான் தனியா கேஷ் கட்டினேன்.",
+   "output": {
+    "status": "unclear",
+    "kind": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "நான் தனியா கேஷ் கட்டினேன்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "இன்னும் எளிமையாகக் கேட்கிறேன். கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "இன்சூரன்ஸ் பாலிசி.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "அதன் விலை எவ்வளவு?",
+   "reply": "27,000.",
+   "output": {
+    "status": "stated",
+    "span": "27,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "இருபத்தேழாயிரம், அதாவது 27,000, சரியா?",
+   "reply": "இல்லை இல்லை, 27,500.",
+   "output": {
+    "status": "stated",
+    "confirms": false,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": "27,500"
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இருபத்தேழாயிரம், அதாவது 27,000, சரியா?",
+   "reply": "இல்லை இல்லை, 27,500.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "இருபத்தேழாயிரத்து ஐநூறு, அதாவது 27,500, சரியா?",
+   "reply": "சரி, அதான்.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1,
+     2
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "அந்தப் பணம் எப்படி செலுத்தப்பட்டது, கடன் தொகையிலிருந்தா அல்லது தனியாகவா?",
+   "reply": "நானே தனியா கட்டினேன், லோன்ல இருந்து இல்லை.",
+   "output": {
+    "status": "stated",
+    "source": "separately",
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "அந்தப் பணம் எப்படி செலுத்தப்பட்டது, கடன் தொகையிலிருந்தா அல்லது தனியாகவா?",
+   "reply": "நானே தனியா கட்டினேன், லோன்ல இருந்து இல்லை.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "கட்டாயம்னு சொல்லலை, என் விருப்பம் தான்.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "கட்டாயம்னு சொல்லலை, என் விருப்பம் தான்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இதில் எவ்வளவு கவர் உள்ளது?",
+   "reply": "4 லட்சம்.",
+   "output": {
+    "status": "stated",
+    "span": "4 லட்சம்",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இது எவ்வளவு காலத்துக்கு?",
+   "reply": "3 வருஷம்.",
+   "output": {
+    "status": "stated",
+    "span": "3 வருஷம்",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "ஆமா, 30 நாள் டைம் இருக்கு, அதுக்குள்ள கேன்சல் பண்ணலாம்.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1,
+     3
+    ],
+    "window_status": "stated",
+    "window_span": "30 நாள்",
+    "window_clauses": [
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "ஆமா, 30 நாள் டைம் இருக்கு, அதுக்குள்ள கேன்சல் பண்ணலாம்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "திரும்ப கிடைக்காது, எனக்கு ஏதாவது ஆனா தான் குடும்பத்துக்கு பணம் வரும்.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "திரும்ப கிடைக்காது, எனக்கு ஏதாவது ஆனா தான் குடும்பத்துக்கு பணம் வரும்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "இன்சூரன்ஸ்க்கு சம்மதிச்சேன், மொபைலுக்கு வந்த OTP நம்பர் சொன்னேன்.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "otp",
+    "method_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "இன்சூரன்ஸ்க்கு சம்மதிச்சேன், மொபைலுக்கு வந்த OTP நம்பர் சொன்னேன்.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "இன்சூரன்ஸ்னு ஒண்ணு இருக்குன்னு லோன் வந்ததுக்கு அப்புறம் தான் தெரிஞ்சது, 32,000 பிடிச்சிருக்காங்க.",
+   "output": {
+    "items": [
+     {
+      "span": "இன்சூரன்ஸ்னு ஒண்ணு",
+      "kind": "insurance",
+      "amount_span": "32,000"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?",
+   "reply": "இன்சூரன்ஸ்னு ஒண்ணு இருக்குன்னு லோன் வந்ததுக்கு அப்புறம் தான் தெரிஞ்சது, 32,000 பிடிச்சிருக்காங்க.",
+   "output": {
+    "claims": [],
+    "concerns": [
+     {
+      "concern": "learned_after_sale",
+      "span": "இன்சூரன்ஸ்னு ஒண்ணு இருக்குன்னு லோன் வந்ததுக்கு அப்புறம் தான் தெரிஞ்சது"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "கடனுடன் உங்களுக்குக் கொடுக்கப்பட்டது காப்பீடா, FD-யா, அல்லது வேறு ஏதாவதா?",
+   "reply": "இன்சூரன்ஸ்.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "அதன் விலை எவ்வளவு?",
+   "reply": "32,000 ரூபாய்.",
+   "output": {
+    "status": "stated",
+    "span": "32,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "முப்பத்திரண்டாயிரம், அதாவது 32,000, சரியா?",
+   "reply": "ஆமா.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "அந்தப் பணம் எப்படி செலுத்தப்பட்டது, கடன் தொகையிலிருந்தா அல்லது தனியாகவா?",
+   "reply": "லோன் தொகையில கழிச்சிட்டாங்க.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "அந்தப் பணம் எப்படி செலுத்தப்பட்டது, கடன் தொகையிலிருந்தா அல்லது தனியாகவா?",
+   "reply": "லோன் தொகையில கழிச்சிட்டாங்க.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "கடன் கிடைக்க இது கட்டாயமா?",
+   "reply": "இல்லை.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "இதில் எவ்வளவு கவர் உள்ளது?",
+   "reply": "2 லட்சம்.",
+   "output": {
+    "status": "stated",
+    "span": "2 லட்சம்",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "கேன்சல் பண்ணலாம்னு சொன்னாங்க, ஆனா எத்தனை நாள்னு ஞாபகம் இல்லை.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "dont_know",
+    "window_span": null,
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "இதை ரத்து செய்ய முடியுமா என்று சொன்னார்களா, எத்தனை நாட்களுக்குள்?",
+   "reply": "கேன்சல் பண்ணலாம்னு சொன்னாங்க, ஆனா எத்தனை நாள்னு ஞாபகம் இல்லை.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "இந்தப் பணத்தைத் திரும்பப் பெற விரும்பினால், கிடைக்குமா, எப்போது?",
+   "reply": "திரும்ப வராது.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "ஏஜென்ட் டேப்லெட்ல அழுத்த சொன்னார், அழுத்தினேன், எதுக்குன்னு சொல்லலை.",
+   "output": {
+    "given_status": "unclear",
+    "given": null,
+    "given_clauses": [],
+    "method_status": "stated",
+    "method": "digital_click",
+    "method_clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "கடன் வாங்கும்போது நீங்கள் எதையெல்லாம் வாங்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புக்கொண்டீர்கள்?",
+   "reply": "ஏஜென்ட் டேப்லெட்ல அழுத்த சொன்னார், அழுத்தினேன், எதுக்குன்னு சொல்லலை.",
+   "output": {
+    "claims": [],
+    "concerns": [
+     {
+      "concern": "signed_without_explanation",
+      "span": "அழுத்தினேன், எதுக்குன்னு சொல்லலை."
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "உங்கள் நேரத்துக்கு நன்றி.",
+   "reply": "சரி. கால் வந்தா எல்லாத்துக்கும் ஆமான்னு சொல்லுங்கன்னு ஆபீஸ்ல சொன்னாங்க.",
+   "output": {
+    "claims": [],
+    "concerns": [
+     {
+      "concern": "coached_answers",
+      "span": "கால் வந்தா எல்லாத்துக்கும் ஆமான்னு சொல்லுங்கன்னு ஆபீஸ்ல சொன்னாங்க."
+     }
+    ]
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಸಾಲದ ಜೊತೆ ಒಂದು ವಿಮೆ ತಗೊಂಡೆ, 21,000 ರೂಪಾಯಿ.",
+   "output": {
+    "items": [
+     {
+      "span": "ಒಂದು ವಿಮೆ",
+      "kind": "insurance",
+      "amount_span": "21,000"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಸಾಲದ ಜೊತೆ ಒಂದು ವಿಮೆ ತಗೊಂಡೆ, 21,000 ರೂಪಾಯಿ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಅದು ವಿಮೆ, ಸಾಲಕ್ಕೆ ಸಂಬಂಧಿಸಿದ್ದು.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಅದು ವಿಮೆ, ಸಾಲಕ್ಕೆ ಸಂಬಂಧಿಸಿದ್ದು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಅದರ ಬೆಲೆ ಎಷ್ಟು?",
+   "reply": "21,000 ರೂಪಾಯಿ.",
+   "output": {
+    "status": "stated",
+    "span": "21,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "ಇಪ್ಪತ್ತೊಂದು ಸಾವಿರ, ಅಂದರೆ 21,000, ಸರಿಯೇ?",
+   "reply": "ಹೌದು, ಸರಿ.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1,
+     2
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಸಾಲದ ಹಣದಲ್ಲೇ ಕಟ್ ಮಾಡಿದ್ರು.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಸಾಲದ ಹಣದಲ್ಲೇ ಕಟ್ ಮಾಡಿದ್ರು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "ಸಾಲ ಸಿಗಲು ಇದು ಕಡ್ಡಾಯವಾಗಿತ್ತೇ?",
+   "reply": "ಹೌದು, ಸಾಲಕ್ಕೆ ಇದು ಬೇಕೇ ಬೇಕು ಅಂತ ಹೇಳಿದ್ರು.",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲ ಸಿಗಲು ಇದು ಕಡ್ಡಾಯವಾಗಿತ್ತೇ?",
+   "reply": "ಹೌದು, ಸಾಲಕ್ಕೆ ಇದು ಬೇಕೇ ಬೇಕು ಅಂತ ಹೇಳಿದ್ರು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "ಇದನ್ನು ಬೇರೆ ಕಂಪನಿಯಿಂದಲೂ ತೆಗೆದುಕೊಳ್ಳಬಹುದು ಎಂದು ನಿಮಗೆ ಹೇಳಿದ್ದರೇ?",
+   "reply": "ಹೌದು, ಬೇರೆ ಕಂಪನಿಯಲ್ಲೂ ಮಾಡಿಸಬಹುದು ಅಂತ ಹೇಳಿದ್ರು.",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಇದನ್ನು ಬೇರೆ ಕಂಪನಿಯಿಂದಲೂ ತೆಗೆದುಕೊಳ್ಳಬಹುದು ಎಂದು ನಿಮಗೆ ಹೇಳಿದ್ದರೇ?",
+   "reply": "ಹೌದು, ಬೇರೆ ಕಂಪನಿಯಲ್ಲೂ ಮಾಡಿಸಬಹುದು ಅಂತ ಹೇಳಿದ್ರು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದರಲ್ಲಿ ಎಷ್ಟು ಕವರ್ ಇದೆ?",
+   "reply": "3 ಲಕ್ಷ ಕವರ್ ಇದೆ.",
+   "output": {
+    "status": "stated",
+    "span": "3 ಲಕ್ಷ",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಇದರಲ್ಲಿ ಎಷ್ಟು ಕವರ್ ಇದೆ?",
+   "reply": "3 ಲಕ್ಷ ಕವರ್ ಇದೆ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದು ಎಷ್ಟು ಅವಧಿಗೆ?",
+   "reply": "3 ವರ್ಷ.",
+   "output": {
+    "status": "stated",
+    "span": "3 ವರ್ಷ",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ಹೌದು, 30 ದಿನ ಒಳಗೆ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಬಹುದು.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "stated",
+    "window_span": "30 ದಿನ",
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ಹೌದು, 30 ದಿನ ಒಳಗೆ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಬಹುದು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "ಇಲ್ಲ, ವಿಮೆ ಹಣ ವಾಪಸ್ ಬರಲ್ಲ.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "ಇಲ್ಲ, ವಿಮೆ ಹಣ ವಾಪಸ್ ಬರಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ವಿಮೆಗೆ ಒಪ್ಪಿದ್ದೆ, ಮೊಬೈಲ್‌ಗೆ ಬಂದ OTP ಕೊಟ್ಟೆ.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "otp",
+    "method_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ವಿಮೆಗೆ ಒಪ್ಪಿದ್ದೆ, ಮೊಬೈಲ್‌ಗೆ ಬಂದ OTP ಕೊಟ್ಟೆ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಚಿನ್ನದ ಸಾಲಕ್ಕೆ ಭದ್ರತೆ ಅಂತ ಒಂದು ಫಿಕ್ಸೆಡ್ ಡೆಪಾಸಿಟ್ ಇಟ್ಟಿದ್ದೀನಿ, 60,000.",
+   "output": {
+    "items": [
+     {
+      "span": "ಒಂದು ಫಿಕ್ಸೆಡ್ ಡೆಪಾಸಿಟ್",
+      "kind": "deposit",
+      "amount_span": "60,000"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಚಿನ್ನದ ಸಾಲಕ್ಕೆ ಭದ್ರತೆ ಅಂತ ಒಂದು ಫಿಕ್ಸೆಡ್ ಡೆಪಾಸಿಟ್ ಇಟ್ಟಿದ್ದೀನಿ, 60,000.",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "ಒಂದು ಫಿಕ್ಸೆಡ್ ಡೆಪಾಸಿಟ್"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಡೆಪಾಸಿಟ್ ಅದು, ಮ್ಯಾನೇಜರ್ ಹಾಗೇ ಹೇಳಿದ್ರು.",
+   "output": {
+    "status": "stated",
+    "kind": "deposit",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಡೆಪಾಸಿಟ್ ಅದು, ಮ್ಯಾನೇಜರ್ ಹಾಗೇ ಹೇಳಿದ್ರು.",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "ಡೆಪಾಸಿಟ್ ಅದು"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಅದರ ಬೆಲೆ ಎಷ್ಟು?",
+   "reply": "60,000.",
+   "output": {
+    "status": "stated",
+    "span": "60,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "ಅರವತ್ತು ಸಾವಿರ, ಅಂದರೆ 60,000, ಸರಿಯೇ?",
+   "reply": "ಹೌದು.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಹಿಡ್ಕೊಂಡ್ರು.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಹಿಡ್ಕೊಂಡ್ರು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "ಸಾಲ ಸಿಗಲು ಇದು ಕಡ್ಡಾಯವಾಗಿತ್ತೇ?",
+   "reply": "ಹೌದು, ಇದಿಲ್ಲದೆ ಸಾಲ ಕೊಡಲ್ಲ ಅಂದ್ರು.",
+   "output": {
+    "status": "stated",
+    "yes": true,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲ ಸಿಗಲು ಇದು ಕಡ್ಡಾಯವಾಗಿತ್ತೇ?",
+   "reply": "ಹೌದು, ಇದಿಲ್ಲದೆ ಸಾಲ ಕೊಡಲ್ಲ ಅಂದ್ರು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "ಇದನ್ನು ಬೇರೆ ಕಂಪನಿಯಿಂದಲೂ ತೆಗೆದುಕೊಳ್ಳಬಹುದು ಎಂದು ನಿಮಗೆ ಹೇಳಿದ್ದರೇ?",
+   "reply": "ಗೊತ್ತಿಲ್ಲ, ನೆನಪಿಲ್ಲ.",
+   "output": {
+    "status": "dont_know",
+    "yes": null,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದರಲ್ಲಿ ಎಷ್ಟು ಕವರ್ ಇದೆ?",
+   "reply": "8 ಲಕ್ಷ.",
+   "output": {
+    "status": "stated",
+    "span": "8 ಲಕ್ಷ",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದು ಎಷ್ಟು ಅವಧಿಗೆ?",
+   "reply": "5 ವರ್ಷ.",
+   "output": {
+    "status": "stated",
+    "span": "5 ವರ್ಷ",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ಇಲ್ಲ, ಅದರ ಬಗ್ಗೆ ಯಾರೂ ಹೇಳಿಲ್ಲ.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": false,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ಇಲ್ಲ, ಅದರ ಬಗ್ಗೆ ಯಾರೂ ಹೇಳಿಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "5 ವರ್ಷ ಆದ್ಮೇಲೆ ಬಡ್ಡಿ ಸೇರಿ ವಾಪಸ್ ಬರುತ್ತೆ.",
+   "output": {
+    "status": "stated",
+    "claims": [
+     "withdrawable_after_period",
+     "guaranteed_return"
+    ],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "5 ವರ್ಷ ಆದ್ಮೇಲೆ ಬಡ್ಡಿ ಸೇರಿ ವಾಪಸ್ ಬರುತ್ತೆ.",
+   "output": {
+    "claims": [
+     {
+      "claim": "guaranteed_return",
+      "span": "ಬಡ್ಡಿ ಸೇರಿ ವಾಪಸ್ ಬರುತ್ತೆ."
+     },
+     {
+      "claim": "withdrawable_after_period",
+      "span": "5 ವರ್ಷ ಆದ್ಮೇಲೆ ಬಡ್ಡಿ ಸೇರಿ ವಾಪಸ್ ಬರುತ್ತೆ."
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ಡೆಪಾಸಿಟ್‌ಗೆ ಅಂತ ಫಾರ್ಮ್‌ಗೆ ಸಹಿ ಹಾಕಿದೆ.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "signed_form",
+    "method_clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ಡೆಪಾಸಿಟ್‌ಗೆ ಅಂತ ಫಾರ್ಮ್‌ಗೆ ಸಹಿ ಹಾಕಿದೆ.",
+   "output": {
+    "claims": [
+     {
+      "claim": "is_deposit",
+      "span": "ಡೆಪಾಸಿಟ್‌ಗೆ ಅಂತ"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಗೊತ್ತಿಲ್ಲ ಸರ್, ಸಾಲ ಮಾತ್ರ ತಗೊಂಡಿದ್ದು.",
+   "output": {
+    "items": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಗೊತ್ತಿಲ್ಲ ಸರ್, ಸಾಲ ಮಾತ್ರ ತಗೊಂಡಿದ್ದು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಏನು ಅಂತ ನನಗೆ ಗೊತ್ತಿಲ್ಲ.",
+   "output": {
+    "status": "dont_know",
+    "kind": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಏನು ಅಂತ ನನಗೆ ಗೊತ್ತಿಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಅದರ ಬೆಲೆ ಎಷ್ಟು?",
+   "reply": "ತಿಂಗಳ ಕಂತು 6,500 ಕಟ್ತಾ ಇದ್ದೀನಿ.",
+   "output": {
+    "status": "unclear",
+    "span": null,
+    "clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಅದರ ಬೆಲೆ ಎಷ್ಟು?",
+   "reply": "ತಿಂಗಳ ಕಂತು 6,500 ಕಟ್ತಾ ಇದ್ದೀನಿ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇನ್ನೂ ಸರಳವಾಗಿ ಕೇಳುತ್ತೇನೆ. ಅದರ ಬೆಲೆ ಎಷ್ಟು?",
+   "reply": "ನೆನಪಿಲ್ಲ.",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಅದು ನನಗೆ ತಿಳಿದಿಲ್ಲ.",
+   "output": {
+    "status": "dont_know",
+    "source": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಅದು ನನಗೆ ತಿಳಿದಿಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದರಲ್ಲಿ ಎಷ್ಟು ಕವರ್ ಇದೆ?",
+   "reply": "ಗೊತ್ತಿಲ್ಲ.",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದು ಎಷ್ಟು ಅವಧಿಗೆ?",
+   "reply": "ನೆನಪಿಲ್ಲ.",
+   "output": {
+    "status": "dont_know",
+    "span": null,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ಹೇಳಿದ್ರೋ ಇಲ್ವೋ ನೆನಪಿಲ್ಲ.",
+   "output": {
+    "allowed_status": "dont_know",
+    "allowed": null,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ಹೇಳಿದ್ರೋ ಇಲ್ವೋ ನೆನಪಿಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "ಗೊತ್ತಿಲ್ಲ, ಯಾರೂ ಏನೂ ಹೇಳಿಲ್ಲ.",
+   "output": {
+    "status": "dont_know",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "ಗೊತ್ತಿಲ್ಲ, ಯಾರೂ ಏನೂ ಹೇಳಿಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ನಾನು ಸಾಲಕ್ಕೆ ಮಾತ್ರ ಒಪ್ಪಿದ್ದು, ಬೇರೆ ಯಾವುದಕ್ಕೂ ಇಲ್ಲ.",
+   "output": {
+    "given_status": "stated",
+    "given": false,
+    "given_clauses": [
+     1,
+     2
+    ],
+    "method_status": "unclear",
+    "method": null,
+    "method_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ನಾನು ಸಾಲಕ್ಕೆ ಮಾತ್ರ ಒಪ್ಪಿದ್ದು, ಬೇರೆ ಯಾವುದಕ್ಕೂ ಇಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಒಂದು ಇನ್ಶೂರೆನ್ಸ್ ಪಾಲಿಸಿ ಮಾಡಿಸಿದೆ, 16,500 ಕಟ್ಟಿದೆ, ಜೊತೆಗೆ ಪ್ರೊಸೆಸಿಂಗ್ ಫೀ ಇತ್ತು.",
+   "output": {
+    "items": [
+     {
+      "span": "ಒಂದು ಇನ್ಶೂರೆನ್ಸ್ ಪಾಲಿಸಿ",
+      "kind": "insurance",
+      "amount_span": "16,500"
+     },
+     {
+      "span": "ಪ್ರೊಸೆಸಿಂಗ್ ಫೀ",
+      "kind": "fee",
+      "amount_span": null
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಒಂದು ಇನ್ಶೂರೆನ್ಸ್ ಪಾಲಿಸಿ ಮಾಡಿಸಿದೆ, 16,500 ಕಟ್ಟಿದೆ, ಜೊತೆಗೆ ಪ್ರೊಸೆಸಿಂಗ್ ಫೀ ಇತ್ತು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಎಫ್‌ಡಿ... ಅಲ್ಲ ಅಲ್ಲ, ಇನ್ಶೂರೆನ್ಸ್.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಎಫ್‌ಡಿ... ಅಲ್ಲ ಅಲ್ಲ, ಇನ್ಶೂರೆನ್ಸ್.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಅದರ ಬೆಲೆ ಎಷ್ಟು?",
+   "reply": "16,500 ರೂಪಾಯಿ.",
+   "output": {
+    "status": "stated",
+    "span": "16,500",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "ಹದಿನಾರು ಸಾವಿರದ ಐನೂರು, ಅಂದರೆ 16,500, ಸರಿಯೇ?",
+   "reply": "ಹೌದು ಹೌದು.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಸಾಲದಿಂದ... ಇಲ್ಲ, ನಾನೇ ಬೇರೆಯಾಗಿ ಫೋನ್‌ಪೇ ಮಾಡಿದೆ.",
+   "output": {
+    "status": "stated",
+    "source": "separately",
+    "clauses": [
+     2,
+     3
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಸಾಲದಿಂದ... ಇಲ್ಲ, ನಾನೇ ಬೇರೆಯಾಗಿ ಫೋನ್‌ಪೇ ಮಾಡಿದೆ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "ಸಾಲ ಸಿಗಲು ಇದು ಕಡ್ಡಾಯವಾಗಿತ್ತೇ?",
+   "reply": "ಇಲ್ಲ, ಕಡ್ಡಾಯ ಇರಲಿಲ್ಲ.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲ ಸಿಗಲು ಇದು ಕಡ್ಡಾಯವಾಗಿತ್ತೇ?",
+   "reply": "ಇಲ್ಲ, ಕಡ್ಡಾಯ ಇರಲಿಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದರಲ್ಲಿ ಎಷ್ಟು ಕವರ್ ಇದೆ?",
+   "reply": "ಎರಡೂವರೆ ಲಕ್ಷ.",
+   "output": {
+    "status": "stated",
+    "span": "ಎರಡೂವರೆ ಲಕ್ಷ",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದು ಎಷ್ಟು ಅವಧಿಗೆ?",
+   "reply": "2 ವರ್ಷ.",
+   "output": {
+    "status": "stated",
+    "span": "2 ವರ್ಷ",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ರದ್ದು ಮಾಡಬಹುದು ಅಂತ ಯಾರೂ ತಿಳಿಸಿಲ್ಲ.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": false,
+    "allowed_clauses": [
+     1
+    ],
+    "window_status": "unclear",
+    "window_span": null,
+    "window_clauses": []
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ರದ್ದು ಮಾಡಬಹುದು ಅಂತ ಯಾರೂ ತಿಳಿಸಿಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "ವಾಪಸ್ ಸಿಗಲ್ಲ, ಇದು ಇನ್ಶೂರೆನ್ಸ್ ಅಲ್ವಾ.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "ವಾಪಸ್ ಸಿಗಲ್ಲ, ಇದು ಇನ್ಶೂರೆನ್ಸ್ ಅಲ್ವಾ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ಇನ್ಶೂರೆನ್ಸ್‌ಗೆ ಫೋನ್‌ನಲ್ಲಿ ಹೌದು ಅಂದೆ, ಆ ಕಾಲ್ ರೆಕಾರ್ಡ್ ಆಗ್ತಿತ್ತು.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "recorded_call",
+    "method_clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ಇನ್ಶೂರೆನ್ಸ್‌ಗೆ ಫೋನ್‌ನಲ್ಲಿ ಹೌದು ಅಂದೆ, ಆ ಕಾಲ್ ರೆಕಾರ್ಡ್ ಆಗ್ತಿತ್ತು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "RecallReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಒಂದು ಇನ್ಶೂರೆನ್ಸ್ ಕೊಟ್ಟಿದ್ದಾರೆ, 25,000 ಒಂದೇ ಸಲ ಕಟ್ಟಿದ್ರೆ ಸಾಕು ಅಂದ್ರು.",
+   "output": {
+    "items": [
+     {
+      "span": "ಒಂದು ಇನ್ಶೂರೆನ್ಸ್",
+      "kind": "insurance",
+      "amount_span": "25,000"
+     }
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?",
+   "reply": "ಒಂದು ಇನ್ಶೂರೆನ್ಸ್ ಕೊಟ್ಟಿದ್ದಾರೆ, 25,000 ಒಂದೇ ಸಲ ಕಟ್ಟಿದ್ರೆ ಸಾಕು ಅಂದ್ರು.",
+   "output": {
+    "claims": [
+     {
+      "claim": "one_time_payment",
+      "span": "25,000 ಒಂದೇ ಸಲ ಕಟ್ಟಿದ್ರೆ ಸಾಕು"
+     }
+    ],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "KindReply",
+   "question": "ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದು ವಿಮೆಯೇ, FD-ಯೇ, ಅಥವಾ ಬೇರೆ ಏನಾದರೂ?",
+   "reply": "ಇನ್ಶೂರೆನ್ಸ್.",
+   "output": {
+    "status": "stated",
+    "kind": "insurance",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಅದರ ಬೆಲೆ ಎಷ್ಟು?",
+   "reply": "25,000.",
+   "output": {
+    "status": "stated",
+    "span": "25,000",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ReadbackReply",
+   "question": "ಇಪ್ಪತ್ತೈದು ಸಾವಿರ, ಅಂದರೆ 25,000, ಸರಿಯೇ?",
+   "reply": "ಸರಿ.",
+   "output": {
+    "status": "stated",
+    "confirms": true,
+    "clauses": [
+     1
+    ],
+    "corrected_amount_span": null
+   }
+  },
+  {
+   "schema": "PaymentReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಸಾಲದ ದುಡ್ಡಲ್ಲೇ ಮುರ್ಕೊಂಡ್ರು.",
+   "output": {
+    "status": "stated",
+    "source": "from_loan",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಆ ಹಣ ಹೇಗೆ ಪಾವತಿಯಾಯಿತು, ಸಾಲದ ಮೊತ್ತದಿಂದಲೇ ಅಥವಾ ಬೇರೆಯಾಗಿ?",
+   "reply": "ಸಾಲದ ದುಡ್ಡಲ್ಲೇ ಮುರ್ಕೊಂಡ್ರು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "YesNoReply",
+   "question": "ಸಾಲ ಸಿಗಲು ಇದು ಕಡ್ಡಾಯವಾಗಿತ್ತೇ?",
+   "reply": "ಇಲ್ಲ.",
+   "output": {
+    "status": "stated",
+    "yes": false,
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "SpanReply",
+   "question": "ಇದರಲ್ಲಿ ಎಷ್ಟು ಕವರ್ ಇದೆ?",
+   "reply": "3 ಲಕ್ಷ.",
+   "output": {
+    "status": "stated",
+    "span": "3 ಲಕ್ಷ",
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "CancelReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ಹೌದು, 15 ದಿನ ಅಂದ್ರು.",
+   "output": {
+    "allowed_status": "stated",
+    "allowed": true,
+    "allowed_clauses": [
+     1,
+     2
+    ],
+    "window_status": "stated",
+    "window_span": "15 ದಿನ",
+    "window_clauses": [
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಇದನ್ನು ರದ್ದು ಮಾಡಬಹುದು ಎಂದು ಹೇಳಿದ್ದರೇ, ಎಷ್ಟು ದಿನದೊಳಗೆ?",
+   "reply": "ಹೌದು, 15 ದಿನ ಅಂದ್ರು.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  },
+  {
+   "schema": "FeaturesReply",
+   "question": "ಈ ಹಣ ವಾಪಸ್ ಬೇಕೆಂದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?",
+   "reply": "ವಾಪಸ್ ಬರಲ್ಲ.",
+   "output": {
+    "status": "stated",
+    "claims": [],
+    "clauses": [
+     1
+    ]
+   }
+  },
+  {
+   "schema": "ConsentReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ಇನ್ಶೂರೆನ್ಸ್‌ಗೆ ಬಾಯಿ ಮಾತಲ್ಲಿ ಒಪ್ಪಿದೆ ಅಷ್ಟೇ, ಯಾವ ಸಹಿನೂ ಹಾಕಿಲ್ಲ.",
+   "output": {
+    "given_status": "stated",
+    "given": true,
+    "given_clauses": [
+     1
+    ],
+    "method_status": "stated",
+    "method": "verbal",
+    "method_clauses": [
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "schema": "ScreenReply",
+   "question": "ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಹೇಗೆ ಒಪ್ಪಿದ್ದಿರಿ?",
+   "reply": "ಇನ್ಶೂರೆನ್ಸ್‌ಗೆ ಬಾಯಿ ಮಾತಲ್ಲಿ ಒಪ್ಪಿದೆ ಅಷ್ಟೇ, ಯಾವ ಸಹಿನೂ ಹಾಕಿಲ್ಲ.",
+   "output": {
+    "claims": [],
+    "concerns": []
+   }
+  }
+ ]
+}
