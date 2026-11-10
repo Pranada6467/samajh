@@ -31,11 +31,22 @@ from samajh.ops.model import (
     Note,
     PhoneSession,
     Reviewer,
-    SummaryLine,
-    Tier,
 )
 from samajh.ops.store import OpsStore
-from samajh.types import Frozen, Language, LenderType, LoanKind, Product, RuleId, Severity, Speaker, Turn
+from samajh.rules import IssueLine
+from samajh.types import (
+    Frozen,
+    Language,
+    LenderType,
+    LoanKind,
+    Product,
+    ProductId,
+    RuleId,
+    Severity,
+    Speaker,
+    Tier,
+    Turn,
+)
 
 
 class Proportion(Frozen):
@@ -113,15 +124,18 @@ class QuoteView(Frozen):
     end_s: float | None
 
 
-class SummaryLineView(Frozen):
-    rule_id: RuleId
-    rule_label: str
-    may_engage: str | None  # e.g. "may engage para 85G"; None for a check of our own
-    severity: Severity
+class IssueLineView(Frozen):
+    """One line of the deduplicated case summary (`samajh.rules.summarise`), with its words."""
+
     tier: Tier
-    expected: str  # the record's side
-    heard: str  # the customer's side
-    quotes: tuple[QuoteView, ...]
+    tier_label: str
+    product_id: ProductId | None  # None for a case-level line
+    title: str  # the issue, in one sentence
+    record_value: str  # the record's side
+    quote: QuoteView | None  # the customer's best quote
+    rule_ids: tuple[RuleId, ...]
+    rule_labels: tuple[str, ...]
+    may_engage: tuple[str, ...]  # e.g. "may engage para 85G"; a check of our own adds nothing
 
 
 class TurnView(Frozen):
@@ -167,8 +181,8 @@ class CaseView(Frozen):
     severity: Severity
     loan: LoanView
     call: CallView
-    refer_lines: tuple[SummaryLineView, ...]  # why the case is here
-    other_lines: tuple[SummaryLineView, ...]  # understanding gaps on the same call (report only)
+    refer_lines: tuple[IssueLineView, ...]  # why the case is here
+    other_lines: tuple[IssueLineView, ...]  # incomplete questions and understanding gaps on the same call
     undecided: tuple[Labelled, ...]  # rules that could not decide, with the reason as the label
     transcript: tuple[TurnView, ...]
     decisions: tuple[Labelled, ...]  # the choices the reviewer has, in order
@@ -393,7 +407,6 @@ def _simulated(source: CallSource) -> bool:
 def _queue_item(batch: Batch, s: Sampled) -> QueueItem:
     refer = [line for line in s.triage.lines if line.tier is Tier.refer]
     day = s.attempts[-1].day_since_sale
-    engaged = (wording.may_engage(line.clause) for line in refer)
     return QueueItem(
         case_id=s.call.call_id,
         loan_id=s.loan.record.loan_id,
@@ -405,9 +418,9 @@ def _queue_item(batch: Batch, s: Sampled) -> QueueItem:
         day_since_sale=day,
         days_left_in_window=max(0, WINDOW_DAYS - day),
         severity=s.triage.severity,
-        headline=f"{wording.RULE_LABEL[refer[0].rule_id]}: {refer[0].heard}.",
+        headline=refer[0].title,
         refer_lines=len(refer),
-        may_engage=tuple(dict.fromkeys(phrase for phrase in engaged if phrase)),
+        may_engage=_engaged(tuple(clause for line in refer for clause in line.clauses)),
         simulated=_simulated(s.call.source),
         disposition=_disposition_view(batch.latest(s.call.call_id)),
     )
@@ -421,24 +434,25 @@ def queue_view(batch: Batch) -> QueueView:
     return QueueView(items=tuple(items))
 
 
-def _line_view(line: SummaryLine, turns: dict[int, Turn]) -> SummaryLineView:
-    return SummaryLineView(
-        rule_id=line.rule_id,
-        rule_label=wording.RULE_LABEL[line.rule_id],
-        may_engage=wording.may_engage(line.clause),
-        severity=line.severity,
+def _engaged(clauses: tuple[str, ...]) -> tuple[str, ...]:
+    return tuple(dict.fromkeys(phrase for phrase in map(wording.may_engage, clauses) if phrase))
+
+
+def _line_view(line: IssueLine, turns: dict[int, Turn]) -> IssueLineView:
+    quote = None
+    if line.quote is not None and line.turn_id is not None:
+        turn = turns[line.turn_id]
+        quote = QuoteView(quote=line.quote, turn_id=line.turn_id, start_s=turn.start_s, end_s=turn.end_s)
+    return IssueLineView(
         tier=line.tier,
-        expected=line.expected,
-        heard=line.heard,
-        quotes=tuple(
-            QuoteView(
-                quote=q.quote,
-                turn_id=q.turn_id,
-                start_s=turns[q.turn_id].start_s,
-                end_s=turns[q.turn_id].end_s,
-            )
-            for q in line.quotes
-        ),
+        tier_label=wording.TIER_LABEL[line.tier],
+        product_id=line.product_id,
+        title=line.title,
+        record_value=line.record_value,
+        quote=quote,
+        rule_ids=line.rule_ids,
+        rule_labels=tuple(wording.RULE_LABEL[rule] for rule in line.rule_ids),
+        may_engage=_engaged(line.clauses),
     )
 
 
@@ -450,7 +464,7 @@ def case_view(batch: Batch, case_id: str) -> CaseView:
     record, call, completed = s.loan.record, s.call, s.attempts[-1]
     turns = {turn.id: turn for turn in call.transcript.turns}
     lines = [_line_view(line, turns) for line in s.triage.lines]
-    cited = {q.turn_id for line in s.triage.lines for q in line.quotes}
+    cited = {line.turn_id for line in s.triage.lines if line.quote is not None}
     undecided = {
         (gap.rule_id, gap.reason): Labelled(
             key=gap.rule_id.value, label=f"{wording.RULE_LABEL[gap.rule_id]}: {wording.GAP_LABEL[gap.reason]}"

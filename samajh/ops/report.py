@@ -11,7 +11,7 @@ from datetime import date, datetime
 
 from samajh.ops import wording
 from samajh.ops.batch import Batch, Sampled, load_batch
-from samajh.ops.model import WINDOW_DAYS, AttemptOutcome, Decision, FinalStatus, Tier
+from samajh.ops.model import WINDOW_DAYS, AttemptOutcome, Decision, FinalStatus
 from samajh.ops.store import OpsStore
 from samajh.ops.views import (
     Breakdown,
@@ -30,7 +30,7 @@ from samajh.ops.views import (
     proportion,
 )
 from samajh.rules import CLAUSES
-from samajh.types import RuleId
+from samajh.types import RuleId, Tier
 
 MIN_GROUP = 5  # a branch or channel is named as "highest" only with at least this many completed calls
 
@@ -142,7 +142,7 @@ def findings(batch: Batch) -> tuple[RuleFinding, ...]:
                 flagged=proportion(len(flagged), len(completed)),
                 undecided=undecided,
                 referred=sum(
-                    any(line.rule_id is rule and line.tier is Tier.refer for line in s.triage.lines)
+                    any(rule in line.rule_ids and line.tier is Tier.refer for line in s.triage.lines)
                     for s in flagged
                 ),
             )

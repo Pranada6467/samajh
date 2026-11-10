@@ -17,12 +17,12 @@ from samajh.ops.model import (
     Draw,
     DrawnLoan,
     FinalStatus,
-    Tier,
     Triage,
 )
 from samajh.ops.sampler import verify_draw
 from samajh.ops.store import OpsStore
 from samajh.ops.triage import triage
+from samajh.types import Tier
 
 
 @dataclass(frozen=True)
@@ -107,7 +107,7 @@ def load_batch(store: OpsStore) -> Batch:
                     loan=loans[drawn.loan_id],
                     attempts=attempts,
                     call=call,
-                    triage=triage(call.result) if call else None,
+                    triage=triage(loans[drawn.loan_id].record, call.result) if call else None,
                 )
             )
     return Batch(

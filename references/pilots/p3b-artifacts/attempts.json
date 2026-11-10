@@ -1,0 +1,2252 @@
+{
+    "draws": [
+        {
+            "draw_id": "D-2027-02-08",
+            "as_of": "2027-02-08",
+            "min_day": 0,
+            "max_day": 30,
+            "size": 20,
+            "seed": 85,
+            "eligible": 110,
+            "already_drawn": 0,
+            "drawn": 20,
+            "verified": true
+        },
+        {
+            "draw_id": "D-2027-02-15",
+            "as_of": "2027-02-15",
+            "min_day": 0,
+            "max_day": 30,
+            "size": 20,
+            "seed": 85,
+            "eligible": 94,
+            "already_drawn": 15,
+            "drawn": 20,
+            "verified": true
+        },
+        {
+            "draw_id": "D-2027-02-22",
+            "as_of": "2027-02-22",
+            "min_day": 0,
+            "max_day": 30,
+            "size": 20,
+            "seed": 85,
+            "eligible": 88,
+            "already_drawn": 23,
+            "drawn": 20,
+            "verified": true
+        },
+        {
+            "draw_id": "D-2027-03-01",
+            "as_of": "2027-03-01",
+            "min_day": 0,
+            "max_day": 30,
+            "size": 20,
+            "seed": 85,
+            "eligible": 71,
+            "already_drawn": 37,
+            "drawn": 20,
+            "verified": true
+        }
+    ],
+    "loans": [
+        {
+            "loan_id": "SYN-GL-270208-0121",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-02-08",
+            "day_since_sale_at_draw": 0,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 0,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-09T11:00:00+05:30",
+                    "day_since_sale": 1,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270119-0054",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-19",
+            "day_since_sale_at_draw": 20,
+            "language": "hi-en",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 20,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270119-0054-tb"
+        },
+        {
+            "loan_id": "SYN-GL-270116-0038",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-16",
+            "day_since_sale_at_draw": 23,
+            "language": "hi-en",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 23,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270113-0025",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-13",
+            "day_since_sale_at_draw": 26,
+            "language": "hi",
+            "branch": "SYN-BR-01",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 26,
+                    "outcome": "declined",
+                    "outcome_label": "Declined the call",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "declined",
+            "status_label": "Declined the call",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270208-0118",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-02-08",
+            "day_since_sale_at_draw": 0,
+            "language": "hi",
+            "branch": "SYN-BR-03",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 0,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270116-0039",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-16",
+            "day_since_sale_at_draw": 23,
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 23,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "incomplete",
+            "tier_label": "Incomplete",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270115-0032",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-15",
+            "day_since_sale_at_draw": 24,
+            "language": "hi-en",
+            "branch": "SYN-BR-04",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 24,
+                    "outcome": "call_back_later",
+                    "outcome_label": "Asked to be called later",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-09T11:00:00+05:30",
+                    "day_since_sale": 25,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270115-0032-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270203-0101",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-02-03",
+            "day_since_sale_at_draw": 5,
+            "language": "hi-en",
+            "branch": "SYN-BR-06",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 5,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-PL-270203-0101-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270115-0036",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-15",
+            "day_since_sale_at_draw": 24,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 24,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270118-0044",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-18",
+            "day_since_sale_at_draw": 21,
+            "language": "hi",
+            "branch": "SYN-BR-01",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 21,
+                    "outcome": "not_confirmed",
+                    "outcome_label": "Identity not confirmed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "not_confirmed",
+            "status_label": "Identity not confirmed",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270203-0099",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-02-03",
+            "day_since_sale_at_draw": 5,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 5,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270127-0080",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-27",
+            "day_since_sale_at_draw": 12,
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 12,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-09T11:00:00+05:30",
+                    "day_since_sale": 13,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-PL-270127-0080-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270118-0051",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-18",
+            "day_since_sale_at_draw": 21,
+            "language": "hi-en",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 21,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270206-0112",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-02-06",
+            "day_since_sale_at_draw": 2,
+            "language": "hi",
+            "branch": "SYN-BR-01",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 2,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270207-0117",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-02-07",
+            "day_since_sale_at_draw": 1,
+            "language": "hi",
+            "branch": "SYN-BR-01",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 1,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270111-0017",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-11",
+            "day_since_sale_at_draw": 28,
+            "language": "hi-en",
+            "branch": "SYN-BR-03",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 28,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270116-0037",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-16",
+            "day_since_sale_at_draw": 23,
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 23,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-PL-270116-0037-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270118-0045",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-18",
+            "day_since_sale_at_draw": 21,
+            "language": "hi-en",
+            "branch": "SYN-BR-02",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 21,
+                    "outcome": "incomplete",
+                    "outcome_label": "Call ended early",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "incomplete",
+            "status_label": "Call ended early",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270125-0071",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-25",
+            "day_since_sale_at_draw": 14,
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 14,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270111-0016",
+            "draw_id": "D-2027-02-08",
+            "sold_on": "2027-01-11",
+            "day_since_sale_at_draw": 28,
+            "language": "hi-en",
+            "branch": "SYN-BR-02",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-08T11:00:00+05:30",
+                    "day_since_sale": 28,
+                    "outcome": "call_back_later",
+                    "outcome_label": "Asked to be called later",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-09T11:00:00+05:30",
+                    "day_since_sale": 29,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270210-0127",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-10",
+            "day_since_sale_at_draw": 5,
+            "language": "hi",
+            "branch": "SYN-BR-03",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 5,
+                    "outcome": "not_confirmed",
+                    "outcome_label": "Identity not confirmed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "not_confirmed",
+            "status_label": "Identity not confirmed",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270130-0085",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-30",
+            "day_since_sale_at_draw": 16,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 16,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-PL-270130-0085-tb"
+        },
+        {
+            "loan_id": "SYN-GL-270201-0092",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-01",
+            "day_since_sale_at_draw": 14,
+            "language": "hi-en",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 14,
+                    "outcome": "wrong_party",
+                    "outcome_label": "Someone else answered",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "wrong_party",
+            "status_label": "Someone else answered",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270125-0072",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-25",
+            "day_since_sale_at_draw": 21,
+            "language": "hi",
+            "branch": "SYN-BR-03",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 21,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270130-0086",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-30",
+            "day_since_sale_at_draw": 16,
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 16,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 17,
+                    "outcome": "wrong_party",
+                    "outcome_label": "Someone else answered",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "wrong_party",
+            "status_label": "Someone else answered",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270205-0107",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-05",
+            "day_since_sale_at_draw": 10,
+            "language": "hi",
+            "branch": "SYN-BR-03",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 10,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 11,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270124-0068",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-24",
+            "day_since_sale_at_draw": 22,
+            "language": "hi-en",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 22,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 23,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "incomplete",
+            "tier_label": "Incomplete",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270210-0125",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-10",
+            "day_since_sale_at_draw": 5,
+            "language": "hi",
+            "branch": "SYN-BR-03",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 5,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 6,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270118-0048",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-18",
+            "day_since_sale_at_draw": 28,
+            "language": "hi-en",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 28,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270120-0059",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-20",
+            "day_since_sale_at_draw": 26,
+            "language": "hi-en",
+            "branch": "SYN-BR-05",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 26,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 27,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "incomplete",
+            "tier_label": "Incomplete",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270211-0129",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-11",
+            "day_since_sale_at_draw": 4,
+            "language": "hi-en",
+            "branch": "SYN-BR-05",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 4,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270118-0049",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-18",
+            "day_since_sale_at_draw": 28,
+            "language": "hi",
+            "branch": "SYN-BR-03",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 28,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 29,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270214-0140",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-14",
+            "day_since_sale_at_draw": 1,
+            "language": "hi",
+            "branch": "SYN-BR-04",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 1,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270121-0062",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-21",
+            "day_since_sale_at_draw": 25,
+            "language": "hi",
+            "branch": "SYN-BR-04",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 25,
+                    "outcome": "declined",
+                    "outcome_label": "Declined the call",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "declined",
+            "status_label": "Declined the call",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270211-0133",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-11",
+            "day_since_sale_at_draw": 4,
+            "language": "hi-en",
+            "branch": "SYN-BR-01",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 4,
+                    "outcome": "call_back_later",
+                    "outcome_label": "Asked to be called later",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 5,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270118-0047",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-18",
+            "day_since_sale_at_draw": 28,
+            "language": "hi-en",
+            "branch": "SYN-BR-05",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 28,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 29,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270212-0138",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-12",
+            "day_since_sale_at_draw": 3,
+            "language": "hi",
+            "branch": "SYN-BR-06",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 3,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270212-0138-tb"
+        },
+        {
+            "loan_id": "SYN-GL-270124-0070",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-01-24",
+            "day_since_sale_at_draw": 22,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 22,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270124-0070-tb"
+        },
+        {
+            "loan_id": "SYN-GL-270204-0105",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-04",
+            "day_since_sale_at_draw": 11,
+            "language": "hi-en",
+            "branch": "SYN-BR-03",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 11,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-16T11:00:00+05:30",
+                    "day_since_sale": 12,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270207-0114",
+            "draw_id": "D-2027-02-15",
+            "sold_on": "2027-02-07",
+            "day_since_sale_at_draw": 8,
+            "language": "hi-en",
+            "branch": "SYN-BR-03",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-15T11:00:00+05:30",
+                    "day_since_sale": 8,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270207-0114-tb"
+        },
+        {
+            "loan_id": "SYN-GL-270205-0110",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-05",
+            "day_since_sale_at_draw": 17,
+            "language": "hi-en",
+            "branch": "SYN-BR-06",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 17,
+                    "outcome": "call_back_later",
+                    "outcome_label": "Asked to be called later",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-23T11:00:00+05:30",
+                    "day_since_sale": 18,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270205-0110-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270222-0172",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-22",
+            "day_since_sale_at_draw": 0,
+            "language": "hi-en",
+            "branch": "SYN-BR-04",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 0,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270205-0111",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-05",
+            "day_since_sale_at_draw": 17,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 17,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270204-0106",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-04",
+            "day_since_sale_at_draw": 18,
+            "language": "hi-en",
+            "branch": "SYN-BR-06",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 18,
+                    "outcome": "wrong_party",
+                    "outcome_label": "Someone else answered",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "wrong_party",
+            "status_label": "Someone else answered",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270219-0161",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-19",
+            "day_since_sale_at_draw": 3,
+            "language": "hi",
+            "branch": "SYN-BR-01",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 3,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270221-0167",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-21",
+            "day_since_sale_at_draw": 1,
+            "language": "hi-en",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 1,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270203-0100",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-03",
+            "day_since_sale_at_draw": 19,
+            "language": "hi",
+            "branch": "SYN-BR-04",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 19,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270220-0164",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-20",
+            "day_since_sale_at_draw": 2,
+            "language": "hi-en",
+            "branch": "SYN-BR-03",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 2,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270220-0164-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270131-0090",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-01-31",
+            "day_since_sale_at_draw": 22,
+            "language": "hi-en",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 22,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-02-23T11:00:00+05:30",
+                    "day_since_sale": 23,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270126-0076",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-01-26",
+            "day_since_sale_at_draw": 27,
+            "language": "hi",
+            "branch": "SYN-BR-01",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 27,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "incomplete",
+            "tier_label": "Incomplete",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270210-0128",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-10",
+            "day_since_sale_at_draw": 12,
+            "language": "hi",
+            "branch": "SYN-BR-06",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 12,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270205-0108",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-05",
+            "day_since_sale_at_draw": 17,
+            "language": "hi",
+            "branch": "SYN-BR-01",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 17,
+                    "outcome": "wrong_party",
+                    "outcome_label": "Someone else answered",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "wrong_party",
+            "status_label": "Someone else answered",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270218-0158",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-18",
+            "day_since_sale_at_draw": 4,
+            "language": "hi-en",
+            "branch": "SYN-BR-01",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 4,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270222-0174",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-22",
+            "day_since_sale_at_draw": 0,
+            "language": "hi-en",
+            "branch": "SYN-BR-06",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 0,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270222-0174-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270130-0087",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-01-30",
+            "day_since_sale_at_draw": 23,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 23,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270216-0147",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-16",
+            "day_since_sale_at_draw": 6,
+            "language": "hi",
+            "branch": "SYN-BR-03",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 6,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270205-0109",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-05",
+            "day_since_sale_at_draw": 17,
+            "language": "hi-en",
+            "branch": "SYN-BR-02",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 17,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270205-0109-tb"
+        },
+        {
+            "loan_id": "SYN-GL-270216-0151",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-16",
+            "day_since_sale_at_draw": 6,
+            "language": "hi-en",
+            "branch": "SYN-BR-04",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 6,
+                    "outcome": "wrong_party",
+                    "outcome_label": "Someone else answered",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "wrong_party",
+            "status_label": "Someone else answered",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270131-0091",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-01-31",
+            "day_since_sale_at_draw": 22,
+            "language": "hi-en",
+            "branch": "SYN-BR-06",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 22,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270214-0142",
+            "draw_id": "D-2027-02-22",
+            "sold_on": "2027-02-14",
+            "day_since_sale_at_draw": 8,
+            "language": "hi",
+            "branch": "SYN-BR-06",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-02-22T11:00:00+05:30",
+                    "day_since_sale": 8,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270216-0152",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-16",
+            "day_since_sale_at_draw": 13,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 13,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270221-0168",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-21",
+            "day_since_sale_at_draw": 8,
+            "language": "hi-en",
+            "branch": "SYN-BR-03",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 8,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270222-0169",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-22",
+            "day_since_sale_at_draw": 7,
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 7,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270222-0170",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-22",
+            "day_since_sale_at_draw": 7,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 7,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270209-0122",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-09",
+            "day_since_sale_at_draw": 20,
+            "language": "hi",
+            "branch": "SYN-BR-04",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 20,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-GL-270209-0122-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270228-0190",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-28",
+            "day_since_sale_at_draw": 1,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 1,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-03-02T11:00:00+05:30",
+                    "day_since_sale": 2,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 3,
+                    "at": "2027-03-03T11:00:00+05:30",
+                    "day_since_sale": 3,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "unreachable",
+            "status_label": "Not reached",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270211-0130",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-11",
+            "day_since_sale_at_draw": 18,
+            "language": "hi-en",
+            "branch": "SYN-BR-04",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 18,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270215-0144",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-15",
+            "day_since_sale_at_draw": 14,
+            "language": "hi-en",
+            "branch": "SYN-BR-04",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 14,
+                    "outcome": "incomplete",
+                    "outcome_label": "Call ended early",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "incomplete",
+            "status_label": "Call ended early",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270207-0115",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-07",
+            "day_since_sale_at_draw": 22,
+            "language": "hi",
+            "branch": "SYN-BR-04",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 22,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-03-02T11:00:00+05:30",
+                    "day_since_sale": 23,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270225-0180",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-25",
+            "day_since_sale_at_draw": 4,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 4,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "TEST-CALL-SYN-PL-270225-0180-tb"
+        },
+        {
+            "loan_id": "SYN-PL-270228-0188",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-28",
+            "day_since_sale_at_draw": 1,
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 1,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270208-0119",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-08",
+            "day_since_sale_at_draw": 21,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 21,
+                    "outcome": "not_confirmed",
+                    "outcome_label": "Identity not confirmed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "not_confirmed",
+            "status_label": "Identity not confirmed",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270202-0098",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-02",
+            "day_since_sale_at_draw": 27,
+            "language": "hi-en",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 27,
+                    "outcome": "wrong_party",
+                    "outcome_label": "Someone else answered",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "wrong_party",
+            "status_label": "Someone else answered",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270216-0154",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-16",
+            "day_since_sale_at_draw": 13,
+            "language": "hi-en",
+            "branch": "SYN-BR-03",
+            "channel": "agent",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 13,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-03-02T11:00:00+05:30",
+                    "day_since_sale": 14,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270214-0141",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-14",
+            "day_since_sale_at_draw": 15,
+            "language": "hi-en",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 15,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270225-0177",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-25",
+            "day_since_sale_at_draw": 4,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 4,
+                    "outcome": "not_confirmed",
+                    "outcome_label": "Identity not confirmed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "not_confirmed",
+            "status_label": "Identity not confirmed",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270203-0104",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-03",
+            "day_since_sale_at_draw": 26,
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 26,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-03-02T11:00:00+05:30",
+                    "day_since_sale": 27,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270218-0160",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-18",
+            "day_since_sale_at_draw": 11,
+            "language": "hi",
+            "branch": "SYN-BR-03",
+            "channel": "app",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 11,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "clear",
+            "tier_label": "No finding",
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-PL-270203-0103",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-03",
+            "day_since_sale_at_draw": 26,
+            "language": "hi-en",
+            "branch": "SYN-BR-01",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 26,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-03-02T11:00:00+05:30",
+                    "day_since_sale": 27,
+                    "outcome": "incomplete",
+                    "outcome_label": "Call ended early",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "incomplete",
+            "status_label": "Call ended early",
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "loan_id": "SYN-GL-270215-0145",
+            "draw_id": "D-2027-03-01",
+            "sold_on": "2027-02-15",
+            "day_since_sale_at_draw": 14,
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "branch",
+            "attempts": [
+                {
+                    "number": 1,
+                    "at": "2027-03-01T11:00:00+05:30",
+                    "day_since_sale": 14,
+                    "outcome": "no_answer",
+                    "outcome_label": "No answer",
+                    "simulated": true,
+                    "session_id": null
+                },
+                {
+                    "number": 2,
+                    "at": "2027-03-02T11:00:00+05:30",
+                    "day_since_sale": 15,
+                    "outcome": "completed",
+                    "outcome_label": "Completed",
+                    "simulated": true,
+                    "session_id": null
+                }
+            ],
+            "status": "completed",
+            "status_label": "Completed",
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
+        }
+    ]
+}

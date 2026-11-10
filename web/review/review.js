@@ -255,7 +255,7 @@ async function pageQueue(main, batch) {
               [h("span", { class: "nowrap" }, it.branch), h("span", { class: "sub" }, `${words(it.channel)} \u00B7 sold ${fmtDate(it.sold_on)}`)],
               `Day ${int(it.day_since_sale)}`,
               `${days(it.days_left_in_window)} left`,
-              it.may_engage.length ? h("span", { class: "engage" }, `may engage ${it.may_engage.join(", ")}`) : h("span", { class: "muted" }, DASH),
+              it.may_engage.length ? h("span", { class: "engage" }, `may engage ${it.may_engage.map((m) => m.replace(/^may engage /, "")).join(", ")}`) : h("span", { class: "muted" }, DASH),
               it.disposition
                 ? [it.disposition.decision_label, h("span", { class: "sub" }, `${it.disposition.reviewer}, ${fmtDate(it.disposition.recorded_at)}`)]
                 : h("strong", null, "Awaiting review"),
@@ -354,6 +354,28 @@ function recordSide(loan) {
   );
 }
 
+function quoteFigure(q, ctx) {
+  return h(
+    "figure",
+    { class: "quote" },
+    h("blockquote", { lang: ctx.lang }, q.quote),
+    h(
+      "figcaption",
+      null,
+      h("a", { href: `#turn-${q.turn_id}`, onclick: () => ctx.openTranscript() }, `Turn ${q.turn_id}`),
+      q.start_s !== null && ctx.recording
+        ? h(
+            "a",
+            { href: `${ctx.recording}#t=${q.start_s}`, onclick: (ev) => ctx.playFrom(ev, q.start_s) },
+            `Play the recording from ${mmss(q.start_s)}`,
+          )
+        : q.start_s !== null
+          ? h("span", null, `At ${mmss(q.start_s)} in the call`)
+          : null,
+    ),
+  );
+}
+
 function lineCard(line, ctx) {
   return h(
     "article",
@@ -361,41 +383,24 @@ function lineCard(line, ctx) {
     h(
       "div",
       { class: "line-head" },
-      h("h3", null, line.rule_label),
-      sevLabel(line.severity),
-      line.may_engage ? h("span", { class: "engage" }, line.may_engage) : null,
+      h("h3", null, line.title),
+      line.tier !== "refer" ? h("span", { class: `tier tier-${line.tier}` }, line.tier_label) : null,
+    ),
+    h(
+      "p",
+      { class: "small muted line-rules" },
+      [line.product_id ? `Product ${line.product_id}` : "Whole call", line.rule_labels.join(", ")].join(" \u00B7 "),
+      line.may_engage.length ? [" \u00B7 ", h("span", { class: "engage" }, line.may_engage.join("; "))] : null,
     ),
     h(
       "div",
       { class: "sides" },
-      h("div", { class: "side record" }, h("span", { class: "side-label" }, "Record"), h("p", null, line.expected)),
+      h("div", { class: "side record" }, h("span", { class: "side-label" }, "Record"), h("p", null, line.record_value)),
       h(
         "div",
         { class: "side customer" },
         h("span", { class: "side-label" }, "Customer"),
-        h("p", null, line.heard),
-        line.quotes.map((q) =>
-          h(
-            "figure",
-            { class: "quote" },
-            h("blockquote", { lang: ctx.lang }, q.quote),
-            h(
-              "figcaption",
-              null,
-              h("a", { href: `#turn-${q.turn_id}`, onclick: () => ctx.openTranscript() }, `Turn ${q.turn_id}`),
-              q.start_s !== null && ctx.recording
-                ? h(
-                    "a",
-                    { href: `${ctx.recording}#t=${q.start_s}`, onclick: (ev) => ctx.playFrom(ev, q.start_s) },
-                    `Play the recording from ${mmss(q.start_s)}`,
-                  )
-                : q.start_s !== null
-                  ? h("span", null, `At ${mmss(q.start_s)} in the call`)
-                  : null,
-            ),
-          ),
-        ),
-        line.quotes.length === 0 ? h("p", { class: "small muted" }, "No quote is attached to this line.") : null,
+        line.quote ? quoteFigure(line.quote, ctx) : h("p", { class: "small muted" }, "No quote is attached to this line."),
       ),
     ),
   );
@@ -605,8 +610,8 @@ async function pageCase(main) {
           ? h(
               "section",
               { "aria-labelledby": "other-h" },
-              h("h2", { id: "other-h" }, "Understanding gaps on the same call"),
-              h("p", { class: "small muted", style: "margin-bottom:10px" }, "These are counted in the half-yearly report. They are not the reason this case was referred."),
+              h("h2", { id: "other-h" }, "Other issues on the same call"),
+              h("p", { class: "small muted", style: "margin-bottom:10px" }, "Questions the call left undecided and understanding gaps. They are counted in the half-yearly report and are not the reason this case was referred."),
               c.other_lines.map((line) => lineCard(line, ctx)),
             )
           : null,
@@ -829,7 +834,7 @@ async function pageReport(main) {
         rows: [
           {
             cells: [
-              "Days from sale to first attempt, over the loans attempted",
+              `Days from sale to first attempt, over the ${int(f.stages.find((x) => x.key === "attempted").value.count)} loans attempted`,
               t.first_attempt_days ? `least ${t.first_attempt_days[0]}, median ${t.first_attempt_days[1]}, most ${t.first_attempt_days[2]}` : "No attempt made",
               DASH,
               DASH,

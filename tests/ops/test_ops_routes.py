@@ -52,7 +52,9 @@ def test_every_page_gets_the_contract_it_reads(client: TestClient) -> None:
 
     case = CaseView.model_validate(client.get(f"/api/review/cases/{queue.items[0].case_id}").json())
     assert case.tier == "refer" and case.tier_label == "Referred for review"
-    assert case.refer_lines and case.severity == queue.items[0].severity == case.refer_lines[0].severity
+    assert case.refer_lines and case.severity == queue.items[0].severity
+    assert all(line.tier == "refer" for line in case.refer_lines)
+    assert case.refer_lines[0].title == queue.items[0].headline
     assert case.call.simulated and case.call.recording_url is None
     assert case.call.analysis == "scripted extraction, no model"
     assert [d.label for d in case.decisions] == [
@@ -61,7 +63,7 @@ def test_every_page_gets_the_contract_it_reads(client: TestClient) -> None:
         "Call the customer",
         "Needs more information",
     ]
-    cited = {q.turn_id for line in (*case.refer_lines, *case.other_lines) for q in line.quotes}
+    cited = {line.quote.turn_id for line in (*case.refer_lines, *case.other_lines) if line.quote}
     assert cited and {t.turn_id for t in case.transcript if t.cited} == cited
     assert "dob" not in client.get(f"/api/review/cases/{case.case_id}").text
 
@@ -187,7 +189,7 @@ def test_a_call_from_a_phone_session_shows_its_audio_offsets_and_recording(
     assert not case.call.simulated and case.call.source == source
     assert case.call.recording_url == f"/api/sessions/{SESSION_ID}/recording.wav"
     assert [(t.start_s, t.end_s) for t in case.transcript] == [(t.start_s, t.end_s) for t in turns]
-    quote = case.refer_lines[0].quotes[0]
+    quote = case.refer_lines[0].quote
     spoken = next(t for t in turns if t.id == quote.turn_id)
     assert (quote.start_s, quote.end_s) == (spoken.start_s, spoken.end_s) != (None, None)
 

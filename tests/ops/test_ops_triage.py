@@ -3,16 +3,15 @@ from __future__ import annotations
 from opskit import COMPLETED, customer, loan
 
 from samajh.ops import book as books
-from samajh.ops.model import Tier
 from samajh.ops.simulate import script_call, scripted_analysis
 from samajh.ops.triage import triage
 from samajh.scenarios.model import DONT_KNOW, DepositWord
-from samajh.types import FeatureClaim, KindClaim, RuleId, SaleConcern
+from samajh.types import FeatureClaim, KindClaim, RuleId, SaleConcern, Tier
 
 
 def _triage(of, who):
     result, _ = scripted_analysis(script_call(of, who), of.record)
-    return result, triage(result)
+    return result, triage(of.record, result)
 
 
 def test_the_tier_of_a_call_is_the_one_the_core_gives_it() -> None:
@@ -23,7 +22,7 @@ def test_the_tier_of_a_call_is_the_one_the_core_gives_it() -> None:
         assert (found.severity is not None) == (found.tier is Tier.refer)
 
 
-def test_flags_under_one_rule_become_one_line_that_keeps_every_quote() -> None:
+def test_flags_about_one_issue_become_one_summary_line() -> None:
     of = loan(1)
     believes_fd = customer(
         of,
@@ -37,12 +36,13 @@ def test_flags_under_one_rule_become_one_line_that_keeps_every_quote() -> None:
     kind_flags = [f for f in result.all_flags() if f.rule_id is RuleId.kind]
     assert len(kind_flags) == 2  # said once unprompted and once when asked
 
-    rules = [line.rule_id for line in found.lines]
-    assert len(rules) == len(set(rules))
-    (kind,) = (line for line in found.lines if line.rule_id is RuleId.kind)
-    assert {q.turn_id for q in kind.quotes} == {f.turn_id for f in kind_flags} and len(kind.quotes) == 2
-    assert (kind.tier, kind.severity, kind.clause) == (Tier.refer, "high", "85Y")
-    assert kind.heard == "customer described it as a deposit (FD)"
+    kind_lines = [line for line in found.lines if RuleId.kind in line.rule_ids]
+    assert len(kind_lines) == 1
+    (kind,) = kind_lines
+    assert (kind.tier, kind.clauses[0]) == (Tier.refer, "85Y")
+    assert kind.turn_id in {f.turn_id for f in kind_flags}
+    assert "deposit" in kind.title.lower()
+    assert (found.tier, found.severity) == (Tier.refer, "high")
 
 
 def test_refer_lines_come_first_and_a_report_only_line_never_opens_a_case() -> None:
@@ -50,9 +50,9 @@ def test_refer_lines_come_first_and_a_report_only_line_never_opens_a_case() -> N
     _, mixed = _triage(
         of, customer(of, COMPLETED, cover_inr=DONT_KNOW, concerns=(SaleConcern.coached_answers,))
     )
-    assert [(line.rule_id, line.tier) for line in mixed.lines] == [
-        (RuleId.sale_conduct, Tier.refer),
-        (RuleId.cover, Tier.understanding_gap),
+    assert [(line.rule_ids, line.tier) for line in mixed.lines] == [
+        ((RuleId.sale_conduct,), Tier.refer),
+        ((RuleId.cover,), Tier.understanding_gap),
     ]
     assert (mixed.tier, mixed.severity) == (Tier.refer, "high")
 
@@ -61,4 +61,5 @@ def test_refer_lines_come_first_and_a_report_only_line_never_opens_a_case() -> N
     _, nothing = _triage(of, customer(of, COMPLETED))
     assert (nothing.tier, nothing.lines) == (Tier.clear, ())
     _, undecided = _triage(of, customer(of, COMPLETED, consent_method=DONT_KNOW))
-    assert (undecided.tier, undecided.lines) == (Tier.incomplete, ())
+    assert (undecided.tier, undecided.severity) == (Tier.incomplete, None)
+    assert [line.tier for line in undecided.lines] == [Tier.incomplete]

@@ -1,0 +1,423 @@
+{
+    "case_id": "TEST-CALL-SYN-GL-270205-0110-tb",
+    "tier": "refer",
+    "tier_label": "Referred for review",
+    "severity": "high",
+    "loan": {
+        "loan_id": "SYN-GL-270205-0110",
+        "borrower": "Namoona Sharma 110 (synthetic)",
+        "lender_type": "bank",
+        "loan_kind": "gold",
+        "sanctioned_inr": 1000000,
+        "disbursed_inr": 1000000,
+        "sold_on": "2027-02-05",
+        "branch": "SYN-BR-06",
+        "channel": "app",
+        "products": [
+            {
+                "id": "P1",
+                "kind": "credit_life",
+                "provider": "Namoona Life (synthetic)",
+                "premium_inr": 12500,
+                "cover_inr": 1000000,
+                "term_months": 60,
+                "paid_from_loan": false,
+                "required_for_loan": false,
+                "risk_mitigant": true,
+                "provider_choice_offered": true,
+                "cancel_window_days": 15,
+                "features": [
+                    "one_time_payment"
+                ],
+                "consent": {
+                    "method": "signed_form",
+                    "at": "2027-02-05"
+                }
+            }
+        ]
+    },
+    "call": {
+        "call_id": "TEST-CALL-SYN-GL-270205-0110-tb",
+        "source": {
+            "kind": "simulated",
+            "script": "samajh.scenarios.script.teach_back"
+        },
+        "simulated": true,
+        "language": "hi-en",
+        "at": "2027-02-23T11:00:00+05:30",
+        "attempt_number": 2,
+        "day_since_sale": 18,
+        "analysis": "openai/gpt-6-luna",
+        "recording_url": null
+    },
+    "refer_lines": [
+        {
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "product_id": "P1",
+            "title": "Customer described the product as a deposit (FD); the record shows insurance.",
+            "record_value": "credit-life insurance from Namoona Life (synthetic)",
+            "quote": {
+                "quote": "Deposit \u0939\u0948 \u091c\u0940, security \u0915\u0947 \u0924\u094c\u0930 \u092a\u0930\u0964",
+                "turn_id": 12,
+                "start_s": null,
+                "end_s": null
+            },
+            "rule_ids": [
+                "kind",
+                "belief_mismatch"
+            ],
+            "rule_labels": [
+                "What the product is",
+                "Beliefs about the product's features"
+            ],
+            "may_engage": [
+                "may engage para 85Y",
+                "may engage para 4(20A)(ii)"
+            ]
+        },
+        {
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "product_id": "P1",
+            "title": "Customer believes the money can be withdrawn after a period; the record does not list this feature.",
+            "record_value": "features on record: a single payment",
+            "quote": {
+                "quote": "\u0939\u093e\u0901, five years \u092c\u093e\u0926 \u0935\u093e\u092a\u0938 \u092e\u093f\u0932 \u091c\u093e\u090f\u0917\u093e, deposit \u0939\u0940 \u0924\u094b \u0939\u0948\u0964",
+                "turn_id": 26,
+                "start_s": null,
+                "end_s": null
+            },
+            "rule_ids": [
+                "belief_mismatch"
+            ],
+            "rule_labels": [
+                "Beliefs about the product's features"
+            ],
+            "may_engage": [
+                "may engage para 4(20A)(ii)"
+            ]
+        }
+    ],
+    "other_lines": [
+        {
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "product_id": "P1",
+            "title": "Customer did not know, or gave a different answer about: the cover; the cancellation window.",
+            "record_value": "cover \u20b910,00,000; cancellation window 15 days",
+            "quote": {
+                "quote": "Cover \u0915\u093e \u0924\u094b \u0915\u0941\u091b \u092a\u0924\u093e \u0928\u0939\u0940\u0902\u0964",
+                "turn_id": 20,
+                "start_s": null,
+                "end_s": null
+            },
+            "rule_ids": [
+                "cover",
+                "cancel_window"
+            ],
+            "rule_labels": [
+                "Cover amount",
+                "Cancellation window"
+            ],
+            "may_engage": [
+                "may engage para 85Y"
+            ]
+        }
+    ],
+    "undecided": [],
+    "transcript": [
+        {
+            "turn_id": 1,
+            "speaker": "bot",
+            "text": "\u0928\u092e\u0938\u094d\u0924\u0947, \u0915\u094d\u092f\u093e \u092e\u0947\u0930\u0940 \u092c\u093e\u0924 Namoona \u091c\u0940 \u0938\u0947 \u0939\u094b \u0930\u0939\u0940 \u0939\u0948?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 2,
+            "speaker": "customer",
+            "text": "\u0939\u093e\u0901, \u092e\u0948\u0902 \u0939\u0940 \u0939\u0942\u0901\u0964 \u0915\u094c\u0928?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 3,
+            "speaker": "bot",
+            "text": "\u092e\u0948\u0902 Namoona Bank \u0915\u0940 customer care team \u0915\u0940 \u0913\u0930 \u0938\u0947 \u092c\u094b\u0932 \u0930\u0939\u0940 \u0939\u0942\u0901\u0964 \u092e\u0948\u0902 \u090f\u0915 automated AI assistant \u0939\u0942\u0901\u0964 \u092f\u0939 sales call \u0928\u0939\u0940\u0902 \u0939\u0948 \u0914\u0930 \u0907\u0938\u092e\u0947\u0902 \u0915\u0941\u091b \u092c\u0947\u091a\u093e \u0928\u0939\u0940\u0902 \u091c\u093e\u090f\u0917\u093e\u0964 \u092f\u0939 call \u0938\u093f\u0930\u094d\u092b\u093c \u0906\u092a\u0915\u093e feedback \u0932\u0947\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0939\u0948 \u0914\u0930 \u0938\u0939\u0940 record \u0930\u0916\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f record \u0939\u094b \u0930\u0939\u0940 \u0939\u0948\u0964 \u0906\u092a \u092e\u0928\u093e \u0915\u0930 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902, \u0915\u092d\u0940 \u092d\u0940 \u0930\u094b\u0915 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902 \u092f\u093e \u0915\u093f\u0938\u0940 \u0915\u0930\u094d\u092e\u091a\u093e\u0930\u0940 \u0938\u0947 \u092c\u093e\u0924 \u0915\u0930\u0928\u0947 \u0915\u094b \u0915\u0939 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902\u0964 \u092e\u0948\u0902 \u0906\u092a\u0938\u0947 OTP, PIN, password \u092f\u093e account number \u0915\u092d\u0940 \u0928\u0939\u0940\u0902 \u092a\u0942\u091b\u0942\u0901\u0917\u0940\u0964 \u0915\u094d\u092f\u093e \u0939\u092e \u0906\u0917\u0947 \u092c\u0922\u093c\u0947\u0902?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 4,
+            "speaker": "customer",
+            "text": "\u0920\u0940\u0915 \u0939\u0948, no problem, \u092a\u0942\u091b \u0932\u0940\u091c\u093f\u090f\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 5,
+            "speaker": "bot",
+            "text": "Verification \u0915\u0947 \u0932\u093f\u090f, please \u0938\u093f\u0930\u094d\u092b\u093c \u0905\u092a\u0928\u093e birth year \u092c\u0924\u093e\u0907\u090f\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 6,
+            "speaker": "customer",
+            "text": "\u091c\u0940, nineteen ninety\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 7,
+            "speaker": "bot",
+            "text": "Thank you\u0964 \u0906\u092a\u0928\u0947 \u0939\u093e\u0932 \u0939\u0940 \u092e\u0947\u0902 \u0939\u092e\u0938\u0947 gold loan \u0932\u093f\u092f\u093e \u0939\u0948, \u092f\u0939 call \u0909\u0938\u0940 \u0915\u0947 \u092c\u093e\u0930\u0947 \u092e\u0947\u0902 \u0939\u0948\u0964 \u0920\u0940\u0915 \u0939\u0948?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 8,
+            "speaker": "customer",
+            "text": "\u0939\u093e\u0901 \u0939\u093e\u0901, gold loan \u0932\u093f\u092f\u093e \u0925\u093e, \u0905\u092d\u0940 recently \u0939\u0940\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 9,
+            "speaker": "bot",
+            "text": "Loan \u0915\u0947 \u0938\u093e\u0925 \u0906\u092a\u0928\u0947 \u0915\u094d\u092f\u093e-\u0915\u094d\u092f\u093e \u0932\u093f\u092f\u093e, \u0914\u0930 \u0915\u093f\u0924\u0928\u0947 \u0915\u093e?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 10,
+            "speaker": "customer",
+            "text": "Loan \u0915\u0947 \u0932\u093f\u090f \u090f\u0915 security deposit \u091c\u092e\u093e \u0915\u0930\u0935\u093e\u092f\u093e \u0925\u093e, \u0938\u093e\u0922\u093c\u0947 \u092c\u093e\u0930\u0939 \u0939\u091c\u093c\u093e\u0930 \u0915\u093e, \u0914\u0930 \u0915\u0941\u091b \u0928\u0939\u0940\u0902\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 11,
+            "speaker": "bot",
+            "text": "Loan \u0915\u0947 \u0938\u093e\u0925 \u091c\u094b \u091a\u0940\u091c\u093c \u0932\u0940 \u0917\u0908, \u0906\u092a\u0915\u0940 \u0938\u092e\u091d \u092e\u0947\u0902 \u0935\u0939 \u0915\u094d\u092f\u093e \u0939\u0948: insurance, FD, \u092f\u093e \u0915\u0941\u091b \u0914\u0930?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 12,
+            "speaker": "customer",
+            "text": "Deposit \u0939\u0948 \u091c\u0940, security \u0915\u0947 \u0924\u094c\u0930 \u092a\u0930\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": true
+        },
+        {
+            "turn_id": 13,
+            "speaker": "bot",
+            "text": "\u0909\u0938\u0915\u0947 \u0932\u093f\u090f \u0906\u092a\u0928\u0947 \u0915\u093f\u0924\u0928\u0947 rupees \u0926\u093f\u090f?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 14,
+            "speaker": "customer",
+            "text": "\u0909\u0938\u0915\u093e \u0938\u093e\u0922\u093c\u0947 \u092c\u093e\u0930\u0939 \u0939\u091c\u093c\u093e\u0930 pay \u0915\u093f\u092f\u093e \u0939\u0948\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 15,
+            "speaker": "bot",
+            "text": "\u0935\u0939 amount \u0915\u0948\u0938\u0947 pay \u0939\u0941\u0906: loan amount \u092e\u0947\u0902 \u0938\u0947, \u092f\u093e \u0905\u0932\u0917 \u0938\u0947?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 16,
+            "speaker": "customer",
+            "text": "\u0905\u0932\u0917 \u0938\u0947 \u0926\u093f\u092f\u093e \u0925\u093e, loan \u092e\u0947\u0902 \u0938\u0947 \u0928\u0939\u0940\u0902 \u0915\u091f\u093e\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 17,
+            "speaker": "bot",
+            "text": "\u0915\u094d\u092f\u093e loan \u092a\u093e\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0909\u0938\u0947 \u0932\u0947\u0928\u093e \u091c\u093c\u0930\u0942\u0930\u0940 \u0925\u093e?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 18,
+            "speaker": "customer",
+            "text": "\u0910\u0938\u093e \u0915\u0941\u091b \u0928\u0939\u0940\u0902 \u0925\u093e \u0915\u093f \u0932\u0947\u0928\u093e \u0939\u0940 \u092a\u0921\u093c\u0947\u0917\u093e\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 19,
+            "speaker": "bot",
+            "text": "\u0909\u0938\u092e\u0947\u0902 \u0915\u093f\u0924\u0928\u0947 amount \u0915\u093e cover \u0939\u0948?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 20,
+            "speaker": "customer",
+            "text": "Cover \u0915\u093e \u0924\u094b \u0915\u0941\u091b \u092a\u0924\u093e \u0928\u0939\u0940\u0902\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": true
+        },
+        {
+            "turn_id": 21,
+            "speaker": "bot",
+            "text": "\u0914\u0930 \u0935\u0939 \u0915\u093f\u0924\u0928\u0947 time \u0915\u0947 \u0932\u093f\u090f \u0939\u0948?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 22,
+            "speaker": "customer",
+            "text": "five years \u0915\u0947 \u0932\u093f\u090f\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 23,
+            "speaker": "bot",
+            "text": "\u0915\u094d\u092f\u093e \u0906\u092a\u0915\u094b \u092c\u0924\u093e\u092f\u093e \u0917\u092f\u093e \u0925\u093e \u0915\u093f \u0906\u092a \u0909\u0938\u0947 cancel \u0915\u0930 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902 \u092f\u093e \u0928\u0939\u0940\u0902, \u0914\u0930 \u0915\u092c \u0924\u0915?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 24,
+            "speaker": "customer",
+            "text": "\u092a\u0924\u093e \u0928\u0939\u0940\u0902, cancel \u0939\u094b\u0924\u093e \u0939\u0948 \u092f\u093e \u0928\u0939\u0940\u0902\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 25,
+            "speaker": "bot",
+            "text": "\u0905\u0917\u0930 \u0906\u092a \u0935\u0939 \u092a\u0948\u0938\u093e \u0935\u093e\u092a\u0938 \u091a\u093e\u0939\u0947\u0902, \u0924\u094b \u0915\u094d\u092f\u093e \u092e\u093f\u0932 \u0938\u0915\u0924\u093e \u0939\u0948, \u0914\u0930 \u0915\u092c?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 26,
+            "speaker": "customer",
+            "text": "\u0939\u093e\u0901, five years \u092c\u093e\u0926 \u0935\u093e\u092a\u0938 \u092e\u093f\u0932 \u091c\u093e\u090f\u0917\u093e, deposit \u0939\u0940 \u0924\u094b \u0939\u0948\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": true
+        },
+        {
+            "turn_id": 27,
+            "speaker": "bot",
+            "text": "Loan \u0932\u0947\u0924\u0947 \u0938\u092e\u092f \u0906\u092a\u0928\u0947 \u0915\u094d\u092f\u093e-\u0915\u094d\u092f\u093e \u0932\u0947\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0939\u093e\u0901 \u0915\u0940 \u0925\u0940, \u0914\u0930 \u0939\u093e\u0901 \u0915\u0948\u0938\u0947 \u0915\u0940 \u0925\u0940?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 28,
+            "speaker": "customer",
+            "text": "Loan \u0914\u0930 security deposit\u0964 Deposit \u0915\u0947 form \u092a\u0930 sign \u0915\u093f\u090f \u0925\u0947\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 29,
+            "speaker": "bot",
+            "text": "twelve thousand five hundred, \u092f\u093e\u0928\u0940 12,500 rupees, \u0938\u0939\u0940 \u0939\u0948?",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 30,
+            "speaker": "customer",
+            "text": "Yes, \u092f\u0939\u0940 \u0939\u0948\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 31,
+            "speaker": "bot",
+            "text": "Thank you\u0964 \u0906\u092a\u0928\u0947 time \u0926\u093f\u092f\u093e, \u0907\u0938\u0915\u0947 \u0932\u093f\u090f \u0927\u0928\u094d\u092f\u0935\u093e\u0926\u0964 \u0928\u092e\u0938\u094d\u0924\u0947\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        },
+        {
+            "turn_id": 32,
+            "speaker": "customer",
+            "text": "Okay \u091c\u0940, bye\u0964",
+            "start_s": null,
+            "end_s": null,
+            "cited": false
+        }
+    ],
+    "decisions": [
+        {
+            "key": "established",
+            "label": "Established by reviewer"
+        },
+        {
+            "key": "not_established",
+            "label": "Not established"
+        },
+        {
+            "key": "call_customer",
+            "label": "Call the customer"
+        },
+        {
+            "key": "needs_information",
+            "label": "Needs more information"
+        }
+    ],
+    "disposition": {
+        "decision": "established",
+        "decision_label": "Established by reviewer",
+        "final": true,
+        "note": "Customer twice called it an FD; the sale file shows no product explanation was signed. Simulated review.",
+        "reviewer": "Asha Reviewer (synthetic)",
+        "recorded_at": "2026-11-10T10:38:27.073162Z"
+    },
+    "history": [
+        {
+            "decision": "established",
+            "decision_label": "Established by reviewer",
+            "final": true,
+            "note": "Customer twice called it an FD; the sale file shows no product explanation was signed. Simulated review.",
+            "reviewer": "Asha Reviewer (synthetic)",
+            "recorded_at": "2026-11-10T10:38:27.073162Z"
+        }
+    ]
+}

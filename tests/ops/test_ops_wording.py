@@ -6,11 +6,11 @@ import pytest
 
 from samajh.ops import wording
 from samajh.ops.batch import load_batch
-from samajh.ops.model import AttemptOutcome, Decision, FinalStatus, Tier
+from samajh.ops.model import AttemptOutcome, Decision, FinalStatus
 from samajh.ops.report import build_report
 from samajh.ops.store import OpsStore
 from samajh.ops.views import case_view, queue_view
-from samajh.types import GapReason, RuleId
+from samajh.types import GapReason, RuleId, Tier
 
 CUSTOMER_WORDS = {"quote", "text"}  # what the customer or the bot said on the call, shown verbatim
 

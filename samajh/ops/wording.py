@@ -7,9 +7,9 @@ generated view.
 
 import re
 
-from samajh.ops.model import AttemptOutcome, Channel, Decision, FinalStatus, Tier
+from samajh.ops.model import AttemptOutcome, Channel, Decision, FinalStatus
 from samajh.rules.clauses import INTERNAL
-from samajh.types import GapReason, LoanKind, RuleId
+from samajh.types import GapReason, LoanKind, RuleId, Tier
 
 BANNED: tuple[str, ...] = (
     r"mis[\s-]?s(?:ell|old)",

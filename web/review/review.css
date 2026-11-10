@@ -391,3 +391,4 @@ input[type="text"] { max-width: 360px; min-height: 44px; }
   .bar > span { background: #555555; }
   details.transcript > .turns { display: block; }
 }
+.line-rules { margin: -4px 0 10px; }

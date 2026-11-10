@@ -7,11 +7,11 @@ from pathlib import Path
 import pytest
 
 from samajh.ops import book as books
-from samajh.ops.model import RETRY_AFTER, Tier
+from samajh.ops.model import RETRY_AFTER
 from samajh.ops.simulate import script_call, scripted_analysis
 from samajh.ops.store import CALL_ID
 from samajh.ops.triage import triage
-from samajh.types import Language
+from samajh.types import Language, Tier
 
 FILES = ("book.jsonl", "sim-customers.jsonl", "BOOK.json", "README.md")
 
@@ -68,7 +68,7 @@ def test_every_loan_can_be_scripted_and_analysed_and_an_informed_customer_has_no
         assert CALL_ID.fullmatch(call.transcript.call_id)
         result, how = scripted_analysis(call, loan.record)
         assert how == "scripted extraction, no model"
-        tier = triage(result).tier
+        tier = triage(loan.record, result).tier
         tiers[tier] += 1
         if customer.archetype == "informed_full":
             assert tier is Tier.clear, (loan.record.loan_id, result.all_flags(), result.all_gaps())

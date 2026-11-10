@@ -22,13 +22,13 @@ from opskit import (
 from samajh.ops import book as books
 from samajh.ops.__main__ import main
 from samajh.ops.batch import load_batch
-from samajh.ops.model import Decision, FinalStatus, Tier
+from samajh.ops.model import Decision, FinalStatus
 from samajh.ops.report import build_report
 from samajh.ops.simulate import run_draw, scripted_analysis
 from samajh.ops.store import NoBatch, OpsStore
 from samajh.ops.views import DispositionIn, Proportion, queue_view, record_disposition
 from samajh.scenarios.model import DONT_KNOW
-from samajh.types import RuleId
+from samajh.types import RuleId, Tier
 
 
 def _files(root: Path) -> dict[str, bytes]:
@@ -210,7 +210,7 @@ def test_the_queue_holds_only_referrals_open_first_then_severity_then_days_left(
     assert [i.severity for i in items] == ["high", "high", "medium", "high"]
     assert [i.days_left_in_window for i in items] == [16, 23, 9, 9]
     assert [i.disposition.final if i.disposition else None for i in items] == [None, False, None, True]
-    assert items[0].headline == "How the sale was handled: customer says they were told what to answer."
+    assert items[0].headline == "Customer says they were told what to answer."
     assert items[0].may_engage == () and items[2].may_engage == ("may engage para 85G",)
     assert all(i.simulated for i in items)
 

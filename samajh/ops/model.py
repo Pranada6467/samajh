@@ -1,7 +1,7 @@
 """Types for the operating layer: the loan book, the sample, the attempt log, review decisions.
 
     LoanBook --sampler.draw--> Draw --simulate.run_batch--> Attempt (+ CallRecord when a call completed)
-    CallRecord --triage.triage--> Triage --views--> reviewer queue, case page
+    CallRecord --triage.triage (samajh.rules.summarise)--> Triage --views--> reviewer queue, case page
     (book, draws, attempts, calls, decisions) --report.build_report--> the half-yearly report
 
 Nothing here decides anything about a sale. A `Decision` is recorded by a person.
@@ -16,18 +16,17 @@ from typing import Annotated, Literal
 
 from pydantic import Field, StringConstraints, model_validator
 
+from samajh.rules import IssueLine
 from samajh.scenarios.model import ProductBelief
 from samajh.types import (
     CaseResult,
-    Evidence,
     Frozen,
     Language,
     LenderType,
     LoanRecord,
-    ProductId,
-    RuleId,
     SaleConcern,
     Severity,
+    Tier,
     Transcript,
 )
 
@@ -224,37 +223,15 @@ class FinalStatus(StrEnum):
     completed = "completed"
 
 
-# --- triage: the one dependency on package P3a ---------------------------------
-
-
-class Tier(StrEnum):
-    """What happens to a call's result. Only `refer` reaches a reviewer."""
-
-    refer = "refer"
-    understanding_gap = "understanding_gap"  # counted in the report; no case is opened
-    incomplete = "incomplete"
-    clear = "clear"
-
-
-class SummaryLine(Frozen):
-    """One line of the deduplicated case summary. `clause` is the paragraph the line may engage."""
-
-    rule_id: RuleId
-    clause: str
-    product_id: ProductId | None
-    severity: Severity
-    tier: Tier  # `refer` or `understanding_gap`
-    expected: str  # what the lender's record shows
-    heard: str  # what the customer said, in the rule's terms
-    quotes: tuple[Evidence, ...]
+# --- triage: the tier and summary come from the core (samajh.types.Tier, samajh.rules.summarise) ---
 
 
 class Triage(Frozen):
-    """The tier of one call and its summary. Built by `samajh.ops.triage.triage` and nowhere else."""
+    """The tier of one call and its deduplicated summary. Built by `samajh.ops.triage.triage` only."""
 
     tier: Tier
-    severity: Severity | None  # the highest severity among the `refer` lines; None unless tier is refer
-    lines: tuple[SummaryLine, ...]  # refer lines first, then by severity
+    severity: Severity | None  # the highest severity among the `refer` flags; None unless tier is refer
+    lines: tuple[IssueLine, ...]  # `samajh.rules.summarise`: refer, then incomplete, then understanding gaps
 
     @model_validator(mode="after")
     def _coherent(self) -> "Triage":
