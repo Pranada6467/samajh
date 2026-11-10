@@ -24,3 +24,6 @@ data/realvoice/
 
 # Human-call material (consent messages, call log, recordings): local only
 .samajh-human/
+
+# Demo video and submission drafts (kept outside the repo)
+demo/
