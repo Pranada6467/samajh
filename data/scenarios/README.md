@@ -58,7 +58,7 @@ Base cases by target rule and class (each appears once per language):
 | Target rule | violating | compliant | near_miss | Total |
 |---|---|---|---|---|
 | kind | 3 | 1 | 0 | 4 |
-| premium | 2 | 0 | 2 | 4 |
+| premium | 3 | 0 | 1 | 4 |
 | cover | 2 | 0 | 0 | 2 |
 | cancel_window | 1 | 0 | 0 | 1 |
 | recall | 2 | 0 | 0 | 2 |
@@ -71,23 +71,23 @@ Base cases by target rule and class (each appears once per language):
 Scenarios by language and class:
 | Language | violating | compliant | near_miss | Total |
 |---|---|---|---|---|
-| hi | 24 | 4 | 8 | 36 |
-| hi-en | 24 | 4 | 8 | 36 |
-| ta | 24 | 4 | 8 | 36 |
-| kn | 24 | 4 | 8 | 36 |
+| hi | 25 | 4 | 7 | 36 |
+| hi-en | 25 | 4 | 7 | 36 |
+| ta | 25 | 4 | 7 | 36 |
+| kn | 25 | 4 | 7 | 36 |
 
 Base cases by gold verdict:
 | Verdict | Base cases |
 |---|---|
 | clear | 9 |
-| flag_for_review | 24 |
-| unclear_needs_human | 3 |
+| flag_for_review | 25 |
+| unclear_needs_human | 2 |
 
 Base cases in which gold flags each rule, leaves it unclear, or does neither:
 | Rule | Flagged | Unclear | Neither |
 |---|---|---|---|
 | kind | 7 | 1 | 28 |
-| premium | 2 | 3 | 31 |
+| premium | 4 | 1 | 31 |
 | cover | 9 | 1 | 26 |
 | term | 6 | 1 | 29 |
 | cancel_window | 8 | 1 | 27 |
@@ -105,7 +105,7 @@ Base cases by customer state, yes/no disposition, scripted yes/no outcome and go
 | informed | truthful | confirmed | clear | 9 |
 | informed | truthful | confirmed | flag_for_review | 6 |
 | informed | truthful | confirmed | unclear_needs_human | 1 |
-| informed | truthful | not_confirmed | unclear_needs_human | 1 |
+| informed | truthful | not_confirmed | flag_for_review | 1 |
 | misled | acquiescent | confirmed | flag_for_review | 1 |
 | misled | coached | confirmed | flag_for_review | 3 |
 | misled | truthful | confirmed | flag_for_review | 5 |
@@ -137,16 +137,17 @@ Classes: `violating` means gold flags the scenario's target rule. `compliant` me
 ## How gold was derived
 
 1. Each base case was written by hand in `samajh/scenarios/cases.py`: the record, the customer's beliefs, and then the gold with a written rationale.
-2. Gold applies `DESIGN.md` section 6 as a person reading it would, plus the coordinator's four decisions of 2026-11-10. The table below is the reading used.
+2. Gold applies `DESIGN.md` section 6 as a person reading it would, plus the coordinator's decisions of 2026-11-10, including the two on "I don't know" that produced version 3. The table below is the reading used.
 3. The rule engine was not run on any scenario before the first freeze. Building the files does not import `samajh.rules`, and a test enforces that.
 4. The set was frozen by hash on 2026-11-10, before any audio or extraction was run on it.
-5. Only after the freeze was gold compared with the rule engine (see "Agreement with the rule engine"). Each disagreement was decided on the written rules, and each change to gold is in `CHANGELOG.md`.
+5. Only after the freeze was gold compared with the rule engine (see "Agreement with the rule engine"). Each disagreement was decided on the written rules or by the coordinator, and each change to gold is in `CHANGELOG.md`.
+6. Version 3 (2026-11-10) changed gold for U09 and U10 in all four languages after that comparison, in the engine's favour, on a coordinator decision. It was frozen before any audio or LLM extraction was run on the set.
 
 | Rule | Paragraph (bank / NBFC) | Gold flags it when | Gold leaves it unclear when |
 |---|---|---|---|
 | `recall` | internal | The customer does not name the product when asked, before any product is mentioned, what they took with the loan (coordinator decision 2) | |
-| `kind` | 85Y / 101Y | The customer says it is something other than insurance, or does not know what it is (the second is our reading) | The customer gives no usable answer |
-| `premium` | 85Y / 101Y | The stated amount, confirmed at read-back, differs from the record by more than 1% | The customer does not state an amount: "I don't know", "I don't remember", or no usable answer |
+| `kind` | 85Y / 101Y | The customer says it is something other than insurance, or does not know what it is (coordinator decision of 2026-11-10) | The customer gives no usable answer |
+| `premium` | 85Y / 101Y | The stated amount, confirmed at read-back, differs from the record by more than 1%; or the customer says they do not know or do not remember the amount (coordinator decision of 2026-11-10) | The customer is silent, is not asked, or gives no usable answer |
 | `cover`, `term` | 85Y / 101Y | The customer is wrong or does not know | The customer gives no usable answer |
 | `cancel_window` | 85Y / 101Y | The record shows a window and the customer gives another, was told of none, or does not know | The customer gives no usable answer |
 | `consent` | 85G / 101G | The record holds no consent; or the customer's own account of what they agreed to buy leaves the product out or is "I don't know"; or the customer describes another way of agreeing than the record shows | The customer agreed but cannot say how (coordinator decision 3), or gives no usable answer |
@@ -157,9 +158,14 @@ Classes: `violating` means gold flags the scenario's target rule. `compliant` me
 
 A product verdict is `flag_for_review` with any flag, `unclear_needs_human` with no flag and at least one unclear rule, and `clear` otherwise. A flag is evidence for a human reviewer. It is never a finding of mis-selling.
 
+Decided by the coordinator on 2026-11-10 (version 3):
+
+- **"I don't know" about the premium is a flag (medium).** A customer who says they do not know what the product cost has stated a lack of understanding of a feature, which is what paragraph 85Y / 101Y probes. Only silence, a question not asked, or an unusable answer is unclear. Versions 1 and 2 read section 6 ("not stated → `unclear`") the other way; U09 and U10 changed in version 3.
+- **"I don't know" about what the product is flags `kind`.** Section 6 is silent on that answer. Gold has flagged it since version 2 (U10); the coordinator confirmed it.
+- So a clear "I don't know" is a flag under every understanding rule (`kind`, `premium`, `cover`, `term`, `cancel_window`, `consent`, the money-back probe). `bundling` is the exception: not knowing whether the product was required is unclear. `loan_funded` is as the table says.
+
 Readings that are ours, where the design is silent:
 
-- **"I don't know" about the premium is unclear; about anything else it is a flag.** Section 6 says a premium "not stated" is unclear, and gold reads "I don't know the amount" as not stated. The rule engine flags it instead (see "Agreement with the rule engine"). For cover, term, cancellation, consent and the money-back probe, section 6 itself makes "unaware" or "I don't know" a flag. Section 6 is silent on a customer who does not know what the product is; gold flags `kind` there by analogy (U10).
 - **A product recalled under the wrong name is still recalled.** A customer who answers the open question with "just an FD, 52,000" has named the product on record, under the wrong kind. Gold flags `kind`, not `recall`.
 - **An evasive reply to the open question names nothing.** In C03 the customer answers "everything is fine". Gold flags `recall` on the letter of section 6. The scripts have no re-ask.
 - **A single-payment claim counts under `belief_mismatch`** when the record does not list one-time payment among the product's features (B03). Section 6 gives refundable, guaranteed return and FD as its examples.
@@ -187,6 +193,7 @@ What this means for E1:
 - **Disposition is applied to the yes/no call only.** U02, C01 and C02 say yes to everything on the yes/no call and answer the teach-back call candidly, including its yes-or-no-shaped questions (choice of provider, cancellation). Only C03 stays on the yes script in both calls. This assumption favours the teach-back call.
 - In B01's award the insurer submitted a recorded call to show the customer had confirmed the policy. The belief about withdrawal is the complainant's account.
 - **U05 and R01** are informed customers whom the rules flag (a premium rounded 1.21% off; a product not named unprompted). They carry the tag `flag-on-informed-customer`. Agreement with gold counts them as correct flags. Report them as the rules' cost on informed customers.
+- **U09** joins them from version 3: its `customer_state` is `informed` (told everything, forgot the figure) and gold now flags `premium`. It does not carry the tag, because version 3 changed only the gold the decision named. Select such cases by `customer_state` and gold verdict, not by the tag alone.
 
 ## Source awards
 
@@ -203,19 +210,20 @@ Run after the freeze with `uv run python -m samajh.scenarios check`. Two paths, 
 - `beliefs`: the customer's true beliefs given to `samajh.rules.evaluate` as perfect `Beliefs`.
 - `extraction`: the perfect extraction of the scripted text through `samajh.rules.to_beliefs` (amount parser and quote grounding) and then `evaluate`.
 
-Result on version 2 (144 scenarios, 36 base cases; counted from the command's output on 2026-11-10):
+Result on version 3 (144 scenarios, 36 base cases; counted from the command's output on 2026-11-10):
 
 | Path | Verdict and flag set agree | Verdicts agree | Flag sets agree | Unclear-rule sets agree |
 |---|---|---|---|---|
-| `beliefs` | 136 of 144 | 140 of 144 | 136 of 144 | 136 of 144 |
-| `extraction` | 135 of 144 | 139 of 144 | 136 of 144 | 135 of 144 |
+| `beliefs` | 144 of 144 | 144 of 144 | 144 of 144 | 144 of 144 |
+| `extraction` | 144 of 144 | 144 of 144 | 144 of 144 | 144 of 144 |
 
-By base case: 34 of 36 agree on the `beliefs` path. The design expected 100%. The number is 94.4%, and what limits it is one rule reading, not noise:
+Every scenario agrees on both paths, with no disagreement to list. Read the number with its history:
 
-- **U09 and U10, all four languages (8 scenarios): the premium rule.** The customer says they do not know or do not remember the amount. Gold says unclear, from section 6 ("not stated → `unclear`"). The engine raises a medium `premium` flag. In U09 this changes the verdict (`unclear_needs_human` against `flag_for_review`); in U10 the verdict is `flag_for_review` either way. Gold was kept and the difference reported to the coordinator.
-- **U01-ta (1 scenario, `extraction` path only): the amount parser.** The customer says "பன்னிரண்டரை ஆயிரம் ரூபாய், ஒரே தடவைதான் கட்டணும்" (twelve and a half thousand, to be paid only once). The parser reads "ஒரே" as the number 1, finds two amounts and refuses the turn, so the premium is a gap and the product is not clear. The other 143 scripted calls parse to the believed amounts, terms and windows.
+- **Agreement was 136 of 144 on versions 1 and 2, and reached 144 by changing gold.** The 8 that differed were U09 and U10 in each language (U09-hi, U09-hi-en, U09-ta, U09-kn, U10-hi, U10-hi-en, U10-ta, U10-kn): the customer says they do not know or do not remember the premium, gold said unclear, and the engine raised a medium `premium` flag. The coordinator decided for the engine's reading on 2026-11-10 and gold was changed by hand. The 144 is therefore not independent evidence that the engine is right on those 8.
+- On version 1, three engine-only flags on U10 (`kind`, `consent`, `belief_mismatch`) were gold errors against the current section 6 and were corrected in version 2.
+- **U01-ta, `extraction` path.** On version 2 the amount parser read "ஒரே" in "பன்னிரண்டரை ஆயிரம் ரூபாய், ஒரே தடவைதான் கட்டணும்" (twelve and a half thousand, to be paid only once) as the number 1 and refused the turn. The parser was fixed; the sentence was not changed. All 144 scripted calls now parse to the believed amounts, terms and windows.
 
-On version 1 the `beliefs` path also gave 136 of 144. Three engine-only flags on U10 (`kind`, `consent`, `belief_mismatch`) were gold errors against the current section 6 and were corrected; see `CHANGELOG.md`.
+Every change is in `CHANGELOG.md`.
 
 This check measures whether gold and the engine read the rules the same way on perfect input. It says nothing about speech recognition or extraction.
 
@@ -225,11 +233,12 @@ This check measures whether gold and the engine read the rules the same way on p
 - **Extraction scoring.** Compare status and value, not quotes: the expected extraction always quotes the whole turn, and the contract also allows a single whole clause. A customer who says nobody mentioned cancelling has `cancel_allowed: stated false` and `cancel_window: not_asked` in the expected extraction; treat an `unclear` there as equivalent. In U08, V04, V06 and C02 the expected `consent_given` is true (see the readings above); an extractor that returns false on "I signed for the FD" has made a defensible call, and the two should be scored separately.
 - **Audio.** Key each customer clip by a hash of its utterance text, not by the hash of `calls.jsonl`. The file hash changes whenever a bot prompt or a read-back wording changes.
 - **Git.** The freeze is a hash in a file next to the data. Until the three directories are committed, nothing outside them anchors it. `tests/scenarios` pins the version 1 hash so that history cannot be silently restarted.
+- **Versions.** Version 3 changed `gold.jsonl` only. `calls.jsonl` has the same hash as in version 2, so scripted text and expected extractions are unchanged.
 
 ## Known limits
 
 - **Templated speech.** Each customer line comes from a phrase bank of one to three variants per answer (`samajh/scenarios/phrases/`). The same sentence recurs across scenarios, and a customer never hesitates mid-sentence, corrects themselves or drifts off the question. Real calls will be messier. Results on this set are an upper bound for the text path.
-- **One author.** The same team wrote the rules, the records, the beliefs, the utterances and the gold. An independent model reviewer audited all 36 gold cases and 38 scripted calls (see `CHANGELOG.md`, version 2). No human has reviewed any of it.
+- **One author.** The same team wrote the rules, the records, the beliefs, the utterances and the gold. An independent model reviewer audited all 36 gold cases and 38 scripted calls (see `CHANGELOG.md`, version 2). Version 3 has had no independent review. No human has reviewed any of it.
 - **No fluent Tamil or Kannada reviewer.** Tamil and Kannada rows are labelled `not human-reviewed` in both files. Hindi and Hinglish rows are labelled `model-written, model-reviewed, no human reviewer`.
 - **Number words.** Tamil and Kannada amounts use standard written number words with fraction forms. Colloquial forms (அஞ்சு, ரெண்டு) are not used.
 - **No re-ask.** The design asks an unclear answer once more in simpler words. The scripts do not model that turn: an evasive customer stays evasive.

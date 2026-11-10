@@ -147,3 +147,39 @@ Gnani credits: 0. OpenRouter: 0 USD. Subagents: one reviewer.
 3. W5 should score extraction on status and value, cluster by base case, and treat the consent reading in U08, V04, V06 and C02 as a separate stratum (`data/scenarios/README.md`, "Using the set").
 4. Key customer audio by a hash of the utterance text, not by the hash of `calls.jsonl`.
 5. Add a matched closed arm to E1 (a confirmation script that states the cover, the window and the premium frequency), so E1 separates open-versus-closed from script coverage.
+
+## 10. Note of 2026-11-10: version 3
+
+Added after the report above. Sections 1 to 9 describe version 2 and are left as written; where they give 136 of 144, three unclear base cases, or a `PARSER_READS_ORE_AS_ONE` exception, this note supersedes them.
+
+The coordinator decided the three items in section 6:
+
+1. **Premium "I don't know" is a flag (medium), not unclear.** A customer who says they do not know what the product cost has stated a lack of understanding of a feature, which is what paragraph 85Y probes. Only silence, a question not asked, or an unusable answer is unclear. Gold changed by hand for U09 and U10 in all four languages (U09-hi, U09-hi-en, U09-ta, U09-kn, U10-hi, U10-hi-en, U10-ta, U10-kn): `premium` moved from unclear to flag. U09's verdict moved from `unclear_needs_human` to `flag_for_review`, and its class from `near_miss` to `violating` because the model ties class to the target-rule flag. U10's verdict is unchanged.
+2. **Kind "I don't know" is a flag.** Confirmed; no gold change.
+3. **The Tamil "ஒரே" parser defect** was fixed by its owner. The test exception for U01-ta was removed.
+
+The set was refrozen as version 3 before any audio or LLM extraction was run on it. The change resolves the gold-against-engine disagreement in the engine's favour, so 144 of 144 is agreement reached by decision, not an independent confirmation of the engine on those 8 scenarios.
+
+```
+$ uv run python -m samajh.scenarios build      (run twice, same output)
+14e49b58929c368e710709c8a93cc88e8852cead5ac89bbcde72c62be422e5dc  gold.jsonl  (144 rows)
+b10111dfc64e5dd74061f553cdbf666db916491f9ce3ef647ae3d0778fad29f5  calls.jsonl  (144 rows)
+
+$ uv run python -m samajh.scenarios verify
+OK: files on disk and the generator match FROZEN.json
+
+$ uv run python -m samajh.scenarios check --strict
+path: beliefs   scenarios: 144
+verdict and flag set agree: 144/144
+path: extraction   scenarios: 144
+verdict and flag set agree: 144/144
+exit: 0
+```
+
+`calls.jsonl` has the version 2 hash: no script changed. Base cases by gold verdict are now 9 clear, 25 flag for review, 2 unclear.
+
+Open after this note:
+
+- U09 is an informed customer whom gold now flags, without the tag `flag-on-informed-customer` that U05 and R01 carry. Not changed, because the instruction was to change nothing else. Coordinator to decide.
+- No independent reviewer has seen version 3.
+- `DESIGN.md` section 6 (`premium`, `kind`) should state both decisions; it is outside this work package.

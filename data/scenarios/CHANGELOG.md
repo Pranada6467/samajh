@@ -56,3 +56,35 @@ U10's case verdict is unchanged (`flag_for_review`). G01's case verdict is uncha
 - A consent given to a misdescribed product (U08, V04, V06, C02) stays unflagged, and a product recalled under the wrong name stays matched to the record. Both are documented as our readings in `README.md`.
 - U01-ta: the amount parser reads "ஒரே" ("only once") as the number 1 and refuses the turn. The sentence is natural and was not changed. Reported as a parser defect.
 - V04, V06 and G01 give a mildly implausible yes to one closed question after a no to an earlier one. The outcome is `not_confirmed` either way.
+
+## Version 3, frozen 2026-11-10
+
+- `gold.jsonl` sha256 `14e49b58929c368e710709c8a93cc88e8852cead5ac89bbcde72c62be422e5dc`
+- `calls.jsonl` sha256 `b10111dfc64e5dd74061f553cdbf666db916491f9ce3ef647ae3d0778fad29f5` (unchanged from version 2: no script, record or belief changed)
+- 144 scenarios, as before.
+- **This change was made before any audio or LLM extraction was run on the set.** Nothing had been scored against version 1 or version 2.
+- **It resolves a disagreement between gold and the rule engine in the engine's favour.** Version 2 gold disagreed with the engine on 8 scenarios, and version 3 gold takes the engine's reading on all 8: U09-hi, U09-hi-en, U09-ta, U09-kn, U10-hi, U10-hi-en, U10-ta, U10-kn. A reader should know that agreement of 144 of 144 was reached by changing gold, on a coordinator decision, after the comparison was seen. The gold was still written by hand in `samajh/scenarios/cases.py`; the build does not call the engine.
+
+### The decision (coordinator, 2026-11-10)
+
+1. **Premium "I don't know" is a flag.** A customer who says they do not know what the product cost has stated a lack of understanding of a feature, which is what RBI paragraph 85Y (101Y for an NBFC) probes. Gold is a `premium` flag (medium), not unclear. Only silence, a question not asked, or an unusable answer is unclear. This replaces the version 2 reading of `DESIGN.md` section 6 ("not stated → `unclear`"), under which "I don't remember the amount" counted as not stated.
+2. **Kind "I don't know" is a flag.** Confirmed. Gold has said so since version 2 (U10), where it was marked as our reading. No gold change.
+
+### Gold changes (2 base cases, 8 scenarios)
+
+| Case | Scenarios | Rule | Version 2 | Version 3 | Case verdict |
+|---|---|---|---|---|---|
+| U09 | U09-hi, U09-hi-en, U09-ta, U09-kn | `premium` | unclear | flag | `unclear_needs_human` → `flag_for_review` (product verdict the same) |
+| U10 | U10-hi, U10-hi-en, U10-ta, U10-kn | `premium` | unclear | flag | `flag_for_review`, unchanged. `bundling` stays unclear |
+
+Two fields follow from the U09 change and nothing else was touched:
+
+- U09 `scenario_class` moved from `near_miss` to `violating`. The model requires the class to be `violating` exactly when gold flags the target rule, and U09's target rule is `premium`.
+- The `rationale` text of U09 and U10 was rewritten to state the decision.
+
+Not changed: U09's `customer_state` stays `informed` and its tags stay `("dont-know",)`. It is now a third informed customer whom the rules flag, next to U05 and R01, but it does not carry the tag `flag-on-informed-customer`. Left for the coordinator, because the instruction was to change nothing else.
+
+### Rule engine agreement after the change
+
+- `beliefs` path: 144 of 144 (version 2: 136 of 144).
+- `extraction` path: 144 of 144 (version 2: 135 of 144). The ninth scenario was U01-ta: the amount parser read "ஒரே" ("only once") as the number 1. The parser was fixed by its owner; the scenario text did not change. The test that pinned the defect as a known exception now expects no disagreement on either path.

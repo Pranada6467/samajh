@@ -2,7 +2,8 @@
 
 Gold follows DESIGN.md section 6 as a person reading it would apply it, plus the coordinator's
 decisions of 2026-11-10 (the money-back probe is part of the call; a product not named in open
-recall is a low flag; a customer who cannot say how they agreed is unclear). The rule engine is
+recall is a low flag; a customer who cannot say how they agreed is unclear; a customer who says
+they do not know the premium, or do not know what the product is, is flagged). The rule engine is
 never called here. `data/scenarios/README.md` lists the reading used for each rule, and
 `data/scenarios/CHANGELOG.md` lists every change made to gold after the first freeze.
 
@@ -404,7 +405,7 @@ def _cases() -> tuple[BaseCase, ...]:
             id="U09",
             title="Informed customer who cannot remember the amount",
             target_rule=R.premium,
-            scenario_class=NEAR_MISS,
+            scenario_class=VIOLATING,
             record=_record(p, BANK, GOLD_LOAN, 250_000, 1990),
             told="Told everything correctly. Does not remember the figure a few weeks later.",
             beliefs=(_informed(p, premium_inr=DONT_KNOW),),
@@ -412,10 +413,12 @@ def _cases() -> tuple[BaseCase, ...]:
             yes_no=TRUTHFUL,
             yes_no_basis="Cannot confirm a figure they do not remember.",
             gold=_gold(
-                UNCLEAR,
-                "Does not state the premium. DESIGN.md section 6: premium not stated is unclear, not a "
-                "flag. Every other answer matches, so the case goes to a human with no flag.",
-                unclear=(R.premium,),
+                FLAGGED,
+                "Says they do not remember what the product cost. Coordinator decision of 2026-11-10: a "
+                "customer who says they do not know the premium has stated a lack of understanding of a "
+                "feature, which is a flag (medium) under premium. Only silence, a question not asked or "
+                "an unusable answer is unclear. Every other answer matches the record.",
+                flags=(R.premium,),
             ),
             tags=("dont-know",),
         )
@@ -460,11 +463,14 @@ def _cases() -> tuple[BaseCase, ...]:
                 "to buy, which section 6 flags under consent, and answers 'I don't know' to the money-back "
                 "probe, which section 6 flags under belief_mismatch. Not knowing what the product is flags "
                 "kind: section 6 is silent on that answer, and this is our reading, by analogy with the "
-                "other understanding rules. Section 6 says a premium 'not stated' is unclear, and not "
-                "knowing whether the product was required is unclear.",
+                "other understanding rules, confirmed by the coordinator on 2026-11-10. Saying they do not "
+                "know what the product cost flags premium (coordinator decision of 2026-11-10: only "
+                "silence, a question not asked or an unusable answer is unclear). Not knowing whether the "
+                "product was required is unclear.",
                 flags=(
                     R.recall,
                     R.kind,
+                    R.premium,
                     R.cover,
                     R.term,
                     R.cancel_window,
@@ -472,7 +478,7 @@ def _cases() -> tuple[BaseCase, ...]:
                     R.consent,
                     R.belief_mismatch,
                 ),
-                unclear=(R.premium, R.bundling),
+                unclear=(R.bundling,),
             ),
             tags=("dont-know",),
         )

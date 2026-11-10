@@ -560,27 +560,29 @@ def test_a_customer_who_does_not_know_what_they_agreed_to_names_no_method():
 
 # --- gold against the rule engine, after the freeze --------------------------
 
-# Where gold and the engine are known to differ on perfect input, and why. A change here means
-# the engine or the gold changed: update CHANGELOG.md and the datasheet with it.
+# Gold and the engine agree on every scenario on perfect input since version 3. A change here
+# means the engine or the gold changed: update CHANGELOG.md and the datasheet with it.
 PREMIUM_DONT_KNOW = {f"{base}-{language.value}" for base in ("U09", "U10") for language in Language}
-PARSER_READS_ORE_AS_ONE = {"U01-ta"}
 
 
-@pytest.mark.parametrize(
-    ("path", "expected"),
-    [("beliefs", PREMIUM_DONT_KNOW), ("extraction", PREMIUM_DONT_KNOW | PARSER_READS_ORE_AS_ONE)],
-)
-def test_gold_and_rule_engine_differ_only_where_documented(path, expected):
+@pytest.mark.parametrize("path", ["beliefs", "extraction"])
+def test_gold_and_rule_engine_agree_on_perfect_input(path):
     from samajh.scenarios import consistency
 
     comparisons = consistency.check(SCENARIOS, tuple(CALLS.values()), path)
     differing = {c.scenario_id for c in comparisons if not (c.agrees and c.unclear_agrees)}
-    assert differing == expected
-    for c in comparisons:
-        if c.scenario_id in PREMIUM_DONT_KNOW:
-            assert c.engine_flags - c.gold_flags == {("P1", RuleId.premium)}
-            assert c.gold_unclear - c.engine_gaps == {("P1", RuleId.premium)}
+    assert differing == set()
     engine_flags_on_clear_gold = [
         c.scenario_id for c, s in zip(comparisons, SCENARIOS, strict=True) if s.gold.verdict is Verdict.clear and c.engine_flags
     ]
     assert engine_flags_on_clear_gold == []
+
+
+def test_a_customer_who_does_not_know_the_premium_is_flagged_on_premium():
+    """Coordinator decision of 2026-11-10: "I don't know what it cost" is a flag, not unclear."""
+    cases = [s for s in SCENARIOS if s.beliefs[0].premium_inr == "dont_know"]
+    assert {s.id for s in cases} == PREMIUM_DONT_KNOW
+    for s in cases:
+        assert ("P1", RuleId.premium) in s.gold.flag_keys(), s.id
+        assert ("P1", RuleId.premium) not in s.gold.unclear_keys(), s.id
+        assert s.gold.verdict is Verdict.flag_for_review, s.id

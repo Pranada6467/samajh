@@ -1,10 +1,10 @@
 {
-  "version": 2,
+  "version": 3,
   "frozen_on": "2026-11-10",
   "count": 144,
   "files": {
     "gold.jsonl": {
-      "sha256": "d002423a32eeb7c020526e01cf0b21083566ad2e593a67a30e1c9d7f0154f152",
+      "sha256": "14e49b58929c368e710709c8a93cc88e8852cead5ac89bbcde72c62be422e5dc",
       "count": 144
     },
     "calls.jsonl": {
@@ -27,6 +27,15 @@
       "reason": "Version 2: gold corrected for U10 and G01 and scripts fixed after the independent audit; see CHANGELOG.md",
       "sha256": {
         "gold.jsonl": "d002423a32eeb7c020526e01cf0b21083566ad2e593a67a30e1c9d7f0154f152",
+        "calls.jsonl": "b10111dfc64e5dd74061f553cdbf666db916491f9ce3ef647ae3d0778fad29f5"
+      },
+      "count": 144
+    },
+    {
+      "frozen_on": "2026-11-10",
+      "reason": "Version 3: premium 'I don't know' is a flag, not unclear (coordinator decision 2026-11-10); gold changed for U09 and U10 in all four languages; see CHANGELOG.md",
+      "sha256": {
+        "gold.jsonl": "14e49b58929c368e710709c8a93cc88e8852cead5ac89bbcde72c62be422e5dc",
         "calls.jsonl": "b10111dfc64e5dd74061f553cdbf666db916491f9ce3ef647ae3d0778fad29f5"
       },
       "count": 144
