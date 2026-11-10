@@ -1,5 +1,7 @@
 # Samajh
 
+**One-page pitch:** [PITCH.md](PITCH.md)
+
 Samajh is a Hindi and Hinglish voice callback for lenders and their compliance reviewers: it asks a borrower, in their own words, what they bought with their loan, and plain code compares the answer with the lender's record, so a human reviewer gets quotes and audio offsets to look at, never a verdict.
 
 Status in one line: it runs end to end on synthetic data with Timbre-voiced customers, **no person has spoken to the phone yet**, and the call and the phone are not independently verified (details under "Status" below).
@@ -10,7 +12,7 @@ Status in one line: it runs end to end on synthetic data with Timbre-voiced cust
 
 ## Three numbers (amounts that skip a place-value group)
 
-All three are on synthetic or public speech, not on real callers, and all use the wording the independent verification allows (`references/reviews/iter2/verify-P6.md`, "Wording for a public submission"; `CLAUDE.md`, "Gnani API facts").
+All three are on synthetic or public speech, not on real callers, and all use the wording the independent verification allows (`references/reviews/iter2/verify-P6.md`, "Wording for a public submission").
 
 1. **40 of 68, against 0 of 68.** On a held-out synthetic set built to stress amounts that skip a place-value group (TTS audio, simulated 8 kHz phone audio), Prisma v3.0 `transcribe` wrote a different amount for 40 of 68 such amounts (59%, 95% CI 47-70) and for 0 of 68 matched controls. Its `verbatim` output of the same audio had the right number words in all 40, and v2.5 `transcribe` wrote none wrong. 26 of the 40 are wrong under any reading ("one lakh three hundred" written as 1,300; "five crore twenty-six thousand" as 5,26,000); the other 14 are "X lakh Y" phrases that colloquial Hindi may mean differently. The 68 are 24% of the set by design, so this is not a rate of how often amounts go wrong.
 2. **224 of 280.** Accepting an amount only when Prisma v3.0 and v2.5 `transcribe` agree accepted 224 of 280 synthetic clips with no wrong amount accepted. The rule was written into the experiment plan before any audio was voiced (`verify-P6.md`, finding 3); a cheaper variant was chosen on these same sets and is not claimed.
@@ -72,7 +74,7 @@ It is built for Gnani AI's Great Indian AI Internship Challenge on Prisma STT an
 
 ## Status (2026-11-10, end of iteration 2's build wave)
 
-Iteration 1 built the parts and was reviewed by two verifiers and a judge (`references/reviews/iter1/`): continue with changes, 69 of 100 against the idea's 84, because the parts had never been joined into one call. Iteration 2 joins them. The state of each package is in `ORCHESTRATION.md`, "Coordinator handoff". In short:
+Iteration 1 built the parts and was reviewed by two verifiers and a judge: continue with changes, 69 of 100 against the idea's 84, because the parts had never been joined into one call. Iteration 2 joins them. The state of each package is in `ORCHESTRATION.md`, "Coordinator handoff". In short:
 
 | Part | State |
 |---|---|
@@ -84,9 +86,9 @@ Iteration 1 built the parts and was reviewed by two verifiers and a judge (`refe
 | Human calls (P4), evaluation of Samajh on customers the builders did not script (P5), demo and submission (P7) | Not started |
 
 What is measured so far, each with what limits it:
-- **Prisma v3.0 and amounts that skip a place-value group (held-out, TTS audio).** On a held-out set of 280 synthetic Hindi and Hinglish sentences, on simulated 8 kHz phone audio, v3.0 `transcribe` wrote a different amount for 40 of 68 skipped-group amounts (59%, 95% CI 47-70) and for 0 of 68 matched controls. Its `verbatim` output of the same audio had the right number words in all 40, and v2.5 `transcribe` wrote none wrong. 14 of the 40 are "X lakh Y" phrases that colloquial Hindi may mean differently; 26 are wrong under any reading. Accepting an amount only when v3.0 and v2.5 agree accepted 224 of 280 synthetic clips and 113 of 124 public Hindi recordings, with no wrong amount accepted; the recordings are mostly from training splits of public datasets and only 4 skip a group, so they are a separate, possibly optimistic result. Details and the full list of what is not claimed: `CLAUDE.md` ("Gnani API facts"), `eval/amounts_v2/`, `references/reviews/iter2/verify-P6.md`.
+- **Prisma v3.0 and amounts that skip a place-value group (held-out, TTS audio).** On a held-out set of 280 synthetic Hindi and Hinglish sentences, on simulated 8 kHz phone audio, v3.0 `transcribe` wrote a different amount for 40 of 68 skipped-group amounts (59%, 95% CI 47-70) and for 0 of 68 matched controls. Its `verbatim` output of the same audio had the right number words in all 40, and v2.5 `transcribe` wrote none wrong. 14 of the 40 are "X lakh Y" phrases that colloquial Hindi may mean differently; 26 are wrong under any reading. Accepting an amount only when v3.0 and v2.5 agree accepted 224 of 280 synthetic clips and 113 of 124 public Hindi recordings, with no wrong amount accepted; the recordings are mostly from training splits of public datasets and only 4 skip a group, so they are a separate, possibly optimistic result. Details and the full list of what is not claimed: `eval/amounts_v2/REPORT.md`, `eval/amounts_v2/`, `references/reviews/iter2/verify-P6.md`.
 - **The decision chain on scripted text (not speech).** The frozen scenario set (144 calls written by the team, 36 base cases; Hindi and Hinglish are 72 calls) was rerun after P3a's changes (one live pass, then cache-only reruns after each fix round): of 38 Hindi and Hinglish calls with a customer problem, 2 ended `clear` or `understanding_gap` (1 of 19 base cases: a wrong cancellation window, which is `understanding_gap` by design); of 18 informed customers on a compliant record, 0 were referred; of 16 informed customers with a fault on the lender's record, 8 were referred. Gold agrees with the rule engine on 144 of 144 partly because of a coordinator decision on 8 scenarios. Report: `eval/text_path/runs/frozen__openai-gpt-6-luna.md`. The teach-back against yes/no comparison (E1) is retired as a headline because it is true by construction.
-- **Gnani API behaviour** measured live, including that the one-request limit is per account and not per key (`references/pilots/api-probe-iter1.md`, `CLAUDE.md`).
+- **Gnani API behaviour** measured live, including that the one-request limit is per account and not per key (`references/pilots/api-probe-iter1.md`).
 
 Not verified: anything on human speech (no human voice recording exists); anything in Tamil or Kannada (no fluent reviewer); the bot's wording (no fluent human has read a line; nobody has listened to the voice); the end-of-speech thresholds (not set on human audio); the whole-suite test run (see "Run the tests").
 
@@ -157,11 +159,6 @@ The whole tree collected 4,443 tests on 2026-11-10 (3 live ones deselected) afte
 | File | What it is |
 |---|---|
 | `DESIGN.md` | The current design (v3): problem, rule, call flow, rules and tiers, evaluation, what we can and can't claim |
-| `ORCHESTRATION.md` | Build rules, the iteration log and the coordinator handoff (where a new session starts) |
-| `USER-GUIDE.md` | What the project's owner personally needs to do |
-| `CLAUDE.md` | Project instructions for coding agents, including the verified Gnani API facts and a map of the files |
-| `RESEARCH.md` | Research on the challenge, Gnani products, the market and all idea directions |
-| `IDEAS-HILLCLIMB.md` | The 5-round evaluation that chose this idea |
 | `references/reviews/` | Independent reviews: iteration 1 (two verifiers and the judge) and iteration 2 (P6 verification, probes) |
 | `references/claims/` | Claims ledger, design corrections and the quote checker (saved sources are local-only) |
 | `references/pilots/` | Package reports and contracts (P1, P2, P3a and the iteration 1 reports), the Gnani API probe, the transport report, rendered reviewer pages (`p3b-artifacts/`) |
