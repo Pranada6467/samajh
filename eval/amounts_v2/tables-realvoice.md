@@ -32,6 +32,18 @@ Items in the manifest 125; clips with all four readings 248; items without a com
 | shape single | v3.0 verbatim | 93 | 92/93 (99%, 94-100) | 0/93 (0%, 0-4) | 1/93 (1%, 0-6) |
 | shape single | v2.5 transcribe | 93 | 89/93 (96%, 89-98) | 2/93 (2%, 1-8) | 2/93 (2%, 1-8) |
 | shape single | v2.5 literal | 93 | 91/93 (98%, 92-99) | 1/93 (1%, 0-6) | 1/93 (1%, 0-6) |
+| gold 1,000 and above | v3.0 transcribe | 79 | 77/79 (97%, 91-99) | 1/79 (1%, 0-7) | 1/79 (1%, 0-7) |
+| gold 1,000 and above | v3.0 verbatim | 79 | 77/79 (97%, 91-99) | 1/79 (1%, 0-7) | 1/79 (1%, 0-7) |
+| gold 1,000 and above | v2.5 transcribe | 79 | 74/79 (94%, 86-97) | 3/79 (4%, 1-11) | 2/79 (3%, 1-9) |
+| gold 1,000 and above | v2.5 literal | 79 | 76/79 (96%, 89-99) | 2/79 (3%, 1-9) | 1/79 (1%, 0-7) |
+| split train | v3.0 transcribe | 107 | 104/107 (97%, 92-99) | 1/107 (1%, 0-5) | 2/107 (2%, 1-7) |
+| split train | v3.0 verbatim | 107 | 104/107 (97%, 92-99) | 1/107 (1%, 0-5) | 2/107 (2%, 1-7) |
+| split train | v2.5 transcribe | 107 | 99/107 (93%, 86-96) | 4/107 (4%, 1-9) | 4/107 (4%, 1-9) |
+| split train | v2.5 literal | 107 | 102/107 (95%, 90-98) | 3/107 (3%, 1-8) | 2/107 (2%, 1-7) |
+| split valid | v3.0 transcribe | 17 | 17/17 (100%, 82-100) | 0/17 (0%, 0-18) | 0/17 (0%, 0-18) |
+| split valid | v3.0 verbatim | 17 | 17/17 (100%, 82-100) | 0/17 (0%, 0-18) | 0/17 (0%, 0-18) |
+| split valid | v2.5 transcribe | 17 | 16/17 (94%, 73-99) | 1/17 (6%, 1-27) | 0/17 (0%, 0-18) |
+| split valid | v2.5 literal | 17 | 17/17 (100%, 82-100) | 0/17 (0%, 0-18) | 0/17 (0%, 0-18) |
 | source indicvoices | v3.0 transcribe | 88 | 85/88 (97%, 90-99) | 1/88 (1%, 0-6) | 2/88 (2%, 1-8) |
 | source indicvoices | v3.0 verbatim | 88 | 85/88 (97%, 90-99) | 1/88 (1%, 0-6) | 2/88 (2%, 1-8) |
 | source indicvoices | v2.5 transcribe | 88 | 80/88 (91%, 83-95) | 4/88 (5%, 2-11) | 4/88 (5%, 2-11) |
@@ -140,6 +152,18 @@ Items in the manifest 125; clips with all four readings 248; items without a com
 | shape single | v3.0 verbatim | 93 | 91/93 (98%, 92-99) | 0/93 (0%, 0-4) | 2/93 (2%, 1-8) |
 | shape single | v2.5 transcribe | 93 | 89/93 (96%, 89-98) | 2/93 (2%, 1-8) | 2/93 (2%, 1-8) |
 | shape single | v2.5 literal | 93 | 91/93 (98%, 92-99) | 1/93 (1%, 0-6) | 1/93 (1%, 0-6) |
+| gold 1,000 and above | v3.0 transcribe | 79 | 76/79 (96%, 89-99) | 1/79 (1%, 0-7) | 2/79 (3%, 1-9) |
+| gold 1,000 and above | v3.0 verbatim | 79 | 77/79 (97%, 91-99) | 1/79 (1%, 0-7) | 1/79 (1%, 0-7) |
+| gold 1,000 and above | v2.5 transcribe | 79 | 74/79 (94%, 86-97) | 3/79 (4%, 1-11) | 2/79 (3%, 1-9) |
+| gold 1,000 and above | v2.5 literal | 79 | 76/79 (96%, 89-99) | 2/79 (3%, 1-9) | 1/79 (1%, 0-7) |
+| split train | v3.0 transcribe | 107 | 103/107 (96%, 91-99) | 1/107 (1%, 0-5) | 3/107 (3%, 1-8) |
+| split train | v3.0 verbatim | 107 | 104/107 (97%, 92-99) | 1/107 (1%, 0-5) | 2/107 (2%, 1-7) |
+| split train | v2.5 transcribe | 107 | 99/107 (93%, 86-96) | 4/107 (4%, 1-9) | 4/107 (4%, 1-9) |
+| split train | v2.5 literal | 107 | 102/107 (95%, 90-98) | 3/107 (3%, 1-8) | 2/107 (2%, 1-7) |
+| split valid | v3.0 transcribe | 17 | 17/17 (100%, 82-100) | 0/17 (0%, 0-18) | 0/17 (0%, 0-18) |
+| split valid | v3.0 verbatim | 17 | 17/17 (100%, 82-100) | 0/17 (0%, 0-18) | 0/17 (0%, 0-18) |
+| split valid | v2.5 transcribe | 17 | 16/17 (94%, 73-99) | 1/17 (6%, 1-27) | 0/17 (0%, 0-18) |
+| split valid | v2.5 literal | 17 | 17/17 (100%, 82-100) | 0/17 (0%, 0-18) | 0/17 (0%, 0-18) |
 | source indicvoices | v3.0 transcribe | 88 | 84/88 (95%, 89-98) | 1/88 (1%, 0-6) | 3/88 (3%, 1-10) |
 | source indicvoices | v3.0 verbatim | 88 | 85/88 (97%, 90-99) | 1/88 (1%, 0-6) | 2/88 (2%, 1-8) |
 | source indicvoices | v2.5 transcribe | 88 | 80/88 (91%, 83-95) | 4/88 (5%, 2-11) | 4/88 (5%, 2-11) |
@@ -221,6 +245,11 @@ Items in the manifest 125; clips with all four readings 248; items without a com
 | rv-iv-070 | multi | indicvoices | 3600 | ok | ok | **36** | **36** |
 | rv-iv-082 | single | indicvoices | 6000 | ok | ok | refused | ok |
 | rv-kb-003 | multi | kathbath | 3500 | ok | ok | refused | ok |
+
+## Stability across the two copies of each clip
+
+- v3.0 transcribe: outcome differs between `native16k` and `phone` on 1 of 124 items 
+
 
 ## Requests: latency and estimated cost
 

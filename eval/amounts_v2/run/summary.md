@@ -1,3 +1,5 @@
+Parser: samajh.amounts at 59c12d9 (eval/amounts_v2/frozen_parser.py). Written by analyze.py.
+
 | language | condition | stt | output | method | correct/n (rate, Wilson 95%) |
 | --- | --- | --- | --- | --- | --- |
 | hi | clean16k | v3.0 transcribe item | text | naive | 119/140 (85%, 78-90) |

@@ -40,6 +40,22 @@ Items in the manifest 280; clips with all four readings 560; items without a com
 | large | v3.0 verbatim | 16 | 16/16 (100%, 81-100) | 0/16 (0%, 0-19) | 0/16 (0%, 0-19) |
 | large | v2.5 transcribe | 16 | 16/16 (100%, 81-100) | 0/16 (0%, 0-19) | 0/16 (0%, 0-19) |
 | large | v2.5 literal | 16 | 16/16 (100%, 81-100) | 0/16 (0%, 0-19) | 0/16 (0%, 0-19) |
+| skipped, unambiguous phrase | v3.0 transcribe | 50 | 19/50 (38%, 26-52) | 8/50 (16%, 8-29) | 23/50 (46%, 33-60) |
+| skipped, unambiguous phrase | v3.0 verbatim | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| skipped, unambiguous phrase | v2.5 transcribe | 50 | 48/50 (96%, 87-99) | 2/50 (4%, 1-13) | 0/50 (0%, 0-7) |
+| skipped, unambiguous phrase | v2.5 literal | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| skipped, X lakh Y | v3.0 transcribe | 18 | 2/18 (11%, 3-33) | 0/18 (0%, 0-18) | 16/18 (89%, 67-97) |
+| skipped, X lakh Y | v3.0 verbatim | 18 | 17/18 (94%, 74-99) | 0/18 (0%, 0-18) | 1/18 (6%, 1-26) |
+| skipped, X lakh Y | v2.5 transcribe | 18 | 17/18 (94%, 74-99) | 1/18 (6%, 1-26) | 0/18 (0%, 0-18) |
+| skipped, X lakh Y | v2.5 literal | 18 | 17/18 (94%, 74-99) | 0/18 (0%, 0-18) | 1/18 (6%, 1-26) |
+| control, unambiguous phrase | v3.0 transcribe | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| control, unambiguous phrase | v3.0 verbatim | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| control, unambiguous phrase | v2.5 transcribe | 50 | 47/50 (94%, 84-98) | 3/50 (6%, 2-16) | 0/50 (0%, 0-7) |
+| control, unambiguous phrase | v2.5 literal | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| control, X lakh Y | v3.0 transcribe | 18 | 18/18 (100%, 82-100) | 0/18 (0%, 0-18) | 0/18 (0%, 0-18) |
+| control, X lakh Y | v3.0 verbatim | 18 | 18/18 (100%, 82-100) | 0/18 (0%, 0-18) | 0/18 (0%, 0-18) |
+| control, X lakh Y | v2.5 transcribe | 18 | 18/18 (100%, 82-100) | 0/18 (0%, 0-18) | 0/18 (0%, 0-18) |
+| control, X lakh Y | v2.5 literal | 18 | 18/18 (100%, 82-100) | 0/18 (0%, 0-18) | 0/18 (0%, 0-18) |
 | language hi | v3.0 transcribe | 140 | 120/140 (86%, 79-91) | 5/140 (4%, 2-8) | 15/140 (11%, 7-17) |
 | language hi | v3.0 verbatim | 140 | 139/140 (99%, 96-100) | 0/140 (0%, 0-3) | 1/140 (1%, 0-4) |
 | language hi | v2.5 transcribe | 140 | 139/140 (99%, 96-100) | 1/140 (1%, 0-4) | 0/140 (0%, 0-3) |
@@ -54,7 +70,9 @@ Items in the manifest 280; clips with all four readings 560; items without a com
 - silent wrong v3.0 transcribe only 39, v2.5 transcribe only 0; exact McNemar p = 3.6e-12
 - silent wrong v2.5 transcribe only 0, v2.5 literal only 1; exact McNemar p = 1
 - v3.0 transcribe: 68 pairs; silent wrong on the skipped item only 39, on the control only 0, on both 0; exact McNemar p = 3.6e-12
+- unambiguous phrases only, v3.0 transcribe: 50 pairs; silent wrong on the skipped item only 23, on the control only 0, on both 0; exact McNemar p = 2.4e-07
 - v2.5 transcribe: 68 pairs; silent wrong on the skipped item only 0, on the control only 0, on both 0; exact McNemar p = 1
+- v3.0 transcribe: 39 silent wrong; 14 are an "X lakh Y" phrase written as X lakh Y thousand (ambiguous in colloquial Hindi), 25 are wrong under any reading
 - Context: the naive digits rule on v3.0 transcribe text: silent wrong 48/280 (17%, 13-22)
 
 ### Mechanism: where the digits are wrong, what the words of the same clip say
@@ -221,6 +239,22 @@ Items in the manifest 280; clips with all four readings 560; items without a com
 | large | v3.0 verbatim | 16 | 16/16 (100%, 81-100) | 0/16 (0%, 0-19) | 0/16 (0%, 0-19) |
 | large | v2.5 transcribe | 16 | 16/16 (100%, 81-100) | 0/16 (0%, 0-19) | 0/16 (0%, 0-19) |
 | large | v2.5 literal | 16 | 16/16 (100%, 81-100) | 0/16 (0%, 0-19) | 0/16 (0%, 0-19) |
+| skipped, unambiguous phrase | v3.0 transcribe | 50 | 21/50 (42%, 29-56) | 5/50 (10%, 4-21) | 24/50 (48%, 35-61) |
+| skipped, unambiguous phrase | v3.0 verbatim | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| skipped, unambiguous phrase | v2.5 transcribe | 50 | 49/50 (98%, 90-100) | 1/50 (2%, 0-10) | 0/50 (0%, 0-7) |
+| skipped, unambiguous phrase | v2.5 literal | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| skipped, X lakh Y | v3.0 transcribe | 18 | 2/18 (11%, 3-33) | 0/18 (0%, 0-18) | 16/18 (89%, 67-97) |
+| skipped, X lakh Y | v3.0 verbatim | 18 | 17/18 (94%, 74-99) | 0/18 (0%, 0-18) | 1/18 (6%, 1-26) |
+| skipped, X lakh Y | v2.5 transcribe | 18 | 17/18 (94%, 74-99) | 1/18 (6%, 1-26) | 0/18 (0%, 0-18) |
+| skipped, X lakh Y | v2.5 literal | 18 | 17/18 (94%, 74-99) | 0/18 (0%, 0-18) | 1/18 (6%, 1-26) |
+| control, unambiguous phrase | v3.0 transcribe | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| control, unambiguous phrase | v3.0 verbatim | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| control, unambiguous phrase | v2.5 transcribe | 50 | 48/50 (96%, 87-99) | 2/50 (4%, 1-13) | 0/50 (0%, 0-7) |
+| control, unambiguous phrase | v2.5 literal | 50 | 50/50 (100%, 93-100) | 0/50 (0%, 0-7) | 0/50 (0%, 0-7) |
+| control, X lakh Y | v3.0 transcribe | 18 | 18/18 (100%, 82-100) | 0/18 (0%, 0-18) | 0/18 (0%, 0-18) |
+| control, X lakh Y | v3.0 verbatim | 18 | 18/18 (100%, 82-100) | 0/18 (0%, 0-18) | 0/18 (0%, 0-18) |
+| control, X lakh Y | v2.5 transcribe | 18 | 18/18 (100%, 82-100) | 0/18 (0%, 0-18) | 0/18 (0%, 0-18) |
+| control, X lakh Y | v2.5 literal | 18 | 18/18 (100%, 82-100) | 0/18 (0%, 0-18) | 0/18 (0%, 0-18) |
 | language hi | v3.0 transcribe | 140 | 121/140 (86%, 80-91) | 3/140 (2%, 1-6) | 16/140 (11%, 7-18) |
 | language hi | v3.0 verbatim | 140 | 139/140 (99%, 96-100) | 0/140 (0%, 0-3) | 1/140 (1%, 0-4) |
 | language hi | v2.5 transcribe | 140 | 139/140 (99%, 96-100) | 1/140 (1%, 0-4) | 0/140 (0%, 0-3) |
@@ -235,7 +269,9 @@ Items in the manifest 280; clips with all four readings 560; items without a com
 - silent wrong v3.0 transcribe only 40, v2.5 transcribe only 0; exact McNemar p = 1.8e-12
 - silent wrong v2.5 transcribe only 0, v2.5 literal only 1; exact McNemar p = 1
 - v3.0 transcribe: 68 pairs; silent wrong on the skipped item only 40, on the control only 0, on both 0; exact McNemar p = 1.8e-12
+- unambiguous phrases only, v3.0 transcribe: 50 pairs; silent wrong on the skipped item only 24, on the control only 0, on both 0; exact McNemar p = 1.2e-07
 - v2.5 transcribe: 68 pairs; silent wrong on the skipped item only 0, on the control only 0, on both 0; exact McNemar p = 1
+- v3.0 transcribe: 40 silent wrong; 14 are an "X lakh Y" phrase written as X lakh Y thousand (ambiguous in colloquial Hindi), 26 are wrong under any reading
 - Context: the naive digits rule on v3.0 transcribe text: silent wrong 45/280 (16%, 12-21)
 
 ### Mechanism: where the digits are wrong, what the words of the same clip say
@@ -364,6 +400,11 @@ Items in the manifest 280; clips with all four readings 560; items without a com
 | amt2-hi-skipped-032 | skipped | crore_thousands | 70011000 | **711000** | ok | ok | ok |
 | amt2-hi-skipped-033 | skipped | crore_thousands | 10066000 | **166000** | ok | ok | ok |
 | amt2-hi-skipped-034 | skipped | crore_thousands | 10068000 | **168000** | ok | ok | ok |
+
+## Stability across the two copies of each clip
+
+- v3.0 transcribe: outcome differs between `clean16k` and `phone` on 9 of 280 items 
+- v3.0 transcribe: outcome differs between `clean16k` and `phone` on 9 of 68 items {'stratum': 'skipped'}
 
 ## Requests: latency and estimated cost
 

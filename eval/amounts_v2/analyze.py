@@ -38,7 +38,16 @@ from samajh.evalkit.readings import (
     where,
 )
 from samajh.evalkit.runner import RunStore, SttRow, current_rows, jobs
-from samajh.evalkit.score import Hypothesis, Prediction, Scorer, markdown_table, mcnemar_exact, score
+from samajh.evalkit.score import (
+    Hypothesis,
+    Prediction,
+    Scorer,
+    aggregate,
+    cell_text,
+    markdown_table,
+    mcnemar_exact,
+    score,
+)
 from samajh.evalkit.scorers import naive_digits
 
 SETS = {
@@ -79,11 +88,18 @@ def subsets(which: str, all_: Sequence[Clip]) -> list[tuple[str, list[Clip]]]:
     if which == "tts":
         for stratum in ("skipped", "control", "general", "fraction", "large"):
             out.append((stratum, where(all_, stratum=stratum)))
+        # "X lakh Y" with Y under 100 may colloquially mean X.Y lakh; the other shapes cannot.
+        for stratum in ("skipped", "control"):
+            out.append((f"{stratum}, unambiguous phrase", unambiguous(where(all_, stratum=stratum))))
+            out.append((f"{stratum}, X lakh Y", where(all_, stratum=stratum, shape=AMBIGUOUS_SHAPE)))
         for language in ("hi", "hi-en"):
             out.append((f"language {language}", where(all_, language=language)))
     else:
         for shape in ("skipped", "multi", "single"):
             out.append((f"shape {shape}", where(all_, shape=shape)))
+        out.append(("gold 1,000 and above", [c for c in all_ if int(c.tags["gold"]) >= 1000]))
+        for split in ("train", "valid"):
+            out.append((f"split {split}", where(all_, split=split)))
         for source in ("indicvoices", "kathbath"):
             out.append((f"source {source}", where(all_, source=source)))
     return out
@@ -105,6 +121,40 @@ def outcome_table(which: str, condition_clips: Sequence[Clip]) -> str:
                 ]
             )
     return markdown_table(["subset", "reading", "n", "correct", "refused", "silent wrong"], rows)
+
+
+AMBIGUOUS_SHAPE = "lakh_units"
+
+
+def unambiguous(clips_: Sequence[Clip]) -> list[Clip]:
+    return [clip for clip in clips_ if clip.tags.get("shape") != AMBIGUOUS_SHAPE]
+
+
+def colloquial(clip: Clip, reading: str) -> bool:
+    """A wrong "X lakh Y" reading that equals X lakh plus Y thousand (X.Y lakh)."""
+    gold, value = int(clip.tags["gold"]), clip.values[reading]
+    lakhs, rest = divmod(gold, 100_000)
+    return clip.tags.get("shape") == AMBIGUOUS_SHAPE and value == lakhs * 100_000 + rest * 1_000
+
+
+def split_failures(condition_clips: Sequence[Clip], reading: str) -> str:
+    wrong = [c for c in condition_clips if c.outcome(reading) == "wrong"]
+    loose = sum(colloquial(c, reading) for c in wrong)
+    return (
+        f'{reading}: {len(wrong)} silent wrong; {loose} are an "X lakh Y" phrase written as X lakh '
+        f"Y thousand (ambiguous in colloquial Hindi), {len(wrong) - loose} are wrong under any reading"
+    )
+
+
+def flips(clips_: Sequence[Clip], reading: str, a: str, b: str, **tags: str) -> str:
+    by_item: dict[str, dict[str, str]] = {}
+    for clip in where(clips_, **tags):
+        by_item.setdefault(clip.item_id, {})[clip.condition] = clip.outcome(reading)
+    both = [o for o in by_item.values() if a in o and b in o]
+    changed = sum(o[a] != o[b] for o in both)
+    return (
+        f"{reading}: outcome differs between `{a}` and `{b}` on {changed} of {len(both)} items {tags or ''}"
+    )
 
 
 def pair_test(condition_clips: Sequence[Clip], reading: str) -> str:
@@ -312,7 +362,12 @@ def main(argv: list[str] | None = None) -> int:
             "- " + model_test(cc, T25, L25),
         ]
         if args.which == "tts":
-            parts += ["- " + pair_test(cc, T3), "- " + pair_test(cc, T25)]
+            parts += [
+                "- " + pair_test(cc, T3),
+                "- unambiguous phrases only, " + pair_test(unambiguous(cc), T3),
+                "- " + pair_test(cc, T25),
+                "- " + split_failures(cc, T3),
+            ]
         naive = [
             r
             for r in scored
@@ -333,7 +388,11 @@ def main(argv: list[str] | None = None) -> int:
             "\n### Clips where any reading is not gold\n",
             failures(cc, args.which),
         ]
+    conditions = list(experiment.conditions)
     parts += [
+        "\n## Stability across the two copies of each clip\n",
+        "- " + flips(complete, T3, *conditions),
+        "- " + flips(complete, T3, *conditions, stratum="skipped") if args.which == "tts" else "",
         "\n## Requests: latency and estimated cost\n",
         latency_table(stt_rows),
         (
@@ -343,6 +402,18 @@ def main(argv: list[str] | None = None) -> int:
     ]
     counts = Counter(c.condition for c in complete)
     out_path.write_text("\n".join(parts) + "\n", encoding="utf-8")
+    if args.which == "tts":
+        # The runner's summary, rescored with the pinned parser (the TTS text is synthetic).
+        by = ["language", "condition", "stt", "output", "method"]
+        table = markdown_table(
+            [*by, "correct/n (rate, Wilson 95%)"],
+            ([*summary.group.values(), cell_text(summary)] for summary in aggregate(scored, by)),
+        )
+        note = f"Parser: samajh.amounts at {COMMIT} (eval/amounts_v2/frozen_parser.py). Written by analyze.py.\n\n"
+        (store_path / "summary.md").write_text(note + table + "\n", encoding="utf-8")
+        (store_path / "scores.jsonl").write_text(
+            "".join(r.model_dump_json() + "\n" for r in scored), encoding="utf-8"
+        )
     print(f"{out_path}: {dict(counts)} clips; parser {COMMIT} ({fingerprint[:16]})")
     return 0
 

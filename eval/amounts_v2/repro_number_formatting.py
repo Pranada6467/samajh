@@ -7,8 +7,9 @@ Needs Python 3.9+ and nothing else (standard library only). Set the API key and 
 
 For each sentence it makes one Timbre clip (16 kHz WAV), then sends that same clip three times to
 POST /stt/v3: prisma-v3.0 transcribe, prisma-v3.0 verbatim, prisma-v2.5 transcribe. It prints the
-amount that was spoken and the digits each transcribe output wrote. About 1.5 credits in all
-(10 TTS clips of about 60 characters, 30 STT requests of about 4 s). Requests go one at a time:
+amount that was spoken and the digits each transcribe output wrote. About 2.1 credits in all by
+our estimates (0.002 per TTS character, 0.010 per STT audio second; 10 clips of about 55
+characters, 30 STT requests of about 3.5 s). Requests go one at a time:
 the API allows one active request per key and answers a second one with 429 at once.
 """
 
@@ -30,17 +31,10 @@ BASE_URL = "https://api.vachana.ai"
 
 # (id, Timbre language, Timbre model, voice, amount spoken in rupees, sentence). The ids are items
 # of our held-out set (amounts-v2); the voices are the ones that voiced them there. Eight skip a
-# group ("three lakh forty" = 3,00,040) and two are controls that skip none.
+# group in a way no listener could read differently ("one lakh three hundred" = 1,00,300); two are
+# controls that skip none. "X lakh Y" phrases such as "three lakh forty" are left out: in
+# colloquial Hindi they can mean X.Y lakh.
 SENTENCES = [
-    (
-        "amt2-hi-skipped-001",
-        "hi-IN",
-        "timbre-v2.5",
-        "Urmila",
-        300040,
-        "उन्होंने बताया था कि प्रीमियम तीन लाख चालीस रुपये होगा।",
-    ),
-    ("amt2-hi-skipped-002", "hi-IN", "timbre-v3.0", "Avinash", 100014, "रसीद पर एक लाख चौदह रुपये लिखा है।"),
     (
         "amt2-hi-skipped-028",
         "hi-IN",
@@ -59,20 +53,28 @@ SENTENCES = [
     ),
     ("amt2-hi-skipped-029", "hi-IN", "timbre-v3.0", "Vasudha", 50026000, "हाथ में पाँच करोड़ छब्बीस हज़ार आए।"),
     (
-        "amt2-hi-en-skipped-003",
-        "hi-en",
+        "amt2-hi-skipped-030",
+        "hi-IN",
         "timbre-v3.0",
-        "Riyaa",
-        200014,
-        "bank वालों ने two lakh fourteen rupees सीधे deduct कर लिए।",
+        "Vasudha",
+        10002000,
+        "रसीद पर एक करोड़ दो हज़ार रुपये लिखा है।",
     ),
     (
-        "amt2-hi-en-control-003",
+        "amt2-hi-en-skipped-012",
         "hi-en",
         "timbre-v3.0",
-        "Riyaa",
-        214000,
-        "bank वालों ने two lakh fourteen thousand rupees सीधे deduct कर लिए।",
+        "Devansh",
+        400900,
+        "उन्होंने बोला था कि premium four lakh nine hundred rupees होगा।",
+    ),
+    (
+        "amt2-hi-en-control-012",
+        "hi-en",
+        "timbre-v3.0",
+        "Devansh",
+        409000,
+        "उन्होंने बोला था कि premium four lakh nine thousand rupees होगा।",
     ),
     (
         "amt2-hi-en-skipped-013",
@@ -81,6 +83,14 @@ SENTENCES = [
         "Riyaa",
         100300,
         "bank वालों ने one lakh three hundred rupees सीधे deduct कर लिए।",
+    ),
+    (
+        "amt2-hi-en-skipped-014",
+        "hi-en",
+        "timbre-v3.0",
+        "Vasudha",
+        300500,
+        "उन्होंने बोला था कि premium three lakh five hundred rupees होगा।",
     ),
     (
         "amt2-hi-en-skipped-022",
