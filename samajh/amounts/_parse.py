@@ -179,6 +179,13 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
         value = evaluate(atoms)
         if after == "bad":  # a number with an ending we cannot read: இருபதாயிரத்தை
             value, j = Value(None), j + 1
+        first = atoms[0]
+        if first.kind == "n" and 0 < first.value < 1:
+            # "वन एंड द हाफ क्रोर": a fraction that an "and" should have joined to the number
+            # before it is not half a unit by itself.
+            back = i - 2 if kind(i - 1, i) in ("art", "other") else i - 1
+            if kind(back, back + 1) == "and":
+                value = Value(None)
         if atoms[0].kind == "m" and (
             kind(i - 1, i) in ("other", "bad") or norm_key(text[tok.start : tok.end]) in PLURAL_UNITS
         ):
@@ -194,6 +201,10 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
             or after in ("cur", "curpfx", "bad")
             or any(a.kind == "m" or (a.kind in "nd" and a.value >= 100) for a in atoms)
         )
+        if strong and after == "other" and kind(j + 2, j + 1) == "cur":
+            # "ಸಾವಿರದ ನಾನ್ನೂರು ರೂಪಾಯಿ" with ನಾನ್ನೂರು unknown: a word we cannot read between an
+            # amount and its currency word may be the rest of the number.
+            value = Value(None)
         runs.append(
             _Run(
                 start=tok.start,
@@ -267,6 +278,14 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
     after punctuation, a currency marker or a word the lexicon knows; directly after an
     unknown word ("साथ हज़ार", "कई लाख", "bavan hazaar") it is `Ambiguous(malformed)`,
     because that word may be the number. A bare plural unit ("lakhs of rupees") is too.
+    A Tamil or Kannada noun in the ablative ("கணக்கிலிருந்து ஆயிரம்", "ಖಾತೆಯಿಂದ ಸಾವಿರ") is not
+    a number, so the unit after it is one unit. An unknown word between an amount and its
+    currency word ("पचास हज़ार पांसौ रुपये") may be the rest of the number: `Ambiguous(malformed)`.
+    So is a half that "and" did not join to a number ("वन एंड द हाफ क्रोर"), and a number of
+    1,000 or more on a thousand or lakh word ("6,13,00,020 थाउज़ंड").
+    Prisma v2.5 also leaves lower groups as words after formatted higher groups: "5,00,000
+    दो सौ" is 5,00,200 when the digits are whole thousands, lakhs or crores and the words carry
+    a unit and fit below them; "5,00,000 दो" and "1,00,000 50,000" are `Ambiguous`.
     A number directly followed by a duration unit ("5 साल") or a percent sign is not a
     candidate. A fraction word by itself that is also an everyday word (கால், ಕಾಲು, half),
     and the Tamil article ஒரு by itself, are not candidates.
@@ -281,7 +300,13 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
     wherever they stand; one that is not in the lexicon is refused only directly before a
     unit word. A bare number after a lakh or crore is read literally ("एक लाख बीस" is
     1,00,020), though in speech it often means 1,20,000: the read-back is the check. Tamil and Kannada numbers carrying a
-    case ending are reported `Ambiguous(malformed)`, not read.
+    case ending are reported `Ambiguous(malformed)`, not read. Refused on purpose, because the
+    text alone does not decide them: a number word directly before digits ("नाइंटी ₹1,80,000"
+    was 90,80,000 and "नाइंटी ₹4,13,000" was 94,13,000 in Prisma v2.5 output), a clock time
+    before an amount ("08:30 100": साढ़े आठ सौ, or 100 at half past eight), Kannada ಒಂದು ಕಾಲು /
+    ಒಂದು ಮುಕ್ಕಾಲು before a unit (ಒಂದು is "one" and "a"), and "3/4" before a unit. Digits that
+    Prisma formatted wrongly but well ("3,02,000" for 3,00,200) cannot be seen here at all:
+    compare two readings with `cross_check`, and read the amount back.
     """
     toks, runs = _runs(text)
     runs = [r for r in runs if not (r.unit is not None or r.percent or (r.filler and not r.strong))]
@@ -336,6 +361,34 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
         reason = AmbiguityReason.bare_number if one else AmbiguityReason.multiple_amounts
         return Ambiguous(reason=reason, candidates=listed)
     return NoAmount()
+
+
+class Agreed(Frozen):
+    """Two readings of the same turn gave the same amount."""
+
+    status: Literal["agreed"] = "agreed"
+    rupees: int
+
+
+class ReadBackNeeded(Frozen):
+    """The two readings differ, or one has no single amount. `readings`: what each gave."""
+
+    status: Literal["read_back_needed"] = "read_back_needed"
+    readings: tuple[int | None, int | None]
+
+
+def cross_check(first: AmountResult, second: AmountResult) -> Agreed | ReadBackNeeded:
+    """Compare two readings of one spoken amount, for example the Prisma v2.5 and v3.0
+    transcripts of the same turn, each already through `parse_amount`.
+
+    Prisma returns no confidence score. On the 240-sentence evaluation (TTS voices, phone
+    audio) the two models agreed on 200 sentences and 199 of those were right, so agreement
+    is the stand-in. It is not a proof: both readings can share an error.
+    """
+    a, b = (r.rupees if isinstance(r, Parsed) else None for r in (first, second))
+    if a is not None and a == b:
+        return Agreed(rupees=a)
+    return ReadBackNeeded(readings=(a, b))
 
 
 def _one_duration(text: str, exact: bool, scale_of: Callable[[Tok], Decimal | None], joins: bool) -> int | None:

@@ -6,6 +6,7 @@ from typing import NamedTuple
 from samajh.amounts._lexicon import CRORE, HUNDRED, LAKH, THOUSAND, Atom
 
 _ITN_UNITS = (CRORE, LAKH, THOUSAND, HUNDRED)
+_ROOM_UNITS = (CRORE, LAKH, THOUSAND)
 _QUARTER = Decimal("0.25")
 
 
@@ -87,7 +88,16 @@ def _itn(first: Atom, digits: Decimal) -> Value:
 
 
 def evaluate(run: list[Atom]) -> Value:
-    """Groups of `coefficient [unit]` with strictly decreasing magnitude."""
+    """Groups of `coefficient [unit]` with strictly decreasing magnitude.
+
+    Two shapes of Prisma's partial number formatting are part of the grammar:
+      * higher groups in digits, lower groups left as words ("5,00,000 दो सौ" = 5,00,200). The
+        digits must be a whole number of thousands, lakhs or crores, and the group after them
+        must carry a unit word and fit below that unit. "5,00,000 दो" and "1,00,000 50,000"
+        stay broken: nothing says the second number continues the first.
+      * never a coefficient of 1,000 or more on a thousand or lakh word ("6,13,00,020
+        थाउज़ंड"), nor of 100 or more on a hundred word: a garbled number, not a product.
+    """
     atoms = _merge(run)
     if not atoms:
         return _BROKEN
@@ -102,6 +112,7 @@ def evaluate(run: list[Atom]) -> Value:
     total = Decimal(0)
     ceiling: Decimal | None = None  # unit of the previous group; this group must stay below it
     fraction = unit_missing = False
+    after_digits = False  # the previous group was unit-less digits with room below them
     i = 0
     while i < len(atoms):
         if fraction or ceiling == 1:
@@ -114,6 +125,7 @@ def evaluate(run: list[Atom]) -> Value:
         if i < len(atoms) and atoms[i].kind in "nd":
             coef, typed = atoms[i].value, atoms[i].kind == "d" and pre is None
             i += 1
+        digits = typed
         hundred = is_unit(i, True)
         i += hundred
         if pre is not None and coef is None:
@@ -144,7 +156,16 @@ def evaluate(run: list[Atom]) -> Value:
         value = small * unit
         if ceiling is not None and not (unit < ceiling and value < ceiling):
             return _BROKEN
-        unit_missing = fraction and not typed and not hundred and unit == 1
+        unitless = unit == 1 and not hundred
+        garbled = (hundred and coef >= HUNDRED) or (unit in (THOUSAND, LAKH) and small >= THOUSAND)
+        if garbled or (after_digits and unitless):
+            return _BROKEN
+        unit_missing = fraction and not typed and unitless
         total += value
         ceiling = unit
+        after_digits = False
+        if digits and unitless and not fraction and coef > 0:
+            room = next((u for u in _ROOM_UNITS if coef % u == 0), None)
+            if room is not None:
+                ceiling, after_digits = Decimal(room), True
     return Value(total, unit_missing)

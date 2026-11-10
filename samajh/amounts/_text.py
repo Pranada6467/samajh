@@ -18,7 +18,7 @@ _GLUE_OK = {"glue", "cur", "curpfx", "dur", "pct"}
 class Tok:
     start: int
     end: int
-    kind: str  # Word.kind, or: bad (a number we cannot read), other
+    kind: str  # Word.kind, or: bad (a number we cannot read), other (a word we do not know)
     atoms: tuple[Atom, ...] = ()
     months: Decimal | None = None
     days: Decimal | None = None
@@ -56,6 +56,8 @@ def _classify(word: str) -> tuple[Word, bool]:
         looks_numeric, has_unit = number_stem(script, key)
         if looks_numeric:
             return Word("bad"), has_unit
+        if key.endswith(script.ablative):
+            return Word("plain"), False
     return Word("other"), False
 
 

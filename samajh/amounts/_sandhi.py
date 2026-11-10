@@ -23,6 +23,7 @@ class Script:
     restore: tuple[str, ...]  # endings a left part may have lost before a vowel
     long_u: str = ""  # Kannada ಒಂದೂ-: lengthened u that joins a fraction
     m_final: str = ""  # Tamil -ம், replaced by case endings (ஆயிரம் -> ஆயிரத்தை)
+    ablative: str = ""  # ending of "from X" (கணக்கிலிருந்து, ಖಾತೆಯಿಂದ): such a word is not a number
 
     def is_consonant(self, char: str) -> bool:
         return self.first + 0x15 <= ord(char) <= self.first + 0x39
@@ -40,6 +41,7 @@ TAMIL = Script(
     u="ு",
     restore=("ு", "ி"),
     m_final="ம்",
+    ablative="ருந்து",  # -இலிருந்து, and இருந்து written apart
 )
 KANNADA = Script(
     name="kn",
@@ -50,6 +52,7 @@ KANNADA = Script(
     u="ು",
     restore=("ು", ""),
     long_u="ೂ",
+    ablative="ಿಂದ",
 )
 SCRIPTS = (TAMIL, KANNADA)
 # The longest number written as one word is under 30 characters; anything longer is not read.

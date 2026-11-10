@@ -51,7 +51,8 @@ class Word(NamedTuple):
 
     kind: num | and | cur (currency word) | curpfx (currency marker that may precede digits)
     | dur | pct | pctpfx | vague | art | glue (unit letter valid only glued to digits)
-    | unitafter (सो) | conn | neg | negpre | cmp | cmpdirect | cmppre (see the table below).
+    | unitafter (सो) | conn | neg | negpre | cmp | cmpdirect | cmppre (see the table below)
+    | plain (an ordinary word that cannot be a number: a Tamil or Kannada noun in the ablative).
     """
 
     kind: str
@@ -154,7 +155,7 @@ _add(WORDS, "crore crores", Word("num", (m(CRORE),)))
 _add(WORDS, "point", Word("num", (PT,)))
 _add(WORDS, "half", Word("num", (n("0.5"),)))
 _add(WORDS, "and", Word("and"))
-_add(WORDS, "a an ए", Word("art"))  # only read inside "two and a half"
+_add(WORDS, "a an ए अ", Word("art"))  # only read inside "two and a half"
 # Romanised Hindi writes "ke/ka" as "k", so the unit letters count only when glued to digits.
 _add(WORDS, "k", Word("glue", (m(THOUSAND),)))
 _add(WORDS, "cr", Word("glue", (m(CRORE),)))
@@ -163,10 +164,10 @@ _add(WORDS, "cr", Word("glue", (m(CRORE),)))
 
 _EN_DEVA = _variants("""
 ज़ीरो वन टू थ्री फोर फाइव|फाईव सिक्स सेवन|सेवेन एट|ऐट नाइन|नाईन
-टेन इलेवन|एलेवन|इलेवेन ट्वेल्व|ट्वेल्फ थर्टीन फोर्टीन|फॉर्टीन फिफ्टीन सिक्सटीन|सिक्स्टीन सेवनटीन|सेवेंटीन|सेवंटीन एटीन|एट्टीन नाइनटीन|नाइंटीन
+टेन इलेवन|एलेवन|इलेवेन ट्वेल्व|ट्वेल्फ थर्टीन फोर्टीन|फॉर्टीन फिफ्टीन सिक्सटीन|सिक्स्टीन सेवनटीन|सेवेंटीन|सेवंटीन|सेवेनटीन एटीन|एट्टीन नाइनटीन|नाइंटीन
 """)
 _EN_DEVA_TENS = _variants(
-    "ट्वेंटी|ट्वंटी थर्टी फोर्टी|फॉर्टी फिफ्टी सिक्सटी|सिक्स्टी सेवंटी|सेवेंटी|सेवनटी एटी|एट्टी नाइंटी|नाइनटी"
+    "ट्वेंटी|ट्वंटी थर्टी फोर्टी|फॉर्टी फिफ्टी सिक्सटी|सिक्स्टी सेवंटी|सेवेंटी|सेवनटी|सेवेनटी एटी|एट्टी नाइंटी|नाइनटी"
 )
 assert len(_EN_DEVA) == 20 and len(_EN_DEVA_TENS) == 8
 for _value, _cell in enumerate(_EN_DEVA):
@@ -208,7 +209,7 @@ _add(WORDS, "than under over above below", Word("cmppre"))
 _add(WORDS, "rs inr रु ரூ ರೂ", Word("curpfx"))
 _add(
     WORDS,
-    "rupee rupees rupaye rupay rupiya रुपये रुपए रुपया रुपयों रुपय रूपये रूपए रूपया रुपी रुपीज़ रुपीस",
+    "rupee rupees rupaye rupay rupiya रुपये रुपए रुपया रुपयों रुपय रूपये रूपए रूपया रुपी रुपीज़ रुपीस रूपी रूपीज़ रूपीस",
     Word("cur"),
 )
 _YEAR, _MONTH = Decimal(12), Decimal(1)
@@ -262,7 +263,7 @@ def _numbers(table: dict, cells: list[list[str]], first: int, step: int = 1, joi
 # Tamil -------------------------------------------------------------------------------
 
 _TA_UNITS = _variants("""
-ஒன்று|ஒண்ணு|ஒன்னு இரண்டு|ரெண்டு|இரெண்டு|ரண்டு மூன்று|மூணு நான்கு|நாலு ஐந்து|அஞ்சு ஆறு ஏழு எட்டு ஒன்பது|ஒம்பது
+ஒன்று|ஒண்ணு|ஒன்னு இரண்டு|ரெண்டு|இரெண்டு|ரண்டு மூன்று|மூணு நான்கு|நாலு ஐந்து|அஞ்சு ஆறு ஏழு|எழு எட்டு ஒன்பது|ஒம்பது
 பத்து பதினொன்று|பதினொண்ணு|பதினொன்னு|பதினோரு|பதினொரு பன்னிரண்டு|பன்னிரெண்டு|பன்னெண்டு|பனிரெண்டு
 பதிமூன்று|பதின்மூன்று|பதிமூணு பதினான்கு|பதினாலு பதினைந்து|பதினஞ்சு பதினாறு பதினேழு பதினெட்டு பத்தொன்பது|பத்தொம்பது
 """)
@@ -338,9 +339,9 @@ _KN_UNITS = _variants("""
 ಒಂದು ಎರಡು|ಎರಡ್ ಮೂರು ನಾಲ್ಕು|ನಾಕು ಐದು|ಐದ್ ಆರು ಏಳು ಎಂಟು ಒಂಬತ್ತು|ಒಂಭತ್ತು
 ಹತ್ತು ಹನ್ನೊಂದು ಹನ್ನೆರಡು ಹದಿಮೂರು ಹದಿನಾಲ್ಕು ಹದಿನೈದು ಹದಿನಾರು ಹದಿನೇಳು ಹದಿನೆಂಟು ಹತ್ತೊಂಬತ್ತು|ಹತ್ತೊಂಭತ್ತು
 """)
-_KN_TENS = _variants("ಇಪ್ಪತ್ತು ಮೂವತ್ತು ನಲವತ್ತು|ನಲ್ವತ್ತು ಐವತ್ತು ಅರವತ್ತು ಎಪ್ಪತ್ತು ಎಂಬತ್ತು|ಎಂಭತ್ತು ತೊಂಬತ್ತು|ತೊಂಭತ್ತು")
+_KN_TENS = _variants("ಇಪ್ಪತ್ತು ಮೂವತ್ತು ನಲವತ್ತು|ನಲ್ವತ್ತು ಐವತ್ತು ಅರವತ್ತು|ಅರುವತ್ತು ಎಪ್ಪತ್ತು ಎಂಬತ್ತು|ಎಂಭತ್ತು ತೊಂಬತ್ತು|ತೊಂಭತ್ತು")
 _KN_HUNDREDS = _variants(
-    "ನೂರು ಇನ್ನೂರು ಮುನ್ನೂರು ನಾನೂರು|ನಾಲ್ನೂರು ಐನೂರು|ಐನ್ನೂರು ಆರುನೂರು|ಆರ್ನೂರು ಏಳುನೂರು|ಏಳ್ನೂರು ಎಂಟುನೂರು|ಎಂಟ್ನೂರು ಒಂಬೈನೂರು|ಒಂಭೈನೂರು"
+    "ನೂರು ಇನ್ನೂರು ಮುನ್ನೂರು ನಾನೂರು|ನಾಲ್ನೂರು|ನಾನ್ನೂರು ಐನೂರು|ಐನ್ನೂರು ಆರುನೂರು|ಆರ್ನೂರು ಏಳುನೂರು|ಏಳ್ನೂರು ಎಂಟುನೂರು|ಎಂಟ್ನೂರು ಒಂಬೈನೂರು|ಒಂಭೈನೂರು"
 )
 assert len(_KN_UNITS) == 19 and len(_KN_TENS) == 8 and len(_KN_HUNDREDS) == 9
 KN_NUM = [""] + [cell[0] for cell in _KN_UNITS]
@@ -352,8 +353,12 @@ _numbers(KN, _KN_UNITS, 1)
 _numbers(KN, _KN_TENS, 20, 10, joins=True)
 for _i, _cell in enumerate(_KN_TENS):
     for _word in _cell:
-        # ಇಪ್ಪತ್ತ / ಇಪ್ಪತ್ + ಮೂರು
-        _add(KN, f"{_word[:-1]} {_word[:-2]}", Morph((n(20 + _i * 10, joins=True), OBL), oblique=True))
+        # ಇಪ್ಪತ್ತ / ಇಪ್ಪತ್ / ಇಪ್ಪತ್ತ್ (Prisma v2.5 writes the virama) + ಮೂರು
+        _add(
+            KN,
+            f"{_word[:-1]} {_word[:-2]} {_word[:-1]}್",
+            Morph((n(20 + _i * 10, joins=True), OBL), oblique=True),
+        )
 for _i, _cell in enumerate(_KN_HUNDREDS, start=1):
     _coef = () if _i == 1 else (n(_i),)
     for _word in _cell:
