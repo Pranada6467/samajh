@@ -375,7 +375,7 @@ def test_premium_flag_is_medium_without_a_confirmed_readback(readback):
 @pytest.mark.parametrize(
     "readback, reason, quoted",
     [
-        (NotAsked(), GapReason.not_asked, False),
+        (NotAsked(), GapReason.not_asked, True),  # quotes the amount the customer said
         (unclear(), GapReason.no_usable_answer, True),
         (unclear(GapReason.quote_not_grounded), GapReason.quote_not_grounded, True),
         (dont_know(), GapReason.no_usable_answer, True),

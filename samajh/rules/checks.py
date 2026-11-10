@@ -339,6 +339,9 @@ def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
             return (_flag(rule, p.id, Why.premium_differs, expected, _heard_amount(a), a.evidence),)
         if isinstance(readback, DontKnow):
             return (_gap(rule, p.id, GapReason.no_usable_answer, readback.evidence),)
+        if isinstance(readback, NotAsked):
+            # No read-back: the reviewer still sees the amount the customer said.
+            return (_gap(rule, p.id, GapReason.not_asked, a.evidence),)
         return (_gap_for(rule, p.id, readback),)
 
     return _decide(

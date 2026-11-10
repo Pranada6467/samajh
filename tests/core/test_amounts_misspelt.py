@@ -122,6 +122,7 @@ def test_an_ordinary_word_next_to_a_number_is_still_ignored(text, rupees):
         "दो लाख पचास हजर",  # was 2,00,050
         "दो लाख पचास हजर रुपये",
         "2 lakh 50 thousnd",
+        "fifty two thousnd",  # was Ambiguous(bare_number) 52: now refused as malformed
     ],
 )
 def test_a_misspelt_unit_word_after_a_number_is_refused(text):

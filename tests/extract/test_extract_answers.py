@@ -433,7 +433,8 @@ def test_requests_do_run_at_the_same_time():
 
 def test_run_text_takes_max_workers():
     transcript, llm = build(BASE)
-    assert run_text(transcript, record(), llm, max_workers=1) == run_text(transcript, record(), llm, max_workers=8)
+    one, eight = (run_text(transcript, record(), llm, max_workers=n) for n in (1, 8))
+    assert (one.extraction.raw, one.beliefs, one.result) == (eight.extraction.raw, eight.beliefs, eight.result)
 
 
 # --- payment frequency -------------------------------------------------------------------------

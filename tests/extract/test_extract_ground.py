@@ -2,7 +2,7 @@
 
 import pytest
 
-from samajh.extract._ground import Reply, comparison_form, days, months, rupees, tighten
+from samajh.extract._ground import Reply, comparison_form, days, months, rupees
 from samajh.rules.normalise import _norm
 
 REPLY = "नहीं, यह तो बीमा है, इसका पैसा वापस नहीं आता।"
@@ -92,16 +92,17 @@ def test_a_reply_with_no_word_is_blank(text):
 
 
 @pytest.mark.parametrize(
-    "words, read, tight",
+    ("text", "read", "value"),
     [
-        ("बावन हज़ार कटे थे", rupees, "बावन हज़ार"),
-        ("करीब 52,000 rupees", rupees, "52,000 rupees"),
-        ("बावन हज़ार", rupees, "बावन हज़ार"),
-        ("पाँच साल के लिए", months, "पाँच साल"),
-        ("30 நாள் உள்ள", days, "30 நாள்"),
-        ("कटे थे", rupees, "कटे थे"),  # no number: left for the engine to refuse
-        ("पचास या बावन हज़ार", rupees, "पचास या बावन हज़ार"),  # two amounts: never narrowed to one
+        ("बावन हज़ार कटे थे", rupees, (52_000, 52_000)),
+        ("करीब 52,000 rupees", rupees, (52_000, 52_000)),
+        ("पचास बावन हज़ार के आसपास", rupees, (50_000, 52_000)),
+        ("सारे तीन लाख", rupees, None),  # a misspelt fraction is refused, never dropped
+        ("पचास या पचपन या साठ हज़ार", rupees, None),
+        ("कटे थे", rupees, None),
+        ("पाँच साल के लिए", months, 60),
+        ("30 நாள் உள்ள", days, 30),
     ],
 )
-def test_tighten_keeps_only_the_number_and_never_picks_between_two(words, read, tight):
-    assert tighten(words, read) == tight
+def test_a_span_reads_to_what_the_parser_says_and_is_never_trimmed(text, read, value):
+    assert read(text) == value

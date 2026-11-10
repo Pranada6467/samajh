@@ -19,8 +19,15 @@ Key = tuple[str, str, str]  # schema name, bot question, customer reply
 
 @cache
 def recorded_outputs() -> dict[Key, dict]:
+    """The recorded outputs. They predate `RecallReply.took_nothing`, so a recall output without
+    it is replayed with `took_nothing` false: no denial is read into a reply the model never judged."""
     calls = json.loads(RECORDED.read_text())["calls"]
-    return {(c["schema"], c["question"], c["reply"]): c["output"] for c in calls}
+    return {
+        (c["schema"], c["question"], c["reply"]): (
+            {"took_nothing": False} | c["output"] if c["schema"] == "RecallReply" else c["output"]
+        )
+        for c in calls
+    }
 
 
 class FakeLlm:

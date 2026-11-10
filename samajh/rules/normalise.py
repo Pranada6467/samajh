@@ -9,23 +9,39 @@ What the rules can rely on afterwards:
    run of whole words. This code checks where a quote sits, not what it means: a wrong value
    on a complete, real clause is the extractor's error and is measured in its evaluation.
 2. Amounts and terms are read by `samajh.amounts` from the customer's whole reply. The LLM's
-   span only has to agree with that reading; a reply with two amounts is a gap.
+   span only has to agree with that reading, and must itself read exactly: a span is never
+   trimmed, so a word next to the number that may change it ("सारे तीन लाख") makes it a gap.
+   An amount said with a word of doubt or as a narrow range is read by `parse_approx_amount`
+   and marked `approximate` (a range keeps its lower end in `low`). A term said as the loan's
+   own ("जब तक लोन चलेगा") is the record's loan tenure, or a `not_comparable` gap without one.
 3. A "yes" to a read-back confirms the premium only when the bot read back that same amount
-   after the customer gave it. The premium may come from the reply to the premium question
-   or from a correction made in reply to a read-back ("नहीं, पचपन हज़ार").
+   after the customer gave it: for a range, the same two ends. The premium may come from the
+   reply to the premium question or from a correction made in reply to a read-back.
 4. A question the bot asked cannot read as "not asked", and open recall counts only when the
    transcript has the open-recall question.
 5. The consent question is open and names no product: a bot turn tagged `asks=consent` with
    no `product_id` counts as asked for every product on the record.
+6. Conflicting answers, a denial in open recall and unscreened replies are kept only where
+   their quotes are in the call; a quote that is not becomes an evidence gap.
 """
 
 import unicodedata
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from samajh.amounts import CLAUSE_END, Parsed, parse_amount, parse_duration_days, parse_duration_months
+from samajh.amounts import (
+    CLAUSE_END,
+    Approximate,
+    Parsed,
+    is_loan_tenure,
+    parse_amount,
+    parse_approx_amount,
+    parse_duration_days,
+    parse_duration_months,
+)
 from samajh.types import (
     Answer,
+    AnswerConflict,
     Beliefs,
     CallStep,
     ClaimEvidence,
@@ -116,7 +132,9 @@ def _replies(transcript: Transcript, on_record: list[ProductId]) -> dict[TurnId,
         if turn.speaker is Speaker.bot:
             prompt, asked = turn, _asked_by(turn, on_record)
         else:
-            clauses = tuple(words for part in CLAUSE_END.split(turn.text) if (words := tuple(_norm(part).split())))
+            clauses = tuple(
+                words for part in CLAUSE_END.split(turn.text) if (words := tuple(_norm(part).split()))
+            )
             replies[turn.id] = _Reply(turn.text, clauses, prompt, asked)
     return replies
 
@@ -130,6 +148,55 @@ def _said(evidence: Evidence, replies: dict[TurnId, _Reply], whole_clauses: bool
 def _rupees(text: str, exact: bool) -> int | None:
     result = parse_amount(text, exact=exact)
     return result.rupees if isinstance(result, Parsed) else None
+
+
+def _ends(text: str, exact: bool) -> tuple[int, int, bool] | None:
+    """(low, high, approximate) of the amount in `text`; low == high for one figure."""
+    result = parse_approx_amount(text, exact=exact)
+    if isinstance(result, Parsed):
+        return result.rupees, result.rupees, False
+    if isinstance(result, Approximate):
+        return result.low, result.high, True
+    return None
+
+
+def _read_amount(answer: Answer[str], replies: dict[TurnId, _Reply]) -> Answer[int]:
+    """An amount from the customer's whole reply, exact or approximate; the span must agree.
+
+    "करीब पचास हज़ार" is 50,000 marked approximate; "पचास बावन हज़ार" is 52,000 with `low`
+    50,000. Hedged and approximate are markers: the rules decide what they may change.
+    """
+    match answer:
+        case Stated(value=span, evidence=ev, hedged=hedged):
+            heard = _ends(replies[ev.turn_id].text, False)
+            said = _ends(span, True)
+            if heard is None or said is None or heard[:2] != said[:2]:
+                return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
+            low, high, approximate = heard
+            return Stated[int](
+                value=high,
+                evidence=ev,
+                hedged=hedged,
+                approximate=approximate,
+                low=low if low < high else None,
+            )
+        case _:
+            return answer
+
+
+def _read_term(answer: Answer[str], tenure: int | None, replies: dict[TurnId, _Reply]) -> Answer[int]:
+    """A term in months; "as long as the loan runs" is the loan's tenure on the record."""
+    if isinstance(answer, Stated) and is_loan_tenure(answer.value):
+        ev = answer.evidence
+        if not is_loan_tenure(replies[ev.turn_id].text):
+            return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
+        if tenure is None:
+            return Unclear(reason=GapReason.not_comparable, evidence=ev)
+        return Stated[int](value=tenure, evidence=ev, hedged=answer.hedged)
+    read = _read(answer, _months, replies)
+    if isinstance(read, Stated) and isinstance(answer, Stated):
+        return read.model_copy(update={"hedged": answer.hedged})
+    return read
 
 
 def _months(text: str, exact: bool) -> int | None:
@@ -164,9 +231,25 @@ def _read(answer: Answer[str], read: _Reader, replies: dict[TurnId, _Reply]) -> 
             heard = read(replies[ev.turn_id].text, False)
             if heard is None or heard != read(span, True):
                 return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
-            return Stated[int](value=heard, evidence=ev)
+            return Stated[int](value=heard, evidence=ev, hedged=answer.hedged)
         case _:
             return answer
+
+
+def _conflicts(
+    raw: RawProductAnswers, ungrounded: list[Evidence], replies: dict[TurnId, _Reply]
+) -> tuple[AnswerConflict, ...]:
+    """Keep each answer of a conflict that is a whole reply to that question; the rest are ungrounded."""
+    kept = []
+    for conflict in raw.conflicts:
+        accepted = (raw.product_id, conflict.question, False)
+        answers = []
+        for ev in conflict.answers:
+            reply = _said(ev, replies, whole_clauses=True)
+            (answers if reply and accepted in reply.asked else ungrounded).append(ev)
+        if len(answers) >= 2:
+            kept.append(conflict.model_copy(update={"answers": tuple(answers)}))
+    return tuple(kept)
 
 
 def _product_beliefs(
@@ -174,6 +257,7 @@ def _product_beliefs(
     ungrounded: list[Evidence],
     replies: dict[TurnId, _Reply],
     asked: frozenset[_Asks],
+    tenure: int | None,
 ) -> ProductBeliefs:
     def ground(answer: Answer, question: Question, read_back: bool = False) -> Answer:
         asks = (raw.product_id, question, read_back)
@@ -184,7 +268,7 @@ def _product_beliefs(
     premium = _ground(
         raw.premium, frozenset({premium_asked, premium_read_back}), premium_asked in asked, replies
     )
-    premium = _read(premium, _rupees, replies)
+    premium = _read_amount(premium, replies)
     readback = ground(raw.premium_readback, Question.premium, read_back=True)
     if isinstance(premium, Stated) and isinstance(readback, Stated):
         read_back_turn = replies[readback.evidence.turn_id].prompt
@@ -193,7 +277,8 @@ def _product_beliefs(
         elif (
             readback.evidence.turn_id <= premium.evidence.turn_id
             or read_back_turn is None
-            or _rupees(read_back_turn.text, False) != premium.value
+            or _ends(read_back_turn.text, False) is None
+            or _ends(read_back_turn.text, False)[:2] != (premium.low or premium.value, premium.value)
         ):
             # The customer confirmed some other amount, or confirmed before giving this one:
             # neither the amount nor the "yes" can be relied on.
@@ -217,10 +302,12 @@ def _product_beliefs(
         consent_given=ground(raw.consent_given, Question.consent),
         consent_method=ground(raw.consent_method, Question.consent),
         feature_probe=ground(raw.feature_probe, Question.features),
+        payment_frequency=ground(raw.payment_frequency, Question.payment_frequency),
         volunteered_claims=tuple(claims),
+        conflicts=_conflicts(raw, ungrounded, replies),
         premium_inr=premium,
-        cover_inr=_read(ground(raw.cover, Question.cover), _rupees, replies),
-        term_months=_read(ground(raw.term, Question.term), _months, replies),
+        cover_inr=_read_amount(ground(raw.cover, Question.cover), replies),
+        term_months=_read_term(ground(raw.term, Question.term), tenure, replies),
         cancel_window_days=_read(ground(raw.cancel_window, Question.cancel_window), _days, replies),
         ungrounded=tuple(ungrounded),
     )
@@ -273,6 +360,14 @@ def to_beliefs(raw: RawExtraction, record: LoanRecord, transcript: Transcript) -
     if answer is not None and not in_recall(answer):
         case_ungrounded.append(answer)
         answer = None
+    denial = raw.recall.denial
+    if denial is not None and not (in_recall(denial) and replies[denial.turn_id].says(denial.quote, True)):
+        case_ungrounded.append(denial)
+        denial = None
+
+    unscreened: list[Evidence] = []
+    for ev in raw.unscreened:
+        (unscreened if _said(ev, replies) else case_ungrounded).append(ev)
 
     concerns: list[ConcernEvidence] = []
     for concern in raw.sale_concerns:
@@ -285,13 +380,18 @@ def to_beliefs(raw: RawExtraction, record: LoanRecord, transcript: Transcript) -
         call_id=raw.call_id,
         loan_id=record.loan_id,
         language=transcript.language,
-        recall=OpenRecall(asked=recall_asked, answer=answer, items=tuple(items)),
+        recall=OpenRecall(asked=recall_asked, answer=answer, items=tuple(items), denial=denial),
         products=tuple(
             _product_beliefs(
-                raw_by_id.get(pid, RawProductAnswers(product_id=pid)), product_ungrounded[pid], replies, asked
+                raw_by_id.get(pid, RawProductAnswers(product_id=pid)),
+                product_ungrounded[pid],
+                replies,
+                asked,
+                record.tenure_months,
             )
             for pid in on_record
         ),
         sale_concerns=tuple(concerns),
         ungrounded=tuple(case_ungrounded),
+        unscreened=tuple(unscreened),
     )

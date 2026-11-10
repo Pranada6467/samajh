@@ -299,7 +299,6 @@ def test_dont_know_with_the_customers_real_words_is_a_flag():
         ("1,52,000 रुपये।", "52,000"),  # the span is the tail of a larger amount
         ("एक लाख बावन हज़ार रुपये।", "बावन हज़ार"),
         ("बावन हज़ार नहीं, पचपन हज़ार।", "बावन हज़ार"),  # the customer corrected themselves
-        ("दो तीन लाख होगा।", "दो तीन लाख"),  # a range
         ("बावन हज़ार महीने का, पाँच साल तक।", "बावन हज़ार"),
         ("पता नहीं, शायद कुछ हज़ार।", "हज़ार"),
     ],
@@ -308,6 +307,15 @@ def test_a_premium_reply_that_is_not_one_clear_amount_is_a_gap(said, span):
     result = judge(raw(premium=stated(span, said, 6)), swap({6: said}))
     assert product_gaps(result) == {(RuleId.premium, GapReason.value_not_parsed)}
     assert result.verdict is UNCLEAR
+
+
+def test_a_spoken_range_far_from_the_record_is_read_and_differs():
+    said = "दो तीन लाख होगा।"
+    call = swap({6: said, 7: "दो से तीन लाख, यानी 2,00,000 से 3,00,000, सही है?"})
+    result = judge(raw(premium=stated("दो तीन लाख", said, 6)), call)
+    (flag,) = result.all_flags()
+    assert (flag.reason.value, flag.heard) == ("premium_differs_confirmed", "customer said ₹2,00,000 to ₹3,00,000")
+    assert result.tier.value == "refer"
 
 
 def test_a_cover_span_that_drops_the_fraction_word_is_a_gap():
@@ -827,3 +835,139 @@ def test_inputs_that_do_not_describe_the_same_call_are_refused(extraction, call_
     call = transcript().model_copy(update={"call_id": call_id, "loan_id": loan_id})
     with pytest.raises(ValueError):
         to_beliefs(RawExtraction.model_validate(extraction), record(), call)
+
+
+# --- decision chain v2: what `to_beliefs` passes on (P3a) ------------------------------------
+
+
+def premium_call(reply: str, read_back: str) -> Transcript:
+    return swap({6: reply, 7: read_back})
+
+
+def test_a_hedged_amount_is_read_marked_and_passes_when_the_same_figure_is_confirmed():
+    call = premium_call("शायद बावन हज़ार रुपये।", "बावन हज़ार, यानी 52,000, सही है?")
+    extraction = raw(premium={**stated("बावन हज़ार", "शायद बावन हज़ार रुपये।", 6), "hedged": True})
+    premium = to_beliefs(extraction, record(), call).for_product("P1").premium_inr
+    assert (premium.value, premium.low, premium.approximate, premium.hedged) == (52000, None, True, True)
+    assert judge(extraction, call).verdict is CLEAR
+
+
+def test_a_spoken_range_is_read_as_its_two_ends_and_confirmed_by_a_read_back_of_both():
+    call = premium_call("पचास बावन हज़ार के आसपास।", "पचास से बावन हज़ार, यानी 50,000 से 52,000, सही है?")
+    extraction = raw(premium=stated("पचास बावन हज़ार के आसपास", "पचास बावन हज़ार के आसपास।", 6))
+    premium = to_beliefs(extraction, record(), call).for_product("P1").premium_inr
+    assert (premium.value, premium.low, premium.approximate) == (52000, 50000, True)
+    result = judge(extraction, call)
+    (flag,) = result.all_flags()
+    assert (flag.rule_id, flag.reason.value, result.tier.value) == (RuleId.premium, "premium_approximate", "understanding_gap")
+
+
+def test_a_range_confirmed_by_a_read_back_of_one_figure_is_a_mismatch():
+    call = premium_call("पचास बावन हज़ार के आसपास।", "बावन हज़ार, यानी 52,000, सही है?")
+    extraction = raw(premium=stated("पचास बावन हज़ार के आसपास", "पचास बावन हज़ार के आसपास।", 6))
+    assert (RuleId.premium, GapReason.readback_mismatch) in product_gaps(judge(extraction, call))
+
+
+def test_a_misspelt_fraction_in_the_span_is_never_read():
+    call = premium_call("सारे तीन लाख रुपये।", "तीन लाख, यानी 3,00,000, सही है?")
+    extraction = raw(premium=stated("सारे तीन लाख", "सारे तीन लाख रुपये।", 6))
+    result = judge(extraction, call, record(premium_inr=300000))
+    assert (RuleId.premium, GapReason.value_not_parsed) in product_gaps(result)
+    assert result.tier.value == "incomplete"
+
+
+@pytest.mark.parametrize(
+    ("tenure", "term_months", "expected"),
+    [(60, 60, "pass"), (None, 60, "not_comparable"), (36, 60, "term_differs")],
+)
+def test_a_term_tied_to_the_loan_is_the_loans_tenure(tenure, term_months, expected):
+    call = swap({16: "जब तक लोन चलेगा।"})
+    extraction = raw(term=stated("जब तक लोन चलेगा", "जब तक लोन चलेगा।", 16))
+    loan = record(term_months=term_months).model_copy(update={"tenure_months": tenure})
+    result = judge(extraction, call, loan)
+    if expected == "pass":
+        assert result.verdict is CLEAR
+    elif expected == "not_comparable":
+        assert product_gaps(result) == {(RuleId.term, GapReason.not_comparable)}
+        assert result.tier.value == "understanding_gap"
+    else:
+        assert [f.reason.value for f in result.all_flags()] == ["term_differs"]
+
+
+def frequency_call(reply: str) -> Transcript:
+    turns = [*TURNS, (25, BOT, "teach_back", "यह पैसा एक ही बार देना था, या बार-बार?", "payment_frequency"),
+             (26, CUSTOMER, "teach_back", reply, None)]  # fmt: skip
+    return transcript(turns)
+
+
+def test_payment_frequency_is_grounded_and_once_on_a_regular_product_is_a_referral():
+    call = frequency_call("एक ही बार देना था।")
+    extraction = raw(payment_frequency=stated("one_time", "एक ही बार देना था।", 26))
+    result = judge(extraction, call)
+    assert [f.reason.value for f in result.all_flags()] == ["feature_contradicted"]
+    assert result.tier.value == "refer"
+    elsewhere = raw(payment_frequency=stated("one_time", "बावन हज़ार रुपये।", 6))
+    assert (RuleId.belief_mismatch, GapReason.quote_not_grounded) in product_gaps(judge(elsewhere, call))
+
+
+def conflict(question: str, *answers: tuple[str, int]) -> dict:
+    return {"question": question, "answers": [{"quote": q, "turn_id": t} for q, t in answers]}
+
+
+def reasked_call() -> Transcript:
+    """The kind question answered "FD", asked again, and answered "insurance"."""
+    first = [(i, who, step, "एफ़डी है।" if i == 4 else text, asks) for i, who, step, text, asks in TURNS]
+    again = [(25, BOT, "teach_back", "एक बार फिर: बीमा, एफ़डी, या कुछ और?", "kind"),
+             (26, CUSTOMER, "teach_back", "अच्छा, बीमा।", None)]  # fmt: skip
+    return transcript([*first, *again])
+
+
+def test_a_conflict_with_both_answers_in_the_call_is_a_referral_holding_both_quotes():
+    call = reasked_call()
+    extraction = raw(
+        kind=stated("insurance", "अच्छा, बीमा।", 26),
+        conflicts=[conflict("kind", ("एफ़डी है।", 4), ("अच्छा, बीमा।", 26))],
+    )
+    result = judge(extraction, call)
+    (flag,) = [f for f in result.all_flags() if f.reason.value == "answers_conflict"]
+    assert (flag.quote, [e.quote for e in flag.also]) == ("एफ़डी है।", ["अच्छा, बीमा।"])
+    assert result.tier.value == "refer"
+
+
+def test_a_conflict_quote_not_in_the_call_is_an_evidence_gap_not_a_conflict():
+    extraction = raw(conflicts=[conflict("kind", ("एफ़डी है।", 4), ("यह बीमा है।", 4))])
+    result = judge(extraction)
+    assert not result.all_flags()
+    assert (RuleId.evidence, GapReason.quote_not_grounded) in product_gaps(result)
+    assert result.tier.value == "incomplete"
+
+
+def test_a_grounded_denial_in_recall_is_a_referral():
+    call = swap({2: "कुछ नहीं लिया, बस लोन लिया था।"})
+    said = {"quote": "कुछ नहीं लिया, बस लोन लिया था।", "turn_id": 2}
+    extraction = raw(recall={"asked": True, "answer": said, "items": [], "denial": said})
+    beliefs = to_beliefs(extraction, record(), call)
+    assert beliefs.recall.denial == Evidence(**said)
+    reasons = [f.reason.value for f in judge(extraction, call, record()).all_flags()]
+    assert reasons == ["recall_not_named"]  # named later, at the kind question: see checks.recall
+    unnamed = raw(recall={"asked": True, "answer": said, "items": [], "denial": said}, kind=dont_know("यह बीमा है", 4))
+    result = judge(unnamed, call)
+    assert "recall_denied" in [f.reason.value for f in result.all_flags()]
+    assert result.tier.value == "refer"
+
+
+def test_a_denial_quote_not_in_the_recall_reply_is_dropped_as_ungrounded():
+    said = {"quote": "कुछ नहीं लिया", "turn_id": 2}
+    extraction = raw(recall={**RECALL, "denial": said})
+    beliefs = to_beliefs(extraction, record(), transcript())
+    assert beliefs.recall.denial is None
+    assert Evidence(**said) in beliefs.ungrounded
+
+
+def test_an_unscreened_reply_is_a_case_gap_and_the_call_is_incomplete():
+    extraction = raw().model_copy(update={"unscreened": (Evidence(quote="यह बीमा है।", turn_id=4),)})
+    beliefs = to_beliefs(extraction, record(), transcript())
+    assert beliefs.unscreened == (Evidence(quote="यह बीमा है।", turn_id=4),)
+    result = evaluate(record(), beliefs)
+    assert {(g.rule_id, g.reason) for g in result.case_gaps} == {(RuleId.evidence, GapReason.extraction_failed)}
+    assert result.tier.value == "incomplete"

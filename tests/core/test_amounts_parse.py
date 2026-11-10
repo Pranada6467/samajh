@@ -577,8 +577,6 @@ def test_weak_candidates(text, rupees):
         ("5", [5]),
         ("99", [99]),
         ("दो बार बोला, दो बार", [2, 2]),
-        # the unit word is misspelt, so only the number under 100 is left
-        ("fifty two thousnd", [52]),
         ("दो सो रहे हैं", [2]),
     ],
 )

@@ -10,7 +10,7 @@ import pytest
 from extractkit import FakeLlm, recorded_outputs
 
 from samajh import pipeline
-from samajh.extract import ExtractionFailed, SlotKind, extract, extract_traced, slots
+from samajh.extract import SlotKind, extract, extract_traced, slots
 from samajh.pipeline import run_text, run_text_case
 from samajh.types import DontKnow, GapReason, LoanRecord, RuleId, Stated, Transcript, Unclear, Verdict
 
@@ -87,12 +87,14 @@ def test_a_rewritten_amount_is_not_accepted(llm, span):
     assert answers(llm).premium == Unclear(reason=GapReason.quote_not_grounded)
 
 
-def test_an_amount_copied_with_a_word_too_many_is_trimmed_by_the_parser(llm):
+def test_an_amount_copied_with_a_word_too_many_is_passed_on_whole_and_refused(llm):
+    """No trimming (verifier finding 3): the word next to a number may be part of it."""
     llm.say("SpanReply", PREMIUM, span="चौबीस हज़ार रुपये लगे")
     premium = answers(llm).premium
     assert isinstance(premium, Stated)
-    assert premium.value == "चौबीस हज़ार रुपये"  # the longest run that is the amount and nothing else
-    assert run_text_case(HI.transcript, HI.record, llm).verdict is CLEAR
+    assert premium.value == "चौबीस हज़ार रुपये लगे"
+    run = run_text(HI.transcript, HI.record, llm)
+    assert (RuleId.premium, GapReason.value_not_parsed) in gaps(run)
 
 
 def test_real_words_that_are_not_the_amount_cannot_pass_as_the_premium(llm):
@@ -225,11 +227,13 @@ def test_a_question_about_a_product_that_is_not_on_the_record_is_refused(llm):
         extract(transcript, HI.record, llm)
 
 
-def test_output_that_never_validates_fails_the_whole_extraction(llm):
+def test_output_that_never_validates_makes_only_that_field_unclear(llm):
     llm.invalid.add(KIND)
-    with pytest.raises(ExtractionFailed) as raised:
-        extract_traced(HI.transcript, HI.record, llm)
-    assert raised.value.kind is SlotKind.kind
+    extraction = extract_traced(HI.transcript, HI.record, llm)
+    kind = extraction.raw.products[0].kind
+    assert isinstance(kind, Unclear) and kind.reason is GapReason.extraction_failed
+    assert {(t.kind, t.screen) for t in extraction.slots if t.failed} <= {(SlotKind.kind, False), (SlotKind.kind, True)}
+    assert extraction.raw.products[0].premium.status == "stated"
 
 
 def test_one_consent_reply_fills_every_product(llm):
@@ -292,7 +296,8 @@ def test_a_claim_quote_is_widened_to_its_whole_clause(llm):
 
 def test_a_recall_item_quote_is_widened_to_its_whole_clause(llm):
     said = "बीमा नहीं लिया था सिर्फ़ लोन लिया, चौबीस हज़ार कटे थे।"
-    llm.say("RecallReply", said, items=[{"span": "बीमा", "kind": "insurance", "amount_span": "चौबीस हज़ार"}])
+    llm.say("RecallReply", said, items=[{"span": "बीमा", "kind": "insurance", "amount_span": "चौबीस हज़ार"}],
+            took_nothing=False)
     run = run_text(with_reply(HI, RECALL, said), HI.record, llm)
     (item,) = run.beliefs.recall.items
     assert item.evidence.quote == "बीमा नहीं लिया था सिर्फ़ लोन लिया"

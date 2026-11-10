@@ -13,9 +13,12 @@ Tamil and Kannada tables and output are not human-reviewed.
 `parse_amount` never rounds and never picks between readings: see its docstring for the
 weak-candidate rule that decides which numbers in a sentence count, and for `exact=True`,
 which accepts a text only when it is the amount and nothing else. `cross_check` compares
-two readings of the same turn and says whether a read-back is needed.
+two readings of the same turn and says whether a read-back is needed. `parse_approx_amount`
+reads what `parse_amount` refuses as hedged ("करीब पचास हज़ार", "पचास से बावन हज़ार") as an
+`Approximate` range; `has_doubt_word` and `is_loan_tenure` mark answers that carry no number.
 """
 
+from samajh.amounts._approx import Approximate, has_doubt_word, is_loan_tenure, parse_approx_amount
 from samajh.amounts._parse import (
     CLAUSE_END,
     Agreed,
@@ -40,13 +43,17 @@ __all__ = [
     "AmbiguityReason",
     "Ambiguous",
     "AmountResult",
+    "Approximate",
     "NoAmount",
     "Parsed",
     "ReadBackNeeded",
     "Span",
     "cross_check",
     "format_inr",
+    "has_doubt_word",
+    "is_loan_tenure",
     "parse_amount",
+    "parse_approx_amount",
     "parse_duration_days",
     "parse_duration_months",
     "spoken_amount",

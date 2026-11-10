@@ -1,19 +1,62 @@
 # Text path on the `frozen` set, model `openai/gpt-6-luna`
 
-Run at 2026-11-10T05:44:37+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
+Run at 2026-11-10T10:31:09+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
 
 ## Headline
 
 | group | calls | false clear | false alarm | call verdict | product verdict | fields |
 |---|---|---|---|---|---|---|
 | all | 144 | 0.9% (1/108) | 0.0% (0/36) | 99.3% (143/144) | 99.3% (143/144) | 99.2% (2163/2180) |
-| hi | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.6% (543/545) |
+| hi | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.1% (540/545) |
 | hi-en | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.6% (543/545) |
-| ta | 36 | 3.7% (1/27) | 0.0% (0/9) | 97.2% (35/36) | 97.2% (35/36) | 98.5% (537/545) |
-| kn | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.1% (540/545) |
+| ta | 36 | 3.7% (1/27) | 0.0% (0/9) | 97.2% (35/36) | 97.2% (35/36) | 98.9% (539/545) |
+| kn | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.3% (541/545) |
 | gold extraction, no LLM | 144 | 0.0% (0/108) | 0.0% (0/36) | 100.0% (144/144) | 100.0% (144/144) | - |
 
 False clear: gold is flag_for_review or unclear_needs_human and the pipeline says clear (n = calls whose gold is not clear). False alarm: gold is clear and the pipeline does not say clear (n = calls whose gold is clear). Extractor errors: 0. Last row: the rule engine on the set's gold extraction, so any miss there is not the extractor's.
+
+## Triage: where each kind of customer ended up
+
+| group | languages | calls (base cases) | tiers | misses, calls | misses, base cases | referrals, calls | referrals, base cases | misses on the set's own extraction, calls |
+|---|---|---|---|---|---|---|---|---|
+| problem | hi + hi-en | 38 (19) | refer 30, incomplete 4, understanding_gap 4 | 11 per 100 (4/38; 95% 4 to 24) | 11 per 100 (2/19; 95% 3 to 31) | 79 per 100 (30/38; 95% 64 to 89) | 79 per 100 (15/19; 95% 57 to 91) | 11 per 100 (4/38; 95% 4 to 24) |
+| problem | hi | 19 (19) | refer 15, incomplete 2, understanding_gap 2 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 11 per 100 (2/19; 95% 3 to 31) |
+| problem | hi-en | 19 (19) | refer 15, incomplete 2, understanding_gap 2 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 11 per 100 (2/19; 95% 3 to 31) |
+| problem | ta (experimental) | 19 (19) | refer 14, incomplete 2, understanding_gap 2, clear 1 | 16 per 100 (3/19; 95% 6 to 38) | 16 per 100 (3/19; 95% 6 to 38) | 74 per 100 (14/19; 95% 51 to 88) | 74 per 100 (14/19; 95% 51 to 88) | 11 per 100 (2/19; 95% 3 to 31) |
+| problem | kn (experimental) | 19 (19) | refer 15, incomplete 2, understanding_gap 2 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 11 per 100 (2/19; 95% 3 to 31) |
+| informed_clear | hi + hi-en | 18 (9) | clear 18 | 100 per 100 (18/18; 95% 82 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/18; 95% 0 to 18) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (18/18; 95% 82 to 100) |
+| informed_clear | hi | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
+| informed_clear | hi-en | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
+| informed_clear | ta (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
+| informed_clear | kn (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
+| informed_flagged | hi + hi-en | 16 (8) | refer 8, incomplete 2, understanding_gap 6 | 38 per 100 (6/16; 95% 18 to 61) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (8/16; 95% 28 to 72) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (6/16; 95% 18 to 61) |
+| informed_flagged | hi | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | hi-en | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | ta (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | kn (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+
+Misses (a customer with a problem ends `clear` or `understanding_gap`): 9.
+- U06-hi: tier `understanding_gap`
+  - understanding_gap: Customer did not know, or gave a different answer about: the cover; the term. | record: cover ₹3,00,000; term 36 months | quote: "कवर... दस लाख रुपये का बताया था।"
+- U06-hi-en: tier `understanding_gap`
+  - understanding_gap: Customer did not know, or gave a different answer about: the cover; the term. | record: cover ₹3,00,000; term 36 months | quote: "Cover... ten lakh rupees का बताया था।"
+- U06-ta: tier `understanding_gap`
+  - understanding_gap: Customer did not know, or gave a different answer about: the cover; the term. | record: cover ₹3,00,000; term 36 months | quote: "கவர் பத்து லட்சம் ரூபாய்னு சொன்னாங்க."
+- U06-kn: tier `understanding_gap`
+  - understanding_gap: Customer did not know, or gave a different answer about: the cover; the term. | record: cover ₹3,00,000; term 36 months | quote: "ಕವರ್ ಹತ್ತು ಲಕ್ಷ ರೂಪಾಯಿ ಅಂತ ಹೇಳಿದ್ರು."
+- U07-hi: tier `understanding_gap`
+  - understanding_gap: Customer did not know, or gave a different answer about: the cancellation window; the cover. | record: cancellation window 30 days; cover ₹3,00,000 | quote: "बताया था, पंद्रह दिन का टाइम होता है कैंसल करने का।"
+- U07-hi-en: tier `understanding_gap`
+  - understanding_gap: Customer did not know, or gave a different answer about: the cancellation window. | record: cancellation window 30 days | quote: "हाँ, बोला था fifteen days के अंदर cancel कर सकते हैं।"
+- U07-ta: tier `understanding_gap`
+  - understanding_gap: Customer did not know, or gave a different answer about: the cancellation window. | record: cancellation window 30 days | quote: "ஆமா, பதினைந்து நாள் டைம் இருக்கு, அதுக்குள்ள கேன்சல் பண்ணலாம்னு சொன்னாங்க."
+- U07-kn: tier `understanding_gap`
+  - understanding_gap: Customer did not know, or gave a different answer about: the cancellation window. | record: cancellation window 30 days | quote: "ಹೌದು, ಹದಿನೈದು ದಿನ ಟೈಮ್ ಇದೆ, ಅಷ್ಟರೊಳಗೆ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಬಹುದು ಅಂತ ಹೇಳಿದ್ರು."
+- B03-ta: tier `clear`
+
+False referrals (an informed customer on a compliant record ends `refer`): 0.
+
+A miss is counted only for customers the set labels misled, unaware or did not agree. `incomplete` is not a miss and not a referral: the call did not yield enough to decide. The last column runs the rule engine on the set's own extraction, so a miss there is the rules', not the extractor's. Base cases, not calls, are the independent unit.
 
 ## Verdicts, gold against pipeline (all calls)
 
@@ -23,6 +66,17 @@ False clear: gold is flag_for_review or unclear_needs_human and the pipeline say
 | flag_for_review | clear | 1 |
 | flag_for_review | flag_for_review | 99 |
 | unclear_needs_human | unclear_needs_human | 8 |
+
+## Tiers by gold verdict (all calls)
+
+| gold verdict | pipeline tier | calls |
+|---|---|---|
+| clear | clear | 36 |
+| flag_for_review | clear | 1 |
+| flag_for_review | incomplete | 4 |
+| flag_for_review | refer | 75 |
+| flag_for_review | understanding_gap | 20 |
+| unclear_needs_human | incomplete | 8 |
 
 ## Extraction accuracy per field
 
@@ -34,12 +88,12 @@ False clear: gold is flag_for_review or unclear_needs_human and the pipeline say
 | payment_source | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | required_for_loan | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | provider_choice_offered | 100.0% (32/32) | 100.0% (8/8) | 100.0% (8/8) | 100.0% (8/8) | 100.0% (8/8) |
-| cover_inr | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
+| cover_inr | 97.9% (141/144) | 91.7% (33/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | term_months | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | cancel_allowed | 99.3% (143/144) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) | 100.0% (36/36) |
 | cancel_window_days | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
-| feature_probe | 98.6% (142/144) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) | 97.2% (35/36) |
-| consent_given | 99.3% (143/144) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) | 100.0% (36/36) |
+| feature_probe | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
+| consent_given | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | consent_method | 93.8% (135/144) | 94.4% (34/36) | 94.4% (34/36) | 91.7% (33/36) | 94.4% (34/36) |
 | recall_items | 98.6% (142/144) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) | 97.2% (35/36) |
 | volunteered_claims | 99.3% (143/144) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) | 100.0% (36/36) |
@@ -65,27 +119,27 @@ False clear: gold is flag_for_review or unclear_needs_human and the pipeline say
 ## Spans and grounding
 
 - Spans the model copied (amounts, durations, recall items, claims, concerns) that were not in the reply: 0 of 802 (0.00%). By field: none.
-- Answers whose clause numbers were missing or out of range: 0 of 1195 (0.00%). By field: none.
+- Answers whose clause numbers were missing or out of range: 0 of 1196 (0.00%). By field: none.
 - Both kinds are dropped to `unclear` (answers) or left for the rule engine to record as an evidence gap (recall items, claims, concerns). None is kept as an answer.
 - Answers marked stated with no value or no span, kept as unclear: 0. By field: none.
 - Gaps the rule engine raised with reason `quote_not_grounded`: 0 (with the gold extraction: 0).
-- Gaps with reason `value_not_parsed`: 0 (with the gold extraction: 0).
+- Gaps with reason `value_not_parsed`: 3 (with the gold extraction: 0).
 - Record values found in bot turns shown to the model: premium in a `readback` question: 120. A lexical check of the premium, cover, sanctioned and disbursed amounts (digits and spoken form) and the provider name. A read-back repeats the amount the customer said, so it shows the record's premium whenever the customer's amount equals it. The two identity checks are never sent.
 
 ## Cost and latency
 
-- LLM calls: 3391 for 144 calls (2149 served from the cache in this run).
-- Spent in this run: $0.09482.
-- Cost of these calls with nothing cached: $0.24589 ($0.00171 per transcript, $0.00007 per LLM call).
-- Latency per LLM call when first made: median 1.88 s, p90 3.38 s (wall time of the client call, retries included, one network).
+- LLM calls: 3391 for 144 calls (3391 served from the cache in this run).
+- Spent in this run: $0.00000.
+- Cost of these calls with nothing cached: $0.21137 ($0.00147 per transcript, $0.00006 per LLM call).
+- Latency per LLM call when first made: median 2.08 s, p90 3.93 s (wall time of the client call, retries included, one network).
 
 ## By base case
 
 - False clears: 1 calls in 1 of 36 base cases (B03).
 - False alarms: 0 calls in 0 of 36 base cases; gold-clear base cases: 9.
 - Any wrong call verdict: 1 calls in 1 of 36 base cases (B03).
-- Any wrong field: 16 calls in 7 of 36 base cases (B01, B03, G01, G02, G05, U08, U10).
-- `consent_given` where the customer agreed to a misdescribed product (C02, U08, V04, V06; the set expects true and calls false a defensible reading): 16/16 match the set. All other calls: 127/128.
+- Any wrong field: 16 calls in 8 of 36 base cases (B02, B03, G01, G02, R01, U07, U08, U10).
+- `consent_given` where the customer agreed to a misdescribed product (C02, U08, V04, V06; the set expects true and calls false a defensible reading): 16/16 match the set. All other calls: 128/128.
 - Replies to a checked question that are word for word a reply of the development set: 70 of 1604 (4.36%); 28 of them longer than three words. The prompt was iterated on the development set, so the model's reading of these replies is in-sample.
 
 ## E1: teach-back call against the yes/no call, by stratum
@@ -103,33 +157,39 @@ Caught: the call did not end as a pass (yes/no: not confirmed; teach-back: verdi
 
 ## Failures
 
-### U08-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`
+### U07-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `understanding_gap`
+Scenario: Customer was told 15 days to cancel; the record says 30 [violating, target rule cancel_window]
+- field `cover_inr`: gold `('stated', 300000)`, pipeline `('unclear', None)`
+  - turn 20 [cover] bot: "उसमें कितनी रकम का कवर है?" customer: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।"
+  - pipeline kept: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।" (turn 20)
+
+### U08-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Customer believes the cover is an investment plan that grows [violating, target rule kind]
 - field `recall_items`: gold `((('P1', <KindClaim.investment: 'investment'>), 1),)`, pipeline `(((None, None), 1),)`
   - turn 10 [recall] bot: "லோனுடன் நீங்கள் என்னென்ன எடுத்தீர்கள், எவ்வளவுக்கு?" customer: "லோனோட ஒரு பிளான்ல பணம் போட்டேன், இருபத்தையாயிரம் ரூபாய்."
   - pipeline kept: None:"லோனோட ஒரு பிளான்ல பணம் போட்டேன்"->None
 - flag not in gold: `recall` on P1: customer did not name this product unprompted | quote: "லோனோட ஒரு பிளான்ல பணம் போட்டேன், இருபத்தையாயிரம் ரூபாய்."
 
-### U08-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`
+### U08-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Customer believes the cover is an investment plan that grows [violating, target rule kind]
 - field `recall_items`: gold `((('P1', <KindClaim.investment: 'investment'>), 1),)`, pipeline `(((None, None), 1),)`
   - turn 10 [recall] bot: "ಲೋನ್ ಜೊತೆ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಂಡಿರಿ, ಎಷ್ಟಕ್ಕೆ?" customer: "ಲೋನ್ ಜೊತೆ ಒಂದು ಪ್ಲಾನಲ್ಲಿ ದುಡ್ಡು ಹಾಕಿದೆ, ಇಪ್ಪತ್ತೈದು ಸಾವಿರ ರೂಪಾಯಿ."
   - pipeline kept: None:"ಲೋನ್ ಜೊತೆ ಒಂದು ಪ್ಲಾನಲ್ಲಿ ದುಡ್ಡು ಹಾಕಿದೆ"->None
 - flag not in gold: `recall` on P1: customer did not name this product unprompted | quote: "ಲೋನ್ ಜೊತೆ ಒಂದು ಪ್ಲಾನಲ್ಲಿ ದುಡ್ಡು ಹಾಕಿದೆ, ಇಪ್ಪತ್ತೈದು ಸಾವಿರ ರೂಪಾಯಿ."
 
-### U10-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`
+### U10-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Customer who answers 'I don't know' to almost everything [violating, target rule cover]
 - field `consent_method`: gold `('dont_know', None)`, pipeline `('unclear', None)`
   - turn 28 [consent] bot: "लोन लेते समय आपने क्या-क्या लेने के लिए हामी भरी थी, और हामी कैसे दी थी?" customer: "ये मुझे नहीं पता कि किस-किस चीज़ के लिए हाँ हुई थी।"
   - pipeline kept: "ये मुझे नहीं पता कि किस-किस चीज़ के लिए हाँ हुई थी।" (turn 28)
 
-### U10-hi-en (hi-en): gold `flag_for_review`, pipeline `flag_for_review`
+### U10-hi-en (hi-en): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Customer who answers 'I don't know' to almost everything [violating, target rule cover]
 - field `consent_method`: gold `('dont_know', None)`, pipeline `('unclear', None)`
   - turn 28 [consent] bot: "Loan लेते समय आपने क्या-क्या लेने के लिए हाँ की थी, और हाँ कैसे की थी?" customer: "ये मुझे नहीं पता कि किस-किस चीज़ के लिए agree किया था।"
   - pipeline kept: "ये मुझे नहीं पता कि किस-किस चीज़ के लिए agree किया था।" (turn 28)
 
-### U10-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`
+### U10-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Customer who answers 'I don't know' to almost everything [violating, target rule cover]
 - field `cancel_allowed`: gold `('dont_know', None)`, pipeline `('unclear', None)`
   - turn 24 [cancel_window] bot: "அதை ரத்து செய்ய முடியுமா முடியாதா, எத்தனை நாளுக்குள் என்று உங்களிடம் சொன்னார்களா?" customer: "கேன்சல் பண்ண முடியுமா முடியாதான்னு தெரியல."
@@ -139,70 +199,64 @@ Scenario: Customer who answers 'I don't know' to almost everything [violating, t
   - pipeline kept: "எது எதுக்கு ஒத்துக்கிட்டேன்னு எனக்கு தெரியலங்க." (turn 28)
 - missed flag: `cancel_window` on P1
 
-### U10-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`
+### U10-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Customer who answers 'I don't know' to almost everything [violating, target rule cover]
 - field `consent_method`: gold `('dont_know', None)`, pipeline `('unclear', None)`
   - turn 28 [consent] bot: "ಲೋನ್ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಒಪ್ಪಿಗೆ ಹೇಗೆ ಕೊಟ್ಟಿರಿ?" customer: "ಯಾವುದಕ್ಕೆಲ್ಲ ಒಪ್ಪಿದ್ದೆ ಅಂತ ನನಗೆ ಗೊತ್ತಿಲ್ಲ."
   - pipeline kept: "ಯಾವುದಕ್ಕೆಲ್ಲ ಒಪ್ಪಿದ್ದೆ ಅಂತ ನನಗೆ ಗೊತ್ತಿಲ್ಲ." (turn 28)
 
-### G01-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`
+### G01-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Two lakh debited from the borrower's account for a policy, no consent on record [violating, target rule consent]
 - field `consent_method`: gold `('unclear', None)`, pipeline `('stated', <ConsentMethod.verbal: 'verbal'>)`
   - turn 28 [consent] bot: "லோன் வாங்கும்போது நீங்கள் என்னென்ன எடுக்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புதல் கொடுத்தீர்கள்?" customer: "நான் லோனுக்கு மட்டும்தான் சரின்னு சொன்னேன். இன்ஷூரன்ஸ் பத்தி என்கிட்ட யாரும் கேக்கல. எனக்கு அப்புறம்தான் தெரிஞ்சுது, அக்கவுண்ட்ல இருந்து பணம் போனப்ப."
   - pipeline kept: "நான் லோனுக்கு மட்டும்தான் சரின்னு சொன்னேன். இன்ஷூரன்ஸ் பத்தி என்கிட்ட யாரும் கேக்கல. எனக்கு அப்புறம்தான் தெரிஞ்சுது, அக்கவுண்ட்ல இருந்து பணம் போனப்ப." (turn 28)
 
-### G01-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`
+### G01-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Two lakh debited from the borrower's account for a policy, no consent on record [violating, target rule consent]
 - field `premium_inr`: gold `('stated', 200000)`, pipeline `('unclear', None)`
   - turn 14 [premium] bot: "ಅದಕ್ಕೆ ನೀವು ಎಷ್ಟು ರೂಪಾಯಿ ಕೊಟ್ಟಿರಿ?" customer: "ಎರಡು ಲಕ್ಷ ರೂಪಾಯಿ ತಗೊಂಡಿದ್ದಾರೆ."
   - turn 30 [readback] bot: "ಎರಡು ಲಕ್ಷ, ಅಂದರೆ 2,00,000 ರೂಪಾಯಿ, ಸರಿಯೇ?" customer: "ಹೌದು, ಸರಿ."
   - pipeline kept: "ಎರಡು ಲಕ್ಷ ರೂಪಾಯಿ ತಗೊಂಡಿದ್ದಾರೆ." (turn 14)
 
-### G02-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`
+### G02-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Signed consent on file; the customer says they agreed only to the loan [violating, target rule consent]
 - field `consent_method`: gold `('unclear', None)`, pipeline `('stated', <ConsentMethod.signed_form: 'signed_form'>)`
   - turn 28 [consent] bot: "लोन लेते समय आपने क्या-क्या लेने के लिए हामी भरी थी, और हामी कैसे दी थी?" customer: "मैंने तो बस लोन के लिए हाँ बोली थी। बीमे के लिए मुझसे किसी ने नहीं पूछा। बहुत सारे काग़ज़ों पर साइन करवाए थे, किसी ने बताया नहीं कौन सा किस चीज़ का है।"
   - pipeline kept: "मैंने तो बस लोन के लिए हाँ बोली थी। बीमे के लिए मुझसे किसी ने नहीं पूछा। बहुत सारे काग़ज़ों पर साइन करवाए थे, किसी ने बताया नहीं कौन सा किस चीज़ का है।" (turn 28)
 
-### G02-hi-en (hi-en): gold `flag_for_review`, pipeline `flag_for_review`
+### G02-hi-en (hi-en): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Signed consent on file; the customer says they agreed only to the loan [violating, target rule consent]
 - field `consent_method`: gold `('unclear', None)`, pipeline `('stated', <ConsentMethod.signed_form: 'signed_form'>)`
   - turn 28 [consent] bot: "Loan लेते समय आपने क्या-क्या लेने के लिए हाँ की थी, और हाँ कैसे की थी?" customer: "सिर्फ़ loan। Insurance लेने की हामी मैंने कभी नहीं भरी। बहुत सारे papers पर sign करवाए थे, किसी ने बताया नहीं कौन सा किस चीज़ का है।"
   - pipeline kept: "सिर्फ़ loan। Insurance लेने की हामी मैंने कभी नहीं भरी। बहुत सारे papers पर sign करवाए थे, किसी ने बताया नहीं कौन सा किस चीज़ का है।" (turn 28)
 
-### G02-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`
+### G02-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Signed consent on file; the customer says they agreed only to the loan [violating, target rule consent]
 - field `consent_method`: gold `('unclear', None)`, pipeline `('stated', <ConsentMethod.signed_form: 'signed_form'>)`
   - turn 28 [consent] bot: "லோன் வாங்கும்போது நீங்கள் என்னென்ன எடுக்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புதல் கொடுத்தீர்கள்?" customer: "லோன் மட்டும்தான். இன்ஷூரன்ஸ் எடுக்க நான் ஒருநாளும் ஒத்துக்கல. நிறைய பேப்பர்ல கையெழுத்து வாங்கினாங்க, எது எதுக்குன்னு யாரும் சொல்லல."
   - pipeline kept: "லோன் மட்டும்தான். இன்ஷூரன்ஸ் எடுக்க நான் ஒருநாளும் ஒத்துக்கல. நிறைய பேப்பர்ல கையெழுத்து வாங்கினாங்க, எது எதுக்குன்னு யாரும் சொல்லல." (turn 28)
 
-### G02-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`
+### G02-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Signed consent on file; the customer says they agreed only to the loan [violating, target rule consent]
 - field `consent_method`: gold `('unclear', None)`, pipeline `('stated', <ConsentMethod.signed_form: 'signed_form'>)`
   - turn 28 [consent] bot: "ಲೋನ್ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಒಪ್ಪಿಗೆ ಹೇಗೆ ಕೊಟ್ಟಿರಿ?" customer: "ಲೋನ್ ಮಾತ್ರ. ಇನ್ಶೂರೆನ್ಸ್ ತಗೊಳ್ಳೋಕೆ ನಾನು ಯಾವತ್ತೂ ಒಪ್ಪಿಲ್ಲ. ತುಂಬಾ ಪೇಪರಿಗೆ ಸಹಿ ಹಾಕಿಸ್ಕೊಂಡ್ರು, ಯಾವುದು ಯಾವುದಕ್ಕೆ ಅಂತ ಯಾರೂ ಹೇಳಿಲ್ಲ."
   - pipeline kept: "ಲೋನ್ ಮಾತ್ರ. ಇನ್ಶೂರೆನ್ಸ್ ತಗೊಳ್ಳೋಕೆ ನಾನು ಯಾವತ್ತೂ ಒಪ್ಪಿಲ್ಲ. ತುಂಬಾ ಪೇಪರಿಗೆ ಸಹಿ ಹಾಕಿಸ್ಕೊಂಡ್ರು, ಯಾವುದು ಯಾವುದಕ್ಕೆ ಅಂತ ಯಾರೂ ಹೇಳಿಲ್ಲ." (turn 28)
 
-### G05-ta (ta): gold `unclear_needs_human`, pipeline `unclear_needs_human`
-Scenario: Customer agreed to the insurance but cannot say how [near_miss, target rule consent]
-- field `consent_given`: gold `('stated', True)`, pipeline `('unclear', None)`
-  - turn 28 [consent] bot: "லோன் வாங்கும்போது நீங்கள் என்னென்ன எடுக்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புதல் கொடுத்தீர்கள்?" customer: "ரெண்டுக்கும் ஒத்துக்கிட்டேன். ஆனா எப்படி ஒத்துக்கிட்டேன்னு ஞாபகம் வரல."
-  - pipeline kept: "ரெண்டுக்கும் ஒத்துக்கிட்டேன். ஆனா எப்படி ஒத்துக்கிட்டேன்னு ஞாபகம் வரல." (turn 28)
+### B02-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
+Scenario: Knows it is insurance; believes the premium comes back grown, guaranteed [violating, target rule belief_mismatch]
+- field `cover_inr`: gold `('stated', 300000)`, pipeline `('unclear', None)`
+  - turn 20 [cover] bot: "उसमें कितनी रकम का कवर है?" customer: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।"
+  - pipeline kept: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।" (turn 20)
 
-### B01-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`
-Scenario: Knows it is a policy; believes the money can be withdrawn after one year [violating, target rule belief_mismatch]
-- field `feature_probe`: gold `('stated', (<FeatureClaim.withdrawable_after_period: 'withdrawable_after_period'>,))`, pipeline `('stated', (<FeatureClaim.refundable_anytime: 'refundable_anytime'>, <FeatureClaim.withdrawable_after_period: 'withdrawable_after_period'>))`
-  - turn 26 [features] bot: "அந்தப் பணத்தை நீங்கள் திரும்பக் கேட்டால் கிடைக்குமா, எப்போது?" customer: "ஆமா, ஒரு வருஷம் கழிச்சு எப்ப வேணும்னாலும் எடுத்துக்கலாம்னு சொன்னாங்க."
-  - pipeline kept: "ஆமா, ஒரு வருஷம் கழிச்சு எப்ப வேணும்னாலும் எடுத்துக்கலாம்னு சொன்னாங்க." (turn 26)
-
-### B01-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`
-Scenario: Knows it is a policy; believes the money can be withdrawn after one year [violating, target rule belief_mismatch]
-- field `feature_probe`: gold `('stated', (<FeatureClaim.withdrawable_after_period: 'withdrawable_after_period'>,))`, pipeline `('stated', (<FeatureClaim.refundable_anytime: 'refundable_anytime'>, <FeatureClaim.withdrawable_after_period: 'withdrawable_after_period'>))`
-  - turn 26 [features] bot: "ಆ ಹಣವನ್ನು ನೀವು ವಾಪಸ್ ಕೇಳಿದರೆ ಸಿಗುತ್ತದೆಯೇ, ಯಾವಾಗ?" customer: "ಹೌದು, ಒಂದು ವರ್ಷ ಆದ್ಮೇಲೆ ಯಾವಾಗ ಬೇಕಾದ್ರೂ ತಗೋಬಹುದು ಅಂತ ಹೇಳಿದ್ರು."
-  - pipeline kept: "ಹೌದು, ಒಂದು ವರ್ಷ ಆದ್ಮೇಲೆ ಯಾವಾಗ ಬೇಕಾದ್ರೂ ತಗೋಬಹುದು ಅಂತ ಹೇಳಿದ್ರು." (turn 26)
-
-### B03-ta (ta): gold `flag_for_review`, pipeline `clear` **FALSE CLEAR**
+### B03-ta (ta): gold `flag_for_review`, pipeline `clear`, tier `clear` **FALSE CLEAR**
 Scenario: Believes the premium is paid only once; the record shows a regular-premium product [violating, target rule belief_mismatch]
 - field `volunteered_claims`: gold `(('P1', <FeatureClaim.one_time_payment: 'one_time_payment'>),)`, pipeline `()`
   - pipeline kept: -
   - gold has: one_time_payment:"ஒரே தடவைதான், ஐம்பத்திரண்டாயிரம் ரூபாய்."
 - missed flag: `belief_mismatch` on P1
+
+### R01-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `understanding_gap`
+Scenario: Informed customer who does not mention the insurance until asked about it [violating, target rule recall]
+- field `cover_inr`: gold `('stated', 300000)`, pipeline `('unclear', None)`
+  - turn 20 [cover] bot: "उसमें कितनी रकम का कवर है?" customer: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।"
+  - pipeline kept: "मुझे कुछ हो गया तो लोन बीमा कंपनी भरेगी, तीन लाख तक का कवर है।" (turn 20)
