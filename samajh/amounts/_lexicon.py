@@ -52,7 +52,8 @@ class Word(NamedTuple):
     kind: num | and | cur (currency word) | curpfx (currency marker that may precede digits)
     | dur | pct | pctpfx | vague | art | glue (unit letter valid only glued to digits)
     | unitafter (सो) | conn | neg | negpre | cmp | cmpdirect | cmppre (see the table below)
-    | plain (an ordinary word that cannot be a number: a Tamil or Kannada noun in the ablative).
+    | plain (an ordinary word that cannot be a number: a Tamil or Kannada noun in the ablative)
+    | times (a noun that counts occurrences: "एक बार", "one time").
     """
 
     kind: str
@@ -221,6 +222,10 @@ _add(WORDS, "week weeks हफ़्ता हफ़्ते हफ़्तो
 _add(WORDS, "hour hours minute minutes घंटा घंटे घंटों मिनट", Word("dur"))
 _add(WORDS, "percent प्रतिशत परसेंट फीसदी फ़ीसद சதவீதம் சதவிகிதம்", Word("pct"))
 _add(WORDS, "ಶೇಕಡ ಶೇಕಡಾ", Word("pctpfx"))
+# The number before one of these says how often, not how much: "एक बार", "one time".
+_add(WORDS, "बार दफ़ा दफ़े मर्तबा टाइम time times baar", Word("times"))
+# "एक ही बार": the particle may stand between the number and the noun.
+EMPHATIC = frozenset({norm_key("ही")})
 
 # Tamil and Kannada inflect these words, so they match by stem.
 STEMS: tuple[tuple[str, Word], ...] = (
@@ -243,6 +248,11 @@ STEMS: tuple[tuple[str, Word], ...] = (
     ("ದಿನಾಂಕ", Word("other")),  # "date", not "day"
     ("ದಿನ", Word("dur", (), None, _DAYS_DAY)),
     ("ವಾರ", Word("dur", (), None, _DAYS_WEEK)),
+    ("தடவை", Word("times")),
+    ("முறை", Word("times")),
+    ("வாட்டி", Word("times")),
+    ("ಸಲ", Word("times")),
+    ("ಬಾರಿ", Word("times")),
 )
 
 # --- Tamil and Kannada morphs (segmented by samajh.amounts._sandhi) ----------------
@@ -324,8 +334,9 @@ for _word in ["லட்சம்", "லக்ஷம்", "இலட்சம்
 _add(TA, "கோடி", Morph((m(CRORE),), head=True))
 _add(TA, "கோடியே", Morph((m(CRORE), OBL), oblique=True, head=True))
 # ஒரு is "one" only before a noun or unit, and also the article "a": it cannot end a number.
+# ஒரே ("only one, a single": ஒரே தடவை) behaves the same.
 TA_ONE_BEFORE_NOUN = (n(1), OBL)
-_add(TA, "ஒரு", Morph(TA_ONE_BEFORE_NOUN))
+_add(TA, "ஒரு ஒரே", Morph(TA_ONE_BEFORE_NOUN))
 _add(TA, "அரை", Morph((n("0.5"),)))
 _add(TA, "கால்", Morph((n("0.25"),)))
 _add(TA, "முக்கால்", Morph((n("0.75"),)))

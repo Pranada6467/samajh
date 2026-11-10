@@ -9,11 +9,21 @@ from itertools import pairwise
 from typing import Literal
 
 from samajh.amounts._grammar import Value, evaluate
-from samajh.amounts._lexicon import AND, JF, PLURAL_UNITS, TA_ONE_BEFORE_NOUN, THOUSAND, Atom, norm_key
+from samajh.amounts._lexicon import (
+    AND,
+    EMPHATIC,
+    JF,
+    PLURAL_UNITS,
+    TA_ONE_BEFORE_NOUN,
+    THOUSAND,
+    Atom,
+    norm_key,
+)
 from samajh.amounts._text import Tok, scan
 from samajh.types import Frozen
 
 _HALF = (Atom("n", Decimal("0.5")),)
+_ONE = (Atom("n", Decimal(1)),)
 _GAP = re.compile(r"[\s\-‌‍]*")
 _CURRENCY = ("cur", "curpfx")
 # Words that join two numbers into a range, a choice or a correction instead of separating them.
@@ -84,6 +94,7 @@ class _Run:
     big_unit: bool = False  # has a thousand-or-larger unit word, so it is not a duration
     stem: bool = False  # a word that only looks like a number (ಐವತ್ತರಿಂದ): counts only next to an amount
     corrects: bool = False  # a negator stands directly before it: "बावन हज़ार था, नहीं पचपन"
+    modifier: bool = False  # it counts the next word, not rupees: "एक बार", "दो बार", "one policy"
 
 
 def _hedged(kind, first: int, last: int) -> bool:
@@ -108,6 +119,22 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
 
     def kind(k: int, after: int) -> str:
         return toks[k].kind if touching(*sorted((k, after))) else ""
+
+    def counts_times(k: int) -> bool:
+        """Token k stands directly before a noun of occurrence: "एक बार", "एक ही बार"."""
+        step = kind(k + 1, k)
+        if step == "other" and norm_key(text[toks[k + 1].start : toks[k + 1].end]) in EMPHATIC:
+            step = kind(k + 2, k + 1)
+        return step == "times"
+
+    def determiner(k: int) -> bool:
+        """Token k is a lone word "one" before an ordinary word that no currency word follows
+        (so that word is not a misspelt unit): "एक पॉलिसी", "one policy", "ಒಂದು ವರ್ಷ"."""
+        return (
+            toks[k].atoms == _ONE
+            and kind(k + 1, k) in ("other", "plain", "dur")
+            and kind(k + 2, k + 1) not in _CURRENCY
+        )
 
     runs: list[_Run] = []
     i = 0
@@ -175,6 +202,21 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
         while j > i and toks[j].atoms == TA_ONE_BEFORE_NOUN:
             j -= 1  # "ஐம்பதாயிரம் ஒரு பாலிசி": the ஒரு belongs to the next word
             del atoms[-2:]
+        last = toks[j].atoms
+        if (
+            j > i
+            and toks[j - 1].kind == "num"
+            and toks[j - 1].atoms[-1].kind == "m"
+            and len(last) == 1
+            and last[0].kind == "n"
+            and 0 < last[0].value < 100
+            and last[0].value == last[0].value.to_integral_value()
+            and (counts_times(j) or determiner(j))
+        ):
+            # "पचास हज़ार एक बार", "पचास हज़ार दो बार", "पचास हज़ार एक FD": 50,000, not 50,001.
+            # After a unit word, a "one" before another word is that word's determiner.
+            j -= 1
+            del atoms[-1:]
         after = kind(j + 1, j)
         value = evaluate(atoms)
         if after == "bad":  # a number with an ending we cannot read: இருபதாயிரத்தை
@@ -196,8 +238,13 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
             value = Value(Decimal(1))  # ஒரு வருடம்
         if after == "curpfx" and kind(j + 2, j + 1) == "num" and toks[j + 2].atoms[0].kind == "d":
             after = ""  # "दो ₹5 लाख": the marker belongs to the digits after it
+        article = tuple(atoms) == TA_ONE_BEFORE_NOUN
+        # A number before a noun of occurrence, or a lone word "one" before an ordinary word
+        # that no currency word follows (so the word is not a misspelt unit).
+        modifier = counts_times(j) or (i == j and determiner(j))
         strong = (
-            currency
+            # "ஆயிரம் ரூபாய் ஒரே தடவை", "हज़ार रुपये एक बार": that currency word closes the amount before it
+            (currency and not (article or modifier))
             or after in ("cur", "curpfx", "bad")
             or any(a.kind == "m" or (a.kind in "nd" and a.value >= 100) for a in atoms)
         )
@@ -213,13 +260,14 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
                 strong=strong,
                 unit=toks[j + 1] if after == "dur" else None,
                 percent=after == "pct" or kind(i - 1, i) == "pctpfx",
-                filler=tuple(atoms) == TA_ONE_BEFORE_NOUN
+                filler=article
                 or (len(atoms) == 1 and (atoms[0].kind == "pt" or 0 < atoms[0].value < 1)),
                 first_tok=i,
                 last_tok=j,
                 hedged=_hedged(kind, i, j + 1 if after == "dur" else j),
                 big_unit=any(a.kind == "m" and a.value >= THOUSAND for a in atoms),
                 corrects=kind(i - 1, i) in ("neg", "negpre"),
+                modifier=modifier,
             )
         )
         i = j + 1
@@ -259,6 +307,12 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
 
     Several numbers in one text. A candidate is WEAK when it is under 100 and has neither a
     unit word nor a currency marker next to it ("एक FD", "बता दो", "दो तीन बार"). Rule:
+      * a weak number directly before a noun of occurrence ("एक बार", "दो बार", "one time",
+        "ஒரு தடவை", "ಒಂದು ಸಲ"; "एक ही बार" too), or a lone word "one" before an ordinary word
+        ("एक पॉलिसी", "one policy"), counts that word. It never joins the amount before it
+        ("पचास हज़ार एक बार" is 50,000) and is ignored after an amount unless a connector or
+        negator joins them. So "पचास हज़ार एक FD" and "पचास हज़ार एक दिए" are 50,000: after a unit
+        word, 50,001 is read only when a currency word or nothing follows the one;
       * exactly one distinct strong value -> `Parsed`; a weak candidate is ignored only when
         at least one ordinary word separates it from the strong one. With nothing, only
         punctuation, or only connectors/negators between them ("50 से 60 हज़ार", "बावन या
@@ -288,7 +342,7 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
     a unit and fit below them; "5,00,000 दो" and "1,00,000 50,000" are `Ambiguous`.
     A number directly followed by a duration unit ("5 साल") or a percent sign is not a
     candidate. A fraction word by itself that is also an everyday word (கால், ಕಾಲು, half),
-    and the Tamil article ஒரு by itself, are not candidates.
+    and the Tamil ஒரு and ஒரே by themselves, are not candidates.
 
     `exact=True` is for a short quote that should be the amount and nothing else: the result
     is `Parsed` only when everything outside `Parsed.span` is whitespace, punctuation or a
@@ -312,7 +366,9 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
     runs = [r for r in runs if not (r.unit is not None or r.percent or (r.filler and not r.strong))]
     counted = {id(r) for r in runs if r.strong or (r.corrects and any(o.strong for o in runs))}
     for a, b in pairwise(runs):
-        if a.strong != b.strong and _linked(toks, a, b):
+        between = toks[a.last_tok + 1 : b.first_tok]
+        starts_new_phrase = b.modifier and all(tok.kind in _CURRENCY for tok in between)
+        if a.strong != b.strong and _linked(toks, a, b) and not starts_new_phrase:
             counted |= {id(a), id(b)}
 
     candidates: list[Parsed] = []
