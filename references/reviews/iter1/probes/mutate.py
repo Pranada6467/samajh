@@ -86,6 +86,45 @@ MUTATIONS = [
      "samajh/extract/_prompt.py", '        f"Assistant\'s question: <<<{question}>>>\\n"', '        f"Assistant\'s question: <<<{question}>>> (premium on record 52000)\\n"'),
 ]
 
+# Second batch. An entry may carry several edits: [(file, old, new), ...] in place of file/old/new.
+MUTATIONS += [
+    ("M29", "a gap blocks `clear` (both the type validator and the engine changed together)",
+     [("samajh/types.py", "return Verdict.unclear_needs_human if gaps else Verdict.clear", "return Verdict.clear"),
+      ("samajh/rules/engine.py", "verdict = Verdict.unclear_needs_human", "verdict = Verdict.clear")], None, None),
+    ("M30", "an off-record insurance, deposit or investment named in recall is a flag",
+     "samajh/rules/checks.py", "if i.product_id is not None or i.kind is KindClaim.fee:", "if True:"),
+    ("M31", "every reply of three words or more is screened for claims and concerns",
+     "samajh/extract/_extract.py", "_SCREEN_MIN_WORDS = 3", "_SCREEN_MIN_WORDS = 30"),
+    ("M32", "a misdescribed recall item is matched to the one unnamed product",
+     "samajh/extract/_extract.py", "if len(misdescribed) == 1 and len(unnamed) == 1:", "if False:"),
+    ("M33", "the last read-back reply replaces an earlier one",
+     "samajh/extract/_extract.py", 'self.put(slot, "premium_readback", answer, replace=True)', 'self.put(slot, "premium_readback", answer)'),
+    ("M34", "a rejected read-back makes the premium unclear",
+     "samajh/rules/normalise.py", "        if not readback.value:\n            premium = Unclear(reason=GapReason.readback_rejected, evidence=readback.evidence)\n        elif (", "        if (not readback.value) or ("),
+    ("M35", "'I do not know' together with a claim at the money-back probe is kept as neither",
+     "samajh/extract/_extract.py", "if wire.status is not Status.stated and claims:", "if False:"),
+    ("M36", "a kind answer that was asked and unusable is not rescued by open recall",
+     "samajh/rules/checks.py", "if isinstance(answer, Unclear) or not sources:", "if not sources:"),
+    ("M37", "the scorer counts a false clear (gold not clear, pipeline clear)",
+     "eval/text_path/scoring.py", "return self.gold_verdict is not Verdict.clear and self.verdict is Verdict.clear", "return False"),
+    ("M38", "frozen gold: B03 is flag_for_review (a changed gold case must fail the set's tests)",
+     "samajh/scenarios/cases.py", """                "The amount itself and every other answer match.",
+                flags=(R.belief_mismatch,),""", """                "The amount itself and every other answer match.",
+                flags=(),"""),
+    ("M39", "bundling: a required product with no choice of provider on record is a flag",
+     "samajh/rules/checks.py", "    if not p.provider_choice_offered:\n        heard", "    if False:\n        heard"),
+    ("M40", "an unmatched recall item the extraction could not classify is a gap",
+     "samajh/rules/checks.py", "            outcomes.append(_gap(rule, None, GapReason.no_usable_answer, i.evidence))", "            pass"),
+    ("M41", "consent on record but the consent question never asked is a gap, not a pass",
+     "samajh/rules/checks.py", "    return _decide(\n        rule, p.id, b.consent_given, stated=stated, dont_know=Why.consent_dont_know, expected=expected\n    )", "    if isinstance(b.consent_given, NotAsked):\n        return _passed(rule, p.id)\n    return _decide(\n        rule, p.id, b.consent_given, stated=stated, dont_know=Why.consent_dont_know, expected=expected\n    )"),
+    ("M42", "a claim or concern whose span is not in the reply still reaches the rules (as an evidence gap)",
+     "samajh/extract/_extract.py", "            quote = found.clauses if found else concern.span\n            self._add(self.concerns", "            if not found:\n                continue\n            quote = found.clauses\n            self._add(self.concerns"),
+    ("M43", "the screening call also runs on replies to unchecked bot turns (slot kind other)",
+     "samajh/extract/_extract.py", "        if reply.word_count >= _SCREEN_MIN_WORDS:", "        if reply.word_count >= _SCREEN_MIN_WORDS and slot.kind is not SlotKind.other:"),
+    ("M44", "E1: a coached or acquiescent customer who is misled is put in that stratum",
+     "eval/text_path/e1.py", 'if disposition in ("coached", "acquiescent"):', 'if disposition in ("coached",):'),
+]
+
 
 def main() -> int:
     scratch = Path(sys.argv[1]).resolve()
@@ -124,15 +163,21 @@ def main() -> int:
     print("baseline:", tail)
     if failed or errors or "passed" not in tail:
         raise SystemExit("the unmutated copy does not pass: results would mean nothing")
+    only = set(sys.argv[2:])
     for name, behaviour, file, old, new in MUTATIONS:
-        path = work / file
-        original = path.read_text()
-        if original.count(old) != 1:
-            print(f"{name} NOT APPLIED ({original.count(old)} matches): {behaviour}")
+        if only and name not in only:
             continue
-        path.write_text(original.replace(old, new))
+        edits = file if isinstance(file, list) else [(file, old, new)]
+        originals = {f: (work / f).read_text() for f, _, _ in edits}
+        counts = [originals[f].count(o) for f, o, _ in edits]
+        if any(c != 1 for c in counts):
+            print(f"{name} NOT APPLIED ({counts} matches): {behaviour}")
+            continue
+        for f, o, n in edits:
+            (work / f).write_text((work / f).read_text().replace(o, n))
         failed, errors, tail = run()
-        path.write_text(original)
+        for f, text in originals.items():
+            (work / f).write_text(text)
         verdict = "killed" if failed or errors else "SURVIVED"
         print(f"{name} {verdict}: {behaviour} -> {tail}", flush=True)
     return 0

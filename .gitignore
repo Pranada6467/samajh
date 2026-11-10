@@ -17,3 +17,7 @@ references/pilots/ledger.jsonl
 
 # Saved primary sources: 180 MB and contain real complainant names. Local only.
 references/claims/sources/
+
+# Real-voice evaluation audio (public consent-based datasets): local only, never in the repo
+.samajh-realvoice/
+data/realvoice/

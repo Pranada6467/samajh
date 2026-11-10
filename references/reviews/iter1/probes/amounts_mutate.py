@@ -206,6 +206,43 @@ MUTATIONS: list[tuple[str, str, str, str]] = [
         'if e.provider == "gnani" and e.cache_key in keys)',
         'if e.provider == "gnani")',
     ),
+    # second batch
+    (
+        "only-first-step-applied",
+        "samajh/evalkit/runner.py",
+        "audio = conditions.apply(clip_audio, job.steps)",
+        "audio = conditions.apply(clip_audio, job.steps[:1])",
+    ),
+    (
+        "fingerprint-without-item-id",
+        "samajh/evalkit/runner.py",
+        '            "item_id": item.id,\n',
+        "",
+    ),
+    (
+        "voice-fingerprint-without-voice",
+        "samajh/evalkit/runner.py",
+        '            "tts": timbre.model_dump(mode="json"),',
+        '            "tts": timbre.model,',
+    ),
+    (
+        "literal-not-scored",
+        "samajh/evalkit/score.py",
+        ' + ([("literal", row.literal)] if row.literal is not None else [])',
+        "",
+    ),
+    (
+        "mix-never-scaled",
+        "samajh/audio/steps.py",
+        "scale = min(1.0, 32767 / max(abs(x) for x in mixed))",
+        "scale = 1.0",
+    ),
+    (
+        "store-recomputes-nothing-wrong-file",
+        "samajh/audio/steps.py",
+        "            key = step_key(hashlib.sha256(wav).hexdigest(), step)\n            path = self._root / key[:2] / f\"{key}.wav\"",
+        "            key = step_key(\"\", step)\n            path = self._root / key[:2] / f\"{key}.wav\"",
+    ),
 ]
 
 
