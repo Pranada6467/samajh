@@ -55,6 +55,8 @@ class Intent(StrEnum):
     maybe_decline = "maybe_decline"  # a weak signal: the bot asks before it ends the call
     maybe_human = "maybe_human"
     call_later = "call_later"  # "call me later", "I am driving": the call ends with a call-back
+    do_not_call = "do_not_call"  # "take my number off your list": the call ends, outcome do_not_call
+    written_request = "written_request"  # "send it in writing": the call ends, outcome written_requested
     other_language = "other_language"  # "speak Tamil": the call ends, the language is recorded
     asks_who = "asks_who"  # "who is this?", "is this a fraud call?": answered, then the question again
     took_nothing = "took_nothing"  # "I took nothing with the loan"
@@ -74,6 +76,10 @@ READ_BACK_MIN, READ_BACK_LIMIT = 100, 1_000_000_000
 
 UNCLEAR: frozenset[Intent] = frozenset(
     {Intent.silence, Intent.asks_repeat, Intent.filler, Intent.off_topic, Intent.unclear}
+)
+# Readings the word lists are not sure of: the classifier is asked about these.
+_UNSETTLED = frozenset(
+    {Intent.said, Intent.maybe_decline, Intent.maybe_human, Intent.off_topic, Intent.unclear}
 )
 
 
@@ -98,7 +104,14 @@ class Interpretation(BaseModel):
     callback: Literal["time", "busy", "ask"] | None = None
     language_name: str | None = None  # with `other_language`: English name in lower case, if said
     own_choice: bool = False  # "it was my choice": the bot then skips the provider-choice question
-    degraded: bool = False  # an LLM was asked and failed; this reading is the word lists' alone
+    # The word lists are sure of this reading (an exact, tight match). An unsettled reading is what the
+    # classifier is asked about; with no classifier it stands, and at the first-name and birth-year
+    # questions it never confirms anyone.
+    settled: bool = True
+    # A year heard in a reply that held other words ("इनका जन्म 1984 में हुआ था"). It never passes the
+    # second check by itself: only a classifier that reads the reply as first person can promote it.
+    loose_year: int | None = None
+    degraded: bool = False  # the classifier was asked and failed; this reading is the word lists' alone
 
 
 class TurnInterpreter(Protocol):
@@ -215,6 +228,13 @@ def _language_request(words: Phrase, lexicon: Lexicon, language: Language) -> tu
     return False, None
 
 
+def speaks_in_first_person(text: str, language: Language) -> bool:
+    """Does the reply hold a first-person word ("मैं", "main", "I", "speaking")? A claim to be the
+    borrower needs one, whoever judges it: "haan batao kya baat hai" is not a claim."""
+    words, lexicon = tokens(text), LEXICONS[language]
+    return _has(words, lexicon.first_person) or _has(words, lexicon.is_self)
+
+
 class RuleInterpreter:
     """Word lists and `samajh.amounts`. Deterministic; reads nothing but the turn."""
 
@@ -224,19 +244,49 @@ class RuleInterpreter:
         words = tokens(text)
         lexicon = LEXICONS[language]
         intent, extra = self._intent(text, words, lexicon, expecting, language)
-        year = birth_year(text) if expecting is Expecting.birth_year else None
+        year = loose = None
+        if expecting is Expecting.birth_year and intent is not Intent.wrong_person:
+            heard = birth_year(text)
+            if heard is not None and self._tight_year(words, lexicon):
+                year = heard
+            else:
+                loose = heard
         parsed = parse_amount(text)
         figure = expecting in _FIGURE
+        settled = extra.pop("settled", None)
+        if settled is None:
+            settled = self._settled(intent, expecting, year)
+        approx = _approximate(text) if figure else None
+        if figure and (_amount(parsed) is not None or approx is not None):
+            settled = True  # a figure the bot can read back: the read-back settles the rest
         return Interpretation(
             intent=intent,
             amount_inr=_amount(parsed),
             figures=_figures(parsed),
-            approx=_approximate(text) if figure else None,
+            approx=approx,
             only_amount=figure and _only_amount(text, parsed, lexicon),
             year=year,
+            loose_year=loose,
             own_choice=expecting is Expecting.either_or and self._own_choice(words, lexicon),
+            settled=settled,
             **extra,
         )
+
+    @staticmethod
+    def _settled(intent: Intent, expecting: Expecting, year: int | None) -> bool:
+        if intent is Intent.silence or expecting is Expecting.callback_time:
+            return True
+        if expecting is Expecting.go_ahead:
+            return False  # every reply at the go-ahead is put to the classifier when there is one
+        if expecting is Expecting.birth_year:
+            return year is not None or intent is Intent.wrong_person
+        return intent not in _UNSETTLED
+
+    @staticmethod
+    def _tight_year(words: Phrase, lexicon: Lexicon) -> bool:
+        """Is the reply the year and nothing else but "my", "born", "in" and the like?"""
+        rest = _rest(words, lexicon.year_ok | lexicon.filler)
+        return all(any(ch.isdigit() for ch in word) or _small_number(word) is not None for word in rest)
 
     @staticmethod
     def _own_choice(words: Phrase, lexicon: Lexicon) -> bool:
@@ -255,14 +305,14 @@ class RuleInterpreter:
 
     @staticmethod
     def _claims_to_be_the_borrower(words: Phrase, lexicon: Lexicon) -> bool:
-        """A yes that says "I am the person you asked for", and nothing a relative would add."""
-        if not (_has(words, lexicon.identity_yes) or _has(words, lexicon.is_self)):
-            return False
-        rest = _rest(words, lexicon.identity_yes | lexicon.is_self | lexicon.self_ok | lexicon.filler)
-        if not rest:
-            return True
-        # One or two words more are allowed only beside "I": the name ("मैं रमेश हूँ", "Ramesh speaking").
-        return len(rest) <= 2 and (_has(words, lexicon.first_person) or _has(words, lexicon.is_self))
+        """An explicit first-person claim ("हाँ, मैं ही बोल रहा हूँ", "speaking") with nothing else in it.
+
+        A name, a title or any word outside the short courtesy list makes the reply not tight: the
+        classifier judges it, and without one it does not confirm.
+        """
+        return _has(words, lexicon.is_self) and not _rest(
+            words, lexicon.identity_yes | lexicon.is_self | lexicon.self_ok | lexicon.filler
+        )
 
     def _stop_signal(
         self, words: Phrase, lexicon: Lexicon, expecting: Expecting
@@ -276,21 +326,26 @@ class RuleInterpreter:
         timed = _has(words, lexicon.time_words) and _has(words, lexicon.call_words)
         later = _has(words, lexicon.call_later) or timed
         busy = _has(words, lexicon.occupied)
+        if busy and expecting in _OPENING and not _has(words, lexicon.first_person):
+            return Intent.wrong_person, {}  # "साहब मीटिंग में हैं": busy, but someone else is
         refuses = _has(words, lexicon.decline)
         if busy and _has(words, lexicon.hurry) and not (later or refuses):
             busy = False  # "थोड़ा बिज़ी हूँ, जल्दी बोलिए": busy, and still says go on
         human = _has(words, lexicon.wants_human)
         short = len(words) <= _STOP_TURN and _has(words, lexicon.decline_short)
-        if not (human or refuses or later or busy or short or _has(words, lexicon.do_not_call)):
+        dnc, written = _has(words, lexicon.do_not_call), _has(words, lexicon.written)
+        if not (human or refuses or later or busy or short or dnc or written):
             return None
         if narrated:
-            return Intent.said, {}
+            return Intent.said, {"settled": False}
         if human:
             return (Intent.maybe_human if recounted else Intent.wants_human), {}
         if recounted:
             return Intent.maybe_decline, {}
-        if _has(words, lexicon.do_not_call):
-            return Intent.decline, {}
+        if dnc:
+            return Intent.do_not_call, {}
+        if written:
+            return Intent.written_request, {}
         if later or busy:
             when = "time" if _has(words, lexicon.time_words) else ("ask" if later and not busy else "busy")
             return Intent.call_later, {"callback": when}
@@ -323,10 +378,15 @@ class RuleInterpreter:
         repeats = _only(words, lexicon.asks_repeat_whole) or (short and _has(words, lexicon.asks_repeat))
         if expecting is Expecting.identity:
             if self._claims_to_be_the_borrower(words, lexicon) and not denies:
-                return Intent.yes, {}  # "हाँ मैं ही बोल रहा हूँ, आप कौन?": the claim stands
-            if _has(words, lexicon.who) or _has(words, lexicon.asks_who) or repeats:
-                return Intent.asks_repeat, {}
-            return (Intent.no if denies else Intent.said), {}
+                return Intent.yes, {"settled": True}
+            if _only(words, lexicon.identity_yes | lexicon.self_ok | lexicon.filler):
+                # "हाँ जी", "बोलिए", "हेलो": an acknowledgement, not a claim
+                return Intent.said, {"settled": True}
+            if _has(words, lexicon.who) or _has(words, lexicon.asks_who):
+                return Intent.asks_who, {"settled": len(words) <= 4}
+            if repeats:
+                return Intent.asks_repeat, {"settled": len(words) <= 4}
+            return (Intent.no if denies else Intent.said), {"settled": False}
         after_loan = expecting not in _NO_ACCOUNT_OF_THE_SALE
         if _has(words, lexicon.asks_who) and not (after_loan and _has(words, lexicon.narrative)):
             return Intent.asks_who, {}
@@ -336,7 +396,7 @@ class RuleInterpreter:
             return Intent.took_nothing, {}
         if repeats:
             return Intent.asks_repeat, {}
-        if expecting is Expecting.confirmation and _has(words, lexicon.dont_know):
+        if expecting in (Expecting.confirmation, Expecting.stop_check) and _has(words, lexicon.dont_know):
             return Intent.dont_know, {}  # "पता नहीं" holds a no-word and is not a no to the read-back
         if expecting in (Expecting.go_ahead, Expecting.confirmation, Expecting.stop_check):
             if denies:

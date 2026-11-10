@@ -17,26 +17,26 @@ OUT = Path(__file__).resolve().parents[3] / "references" / "pilots" / "P2-lines-
 
 # key -> (plain English meaning, when it is said)
 MEANINGS: dict[str, tuple[str, str]] = {
-    "right_party.ask": ("Hello. Am I speaking with {first_name}?", "First line of every call."),
+    "right_party.ask": ("Hello, are you {first_name}?", "First line of every call."),
     "right_party.reask": (
         "This is an automated customer-care call for {first_name}. Are you {first_name} yourself?",
-        'Once, when the first reply does not claim to be the borrower ("who?", "tell me", silence).',
+        'Once, when the first reply is not an explicit first-person claim ("haan boliye", "ji", "hello", silence).',
     ),
     "end.third_party": (
-        "This was a customer-care call for {first_name}. We will try again later. Thank you, goodbye.",
-        "Ends the call when the speaker is someone else, or never says they are the borrower.",
+        "We will talk to {first_name} later. Thank you.",
+        "Ends the call when the speaker is someone else, hands the call to someone else, or never claims to be the borrower.",
     ),
     "end.neutral": (
         "No problem. Sorry to have troubled you. Goodbye.",
         "Ends the call when there is no clear yes to going ahead, after one re-ask.",
     ),
     "disclosure.who": (
-        "Thank you. I am an automated assistant from {lender} customer care.",
-        "After the borrower says yes to their name (opening line 1 of 4).",
+        "I am a computer-run voice from {lender} customer care, not a person.",
+        "After the borrower claims to be themselves (opening line 1 of 4).",
     ),
     "disclosure.not_sales": ("This is not a sales call; it is a feedback call.", "Opening line 2 of 4."),
     "disclosure.recording": (
-        "The call is being recorded, as set out in {lender}'s written notice.",
+        "The conversation is being recorded; the details are in {lender}'s written notice.",
         "Opening line 3 of 4.",
     ),
     "disclosure.go_ahead": (
@@ -44,7 +44,7 @@ MEANINGS: dict[str, tuple[str, str]] = {
         "Opening line 4 of 4; the customer can say no.",
     ),
     "disclosure.reask": (
-        "This is a feedback call from {lender}, not a sales call. Can we talk for two or three minutes now? Please say yes or no.",
+        "This is a feedback call from {lender}, not a sales call. Can we talk for two or three minutes now? Just say yes or no.",
         "Once, after an unclear reply to the go-ahead question.",
     ),
     "disclosure.never_ask": (
@@ -56,12 +56,12 @@ MEANINGS: dict[str, tuple[str, str]] = {
         "With the first mention of the loan, before the first question about it.",
     ),
     "verify.before_loan": (
-        "This call is from {lender} customer care. If in doubt, hang up and call {lender}'s customer-care number yourself to check. We never ask for an OTP or PIN.",
-        "When the customer asks who is calling or whether the call is genuine, before the loan is named (at most twice); then the question again.",
+        "This is a feedback call from {lender} customer care; what it is about we will say once the year of birth is confirmed. If in doubt, hang up and ask {lender} customer care yourself. We never ask for an OTP or PIN.",
+        "When the customer asks who is calling, what this is about or whether it is genuine, after the name claim and before the loan is named (at most twice); then the question again.",
     ),
     "verify.after_loan": (
-        "This call is from {lender} customer care. If in doubt, hang up and call the customer-care number printed on your loan papers. We never ask for an OTP or PIN.",
-        "The same, after the loan is named.",
+        "This call is a few short questions about the loan you recently took from {lender}. If in doubt, hang up and call the customer-care number printed on your loan papers. We never ask for an OTP or PIN.",
+        "The same, after the loan is named; then the question again.",
     ),
     "second_check.ask": (
         "To confirm, please tell me your year of birth. Just the year.",
@@ -76,7 +76,7 @@ MEANINGS: dict[str, tuple[str, str]] = {
         "Ends the call after a second wrong or unclear year. The loan is never mentioned.",
     ),
     "context.loan": (
-        "Thank you. This call is about the loan you recently took from {lender}.",
+        "Thank you. A few questions about the loan you recently took from {lender}.",
         "After the year matches: the first time the loan is named.",
     ),
     "open_recall.ask": (
@@ -166,27 +166,27 @@ MEANINGS: dict[str, tuple[str, str]] = {
         "Once, after an unclear answer.",
     ),
     "consent.ask": (
-        "When you took the loan, what things did you say yes to, and how was your yes taken?",
+        "When you took the loan, what things did you say yes to? And in what way did you give that yes?",
         "After the last product (or straight after the recall follow-up when the customer took nothing).",
     ),
     "consent.reask": (
-        "I mean, what were you asked to agree to, and in what way?",
+        "I mean, what were you asked to say yes to, and in what way did you give that yes?",
         "Once, after an unclear answer.",
     ),
     "read_back.confirm": (
-        "So you paid {amount_words} rupees for it, that is {amount_digits}. Is that right?",
-        "Straight after the premium answer: the customer's own figure, never the record's.",
+        "So you paid {amount_words} rupees for it. Is that right?",
+        "Straight after the premium answer (or after the kind question, when the customer already gave the figure in open recall): the customer's own figure, in words only.",
     ),
     "read_back.confirm_about": (
         "So you paid about {amount_words} rupees for it. Is that right?",
         'Instead, when the customer gave the amount as "about X" or "X to Y".',
     ),
     "read_back.cover_confirm": (
-        "So you get up to {amount_words} rupees from it, that is {amount_digits}. Is that right?",
+        "So you get up to {amount_words} rupees from it. Is that right?",
         "After the cover answer, only when the customer stated a cover amount.",
     ),
     "read_back.reconfirm": (
-        "Once more: {amount_words}, that is {amount_digits}. Is that right or not?",
+        "Once more: {amount_words} rupees. Is that right or not?",
         "After an unclear reply to a read-back, or when the two readings of the reply disagree (yes and no).",
     ),
     "read_back.restate": (
@@ -198,11 +198,11 @@ MEANINGS: dict[str, tuple[str, str]] = {
         "Before the next question when an answer stayed unclear after one re-ask.",
     ),
     "stop_check.decline": (
-        "Shall we carry on talking?",
-        "Once (at most twice a call) after a weak sign the customer wants to stop. Yes goes back to the question, no ends the call.",
+        "Shall I go on?",
+        "After a weak sign the customer wants to stop, or once when the classifier failed on a free reply. Yes goes back to the question, no ends the call.",
     ),
     "stop_check.human": (
-        "Would you like someone from our team to talk to you?",
+        "Would you like to talk to someone from our team?",
         "After a weak sign the customer wants a person.",
     ),
     "callback.when": (
@@ -239,7 +239,51 @@ MEANINGS: dict[str, tuple[str, str]] = {
         "Close of a completed call.",
     ),
     "close.bye": ("Goodbye.", "Last line of a completed call."),
+    "purpose.before_confirm": (
+        "This is a customer-care feedback call; the rest once we are sure we are speaking to the right person.",
+        "When someone asks who is calling or what it is about before claiming to be the borrower (at most twice); no lender, no loan. Then the re-ask.",
+    ),
+    "verify.short": (
+        "If in doubt, hang up and ask {lender} customer care yourself.",
+        "With the birth-year question.",
+    ),
+    "cover.say_again": (
+        "Please tell me that amount once more so it is noted correctly. Up to how much do you get from it?",
+        "Once per product, when the two speech readings of the cover amount disagree or only one heard a figure.",
+    ),
+    "stop_check.disengaged": (
+        "Shall I ask on, or stop here?",
+        'Once a call, after two unusable replies or three "I don\'t know"s in a row.',
+    ),
+    "end.do_not_call": (
+        "All right, we have noted not to call you again. Thank you, goodbye.",
+        "Ends the call when the customer asks not to be called again or to remove the number.",
+    ),
+    "end.written": (
+        "All right, we have noted that you want this in writing. Thank you, goodbye.",
+        "Ends the call when the customer asks for this in writing.",
+    ),
 }
+
+
+# Lines added or reworded in review round 2 (after the iteration-2 verifier), marked in the export.
+ROUND2_NEW = frozenset({"purpose.before_confirm", "verify.short", "cover.say_again", "stop_check.disengaged",
+                        "end.do_not_call", "end.written"})  # fmt: skip
+ROUND2_CHANGED = frozenset({
+    "right_party.ask", "end.third_party", "disclosure.who", "disclosure.recording", "disclosure.reask",
+    "verify.before_loan", "verify.after_loan", "context.loan", "consent.ask", "consent.reask", "read_back.confirm",
+    "read_back.cover_confirm", "read_back.reconfirm", "stop_check.decline", "stop_check.human", "end.human",
+})  # fmt: skip
+
+
+def _mark(key: str) -> str:
+    return (
+        " **(new, round 2)**"
+        if key in ROUND2_NEW
+        else " **(changed, round 2)**"
+        if key in ROUND2_CHANGED
+        else ""
+    )
 
 
 def _cell(text: str) -> str:
@@ -258,13 +302,16 @@ def main() -> None:
         "`{amount_digits}` only ever with the figure the customer said. Tamil and Kannada are not listed:",
         "they are experimental and not human-reviewed. Lines are in the order the call can say them.",
         "",
+        "**Round 2** (after the iteration-2 verifier): lines marked *new* or *changed* moved; the verifier's",
+        "eight wording changes are adopted, and read-backs say the figure in words only.",
+        "",
         "| Key | Hindi | Hinglish | Plain English meaning | When it is said |",
         "|---|---|---|---|---|",
     ]
     for key in LINES:
         meaning, when = MEANINGS[key]
         rows.append(
-            f"| `{key}` | {_cell(hi.templates[key])} | {_cell(he.templates[key])} | {_cell(meaning)} | {_cell(when)} |"
+            f"| `{key}`{_mark(key)} | {_cell(hi.templates[key])} | {_cell(he.templates[key])} | {_cell(meaning)} | {_cell(when)} |"
         )
     OUT.write_text("\n".join(rows) + "\n", encoding="utf-8")
     print(f"{len(LINES)} lines written to {OUT}")

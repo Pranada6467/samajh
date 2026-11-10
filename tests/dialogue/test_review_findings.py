@@ -157,7 +157,8 @@ def test_a_third_person_account_is_an_answer_and_a_first_person_one_is_asked_abo
 )
 def test_a_refusal_before_the_questions_start_ends_the_call_at_once(language, reply):
     call = play(record(), language, [CUSTOMERS[language].identity, reply])
-    assert call.end is not None and call.end.outcome in (Outcome.declined, Outcome.human_requested)
+    assert call.end is not None
+    assert call.end.outcome in (Outcome.declined, Outcome.human_requested, Outcome.do_not_call)
     assert not [key for key in call.keys if key.startswith("stop_check")]
 
 
@@ -283,7 +284,11 @@ def test_readings_that_still_differ_read_back_the_first_and_the_customer_can_cor
         "read_back.restate",
         "read_back.confirm",
     ]
-    read_backs = [t for t in call.state.turns if t.speaker is Speaker.bot and "यानी" in t.text]
+    read_backs = [
+        t
+        for t in call.state.turns
+        if t.speaker is Speaker.bot and t.step is CallStep.read_back and "सही रक़म" not in t.text
+    ]
     assert [parse_amount(t.text).rupees for t in read_backs] == [302000, 300200]
     assert call.state.premium_of(0) == 300200 and call.keys[-1] == "payment_source.ask"
     v25_first = play(record(), HI, [*customer.happy()[:PREMIUM], pair[::-1], pair[::-1]])

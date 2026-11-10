@@ -1,26 +1,38 @@
-"""An LLM second opinion for customer turns the word lists cannot place.
+"""The turn classifier: an LLM that judges every customer turn the word lists are not sure of.
 
 Kept apart from `interpret` so the call core imports no network client.
 
+Call v2, round 2. The word lists are a fast path only. The classifier is asked:
+- at the first-name and birth-year questions, about every reply that is not an exact tight match;
+- at the go-ahead question, about every reply;
+- later, whenever the word lists find no settled reading (`Interpretation.settled` is False).
+
+Every label it returns is honoured (`_READS_AS`). When it fails, times out (`timeout_s`, wall clock)
+or says `unclear`, the defaults are asymmetric: at the first-name and birth-year questions nobody is
+confirmed; later, the turn keeps the word lists' reading marked `degraded`, and the call asks once
+whether to go on. No exception from the client leaves `interpret`.
+
 The model is named here, not taken from the client's default: that default is chosen for extraction
-after the call and can change, and this call sits inside a live turn where every second is silence
-on the line. The call is cut off after `timeout_s` of wall-clock time. A failed or late call is never
-passed over in silence: the turn keeps the word lists' reading, is marked `degraded` (the machine
-lists it in `CallState.degraded_turns`), and the reason is logged.
+after the call, and this call sits inside a live turn.
 """
 
 from __future__ import annotations
 
 import logging
 from concurrent.futures import ThreadPoolExecutor
-from concurrent.futures import TimeoutError as FutureTimeout
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
-from samajh.clients.errors import ClientError
 from samajh.clients.llm import LlmClient, Message
-from samajh.dialogue.interpret import Expecting, Intent, Interpretation, RuleInterpreter, TurnInterpreter
+from samajh.dialogue.interpret import (
+    Expecting,
+    Intent,
+    Interpretation,
+    RuleInterpreter,
+    TurnInterpreter,
+    speaks_in_first_person,
+)
 from samajh.types import Language
 
 log = logging.getLogger(__name__)
@@ -30,24 +42,30 @@ FALLBACK_MODEL = "mistralai/mistral-small-3.2-24b-instruct"
 # The reply is one short JSON object. The room above that is for models that spend output tokens
 # on reasoning first: with 30, openai/gpt-6-luna came back cut off and empty.
 MAX_TOKENS = 512
-# Wall-clock limit on one LLM call inside a live turn (W9 report §6: the client's own default is 60 s
-# with retries). Past it the turn is read by the word lists alone.
+# Wall-clock limit on one classifier call inside a live turn (W9 report §6).
 TIMEOUT_S = 2.5
 # Calls that outlive their turn finish here in the background; their answer is dropped.
-_POOL = ThreadPoolExecutor(max_workers=4, thread_name_prefix="samajh-llm-fallback")
+_POOL = ThreadPoolExecutor(max_workers=4, thread_name_prefix="samajh-turn-classifier")
 
 
 class _Label(StrEnum):
+    confirms_self = "confirms_self"
+    wrong_person = "wrong_person"
+    third_party_handoff = "third_party_handoff"
     yes = "yes"
     no = "no"
-    wrong_person = "wrong_person"
-    decline = "decline"
-    wants_human = "wants_human"
+    answer = "answer"
     dont_know = "dont_know"
     asks_repeat = "asks_repeat"
-    asks_who = "asks_who"
+    who_or_why = "who_or_why"
+    refuse = "refuse"
+    stop = "stop"
+    human_request = "human_request"
+    call_back = "call_back"
+    remove_number = "remove_number"
+    written_request = "written_request"
     off_topic = "off_topic"
-    answer = "answer"
+    unclear = "unclear"
 
 
 class _Verdict(BaseModel):
@@ -56,76 +74,90 @@ class _Verdict(BaseModel):
     label: _Label
 
 
-_SYSTEM = """You label one customer reply in a phone call. A lender's automated assistant asked a \
-question about a loan and something bought with it; you see the question and the reply (Hindi, \
-Hinglish, Tamil or Kannada, as transcribed speech).
+_STAGE = {
+    Expecting.identity: "first_name: the assistant asked whether it is speaking with the person it named",
+    Expecting.go_ahead: "go_ahead: the assistant asked whether it may ask a few questions now",
+    Expecting.birth_year: "birth_year: the assistant asked the person for their own year of birth",
+    Expecting.stop_check: "stop_check: the assistant asked whether to go on with the call",
+}
+
+_SYSTEM = """You label one customer reply in a phone call. An automated customer-care assistant of a \
+lender is calling a named borrower about a recent loan and anything bought with it. You see the stage, \
+the assistant's question and the reply (Hindi, Hinglish, English, Tamil or Kannada, transcribed speech).
 
 Choose exactly one label:
-- answer: the reply says anything at all about the loan, the lender, its staff, the thing bought, \
-money, papers, or how the customer feels about them. Complaints are answers: "I never wanted it", \
-"they forced it on me", "nobody explained", "I got no time to read", "I spoke to the manager then", \
-"I refused but they added it". Vague, angry or wrong answers are still answers.
-- decline: the customer wants to end or stop THIS CALL now (busy now, call later, don't call me, \
-won't talk). Not wanting the product, or having refused it in the past, is NOT a decline.
-- wants_human: the customer asks, now, to be put through to a person or staff member instead of \
-the assistant. Having spoken to a manager or agent in the past is NOT this.
-- wrong_person: the speaker says they are not the person asked for, or it is a wrong number.
+- confirms_self: the speaker says, in the first person, that they ARE the person named in the question \
+("haan main hi bol raha hoon", "ji main Ramesh", "speaking"). A greeting or "yes, tell me" alone is NOT \
+this; use unclear.
+- wrong_person: the speaker is someone else, or speaks of the named person in the third person ("he is \
+out", "unki wife", "sahab meeting mein hain", "hamare ye", "mrs Ramesh", "ghar se bol rahi hoon"), gives \
+a different name, gives SOMEONE ELSE'S year of birth, or says it is a wrong number.
+- third_party_handoff: the speaker wants the call to go to someone else ("talk to my son, he handles it").
 - yes / no: a plain yes or no to a yes-or-no question.
-- dont_know: the customer says they do not know or do not remember.
-- asks_repeat: the customer did not hear or understand the question and wants it said again.
-- asks_who: the customer asks who is calling, from where, or whether this call is genuine or a fraud.
-- off_topic: the reply is plainly about something else altogether (the weather, chores, shopping, \
-words spoken to someone else in the room) and says nothing about the loan or the thing bought.
+- answer: the reply answers the question in substance, including complaints and accounts of what the \
+lender's staff said or did ("I refused but they added it", "the agent said call later"). At the \
+birth_year stage, a year the speaker gives as THEIR OWN is an answer.
+- dont_know: the speaker does not know or does not remember.
+- asks_repeat: the speaker did not hear or understand and wants the question again.
+- who_or_why: the speaker asks who is calling, from where, whether the call is genuine, or what it is \
+about. Asking for a real person is NOT this.
+- refuse: the speaker does not want to take part or answer (now or at all).
+- stop: the speaker wants to end the call now, or is leaving.
+- human_request: the speaker asks to talk to a human, a real person, staff or a manager now.
+- call_back: the speaker asks to be called at another time, or cannot talk now (driving, busy).
+- remove_number: the speaker asks not to be called again or to remove their number.
+- written_request: the speaker wants this in writing (a letter, an email) instead of a call.
+- off_topic: the reply is about something else altogether.
+- unclear: none of the above fits, or you are not sure."""
 
-When unsure, choose answer."""
-
-# What the LLM's label may do, by the kind of reply expected; any other label leaves the rule reading.
-# No entry ends a call on the LLM's word alone. Its "decline" and "wants_human" (and its "no" to
-# "may we go on?") become a question to the customer, and it cannot say "wrong person" at all:
-# on the held-out replies it took "I spoke to the branch manager about it" for a request for a
-# human and "what is this about?" for a wrong number. It is never asked at the first-name question.
-_OPEN = {
+# What each label does, by the kind of reply expected. A label missing from a stage's table leaves the
+# word lists' reading; at the first-name and birth-year questions that reading never confirms.
+_ENDS = {
+    _Label.refuse: Intent.decline,
+    _Label.stop: Intent.decline,
+    _Label.human_request: Intent.wants_human,
+    _Label.call_back: Intent.call_later,
+    _Label.remove_number: Intent.do_not_call,
+    _Label.written_request: Intent.written_request,
+    _Label.wrong_person: Intent.wrong_person,
+    _Label.third_party_handoff: Intent.wrong_person,
+    _Label.who_or_why: Intent.asks_who,
+}
+_LATER = _ENDS | {
+    _Label.answer: Intent.said,
+    _Label.confirms_self: Intent.said,
     _Label.dont_know: Intent.dont_know,
     _Label.asks_repeat: Intent.asks_repeat,
-    _Label.asks_who: Intent.asks_who,
     _Label.off_topic: Intent.off_topic,
+    _Label.unclear: Intent.unclear,
 }
-_STOP = {_Label.decline: Intent.maybe_decline, _Label.wants_human: Intent.maybe_human}
 _READS_AS: dict[Expecting, dict[_Label, Intent]] = {
-    Expecting.go_ahead: {
-        _Label.yes: Intent.yes,
-        _Label.no: Intent.maybe_decline,
-        _Label.asks_repeat: Intent.asks_repeat,
-        _Label.asks_who: Intent.asks_who,
-    }
-    | _STOP,
-    Expecting.stop_check: {_Label.yes: Intent.yes, _Label.no: Intent.no} | _STOP,
-    Expecting.confirmation: {
+    Expecting.identity: _ENDS | {_Label.confirms_self: Intent.yes, _Label.asks_repeat: Intent.asks_repeat},
+    Expecting.go_ahead: _ENDS
+    | {_Label.yes: Intent.yes, _Label.confirms_self: Intent.yes, _Label.no: Intent.no,
+       _Label.asks_repeat: Intent.asks_repeat},
+    Expecting.birth_year: _ENDS | {_Label.asks_repeat: Intent.asks_repeat},
+    Expecting.stop_check: {
         _Label.yes: Intent.yes,
         _Label.no: Intent.no,
-        _Label.asks_repeat: Intent.asks_repeat,
-        _Label.dont_know: Intent.dont_know,
-    }
-    | _STOP,
-    Expecting.birth_year: {_Label.asks_repeat: Intent.asks_repeat} | _STOP,
-    Expecting.open: _OPEN | _STOP,
-    Expecting.told: _OPEN | _STOP,
-    Expecting.either_or: _OPEN | _STOP,
-    Expecting.amount: _OPEN | _STOP,
-}
-# A weak stop signal from the word lists (a short "leave it", a refusal inside a first-person account)
-# is put to the LLM too: "answer" clears it, a stop label keeps the one question to the customer.
+        _Label.refuse: Intent.maybe_decline,
+        _Label.stop: Intent.maybe_decline,
+        _Label.human_request: Intent.maybe_human,
+    },
+    Expecting.open: _LATER,
+    Expecting.told: _LATER | {_Label.yes: Intent.yes, _Label.no: Intent.no},
+    Expecting.either_or: _LATER,
+    Expecting.amount: _LATER,
+    Expecting.confirmation: _LATER | {_Label.yes: Intent.yes, _Label.no: Intent.no},
+}  # fmt: skip
 _WEAK = frozenset({Intent.maybe_decline, Intent.maybe_human})
+_KEEPS_WEAK = frozenset(_ENDS.values()) | {Intent.said}
+# At these questions a failed, late or unsure classifier confirms nobody.
+_CONFIRMING = frozenset({Expecting.identity, Expecting.birth_year})
 
 
 class LlmFallbackInterpreter:
-    """The rules first; an LLM only for a turn the rules left as plain `said` or as a weak stop signal.
-
-    The LLM picks a label and nothing else: amounts and years always come from the rules, and no
-    label ends a call by itself (see `_READS_AS`). If the LLM call fails or takes longer than
-    `timeout_s`, the turn keeps the rules' reading, marked `degraded`, and the reason is logged as a
-    warning. The log line names the error and the model, never the customer's words.
-    """
+    """The word lists first, as a fast path; the classifier for every reading they are not sure of."""
 
     def __init__(
         self,
@@ -147,31 +179,48 @@ class LlmFallbackInterpreter:
     ) -> Interpretation:
         first = self._rules.interpret(text, language=language, expecting=expecting, question=question)
         table = _READS_AS.get(expecting)
-        settled = first.amount_inr is not None and expecting in (Expecting.amount, Expecting.confirmation)
-        if table is None or settled or first.year is not None:
+        if table is None or first.settled:
             return first
-        if first.intent is not Intent.said and first.intent not in _WEAK:
-            return first
+        stage = _STAGE.get(
+            expecting, "question: the assistant asked about the loan or what was bought with it"
+        )
         messages = [
             Message(role="system", content=_SYSTEM),
-            Message(role="user", content=f"Question: {question}\nReply: {text}"),
+            Message(role="user", content=f"Stage: {stage}\nQuestion: {question}\nReply: {text}"),
         ]
         try:
             label = self._label(messages)
-        except (ClientError, FutureTimeout) as error:
+        except Exception as error:  # noqa: BLE001 - any client failure must leave the turn readable
             log.warning(
-                "LLM fallback failed, turn read by the word lists: %s from %s: %s",
+                "turn classifier failed, turn read by the word lists: %s from %s: %s",
                 type(error).__name__,
                 self._model,
                 error,
             )
-            return first.model_copy(update={"degraded": True})
-        if first.intent in _WEAK:
-            if label is _Label.answer:
-                return first.model_copy(update={"intent": Intent.said})
-            return first
+            return self._unjudged(first, expecting)
+        if expecting is Expecting.birth_year and label in (_Label.answer, _Label.confirms_self):
+            # Read as the speaker's own year: the loose year counts. No year at all: asked again.
+            return first.model_copy(update={"year": first.loose_year, "settled": True})
+        if label is _Label.confirms_self and not speaks_in_first_person(text, language):
+            label = _Label.unclear  # a claim needs an "I": an acknowledgement is not one
         intent = table.get(label)
-        return first if intent is None else first.model_copy(update={"intent": intent})
+        if intent is None or (expecting in _CONFIRMING and label is _Label.unclear):
+            return self._unjudged(first, expecting) if expecting in _CONFIRMING else first
+        if first.intent in _WEAK and intent not in _KEEPS_WEAK:
+            return first  # a weak stop signal stays one question to the customer unless clearly an answer or an end
+        if first.intent is Intent.yes and intent in (Intent.decline, Intent.call_later):
+            intent = Intent.maybe_decline  # "busy, but ask quickly": the two readings disagree, so ask once
+        update: dict = {"intent": intent, "settled": True}
+        if intent is Intent.call_later and first.callback is None:
+            update["callback"] = "ask"
+        return first.model_copy(update=update)
+
+    @staticmethod
+    def _unjudged(first: Interpretation, expecting: Expecting) -> Interpretation:
+        """No judgment: at the confirming questions nobody is confirmed; later, the call asks once."""
+        if expecting is Expecting.identity and first.intent is Intent.yes:
+            first = first.model_copy(update={"intent": Intent.said})
+        return first.model_copy(update={"degraded": True, "year": None})
 
     def _label(self, messages: list[Message]) -> _Label:
         def ask() -> _Label:

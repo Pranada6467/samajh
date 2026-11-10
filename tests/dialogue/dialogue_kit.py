@@ -62,7 +62,7 @@ class Customer:
     identity: str
     go_ahead: str
     year: str  # 1984
-    recall: str
+    recall: str  # names the product, gives no figure (a figure would be carried forward to the read-back)
     answers: tuple[str, ...]  # one per PRODUCT_QUESTIONS entry; the premium answer is 52,000
     consent: str
     confirm: str
@@ -94,7 +94,7 @@ CUSTOMERS: dict[Language, Customer] = {
         identity="हाँ जी, बोल रहा हूँ",
         go_ahead="हाँ, ठीक है",
         year="उन्नीस सौ चौरासी",
-        recall="बस एक एफडी, लोन सिक्योरिटी के लिए, बावन हज़ार की",
+        recall="बस एक एफडी, लोन सिक्योरिटी के लिए",
         answers=(
             "एफडी है",
             "बावन हज़ार",
@@ -125,7 +125,7 @@ CUSTOMERS: dict[Language, Customer] = {
         identity="yes, speaking",
         go_ahead="हाँ okay",
         year="1984",
-        recall="बस एक FD ली थी loan security के लिए, fifty two thousand की",
+        recall="बस एक FD ली थी loan security के लिए",
         answers=(
             "FD है",
             "fifty two thousand",
@@ -143,7 +143,7 @@ CUSTOMERS: dict[Language, Customer] = {
         reject="no, wrong है",
         correction="नहीं, fifty five thousand",
         corrected="fifty five thousand",
-        decline="I am not interested, please don't call",
+        decline="I am not interested, I don't want to talk",
         human="mujhe kisi agent se baat karni hai",
         wrong_person="wrong number",
         who="who is this?",
@@ -156,7 +156,7 @@ CUSTOMERS: dict[Language, Customer] = {
         identity="ஆமா, நான்தான் பேசுறேன்",
         go_ahead="சரி, சொல்லுங்க",
         year="1984",
-        recall="ஒரு எஃப்டி மட்டும், கடன் பாதுகாப்புக்கு, ஐம்பத்திரண்டாயிரம்",
+        recall="ஒரு எஃப்டி மட்டும், கடன் பாதுகாப்புக்கு",
         answers=(
             "அது எஃப்டி",
             "ஐம்பத்திரண்டாயிரம்",
@@ -174,7 +174,7 @@ CUSTOMERS: dict[Language, Customer] = {
         reject="இல்லை, தவறு",
         correction="இல்லை, ஐம்பத்தைந்தாயிரம்",
         corrected="ஐம்பத்தைந்தாயிரம்",
-        decline="எனக்கு பேச விருப்பம் இல்லை, கூப்பிடாதீங்க",
+        decline="எனக்கு பேச விருப்பம் இல்லை",
         human="ஒரு அதிகாரி கிட்ட பேசணும்",
         wrong_person="ராங் நம்பர்",
         who="யார் பேசுறீங்க?",
@@ -187,7 +187,7 @@ CUSTOMERS: dict[Language, Customer] = {
         identity="ಹೌದು, ನಾನೇ ಮಾತಾಡ್ತಿದ್ದೀನಿ",
         go_ahead="ಸರಿ, ಹೇಳಿ",
         year="1984",
-        recall="ಒಂದು ಎಫ್‌ಡಿ ಮಾತ್ರ, ಸಾಲದ ಭದ್ರತೆಗೆ, ಐವತ್ತೆರಡು ಸಾವಿರ",
+        recall="ಒಂದು ಎಫ್‌ಡಿ ಮಾತ್ರ, ಸಾಲದ ಭದ್ರತೆಗೆ",
         answers=(
             "ಅದು ಎಫ್‌ಡಿ",
             "ಐವತ್ತೆರಡು ಸಾವಿರ",
@@ -205,7 +205,7 @@ CUSTOMERS: dict[Language, Customer] = {
         reject="ಇಲ್ಲ, ತಪ್ಪು",
         correction="ಇಲ್ಲ, ಐವತ್ತೈದು ಸಾವಿರ",
         corrected="ಐವತ್ತೈದು ಸಾವಿರ",
-        decline="ನನಗೆ ಮಾತಾಡಲು ಇಷ್ಟ ಇಲ್ಲ, ಕರೆ ಮಾಡಬೇಡಿ",
+        decline="ನನಗೆ ಮಾತಾಡಲು ಇಷ್ಟ ಇಲ್ಲ",
         human="ಒಬ್ಬ ಅಧಿಕಾರಿ ಜೊತೆ ಮಾತಾಡಬೇಕು",
         wrong_person="ರಾಂಗ್ ನಂಬರ್",
         who="ಯಾರು ಮಾತಾಡ್ತಿರೋದು?",

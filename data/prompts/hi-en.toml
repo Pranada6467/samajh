@@ -12,23 +12,19 @@ range_word = "से"
 
 [lines."right_party.ask"]
 design = "§5 step 1: confirm the first name; nothing else is said yet"
-text = "Hello। क्या मेरी बात {first_name} जी से हो रही है?"
+text = "Hello, क्या आप {first_name} जी हैं?"
 
 [lines."right_party.reask"]
 design = "§5 step 1 and the one-re-ask rule: asks whether the speaker is the borrower, not whether he is there; no lender, no loan"
 text = "यह {first_name} जी के लिए एक automated customer care call है। क्या आप ख़ुद {first_name} जी बोल रहे हैं?"
 
-[lines."end.third_party"]
-design = "§5 step 1: someone who is not the borrower, or never says they are, hears only who the call was for"
-text = "यह {first_name} जी के लिए customer care की call थी। हम बाद में फिर try करेंगे। Thank you, नमस्ते।"
-
-[lines."end.neutral"]
-design = "§5 step 2: no clear yes to going ahead; the bot ends and says nothing about a loan"
-text = "कोई बात नहीं। Disturb करने के लिए sorry। नमस्ते।"
+[lines."purpose.before_confirm"]
+design = "§5 step 1: 'what is this about?' before anyone has claimed to be the borrower; no lender, no loan"
+text = "यह एक customer care feedback call है; बाक़ी बात सही person से बात confirm होने के बाद।"
 
 [lines."disclosure.who"]
 design = "§5 step 2: the bank's name, customer care, an automated assistant (FREE-AI report para 4.4.54)"
-text = "Thank you। मैं {lender} customer care से automated assistant हूँ।"
+text = "मैं {lender} customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।"
 
 [lines."disclosure.not_sales"]
 design = "§5 step 2: not a sales call (TCCCPR), and its purpose, feedback (DPDP Act s.5)"
@@ -36,7 +32,7 @@ text = "यह sales नहीं, feedback call है।"
 
 [lines."disclosure.recording"]
 design = "§5 step 2: recorded (our choice), with the pointer to the written notice (DPDP Act ss.5-6)"
-text = "Call record हो रही है, {lender} के written notice के हिसाब से।"
+text = "बातचीत record हो रही है; जानकारी {lender} के written notice में है।"
 
 [lines."disclosure.go_ahead"]
 design = "§5 step 2: the customer can decline, so the bot asks before going on"
@@ -44,7 +40,7 @@ text = "क्या दो-तीन minute बात करें?"
 
 [lines."disclosure.reask"]
 design = "§5 step 2 and the one-re-ask rule"
-text = "यह {lender} की feedback call है, sales call नहीं। क्या अभी दो-तीन minute बात करें? हाँ या ना में बताइए।"
+text = "यह {lender} की feedback call है, sales call नहीं। क्या अभी दो-तीन minute बात करें? बस हाँ या ना कह दीजिए।"
 
 [lines."disclosure.never_ask"]
 design = "§5 step 2: never an OTP, PIN, password or account number; said with the birth-year question, where it matters"
@@ -56,11 +52,15 @@ text = "रुकना हो या किसी इंसान से बा
 
 [lines."verify.before_loan"]
 design = "§5 step 2: how to check the call is genuine, on request before the loan is named; never names the loan"
-text = "यह call {lender} customer care की तरफ़ से है। Doubt हो तो phone रखकर {lender} के customer care number पर ख़ुद call करके पूछ लीजिए। हम कभी O-T-P या PIN नहीं माँगते।"
+text = "यह {lender} customer care की feedback call है; किस बारे में है, यह birth year confirm होने के बाद बताएँगे। Doubt हो तो phone रखकर {lender} customer care पर ख़ुद पूछ लीजिए। हम कभी O-T-P या PIN नहीं माँगते।"
 
 [lines."verify.after_loan"]
 design = "§5 step 2: how to check the call is genuine, on request after the loan is named"
-text = "यह call {lender} customer care की तरफ़ से है। Doubt हो तो phone रखकर अपने loan papers पर छपे customer care number पर call कर लीजिए। हम कभी O-T-P या PIN नहीं माँगते।"
+text = "यह call {lender} से लिए आपके हाल के loan के बारे में कुछ छोटे questions के लिए है। Doubt हो तो phone रखकर loan papers पर छपे customer care number पर पूछ लीजिए। हम कभी O-T-P या PIN नहीं माँगते।"
+
+[lines."verify.short"]
+design = "§5 step 2: one short line on checking the call, said with the birth-year question (review round 2)"
+text = "Doubt हो तो phone रखकर {lender} customer care पर ख़ुद पूछ सकते हैं।"
 
 [lines."second_check.ask"]
 design = "§5 step 3: one low-sensitivity fact, the year of birth; never account digits"
@@ -70,13 +70,9 @@ text = "Confirm करने के लिए, अपना birth year बता
 design = "§5 step 3 and the one-re-ask rule; the same line whether the year was unclear or did not match, and it claims neither"
 text = "एक बार फिर, सिर्फ़ अपना birth year बताइए।"
 
-[lines."end.check_failed"]
-design = "§5 step 3: the check did not pass, so the loan is never mentioned"
-text = "Sorry, अभी confirm नहीं हो पाया, इसलिए call यहीं end करते हैं। ज़रूरत हो तो आप {lender} customer care से बात कर सकते हैं। Thank you।"
-
 [lines."context.loan"]
 design = "§5 step 4: only now does the bot mention the loan"
-text = "Thank you। यह call {lender} से लिए आपके हाल के loan के बारे में है।"
+text = "Thank you। आपने हाल ही में {lender} से जो loan लिया, उसके बारे में कुछ questions हैं।"
 
 [lines."open_recall.ask"]
 design = "§5 step 5: open recall before any product is named; asks whether anything was taken instead of presupposing it"
@@ -158,6 +154,10 @@ text = "उससे आपको क्या मिलता है? कोई
 design = "§5 step 6 and the one-re-ask rule"
 text = "मतलब, वो आपके किस काम आता है? जो समझ में आया हो, बताइए।"
 
+[lines."cover.say_again"]
+design = "§6 two readings, applied to the cover figure: they disagreed, so the amount is asked for once more"
+text = "वो amount एक बार और बता दीजिए, ताकि सही note हो। उससे कितने तक का मिलता है?"
+
 [lines."term.ask"]
 design = "§5 step 6 '... and for how long?'"
 text = "वो कितने time के लिए है?"
@@ -184,15 +184,15 @@ text = "मतलब, उसमें लगे पैसे का आगे �
 
 [lines."consent.ask"]
 design = "§5 step 7: what the customer agreed to and how (correction 12); the call never captures consent"
-text = "Loan लेते time आपने किन-किन चीज़ों के लिए हाँ बोला था, और आपकी हाँ कैसे ली गई थी?"
+text = "Loan लेते time आपने किन-किन चीज़ों के लिए हाँ बोला था? और वो हाँ आपने किस तरह दी थी?"
 
 [lines."consent.reask"]
 design = "§5 step 7 and the one-re-ask rule"
-text = "मतलब, आपसे किस चीज़ के लिए हाँ ली गई, और किस तरह?"
+text = "मतलब, आपसे किस चीज़ के लिए हाँ ली गई, और वो हाँ आपने किस तरह दी थी?"
 
 [lines."read_back.confirm"]
 design = "§5 step 8: straight after the premium answer, the customer's figure in words and digits, and what it is for"
-text = "तो आपने उसके लिए {amount_words} rupees pay किए, यानी {amount_digits}। सही है?"
+text = "तो आपने उसके लिए {amount_words} rupees pay किए। सही है?"
 
 [lines."read_back.confirm_about"]
 design = "§5 step 8 for an amount said as 'about X' or 'X to Y': read back as said (P3a contract §4)"
@@ -200,11 +200,11 @@ text = "तो आपने उसके लिए लगभग {amount_words} r
 
 [lines."read_back.cover_confirm"]
 design = "coordinator decision (iteration 2): a cover figure the customer stated is read back and confirmed, like the premium; never the record's"
-text = "तो उससे {amount_words} rupees तक मिलता है, यानी {amount_digits}। सही है?"
+text = "तो उससे {amount_words} rupees तक मिलता है। सही है?"
 
 [lines."read_back.reconfirm"]
 design = "§5 step 8 after an unclear reply, or when two readings of the reply disagree"
-text = "एक बार फिर: {amount_words}, यानी {amount_digits}। यह सही है या नहीं?"
+text = "एक बार फिर: {amount_words} rupees। यह सही है या नहीं?"
 
 [lines."read_back.restate"]
 design = "§5 step 8: the customer said the figure is wrong and gave no other"
@@ -216,15 +216,31 @@ text = "कोई बात नहीं, आगे बढ़ते हैं।
 
 [lines."stop_check.decline"]
 design = "§5 step 2: a weak sign the customer wants to stop is checked with one question, never argued with"
-text = "क्या हम बात continue करें?"
+text = "क्या मैं आगे बढ़ूँ?"
 
 [lines."stop_check.human"]
 design = "§5 step 2: the customer can ask for a human; a weak signal is checked with one question"
-text = "क्या आप चाहते हैं कि हमारी team से कोई इंसान आपसे बात करे?"
+text = "क्या आप हमारी team के किसी व्यक्ति से बात करना चाहेंगे?"
+
+[lines."stop_check.disengaged"]
+design = "§5: two unusable replies or three 'don't know' in a row get one 'ask on, or stop here?'"
+text = "क्या मैं आगे पूछूँ, या यहीं रोक दूँ?"
 
 [lines."callback.when"]
 design = "§5 step 2: the customer can stop; one who asks for a later call is asked when, once"
 text = "ठीक है। आपको कब call करें?"
+
+[lines."end.third_party"]
+design = "§5 step 1: someone who is not the borrower, or never says they are, hears only who the call was for"
+text = "हम {first_name} जी से बाद में बात कर लेंगे। Thank you।"
+
+[lines."end.neutral"]
+design = "§5 step 2: no clear yes to going ahead; the bot ends and says nothing about a loan"
+text = "कोई बात नहीं। Disturb करने के लिए sorry। नमस्ते।"
+
+[lines."end.check_failed"]
+design = "§5 step 3: the check did not pass, so the loan is never mentioned"
+text = "Sorry, अभी confirm नहीं हो पाया, इसलिए call यहीं end करते हैं। ज़रूरत हो तो आप {lender} customer care से बात कर सकते हैं। Thank you।"
 
 [lines."end.declined"]
 design = "§5 step 2: the customer can decline or stop at any time; no persuasion"
@@ -232,7 +248,7 @@ text = "ठीक है, कोई problem नहीं। आपके time �
 
 [lines."end.human"]
 design = "§5 step 2: the customer can ask for a human"
-text = "ठीक है, यह note कर लिया है। हमारी team से कोई आपको contact करेगा। Thank you, नमस्ते।"
+text = "ठीक है, यह note कर लिया है। हमारी team का कोई व्यक्ति आपको contact करेगा। Thank you, नमस्ते।"
 
 [lines."end.call_back"]
 design = "§5 step 2: the customer asked for another time; no time is promised"
@@ -245,6 +261,14 @@ text = "ठीक है, हम आपकी language में दोबार
 [lines."end.no_response"]
 design = "§5: nothing heard twice in a row; the call ends and says nothing about a loan"
 text = "आवाज़ नहीं आ रही है। हम बाद में फिर try करेंगे। नमस्ते।"
+
+[lines."end.do_not_call"]
+design = "§5 step 2: the customer asked not to be called again; the call ends and records it"
+text = "ठीक है, आगे call न करने की बात note कर ली है। Thank you, नमस्ते।"
+
+[lines."end.written"]
+design = "§5 step 2: the customer asked for this in writing; the call ends and records it"
+text = "ठीक है, यह note कर लिया है कि आप यह written में चाहते हैं। Thank you, नमस्ते।"
 
 [lines."close.thanks"]
 design = "§5 step 9: thank you; no other product is mentioned"

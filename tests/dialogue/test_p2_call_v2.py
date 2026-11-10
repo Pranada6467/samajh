@@ -12,6 +12,7 @@ from __future__ import annotations
 import pytest
 from dialogue_kit import CUSTOMERS, LANGUAGES, play, product, record
 
+from samajh.amounts import parse_amount
 from samajh.dialogue import (
     LINES,
     PRODUCT_QUESTIONS,
@@ -151,7 +152,7 @@ def test_the_reask_asks_whether_the_speaker_is_the_borrower_not_whether_he_is_th
 
 @pytest.mark.parametrize(
     "replies",
-    [["कौन?", "बताइए"], ["कौन?", "okay go ahead"], ["हेलो?", "बोलिए बोलिए"], ["हाँ, आप कौन?", "किसलिए?"]],
+    [["कौन?", "बताइए"], ["कौन?", "okay go ahead"], ["हेलो?", "बोलिए बोलिए"], ["हाँ, आप कौन?", "हम्म"]],
 )
 def test_a_reply_that_does_not_claim_to_be_the_borrower_is_never_a_yes(replies):
     call = play(record(), HI, replies)
@@ -160,11 +161,28 @@ def test_a_reply_that_does_not_claim_to_be_the_borrower_is_never_a_yes(replies):
 
 
 @pytest.mark.parametrize(
-    "reply", ["हाँ जी", "जी हाँ, मैं ही हूँ", "हाँ, मैं रमेश बोल रहा हूँ", "yes, speaking", "हाँ बोलिए"]
+    "reply", ["जी हाँ, मैं ही हूँ", "हाँ, मैं ही बोल रहा हूँ", "yes, speaking", "हाँ जी, बोल रहा हूँ"]
 )
-def test_a_first_person_yes_goes_on(reply):
+def test_an_explicit_first_person_claim_goes_on(reply):
     call = play(record(), HI, [reply])
     assert call.keys[-1] == "disclosure.go_ahead"
+
+
+@pytest.mark.parametrize("ack", ["हाँ बोलिए", "जी कहिए", "जी", "हेलो", "नमस्ते", "हाँ जी", "haan boliye"])
+def test_an_acknowledgement_is_not_a_claim_and_twice_ends_the_call(ack):
+    call = play(record(), HI, [ack, ack])
+    assert call.keys == ("right_party.ask", "right_party.reask", "end.third_party")
+    assert call.end.outcome is Outcome.not_confirmed and "Udaharan" not in " ".join(
+        line.text for line in call.lines
+    )
+
+
+@pytest.mark.parametrize(
+    "reply", ["हाँ, मैं रमेश बोल रहा हूँ", "ji main Ramesh", "मैं सुरेश बोल रहा हूँ", "हाँ साहब बोलिए"]
+)
+def test_a_reply_outside_the_tight_patterns_never_confirms_without_the_classifier(reply):
+    call = play(record(), HI, [reply])
+    assert call.keys[-1] in ("right_party.reask", "end.third_party")
 
 
 # --- 2. refusals and non-refusals ---------------------------------------------------------------
@@ -629,7 +647,9 @@ def test_a_stated_cover_figure_is_read_back_and_confirmed():
     state, said = step(at_cover(), "पाँच लाख तक का कवर है")
     line = said.lines[-1]
     assert line.key == "read_back.cover_confirm" and line.step.value == "read_back"
-    assert line.asks is Question.cover and line.product_id == "P1" and "5,00,000" in line.text
+    assert (
+        line.asks is Question.cover and line.product_id == "P1" and parse_amount(line.text).rupees == 500000
+    )
     after, said = step(state, "हाँ")
     assert after.position.question is Question.term
 
@@ -639,8 +659,8 @@ def test_a_cover_figure_can_be_corrected_and_the_record_is_never_read():
     call = play(rec, HI, [*OPENING[HI], NAMED[HI], "एफडी", "बावन हज़ार", "हाँ", "लोन से", "एक बार", "मेरी मर्ज़ी थी",
                           "पाँच लाख", "नहीं, चार लाख", "हाँ"])  # fmt: skip
     readbacks = [line.text for line in call.lines if line.key == "read_back.cover_confirm"]
-    assert len(readbacks) == 2 and "5,00,000" in readbacks[0] and "4,00,000" in readbacks[1]
-    assert not any("9,00,000" in line.text for line in call.lines)
+    assert [parse_amount(t).rupees for t in readbacks] == [500000, 400000]
+    assert not any("नौ लाख" in line.text for line in call.lines)
     assert call.keys[-1] == "term.ask" and call.state.premium_of(0) == 52000
 
 

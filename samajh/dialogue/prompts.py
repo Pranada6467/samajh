@@ -21,7 +21,8 @@ from samajh.types import CallStep, Language, Question
 PROMPT_DIR = Path(__file__).resolve().parents[2] / "data" / "prompts"
 
 _ORDINAL = frozenset({"ordinal"})
-_AMOUNT = frozenset({"amount_words", "amount_digits"})
+# Read-backs say the figure in words only: the digit form made the voice say it twice.
+_AMOUNT = frozenset({"amount_words"})
 
 
 @dataclass(frozen=True)
@@ -39,6 +40,7 @@ def _question(key: str, question: Question) -> dict[str, LineSpec]:
 LINES: dict[str, LineSpec] = {
     "right_party.ask": LineSpec(CallStep.right_party_check, slots=frozenset({"first_name"})),
     "right_party.reask": LineSpec(CallStep.right_party_check, slots=frozenset({"first_name"})),
+    "purpose.before_confirm": LineSpec(CallStep.right_party_check),  # no lender, no loan
     "disclosure.who": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
     "disclosure.not_sales": LineSpec(CallStep.disclosure),
     "disclosure.recording": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
@@ -48,6 +50,9 @@ LINES: dict[str, LineSpec] = {
     "disclosure.rights": LineSpec(CallStep.context),  # said with the first mention of the loan
     "verify.before_loan": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
     "verify.after_loan": LineSpec(CallStep.context, slots=frozenset({"lender"})),
+    "verify.short": LineSpec(
+        CallStep.second_check, slots=frozenset({"lender"})
+    ),  # with the birth-year question
     "second_check.ask": LineSpec(CallStep.second_check),
     "second_check.reask": LineSpec(CallStep.second_check),
     "context.loan": LineSpec(CallStep.context, slots=frozenset({"lender"})),
@@ -64,19 +69,21 @@ LINES: dict[str, LineSpec] = {
     **_question("required_for_loan", Question.required_for_loan),
     **_question("provider_choice", Question.provider_choice),
     **_question("cover", Question.cover),
+    "cover.say_again": LineSpec(CallStep.teach_back, Question.cover),
     **_question("term", Question.term),
     **_question("cancel_window", Question.cancel_window),
     **_question("features", Question.features),
     "consent.ask": LineSpec(CallStep.consent_check, Question.consent),
     "consent.reask": LineSpec(CallStep.consent_check, Question.consent),
     "read_back.confirm": LineSpec(CallStep.read_back, Question.premium, _AMOUNT),
-    "read_back.confirm_about": LineSpec(CallStep.read_back, Question.premium, frozenset({"amount_words"})),
+    "read_back.confirm_about": LineSpec(CallStep.read_back, Question.premium, _AMOUNT),
     "read_back.cover_confirm": LineSpec(CallStep.read_back, Question.cover, _AMOUNT),
     "read_back.reconfirm": LineSpec(CallStep.read_back, Question.premium, _AMOUNT),
     "read_back.restate": LineSpec(CallStep.read_back, Question.premium),
     "bridge.moving_on": LineSpec(CallStep.teach_back),
     "stop_check.decline": LineSpec(CallStep.close),
     "stop_check.human": LineSpec(CallStep.close),
+    "stop_check.disengaged": LineSpec(CallStep.close),
     "callback.when": LineSpec(CallStep.close),
     "end.third_party": LineSpec(CallStep.close, slots=frozenset({"first_name"})),
     "end.neutral": LineSpec(CallStep.close),
@@ -86,6 +93,8 @@ LINES: dict[str, LineSpec] = {
     "end.call_back": LineSpec(CallStep.close),
     "end.language": LineSpec(CallStep.close),
     "end.no_response": LineSpec(CallStep.close),
+    "end.do_not_call": LineSpec(CallStep.close),
+    "end.written": LineSpec(CallStep.close),
     "close.thanks": LineSpec(CallStep.close),
     "close.may_call_back": LineSpec(CallStep.close),
     "close.verify": LineSpec(CallStep.close, slots=frozenset({"lender"})),

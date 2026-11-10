@@ -80,12 +80,21 @@ def test_wrong_person_ends_the_call_with_one_neutral_line(language, reply):
 
 
 @pytest.mark.parametrize("language", LANGUAGES)
-@pytest.mark.parametrize("replies", [("who", "filler"), ("repeat", "repeat"), ("", "filler")])
+@pytest.mark.parametrize("replies", [("repeat", "repeat"), ("", "filler"), ("filler", "filler")])
 def test_no_confirmation_is_asked_once_more_then_the_call_ends(language, replies):
     said = [getattr(CUSTOMERS[language], r) if r else "" for r in replies]
     call = play(record(), language, said)
     assert call.end.outcome is Outcome.not_confirmed
     assert call.keys == ("right_party.ask", "right_party.reask", "end.third_party")
+    assert all(LENDER not in line.text for line in call.lines)
+
+
+@pytest.mark.parametrize("language", LANGUAGES)
+def test_who_is_this_gets_the_purpose_without_the_lender_then_the_reask(language):
+    customer = CUSTOMERS[language]
+    call = play(record(), language, [customer.who, customer.filler])
+    assert call.keys == ("right_party.ask", "purpose.before_confirm", "right_party.reask", "end.third_party")
+    assert call.end.outcome is Outcome.not_confirmed
     assert all(LENDER not in line.text for line in call.lines)
 
 
@@ -101,7 +110,12 @@ def test_who_is_this_then_yes_goes_on_to_the_disclosure(language):
     customer = CUSTOMERS[language]
     call = play(record(), language, [customer.who, customer.identity])
     assert call.end is None
-    assert call.keys[:3] == ("right_party.ask", "right_party.reask", "disclosure.who")
+    assert call.keys[:4] == (
+        "right_party.ask",
+        "purpose.before_confirm",
+        "right_party.reask",
+        "disclosure.who",
+    )
 
 
 @pytest.mark.parametrize("language", LANGUAGES)
@@ -159,10 +173,11 @@ def test_an_unclear_answer_is_asked_once_more_then_recorded_and_the_call_moves_o
     customer = CUSTOMERS[language]
     noise = getattr(customer, unclear)
     replies = [customer.identity, customer.go_ahead, customer.year, customer.recall]
-    replies += [noise, noise] * (len(PRODUCT_QUESTIONS) + 1)  # every product question, then consent
+    replies += [noise] * (2 * (len(PRODUCT_QUESTIONS) + 1) + 1)  # every question twice, and the one check
     call = play(record(), language, replies)
 
     assert call.end.outcome is Outcome.completed
+    assert call.keys.count("stop_check.disengaged") == 1  # after the first two unusable replies, once a call
     asked = [line.key for line in call.lines if line.key.endswith((".ask", ".reask"))]
     for name in [*[q.value for q in PRODUCT_QUESTIONS], "consent"]:
         assert asked.count(f"{name}.ask") == 1 and asked.count(f"{name}.reask") == 1
@@ -177,7 +192,10 @@ def test_an_unclear_answer_is_asked_once_more_then_recorded_and_the_call_moves_o
 def test_an_open_recall_unclear_twice_gets_the_one_follow_up(language, unclear):
     customer = CUSTOMERS[language]
     noise = getattr(customer, unclear)
-    call = play(record(), language, [*customer.happy()[:RECALL], noise, noise, noise, customer.consent])
+    call = play(
+        record(), language, [*customer.happy()[:RECALL], noise, noise, noise, noise, customer.consent]
+    )
+    assert call.keys.count("stop_check.disengaged") == 1
     assert call.keys.count("open_recall.reask") == 1 and call.keys.count("open_recall.nothing") == 1
     assert call.end.outcome is Outcome.completed
     assert [u.step for u in call.end.unresolved] == [CallStep.open_recall, CallStep.open_recall]
@@ -198,9 +216,10 @@ def test_a_clear_answer_to_the_reask_leaves_nothing_unresolved(language):
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_dont_know_is_an_answer_and_is_not_asked_again(language):
     customer = CUSTOMERS[language]
-    replies = customer.happy()[:FIRST_ANSWER] + [customer.dont_know] * (len(PRODUCT_QUESTIONS) + 1)
+    replies = customer.happy()[:FIRST_ANSWER] + [customer.dont_know] * (len(PRODUCT_QUESTIONS) + 2)
     call = play(record(), language, replies)
     assert call.end.outcome is Outcome.completed and call.end.unresolved == ()
+    assert call.keys.count("stop_check.disengaged") == 1  # after three in a row; going on keeps the answer
     assert not [key for key in call.keys if key.endswith(".reask")]
     assert CallStep.read_back not in {line.step for line in call.lines}
 
@@ -210,7 +229,8 @@ def test_read_back_says_the_customers_figure_in_words_and_digits(language):
     call = play(record(product(premium_inr=61000)), language, CUSTOMERS[language].happy())
     read_back = next(line for line in call.lines if line.key == "read_back.confirm")
     assert parse_amount(read_back.text).rupees == 52000  # what the customer said, not the 61,000 on record
-    assert "52,000" in read_back.text and read_back.asks is Question.premium and read_back.product_id == "P1"
+    assert read_back.asks is Question.premium and read_back.product_id == "P1"
+    assert not any(ch.isdigit() for ch in read_back.text)  # words only: the voice says it once
 
 
 @pytest.mark.parametrize("language", LANGUAGES)
@@ -256,7 +276,7 @@ def test_read_back_loop_is_bounded(language):
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_unclear_reply_to_a_read_back_repeats_it_then_gives_up(language):
     customer = CUSTOMERS[language]
-    replies = customer.happy()[:READ_BACK] + [customer.filler] * 2 + customer.happy()[READ_BACK + 1 :]
+    replies = customer.happy()[:READ_BACK] + [customer.filler] * 3 + customer.happy()[READ_BACK + 1 :]
     call = play(record(), language, replies, limits=Limits(max_read_backs=2))
     assert call.end.outcome is Outcome.completed
     assert [k for k in call.keys if k.startswith("read_back")] == ["read_back.confirm", "read_back.reconfirm"]

@@ -13,7 +13,6 @@ from samajh.amounts import (
     NOT_HUMAN_REVIEWED,
     Approximate,
     Parsed,
-    format_inr,
     parse_amount,
     parse_approx_amount,
     spoken_amount,
@@ -66,7 +65,7 @@ def test_no_template_holds_banned_wording_or_a_digit(language):
 def test_lines_are_short_enough_to_speak(language):
     pack = load_prompts(language)
     slots = {"first_name": "Ramesh", "lender": "Udaharan Bank", "ordinal": pack.ordinal(0),
-             "amount_words": spoken_amount(1_275_450, language), "amount_digits": format_inr(1_275_450)}  # fmt: skip
+             "amount_words": spoken_amount(1_275_450, language)}  # fmt: skip
     for key in LINES:
         text = pack.render(key, **{name: slots[name] for name in LINES[key].slots})
         assert len(text) <= MAX_LINE_CHARS, (key, len(text))
@@ -93,9 +92,7 @@ def test_a_read_back_line_parses_back_to_the_amount_it_reads(language):
     amounts |= {k * 1000 for k in range(1, 200)} | {k * 100 for k in range(1, 100)} | {52000, 55000, 175000}
     for key in ("read_back.confirm", "read_back.cover_confirm", "read_back.reconfirm"):
         for amount in amounts:
-            text = pack.render(
-                key, amount_words=spoken_amount(amount, language), amount_digits=format_inr(amount)
-            )
+            text = pack.render(key, amount_words=spoken_amount(amount, language))
             heard = parse_amount(text)
             assert isinstance(heard, Parsed) and heard.rupees == amount, text
 

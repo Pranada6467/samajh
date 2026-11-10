@@ -64,4 +64,4 @@ def test_a_turn_typed_as_two_transcripts_is_heard_twice(monkeypatch, capsys):
     assert main(["play", "--record", RECORD, "--lang", "hi"]) == 0
     printed = capsys.readouterr().out
     assert printed.count("BOT  [teach_back/premium]") == 2  # the question, then the one say-again
-    assert "52,000। सही है?" in printed and "unresolved questions: 0" in printed
+    assert "बावन हज़ार रुपये दिए। सही है?" in printed and "unresolved questions: 0" in printed

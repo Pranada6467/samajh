@@ -1,6 +1,6 @@
 # Samajh: what you personally need to do
 
-**Status (2026-11-10, kept current by the coordinator):** human calls are NOT open yet. Ready now: the dashboard reading, recruiting friends, the decisions in §2.5. Waiting on packages P1 and P2 for the wording review, the listening pass and the calls.
+**Status (2026-11-10, kept current by the coordinator):** human calls are NOT open yet. Ready now: the dashboard reading, recruiting friends, the decisions in §2.5, and two short answers for the coordinator (§2.7: what the phrase "teen lakh chalis" means, and a go-ahead to copy two reports into the repo). **Hold the wording review (§2.2) until the P2 fix round lands:** an independent check found the call not ready for a live line, its lines are being changed, and `references/pilots/P2-lines-for-review.md` will be regenerated; the coordinator will say when to start. The listening pass and the calls wait for packages P1 and P2 to be verified. Keep the consent messages, the call log and friends' audio in `.samajh-human/` at the repo root; git ignores that folder.
 
 Written 2026-11-10 by the guide agent, from the repo as it stood that evening, and updated the same day with the coordinator's answers. Other agents are still building, so anything marked **coming** is not ready: do not do it yet. What is still open is in section 5. Suggestions that are mine, not the project's, are marked "(guide's suggestion)".
 
@@ -12,7 +12,7 @@ Package names used below: **P1** = the real call on the browser phone, **P2** = 
 |---|---|---|---|---|---|
 | 1 | Read the STT and TTS totals off the Gnani dashboard, twice | Every credit figure in the project is an estimate. A reading turns them into measurements | First reading now; second after the human calls | 5 to 10 min each | Dashboard numbers, the time, and the ledger output sent to the coordinator |
 | 2 | Line up one to three friends and get their consent | The human calls cannot happen without people. The judge calls them the single most valuable evidence | Now | 30 min of messages | Each person has sent a written yes to the points in §2.3 |
-| 3 | Review the Hindi and Hinglish wording of the bot's lines | No fluent human has read any line. The judge found the wording stiff where it matters | **Coming**: `references/pilots/P2-lines-for-review.md` appears when P2 is verified (not there yet) | About 1 to 2 hours (guide's estimate) | Every line marked keep, change or unsure |
+| 3 | Review the Hindi and Hinglish wording of the bot's lines | No fluent human has read any line. The judge found the wording stiff where it matters | **Hold**: do not start until the coordinator says the P2 fix round has landed; `references/pilots/P2-lines-for-review.md` exists but its lines are changing | About 1 to 2 hours (guide's estimate) | Every line marked keep, change or unsure |
 | 4 | Listen to the bot's lines and pick its voice | Nobody has checked by ear how Timbre says the lines, or compared the voices | **Coming**: after P1 pre-generates the bot's audio, the coordinator gives you a local page | Not estimated | A voice chosen per language; lines that sound wrong noted |
 | 5 | Make the human calls (P4) | Answers both objections at once: "synthetic voices" and "you scripted the customers" | **Coming**: on the coordinator's go signal (P1 and P2 verified) | About 2 hours with the friends (judge's estimate) | 20 calls made, each with a row in the log, failures included |
 | 6 | Record and post the demo video; submit the written explanation (P7) | It is the submission | **Coming**: last | Not estimated | Video posted with the tags; written explanation sent |
@@ -21,6 +21,8 @@ Package names used below: **P1** = the real call on the browser phone, **P2** = 
 | 9 | Keep the agents running | Workers stop when the account's usage limit is hit and do not restart themselves | Throughout | A glance now and then | Coordinator session open; stalled work resumed |
 | 10 | Be able to explain the project yourself | Internships are decided in individual interviews | Any time | A few hours of reading | You can explain the rule, the call and the main finding without notes |
 | 11 | Read the closing date and submission steps off the challenge page | Nobody in the project knows them (section 5) | Now | 10 min | Date and steps told to the coordinator |
+| 12 | Tell the coordinator what the spoken phrase "teen lakh chalis" means: 3,40,000 or 3,00,040 | It decides whether 14 of the 40 held-out number-formatting failures count as errors (section 2.7) | Now | 2 min | One line to the coordinator |
+| 13 | Say yes or no to copying two finished reports into the repo (`eval/amounts_v2/REPORT.md` and `references/pilots/gnani-number-formatting-report.md`) | They are written and sit in the coordinator's scratchpad until you agree | Now | 2 min | A yes or a no to the coordinator |
 
 ## 2. The tasks, step by step
 
@@ -40,7 +42,7 @@ Take one reading now and a second, the same way, after the human calls.
 
 ### 2.2 Hindi and Hinglish wording review (coming, do not start yet)
 
-**What it will be.** `references/pilots/P2-lines-for-review.md`: the bot's lines for you to read. It appears when package P2 is verified; it does not exist yet (checked). The lines themselves live in `data/prompts/hi.toml` and `hi-en.toml`. **Do not edit those files.** They are guarded by a lint and tests, and P2 is rewriting them now. Tamil and Kannada are out of scope for you: the project has cut them to an experimental appendix.
+**What it will be.** `references/pilots/P2-lines-for-review.md`: the bot's lines for you to read. A copy exists now, but the lines are still changing: wait until the coordinator regenerates it and tells you to start. The lines themselves live in `data/prompts/hi.toml` and `hi-en.toml`. **Do not edit those files.** They are guarded by a lint and tests, and P2 is rewriting them now. Tamil and Kannada are out of scope for you: the project has cut them to an experimental appendix.
 
 **How to mark it up** (convention confirmed by the coordinator). Add one line directly under each bot line, starting with `REVIEW:` and one of three words:
 
@@ -93,9 +95,19 @@ Rules for the markup, so an agent can apply it without asking you anything:
 | 1 | Suspects a fraud call |
 | 1 | Coached: was told to say yes to everything |
 
-**Who can take part.** You, and adults (18+) who agree. The challenge's own wording is "record yourself or your teammate with consent". The coordinator's recommendation follows from it: friends' recordings are used for the evaluation numbers only, stay on your machine, and never enter the repo or the video; the public video uses only your own voice. Whether to list a friend as a team member is your decision (§2.5).
+**You do not record anything yourself.** The call is a live conversation with the bot in Chrome on your laptop. The page takes the microphone, and the server saves the whole call by itself (see "What happens to the recordings"). WhatsApp voice notes and iPhone Voice Memos cannot be used: a recorded message is not a conversation, because the bot's next line depends on what it just heard and when the speaker stopped. Each person sits at your laptop for their calls; calling from another place or from a phone is not set up.
 
-**What each person must be told and agree to.** A written message from each person saying yes to the points below is enough; no form is needed. Send the points, get a written "yes, I agree" back, and keep the messages (screenshots or exports) in a local folder outside the public repo. The coordinator will name a gitignored folder for human-call material (section 5); until then use any folder outside the repo.
+**No script for the speakers.** They get a brief card and answer in their own words. A scripted call would bring back the objection these calls exist to answer ("you scripted the customers"). What you can prepare is what you say to them: the invitation and consent message, and a two-minute briefing before their first call (how the page works, play the person on the card, never say anything real, "I don't know" is a fine answer).
+
+**Practice calls** (decided by the coordinator). Each speaker makes one practice call before their counted calls, on the record "Ramesh: a gold loan and one add-on". It is logged with card id `practice-hero` and left out of every number. You may make a handful of practice calls now, with these limits:
+- Use the server that is already running. Do not restart it: a restart would load call code that an agent is editing.
+- If a bot line sounds odd, note it. It may be a mid-edit artefact, not a finding.
+- Stop when the coordinator says in chat that re-voicing or an evaluation is starting, until it says the key is clear.
+- A practice call is described only as "practice, n = 1, not scored", never as a result.
+
+**Who can take part.** You, and adults (18+) who agree; family members count the same as friends. The challenge's own wording is "record yourself or your teammate with consent". The coordinator's recommendation follows from it: friends' recordings are used for the evaluation numbers only, stay on your machine, and never enter the repo or the video; the public video uses only your own voice. Whether to list a friend as a team member is your decision (§2.5).
+
+**What each person must be told and agree to.** A written message from each person saying yes to the points below is enough; no form is needed. Send the points, get a written "yes, I agree" back, and keep the messages (screenshots or exports) in a local folder outside the public repo. Keep them in `.samajh-human/` at the repo root: git ignores that folder (checked in `.gitignore`), so nothing in it is published. Create it if it is not there.
 - What it is: a student project for Gnani AI's internship challenge. They play an invented bank customer on a short test call with a bot.
 - The whole call is recorded. Their voice is personal data under India's DPDP Act.
 - Where it goes: the audio is sent to Gnani's speech API to be transcribed. The text of what they say is sent to AI models through OpenRouter. The recording is kept on your laptop.
@@ -104,20 +116,25 @@ Rules for the markup, so an agent can apply it without asking you anything:
 - They can stop at any time. If they withdraw later, their recordings are deleted and their calls are dropped from the numbers (the report states how many calls were dropped).
 - They will play a made-up person. They must not say their real name, bank, loan, phone number, account number, Aadhaar, PAN or any other real detail. The bot never asks for an OTP, PIN, password or account number; if anything on the call seems to, they should not answer, and you note it.
 
-**What a brief card is.** One card per call. It tells the caller who they are playing and what they believe, and they answer in their own words. It is not a script: nothing on it is read aloud. An agent writes the real cards before the go signal; you do not write them. An illustration, built on the phone's existing demo record "Ramesh: a gold loan and one add-on":
+**What a brief card is.** One card per call. It is a fact sheet, not a script: it gives the speaker everything their character knows, in plain words, and marks what the character does not know. The speaker needs no knowledge of loans or insurance. They say those facts in their own words, the way they would on a real call, and nothing on the card is read aloud. Not knowing an answer is realistic and useful: "pata nahi" is a valid reply. An agent writes the real cards before the go signal; you do not write them. An illustration, built on the phone's existing demo record "Ramesh: a gold loan and one add-on":
 
 ```
 CARD H-01 (example only)                         Language: Hinglish
-You are Ramesh. If asked, your year of birth is 1984. (An invented person.)
-Your story: last month you took a gold loan of about five lakh. At the branch the
-officer said you also had to open an FD "for loan security". About fifty-two thousand
-was cut from the loan money for it. You signed many pages without reading them.
-You believe the money is yours and you can take it out later.
+You are Ramesh, born 1984. (An invented person.)
+What happened: last month you took a gold loan of about five lakh from your bank.
+What you know:
+- The officer said you also had to open an FD "for loan security".
+- About fifty-two thousand was cut from the loan money for it.
+- He said without it the loan would not be passed.
+- You signed many pages at the branch. Nobody explained them.
+- You believe the money is yours and you can take it out later.
+What you do not know: how long it runs, whether you could cancel it, what you get from it.
 How you talk: friendly, a little busy, short answers, Hindi mixed with English.
-Rules: answer from this story in your own words. If the card does not cover a
-question, say what this person would honestly say ("pata nahi" is a fine answer).
-Never say anything real about yourself.
+Rules: say these things in your own words. For anything not on the card, say what
+this person would honestly say. Never say anything real about yourself.
 ```
+
+The bot asks about the same topics on every call: who you are, your year of birth, what you took with the loan and for how much, what that thing is, how and how often it was paid for, whether it was required, what you get from it, how long it runs, whether you could cancel, what happens if you want the money back, and what you agreed to. A real card covers each of these, as something the character knows or does not know.
 
 **Equipment and room.**
 - Chrome on the laptop that runs the server. Nothing else is tested: no human has used the phone yet, and Safari, mobile browsers, real microphones, echo and noisy rooms are all untested. Friends sit at your laptop; remote calling is not set up.
@@ -130,10 +147,12 @@ Never say anything real about yourself.
 1. Wait for the go signal. The coordinator tells you in chat and updates the Status line at the top of this file.
 2. Tell the coordinator the time of your calling session first. Gnani allows one request at a time for the whole key. If an agent runs an evaluation during your call, your turns fail with `gnani_busy`.
 3. In the repo folder: `uv run python -m samajh.server --port 8085`
-4. Open `http://127.0.0.1:8085/` in Chrome. Pick the record and language the card names. Press "Place demo call", then "Answer".
+4. Open `http://127.0.0.1:8085/` in Chrome. Pick the record and language the card names. Press "Place demo call", then "Answer". When the call ends, copy the id shown beside "Session" into the log, and wait until the "Case file" box on the page has finished before the next call (guide's suggestion: the after-call work also uses the Gnani key).
 5. Every call spends Gnani credits. The code on disk now starts the Samajh call by default, but P1 is mid-build and unverified, and `README.md` still describes the older three-question stub. **Wait for the coordinator to say P1 and P2 are verified before making any call that counts.**
 
-**Keep a call log**: one CSV file, kept beside the consent messages, one row per call, written during or right after it. A failed call gets a row too. Columns:
+**The "who to play" note stays on screen.** The page shows a note under the header (for example "Play Ramesh, born 1984, ...") from the start screen through the whole call. The three demo records: "Ramesh: a gold loan and one add-on" and "Ramesh: a sale he understood" are both Ramesh, born **1984**; "Sunita: someone else answers" is Sunita, born 1979, and there you play a family member who picks up her phone.
+
+**Keep a call log**: one CSV file in `.samajh-human/`, beside the consent messages, one row per call, written during or right after it. A failed call gets a row too. Columns:
 
 ```
 date,time,card_id,speaker_initials,language,setup,session_id,note
@@ -203,6 +222,18 @@ Tell the coordinator each answer. None blocks the build today; all are needed be
 
 **Be ready to explain it (task 10).** Selection ends in individual interviews, and Gnani sells mostly to banks, lenders, insurers and contact centres. Read `README.md`, `DESIGN.md` §1 to §5, and the judge's review §1 and §2. Know the lead finding and its limits. The judge also says to read the saved Gnani page on banking feedback calls (claims ledger item C2.7) before the interview.
 
+### 2.7 The order from here (coordinator, 2026-11-10)
+
+No clock times: each step depends on verification results and the account's usage limit.
+1. **Now:** recruit and collect consent messages; take the dashboard reading; answer the "teen lakh chalis" question below; optional practice calls; fill in `.samajh-human/practice-call-1-check.md` for your first practice call.
+2. **On the coordinator's word:** the wording review. Wait: the lines are still changing, and the coordinator will regenerate the review file and tell you.
+3. **After the final lines are re-voiced:** the listening page.
+4. **Then:** the brief cards arrive, then the go signal (P1 and P2 verified), then the 20 calls.
+
+Two more things the coordinator is waiting on from you (`ORCHESTRATION.md`, "Waiting on the user"):
+- **A language question.** When someone says "teen lakh chalis", do they mean 3,40,000 or 3,00,040? Your answer decides whether 14 of 40 number-formatting failures count.
+- **A go-ahead** to copy two finished reports into the repo: `eval/amounts_v2/REPORT.md` and `references/pilots/gnani-number-formatting-report.md`.
+
 ## 3. What you do not need to do
 
 - Write or fix code, tests, prompts files or documents. Do not edit `data/prompts/` or `defaults.toml`.
@@ -233,9 +264,8 @@ Tell the coordinator each answer. None blocks the build today; all are needed be
 2. How the submission is made: where the written explanation and the nominated post links go, and whether you name an award category yourself or the judges assign one.
 
 **For the coordinator to supply.**
-3. The name of the gitignored folder for human-call material (consent messages and the call log CSV). Until then, keep them in any folder outside the repo.
-4. The go signal for the human calls: given in chat and in the Status line at the top of this file.
-5. The local listening page, once P1 has pre-generated the bot's audio.
-6. The brief cards, before the go signal.
+3. The go signal for the human calls: given in chat and in the Status line at the top of this file.
+4. The local listening page, once P1 has pre-generated the bot's audio.
+5. The brief cards, before the go signal. Each card should cover every topic the bot asks about, as a fact the character knows or a stated "does not know".
 
 **For you to decide** (§2.5): the final name, the award category, team and contributions, and whether to publish the repo.

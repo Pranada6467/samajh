@@ -27,12 +27,13 @@ call, and the whole call is capped at `Limits.max_bot_turns`, so a call always e
 
 from __future__ import annotations
 
+import logging
 from enum import StrEnum
 from typing import Annotated, Literal
 
 from pydantic import Field
 
-from samajh.amounts import format_inr, spoken_amount
+from samajh.amounts import spoken_amount
 from samajh.dialogue.interpret import (
     UNCLEAR,
     Expecting,
@@ -70,6 +71,8 @@ class Outcome(StrEnum):
     call_back_later = "call_back_later"  # the customer asked to be called another time
     language_switch = "language_switch"  # the customer asked for another language; no live switch
     no_response = "no_response"  # nothing heard `Limits.max_silences` times in a row
+    do_not_call = "do_not_call"  # the customer asked not to be called again / to remove the number
+    written_requested = "written_requested"  # the customer asked for this in writing instead
 
 
 class Limits(Frozen):
@@ -148,10 +151,11 @@ class AtTeachBack(Frozen):
 
 
 class AtSayAgain(Frozen):
-    """The two readings of the premium answer differed: the bot asked for the amount once more."""
+    """The two readings of an amount answer differed: the bot asked for the amount once more."""
 
     at: Literal["say_again"] = "say_again"
     product: int
+    item: Literal["premium", "cover"] = "premium"
 
 
 class AtConsent(Frozen):
@@ -210,8 +214,11 @@ class AtStopCheck(Frozen):
     """
 
     at: Literal["stop_check"] = "stop_check"
-    wish: Literal["decline", "human"]
+    # "decline": "shall I go on?"; "human": "shall a person call you?"; "disengaged": "shall I ask on, or
+    # stop here?", after two unusable replies or three "I don't know"s in a row.
+    wish: Literal["decline", "human", "disengaged"]
     resume: Annotated[_Waiting, Field(discriminator="at")]
+    then: Intent = Intent.asks_repeat  # what the pending question is taken to have heard, on going on
 
 
 Position = Annotated[_Waiting | AtStopCheck | Ended, Field(discriminator="at")]
@@ -229,6 +236,14 @@ class Unresolved(Frozen):
     step: CallStep
     asks: Question | None = None
     product_id: ProductId | None = None
+
+
+class CarriedAnswer(Frozen):
+    """An answer given in open recall that the call did not ask for again ("बावन हज़ार का" -> the premium)."""
+
+    product_id: ProductId
+    question: Question
+    turn_id: TurnId  # the customer's recall turn that holds it
 
 
 class SecondReading(Frozen):
@@ -260,7 +275,14 @@ class CallState(Frozen):
     own_choice: tuple[ProductId, ...] = ()  # products the customer said were their own choice
     callback_time: str | None = None  # the customer's own words for when to call; never parsed
     requested_language: str | None = None  # English name in lower case, as asked for
-    degraded_turns: tuple[TurnId, ...] = ()  # customer turns the LLM fallback failed on
+    degraded_turns: tuple[TurnId, ...] = ()  # customer turns the classifier failed on
+    degraded_checked: bool = False  # the call has asked "shall I go on?" after a failed classifier
+    unusable_run: int = 0  # unusable replies in a row
+    dont_know_run: int = 0  # "I don't know" replies in a row
+    disengage_checked: bool = False
+    recall_figure: tuple[int, TurnId] | None = None  # a single figure the customer gave in open recall
+    carried_forward: tuple[CarriedAnswer, ...] = ()
+    said_again_cover: tuple[ProductId, ...] = ()
 
     def transcript(self) -> Transcript:
         """The call so far, in the shape the extractor and the rules consume."""
@@ -283,7 +305,10 @@ class EndOfCall(Frozen):
     callback_time: str | None = None
     requested_language: str | None = None
     degraded_turns: tuple[TurnId, ...] = ()
+    carried_forward: tuple[CarriedAnswer, ...] = ()
 
+
+log = logging.getLogger(__name__)
 
 _RULES = RuleInterpreter()
 
@@ -302,6 +327,8 @@ _END_LINES: dict[Outcome, tuple[str, ...]] = {
     Outcome.call_back_later: ("end.call_back",),
     Outcome.language_switch: ("end.language",),
     Outcome.no_response: ("end.no_response",),
+    Outcome.do_not_call: ("end.do_not_call",),
+    Outcome.written_requested: ("end.written",),
 }
 
 
@@ -314,7 +341,7 @@ def expecting(position: Position) -> Expecting:
             return Expecting.go_ahead
         case AtBirthYear():
             return Expecting.birth_year
-        case AtTeachBack(question=Question.premium) | AtSayAgain() | AtRestate():
+        case AtTeachBack(question=Question.premium | Question.cover) | AtSayAgain() | AtRestate():
             return Expecting.amount
         case AtTeachBack(question=question) if question in _EITHER_OR:
             return Expecting.either_or
@@ -376,7 +403,7 @@ def _read_back_line(state: CallState, position: AtReadBack, *, again: bool) -> L
     amount, low = position.amount_inr, position.low
     asks = _item_question(position.item)
     if low is None:
-        said = {"amount_words": spoken_amount(amount, state.language), "amount_digits": format_inr(amount)}
+        said = {"amount_words": spoken_amount(amount, state.language)}
         first = "read_back.cover_confirm" if position.item == "cover" else "read_back.confirm"
         return _line(
             state, "read_back.reconfirm" if again else first, product=position.product, asks=asks, **said
@@ -404,6 +431,7 @@ def _lines_for(state: CallState, position: Position, *, again: bool = False) -> 
         case AtBirthYear():
             return (
                 _line(state, "disclosure.never_ask", step=CallStep.second_check),
+                _line(state, "verify.short", step=CallStep.second_check),
                 _line(state, "second_check.ask"),
             )
         case AtRecall(reasked=True):
@@ -424,8 +452,8 @@ def _lines_for(state: CallState, position: Position, *, again: bool = False) -> 
                 ordinal = load_prompts(state.language).ordinal(product)
                 return (_line(state, "teach_back.intro_nth", ordinal=ordinal), ask)
             return (_line(state, "teach_back.intro"), ask)
-        case AtSayAgain(product=product):
-            return (_line(state, "premium.say_again", product=product),)
+        case AtSayAgain(product=product, item=item):
+            return (_line(state, f"{item}.say_again", product=product),)
         case AtConsent(reasked=reasked):
             return (_line(state, "consent.reask" if reasked else "consent.ask"),)
         case AtReadBack():
@@ -454,6 +482,7 @@ def _say(
     """
     if state.bot_turns + 1 >= state.limits.max_bot_turns:
         return _end(state, Outcome.turn_limit)
+    state, position = _carry_forward(state, position)
     lines = _lines_for(state, position, again=again)
     if before:
         lines = (*(_line(state, key, step=lines[-1].step) for key in before), lines[-1])
@@ -520,7 +549,11 @@ def _after(state: CallState, position: _Waiting) -> Position | None:
             return AtConsent()
         case AtTeachBack(product=product, question=question):
             return _next_question(state, product, question)
-        case AtReadBack(product=product, item="cover") | AtRestate(product=product, item="cover"):
+        case (
+            AtReadBack(product=product, item="cover")
+            | AtRestate(product=product, item="cover")
+            | AtSayAgain(product=product, item="cover")
+        ):
             return _next_question(state, product, Question.cover)
         case AtSayAgain(product=product) | AtReadBack(product=product) | AtRestate(product=product):
             return _next_question(state, product, Question.premium)
@@ -558,9 +591,11 @@ def _unresolved_at(state: CallState, position: _Waiting) -> Unresolved:
             return Unresolved(
                 step=CallStep.teach_back, asks=question, product_id=state.plan.product_ids[product]
             )
-        case AtSayAgain(product=product):
+        case AtSayAgain(product=product, item=item):
             return Unresolved(
-                step=CallStep.teach_back, asks=Question.premium, product_id=state.plan.product_ids[product]
+                step=CallStep.teach_back,
+                asks=_item_question(item),
+                product_id=state.plan.product_ids[product],
             )
         case AtConsent():
             return Unresolved(step=CallStep.consent_check, asks=Question.consent)
@@ -617,6 +652,30 @@ def _keep(state: CallState, position: AtReadBack | AtRestate, figure: Figure) ->
     if position.item == "cover":
         return state
     return _with_premium(state, position.product, figure.high, figure.low if figure.about else None)
+
+
+def _carry_forward(state: CallState, position: Position) -> tuple[CallState, Position]:
+    """A figure the customer already gave in open recall is not asked for again: it is read back.
+
+    Only for the first product, and only a single clean figure; the customer confirms or corrects it.
+    """
+    if not (
+        isinstance(position, AtTeachBack)
+        and position.question is Question.premium
+        and position.product == 0
+        and not position.reasked
+        and state.recall_figure is not None
+    ):
+        return state, position
+    amount, turn_id = state.recall_figure
+    carried = CarriedAnswer(product_id=state.plan.product_ids[0], question=Question.premium, turn_id=turn_id)
+    state = _with_premium(state, 0, amount).model_copy(
+        update={"recall_figure": None, "carried_forward": (*state.carried_forward, carried)}
+    )
+    return state, AtReadBack(product=0, amount_inr=amount, read_backs=1)
+
+
+_QUESTION_POSITIONS = (AtRecall, AtRecallFollowUp, AtTeachBack, AtSayAgain, AtConsent, AtReadBack, AtRestate)
 
 
 # --- the two entry points ----------------------------------------------------
@@ -684,7 +743,16 @@ def step(
     turn_id = TurnId(len(state.turns) + 1)
 
     def read(text: str) -> Interpretation:
-        return interpreter.interpret(text, language=state.language, expecting=expects, question=asked.text)
+        try:
+            return interpreter.interpret(
+                text, language=state.language, expecting=expects, question=asked.text
+            )
+        except Exception:  # an interpreter's failure must never escape `step`
+            log.warning("interpreter raised; turn read by the word lists", exc_info=True)
+            heard = _RULES.interpret(text, language=state.language, expecting=expects, question=asked.text)
+            if expects in (Expecting.identity, Expecting.birth_year) and not heard.settled:
+                heard = heard.model_copy(update={"intent": Intent.said, "year": None})
+            return heard.model_copy(update={"degraded": True})
 
     heard = read(customer_text)
     other: Interpretation | None = None
@@ -717,6 +785,12 @@ def step(
         return _end(state, Outcome.human_requested)
     if heard.intent is Intent.decline:
         return _end(state, Outcome.declined)
+    if heard.intent is Intent.do_not_call:
+        return _end(state, Outcome.do_not_call)
+    if heard.intent is Intent.written_request:
+        return _end(state, Outcome.written_requested)
+    if heard.intent is Intent.wrong_person and not isinstance(position, (*_BEFORE_LOAN, AtStopCheck)):
+        return _end(state, Outcome.wrong_party)  # "talk to my son, he handles it"
     if isinstance(position, AtCallbackTime):
         return _call_back(state, customer_text.strip() or None)
     if heard.intent is Intent.call_later:
@@ -731,13 +805,43 @@ def step(
             return _end(state, Outcome.declined if wish == "decline" else Outcome.human_requested)
         state = state.model_copy(update={"stop_checks": state.stop_checks + 1})
         return _say(state, AtStopCheck(wish=wish, resume=position))
-    if heard.intent is Intent.asks_who and not isinstance(position, AtIdentity):
+    if heard.intent is Intent.asks_who:
         if state.side_answers < state.limits.max_side_answers:
             state = state.model_copy(update={"side_answers": state.side_answers + 1})
+            if isinstance(position, AtIdentity):  # no lender, no loan: only that it is a feedback call
+                return _say(state, AtIdentity(reasked=True), before=("purpose.before_confirm",))
             verify = "verify.before_loan" if isinstance(position, _BEFORE_LOAN) else "verify.after_loan"
             return _say(state, position, before=(verify,))
         heard = heard.model_copy(update={"intent": Intent.asks_repeat})
+    # The classifier failed on a free reply: ask once whether to go on.
+    failed = heard.degraded and heard.intent is Intent.said and isinstance(position, _QUESTION_POSITIONS)
+    if failed and not state.degraded_checked:
+        state = state.model_copy(update={"degraded_checked": True})
+        return _say(state, AtStopCheck(wish="decline", resume=position))
+    if isinstance(position, _QUESTION_POSITIONS):
+        state, check = _disengaged(state, position, heard)
+        if check is not None:
+            return _say(state, check)
+    if isinstance(position, AtRecall) and heard.amount_inr is not None and heard.intent not in UNCLEAR:
+        state = state.model_copy(update={"recall_figure": (heard.amount_inr, turn_id)})
     return _on_reply(state, position, heard, other)
+
+
+def _disengaged(
+    state: CallState, position: _Waiting, heard: Interpretation
+) -> tuple[CallState, AtStopCheck | None]:
+    """Two unusable replies or three "I don't know"s in a row get one "shall I ask on, or stop here?"."""
+    unusable = heard.intent in UNCLEAR and heard.intent is not Intent.silence
+    dont_know = heard.intent is Intent.dont_know
+    runs = {
+        "unusable_run": state.unusable_run + 1 if unusable else 0,
+        "dont_know_run": state.dont_know_run + 1 if dont_know else 0,
+    }
+    state = state.model_copy(update=runs)
+    if state.disengage_checked or (runs["unusable_run"] < 2 and runs["dont_know_run"] < 3):
+        return state, None
+    state = state.model_copy(update={"disengage_checked": True, "unusable_run": 0, "dont_know_run": 0})
+    return state, AtStopCheck(wish="disengaged", resume=position, then=heard.intent)
 
 
 def _call_back(state: CallState, when: str | None) -> tuple[CallState, EndOfCall]:
@@ -759,7 +863,7 @@ def _on_reply(state: CallState, position: _Waiting, heard: Interpretation, other
         case AtTeachBack() | AtConsent():
             return _on_question(state, position, heard, other)
         case AtSayAgain():
-            return _on_premium(state, position, heard, other)
+            return _on_amount(state, position, heard, other)
         case AtReadBack():
             return _on_read_back(state, position, heard, other)
         case AtRestate():
@@ -775,11 +879,11 @@ def _on_stop_check(state: CallState, position: AtStopCheck, heard: Interpretatio
         return _end(state, Outcome.declined)
     if heard.intent is Intent.maybe_human:
         return _end(state, Outcome.human_requested)
-    if position.wish == "decline" and heard.intent is Intent.no:
+    if position.wish in ("decline", "disengaged") and heard.intent is Intent.no:
         return _end(state, Outcome.declined)
     if position.wish == "human" and heard.intent is Intent.yes:
         return _end(state, Outcome.human_requested)
-    return _on_reply(state, position.resume, Interpretation(intent=Intent.asks_repeat), None)
+    return _on_reply(state, position.resume, Interpretation(intent=position.then), None)
 
 
 def _on_identity(state: CallState, position: AtIdentity, heard: Interpretation):
@@ -845,15 +949,8 @@ def _on_question(state: CallState, position: AtTeachBack | AtConsent, heard: Int
     if isinstance(position, AtTeachBack):
         if heard.intent is Intent.took_nothing:  # "कौन सी चीज़? मैंने तो कुछ नहीं लिया": no more product questions
             return _say(state, AtConsent())
-        if position.question is Question.premium:
-            return _on_premium(state, position, heard, other)
-        if (
-            position.question is Question.cover
-            and heard.amount_inr is not None
-            and heard.intent not in UNCLEAR
-        ):
-            # A stated cover figure is read back and confirmed, like the premium (coordinator decision).
-            return _say(state, _read_back_at(position.product, _figure(heard), 1, item="cover"))
+        if position.question in (Question.premium, Question.cover):
+            return _on_amount(state, position, heard, other)
         if position.question is Question.required_for_loan and heard.own_choice:
             product_id = state.plan.product_ids[position.product]
             state = state.model_copy(update={"own_choice": (*state.own_choice, product_id)})
@@ -865,20 +962,35 @@ def _on_question(state: CallState, position: AtTeachBack | AtConsent, heard: Int
     return _go(state, _after(state, position), bridge=True)
 
 
-def _on_premium(state: CallState, position: AtTeachBack | AtSayAgain, heard: Interpretation, other):
-    """An answer to "how much did you pay?": read the figure back, or ask for it once more."""
+def _on_amount(state: CallState, position: AtTeachBack | AtSayAgain, heard: Interpretation, other):
+    """An answer to "how much did you pay?" or "what do you get from it?": the same two-reading rule.
+
+    The readings differ, or only one holds a figure: the amount is asked for once more per product and
+    item. Then the figure is read back. A figure the parser marks ambiguous is never read back.
+    """
     product = position.product
+    item = position.item if isinstance(position, AtSayAgain) else position.question.value
+    cover = item == "cover"
     first, second = _figure(heard), _figure(other)
-    may_say_again = state.plan.product_ids[product] not in state.said_again
+    if cover:  # a cover range is not read back; only one plain figure is
+        first = first if first is not None and not first.about else None
+        second = second if second is not None and not second.about else None
+    done = state.said_again_cover if cover else state.said_again
+    product_id = state.plan.product_ids[product]
     differ = other is not None and (first is not None or second is not None) and not _same(first, second)
-    if differ and may_say_again:  # never read back a figure on one model's word the first time
-        update = {"said_again": (*state.said_again, state.plan.product_ids[product])}
-        return _say(state.model_copy(update=update), AtSayAgain(product=product))
+    if differ and product_id not in done:  # never read back a figure on one model's word the first time
+        key = "said_again_cover" if cover else "said_again"
+        state = state.model_copy(update={key: (*done, product_id)})
+        return _say(state, AtSayAgain(product=product, item=item))
     figure = first or second
     if figure is not None:
-        state = _with_premium(state, product, figure.high, figure.low if figure.about else None)
-        return _say(state, _read_back_at(product, figure, read_backs=1))
-    if heard.intent in (Intent.dont_know, Intent.no, Intent.took_nothing):
+        if not cover:
+            state = _with_premium(state, product, figure.high, figure.low if figure.about else None)
+        return _say(state, _read_back_at(product, figure, 1, item=item))
+    answered = heard.intent in (Intent.dont_know, Intent.no, Intent.took_nothing)
+    if cover:  # "पैसा सुरक्षित रहेगा" answers the cover question without a figure
+        answered = heard.intent not in UNCLEAR and not heard.figures
+    if answered:
         return _go(state, _after(state, position))
     if isinstance(position, AtTeachBack) and not position.reasked:
         return _say(state, position.model_copy(update={"reasked": True}))

@@ -1,4 +1,5 @@
-"""The LLM fallback is asked only about turns the rules cannot place, and can only relabel them."""
+"""The turn classifier: asked about every reading the word lists are not sure of; every label honoured;
+asymmetric defaults when it fails (nobody confirmed at the opening, one "shall I go on?" later)."""
 
 from __future__ import annotations
 
@@ -9,15 +10,16 @@ import pytest
 from dialogue_kit import CUSTOMERS, play, record
 
 from samajh.clients.errors import CapExceeded, LlmOutputInvalid, RateLimited, TransportError
-from samajh.dialogue import Expecting, Intent, Outcome
+from samajh.dialogue import Expecting, Intent, Outcome, step
 from samajh.dialogue.llm_fallback import FALLBACK_MODEL, LlmFallbackInterpreter
 from samajh.types import Language
 
 HI = Language.hi
+Q = "क्या आप Ramesh जी हैं?"
 
 
 class FakeLlm:
-    """Stands in for `LlmClient`: answers every call with one label, or raises."""
+    """Stands in for `LlmClient`: answers every call with one label (a "yes" at the go-ahead), or raises."""
 
     def __init__(self, label: str | None = None, error: Exception | None = None) -> None:
         self.label, self.error, self.calls, self.options = label, error, [], []
@@ -27,112 +29,128 @@ class FakeLlm:
         self.options.append(kwargs)
         if self.error:
             raise self.error
-        return SimpleNamespace(value=schema(label=self.label))
+        go_ahead = "Stage: go_ahead" in messages[-1].content and self.label not in ("yes", "no", "unclear")
+        return SimpleNamespace(value=schema(label="yes" if go_ahead else self.label))
 
 
-def read(llm: FakeLlm, text: str, expecting: Expecting, question: str = "आपके हिसाब से वो चीज़ क्या है?"):
+def read(llm, text: str, expecting: Expecting, question: str = "वो क्या है?"):
     return LlmFallbackInterpreter(llm).interpret(text, language=HI, expecting=expecting, question=question)
 
 
 @pytest.mark.parametrize(
     "text, expecting",
     [
-        ("हाँ जी, बोल रहा हूँ", Expecting.identity),
-        ("जी बताइए, क्या बात है", Expecting.identity),
+        ("हाँ जी, बोल रहा हूँ", Expecting.identity),  # a tight claim
+        ("जी", Expecting.identity),  # a tight acknowledgement: re-asked, never confirmed
+        ("मैं उनकी पत्नी बोल रही हूँ", Expecting.identity),  # a tight relation word
+        ("1984", Expecting.birth_year),
         ("मुझे बात नहीं करनी", Expecting.open),
         ("किसी इंसान से बात कराइए", Expecting.open),
         ("पता नहीं", Expecting.open),
         ("क्या?", Expecting.open),
         ("", Expecting.open),
-        ("हम्म", Expecting.open),
         ("बावन हज़ार", Expecting.amount),
         ("हाँ बावन हज़ार", Expecting.confirmation),
-        ("उन्नीस सौ चौरासी", Expecting.birth_year),
     ],
 )
-def test_the_llm_is_not_called_when_the_rules_settle_the_turn(text, expecting):
-    """Including every reply at the first-name question: who is believed is never an LLM's guess."""
-    llm = FakeLlm("decline")
+def test_the_classifier_is_not_called_when_the_rules_settle_the_turn(text, expecting):
+    llm = FakeLlm("refuse")
     read(llm, text, expecting)
     assert llm.calls == []
 
 
-def test_the_llm_sees_the_question_and_the_reply_and_nothing_else():
+@pytest.mark.parametrize(
+    "text, expecting",
+    [
+        ("हाँ जी", Expecting.go_ahead),  # every go-ahead reply
+        ("ji main Ramesh", Expecting.identity),  # a name: not tight
+        ("हाँ साहब बोलिए", Expecting.identity),  # a title: not tight
+        ("जी अपना तो 1984 का है", Expecting.birth_year),  # a year among other words
+        ("आज बहुत गर्मी है", Expecting.open),  # a free reply later in the call
+    ],
+)
+def test_the_classifier_is_called_on_every_unsettled_reading(text, expecting):
+    llm = FakeLlm("unclear")
+    read(llm, text, expecting, question=Q)
+    assert len(llm.calls) == 1
+
+
+def test_the_classifier_sees_the_stage_the_question_and_the_reply():
     llm = FakeLlm("answer")
     read(llm, "आज बहुत गर्मी है", Expecting.open)
     (messages,) = llm.calls
     assert [m.role for m in messages] == ["system", "user"]
-    assert messages[1].content == "Question: आपके हिसाब से वो चीज़ क्या है?\nReply: आज बहुत गर्मी है"
+    assert messages[1].content.endswith("Question: वो क्या है?\nReply: आज बहुत गर्मी है")
+    assert messages[1].content.startswith("Stage: ")
 
 
 @pytest.mark.parametrize(
     "label, expecting, intent",
     [
-        ("off_topic", Expecting.open, Intent.off_topic),
-        # the LLM never ends a call: its stop labels become a question to the customer
-        ("decline", Expecting.open, Intent.maybe_decline),
-        ("wants_human", Expecting.told, Intent.maybe_human),
-        ("decline", Expecting.identity, Intent.said),  # never asked at the first-name question
-        ("yes", Expecting.identity, Intent.said),
-        ("asks_who", Expecting.go_ahead, Intent.asks_who),
-        ("asks_who", Expecting.open, Intent.asks_who),
-        ("off_topic", Expecting.either_or, Intent.off_topic),
-        ("no", Expecting.go_ahead, Intent.maybe_decline),
-        ("yes", Expecting.stop_check, Intent.yes),
-        ("wrong_person", Expecting.identity, Intent.said),
-        ("no", Expecting.identity, Intent.said),
-        ("dont_know", Expecting.amount, Intent.dont_know),
-        ("asks_repeat", Expecting.open, Intent.asks_repeat),
+        ("confirms_self", Expecting.identity, Intent.yes),
+        ("wrong_person", Expecting.identity, Intent.wrong_person),  # honoured, no longer ignored
+        ("third_party_handoff", Expecting.identity, Intent.wrong_person),
+        ("who_or_why", Expecting.identity, Intent.asks_who),
+        ("wrong_person", Expecting.birth_year, Intent.wrong_person),
+        ("refuse", Expecting.open, Intent.decline),
+        ("stop", Expecting.amount, Intent.decline),
+        ("human_request", Expecting.told, Intent.wants_human),
+        ("call_back", Expecting.open, Intent.call_later),
+        ("remove_number", Expecting.open, Intent.do_not_call),
+        ("written_request", Expecting.either_or, Intent.written_request),
+        ("third_party_handoff", Expecting.open, Intent.wrong_person),
+        ("who_or_why", Expecting.open, Intent.asks_who),
         ("answer", Expecting.open, Intent.said),
+        ("dont_know", Expecting.amount, Intent.dont_know),
+        ("unclear", Expecting.open, Intent.unclear),
         ("yes", Expecting.go_ahead, Intent.yes),
-        ("no", Expecting.confirmation, Intent.no),
-        # labels that make no sense for the question asked are dropped
+        ("no", Expecting.go_ahead, Intent.no),
+        ("refuse", Expecting.stop_check, Intent.maybe_decline),
+        # labels that make no sense for the question asked leave the rules' reading
         ("yes", Expecting.open, Intent.said),
-        ("no", Expecting.amount, Intent.said),
-        ("wrong_person", Expecting.open, Intent.said),
-        ("off_topic", Expecting.identity, Intent.said),
-        ("off_topic", Expecting.confirmation, Intent.said),
+        ("yes", Expecting.identity, Intent.said),
+        ("answer", Expecting.identity, Intent.said),
     ],
 )
-def test_label_becomes_intent_only_where_it_fits_the_question(label, expecting, intent):
-    assert read(FakeLlm(label), "आज बहुत गर्मी है", expecting).intent is intent
+def test_every_label_becomes_its_intent(label, expecting, intent):
+    text = {Expecting.identity: "ji main Ramesh", Expecting.stop_check: "देखते हैं"}.get(
+        expecting, "आज बहुत गर्मी है"
+    )
+    assert read(FakeLlm(label), text, expecting, question=Q).intent is intent
 
 
-def test_numbers_always_come_from_the_rules():
-    heard = read(FakeLlm("off_topic"), "पाँच लाख का लोन था, उसमें से बावन हज़ार कटे", Expecting.open)
-    assert heard.intent is Intent.off_topic and heard.amount_inr is None
-    heard = read(FakeLlm("answer"), "वो तो बावन हज़ार ले गए", Expecting.open)
-    assert heard.amount_inr == 52000
+def test_a_year_is_confirmed_only_when_the_classifier_reads_it_as_the_speakers_own():
+    text = "जी अपना तो 1984 का है"
+    assert read(FakeLlm("answer"), text, Expecting.birth_year).year == 1984
+    assert read(FakeLlm("wrong_person"), text, Expecting.birth_year).intent is Intent.wrong_person
+    assert read(FakeLlm("unclear"), text, Expecting.birth_year).year is None
+    assert read(FakeLlm(error=TransportError("down")), text, Expecting.birth_year).year is None
 
 
 def test_the_fallback_names_its_own_model_and_leaves_room_for_the_reply():
-    """The client's default model is chosen for extraction and can change; this call sits in a live turn."""
     llm = FakeLlm("answer")
     read(llm, "आज बहुत गर्मी है", Expecting.open)
     (options,) = llm.options
     assert options["model"] == FALLBACK_MODEL and "/" in FALLBACK_MODEL
-    assert options["max_tokens"] >= 200  # 30 came back cut off and empty from a reasoning model
+    assert options["max_tokens"] >= 200
 
 
 @pytest.mark.parametrize(
-    "error, reason",
+    "error",
     [
-        (CapExceeded(unit="USD", cap=1.0, spent=1.0, estimate=0.01), "would cross cap"),
-        (TransportError("down"), "down"),
-        (LlmOutputInvalid(model="m", attempts=1, last_error="finish_reason=length, empty content"),
-         "finish_reason=length, empty content"),
-        (RateLimited(status=429, code=None, message="slow down"), "slow down"),
+        CapExceeded(unit="USD", cap=1.0, spent=1.0, estimate=0.01),
+        TransportError("down"),
+        LlmOutputInvalid(model="m", attempts=1, last_error="finish_reason=length, empty content"),
+        RateLimited(status=429, code=None, message="slow down"),
+        ValueError("anything else a client might raise"),
     ],
-)  # fmt: skip
-def test_a_failed_llm_call_keeps_the_word_lists_reading_marked_degraded(error, reason, caplog):
-    llm = FakeLlm(error=error)
+)
+def test_a_failed_classifier_keeps_the_word_lists_reading_marked_degraded(error, caplog):
     with caplog.at_level("WARNING", logger="samajh.dialogue.llm_fallback"):
-        heard = read(llm, "वो तो बावन हज़ार ले गए", Expecting.open)
+        heard = read(FakeLlm(error=error), "वो तो बावन हज़ार ले गए", Expecting.open)
     assert heard.intent is Intent.said and heard.degraded and heard.amount_inr == 52000
-    assert len(llm.calls) == 1
     (logged,) = caplog.records
-    assert type(error).__name__ in logged.getMessage() and reason in logged.getMessage()
-    assert FALLBACK_MODEL in logged.getMessage()
+    assert type(error).__name__ in logged.getMessage() and FALLBACK_MODEL in logged.getMessage()
     assert "बावन" not in logged.getMessage()  # the log names the failure, not what the customer said
 
 
@@ -142,56 +160,97 @@ class SlowLlm(FakeLlm):
         return super().complete(schema, messages, **kwargs)
 
 
-def test_a_late_llm_call_is_cut_off_at_the_timeout():
-    llm = SlowLlm("decline")
+def test_a_late_classifier_is_cut_off_at_the_timeout():
     began = time.monotonic()
-    heard = LlmFallbackInterpreter(llm, timeout_s=0.1).interpret(
+    heard = LlmFallbackInterpreter(SlowLlm("refuse"), timeout_s=0.1).interpret(
         "आज बहुत गर्मी है", language=HI, expecting=Expecting.open, question="वो क्या है?"
     )
     assert time.monotonic() - began < 0.5
     assert heard.intent is Intent.said and heard.degraded
 
 
-def test_a_failed_llm_call_never_makes_the_bot_ask_again_and_the_turn_is_listed():
+def test_a_failed_classifier_at_the_first_name_confirms_nobody():
+    down = LlmFallbackInterpreter(FakeLlm(error=TransportError("down")))
+    call = play(record(), HI, ["ji main Ramesh", "ji main Ramesh"], interpreter=down)
+    assert call.end.outcome is Outcome.not_confirmed and "disclosure.who" not in call.keys
+
+
+def test_a_failed_classifier_later_asks_once_whether_to_go_on_then_reads_by_the_word_lists():
     customer = CUSTOMERS[HI]
     down = LlmFallbackInterpreter(FakeLlm(error=TransportError("down")))
-    replies = [*customer.happy()[:3], "आज बहुत गर्मी है"]
-    call = play(record(), HI, replies, interpreter=down)
-    assert call.end is None and call.keys[-2:] == ("teach_back.intro", "kind.ask")
-    assert call.state.degraded_turns == (call.state.turns[-3].id,)
+    call = play(record(), HI, [*customer.happy()[:3], "आज बहुत गर्मी है"], interpreter=down)
+    assert call.keys[-1] == "stop_check.decline"
+    call = play(record(), HI, [*customer.happy()[:3], "आज बहुत गर्मी है", "हाँ", "एक एफडी", "आज भी गर्मी है"],
+                interpreter=down)  # fmt: skip
+    assert call.keys.count("stop_check.decline") == 1 and call.keys[-1] == "premium.ask"
+    assert len(call.state.degraded_turns) >= 2
 
 
-def test_an_off_topic_label_gets_the_question_asked_once_more():
-    customer = CUSTOMERS[HI]
-    replies = [*customer.happy()[:3], "आज बहुत गर्मी है", "आज बहुत गर्मी है"]
-    call = play(record(), HI, replies, interpreter=LlmFallbackInterpreter(FakeLlm("off_topic")))
-    assert call.keys[-3:] == ("open_recall.ask", "open_recall.reask", "open_recall.nothing")
-    assert [u.step.value for u in call.state.unresolved] == ["open_recall"]
+class Explodes:
+    def interpret(self, *args, **kwargs):
+        raise RuntimeError("an interpreter bug")
+
+
+def test_an_interpreter_exception_never_escapes_step():
+    call = play(record(), HI, ["हाँ जी, बोल रहा हूँ"])
+    state, said = step(call.state, "हाँ", interpreter=Explodes())
+    assert said.lines[-1].key == "second_check.ask" and state.degraded_turns
 
 
 @pytest.mark.parametrize(
-    "label, check, outcome, ends, goes_on",
+    "label, outcome",
     [
-        ("decline", "stop_check.decline", Outcome.declined, "नहीं", "हाँ, पूछिए"),
-        ("wants_human", "stop_check.human", Outcome.human_requested, "हाँ", "नहीं नहीं"),
+        ("refuse", Outcome.declined),
+        ("stop", Outcome.declined),
+        ("human_request", Outcome.human_requested),
+        ("remove_number", Outcome.do_not_call),
+        ("written_request", Outcome.written_requested),
+        ("third_party_handoff", Outcome.wrong_party),
     ],
 )
-def test_a_stop_label_from_the_llm_is_checked_with_the_customer_before_the_call_ends(
-    label, check, outcome, ends, goes_on
-):
+def test_a_classifier_label_ends_the_call_with_its_own_outcome(label, outcome):
     customer = CUSTOMERS[HI]
-    said = "देखिए अभी मैं दुकान पर हूँ, ग्राहक खड़े हैं"
-    opening = customer.happy()[:3]
-    stops = play(record(), HI, [*opening, said, ends], interpreter=LlmFallbackInterpreter(FakeLlm(label)))
-    assert stops.keys[-2] == check and stops.end.outcome is outcome
-    resumed = play(
-        record(), HI, [*opening, said, goes_on], interpreter=LlmFallbackInterpreter(FakeLlm(label))
+    call = play(record(), HI, [*customer.happy()[:3], "देखिए ये सब तो बेटा ही संभालता है"],
+                interpreter=LlmFallbackInterpreter(FakeLlm(label)))  # fmt: skip
+    assert call.end is not None and call.end.outcome is outcome
+
+
+def test_who_or_why_at_open_recall_is_answered_and_never_taken_as_the_answer():
+    customer = CUSTOMERS[HI]
+    fb = LlmFallbackInterpreter(FakeLlm("who_or_why"))
+    call = play(record(), HI, [*customer.happy()[:3], "ये किस बारे में पूछ रहे हो?", "ये किस बारे में है?"],
+                interpreter=fb)  # fmt: skip
+    assert call.end is None and call.keys[-2:] == ("verify.after_loan", "open_recall.ask")
+    assert call.keys.count("verify.after_loan") == 2
+
+
+def test_a_confirms_self_label_without_a_first_person_word_confirms_nobody():
+    assert (
+        read(FakeLlm("confirms_self"), "haan batao kya baat hai", Expecting.identity, question=Q).intent
+        is not Intent.yes
     )
-    assert resumed.end is None
-    assert resumed.keys[-2:] == (check, "open_recall.reask")
+    assert (
+        read(FakeLlm("confirms_self"), "ji main Ramesh", Expecting.identity, question=Q).intent is Intent.yes
+    )
 
 
-def test_an_answer_label_clears_a_weak_stop_signal_from_the_word_lists():
-    text = "मैंने कहा था मुझे इंटरेस्ट नहीं है"  # a first-person account: the word lists only suspect a stop
+def test_a_weak_stop_signal_stays_a_question_unless_the_classifier_reads_an_answer_or_an_end():
+    text = "चलो रखता हूँ"
+    assert read(FakeLlm("unclear"), text, Expecting.open).intent is Intent.maybe_decline
+    assert read(FakeLlm("off_topic"), text, Expecting.open).intent is Intent.maybe_decline
+    assert read(FakeLlm("stop"), text, Expecting.open).intent is Intent.decline
     assert read(FakeLlm("answer"), text, Expecting.open).intent is Intent.said
-    assert read(FakeLlm("decline"), text, Expecting.open).intent is Intent.maybe_decline
+
+
+def test_a_go_on_word_against_an_end_label_asks_once_instead_of_ending():
+    class AlwaysCallBack(FakeLlm):
+        def complete(self, schema, messages, **kwargs):
+            return SimpleNamespace(value=schema(label="call_back"))
+
+    heard = LlmFallbackInterpreter(AlwaysCallBack()).interpret(
+        "abhi thoda busy hoon par chalo pooch lo",
+        language=Language.hi_en,
+        expecting=Expecting.go_ahead,
+        question=Q,
+    )
+    assert heard.intent is Intent.maybe_decline

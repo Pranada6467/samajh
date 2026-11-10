@@ -19,6 +19,10 @@ text = "வணக்கம். நான் {first_name} அவர்களி�
 design = "§5 step 1 and the one-re-ask rule: asks whether the speaker is the borrower, not whether he is there; no lender, no loan"
 text = "இது {first_name} அவர்களுக்கான ஒரு தானியங்கி வாடிக்கையாளர் சேவை அழைப்பு. நீங்களே {first_name} அவர்களா?"
 
+[lines."purpose.before_confirm"]
+design = "§5 step 1: 'what is this about?' before anyone has claimed to be the borrower; no lender, no loan"
+text = "இது ஒரு வாடிக்கையாளர் சேவை கருத்துக் கேட்பு அழைப்பு; சரியான நபர் என்று உறுதியானதும் மேலும் சொல்கிறோம்."
+
 [lines."disclosure.who"]
 design = "§5 step 2: the bank's name, customer-care team, automated AI assistant (recommended: FREE-AI report para 4.4.54)"
 text = "நன்றி. இந்த அழைப்பு {lender} வாடிக்கையாளர் சேவைக் குழுவிடமிருந்து வருகிறது. நான் ஒரு தானியங்கி ஏ-ஐ உதவியாளர், மனிதர் அல்ல."
@@ -54,6 +58,10 @@ text = "இந்த அழைப்பு {lender} வாடிக்கைய�
 [lines."verify.after_loan"]
 design = "§5 step 2: how to check the call is genuine, on request after the loan is named"
 text = "இந்த அழைப்பு {lender} வாடிக்கையாளர் சேவையிலிருந்து. சந்தேகம் இருந்தால், போனை வைத்துவிட்டு உங்கள் கடன் ஆவணங்களில் அச்சிடப்பட்ட வாடிக்கையாளர் சேவை எண்ணுக்கு அழைக்கலாம். நாங்கள் ஒருபோதும் ஓடிபி அல்லது பின் கேட்க மாட்டோம்."
+
+[lines."verify.short"]
+design = "§5 step 2: one short line on checking the call, said with the birth-year question (review round 2)"
+text = "சந்தேகம் இருந்தால், போனை வைத்துவிட்டு {lender} வாடிக்கையாளர் சேவைக்கு நீங்களே அழைக்கலாம்."
 
 [lines."second_check.ask"]
 design = "§5 step 3: one low-sensitivity fact, the year of birth; never account digits"
@@ -147,6 +155,10 @@ text = "அதனால் உங்களுக்கு என்ன கிட
 design = "§5 step 6 and the one-re-ask rule"
 text = "அதாவது, அந்தப் பொருள் உங்களுக்கு எதற்குப் பயன்படும்? புரிந்ததைச் சொல்லுங்கள்."
 
+[lines."cover.say_again"]
+design = "§6 two readings, applied to the cover figure: they disagreed, so the amount is asked for once more"
+text = "அந்தத் தொகையை இன்னொரு முறை சொல்லுங்கள். எவ்வளவு வரை கிடைக்கும்?"
+
 [lines."term.ask"]
 design = "§5 step 6 '... and for how long?'"
 text = "அது எவ்வளவு காலத்துக்கு?"
@@ -181,7 +193,7 @@ text = "அதாவது, எவற்றுக்கு நீங்கள்
 
 [lines."read_back.confirm"]
 design = "§5 step 8: the amount the customer said is read back in words and digits"
-text = "நீங்கள் சொன்ன தொகை: {amount_words}, அதாவது {amount_digits}. இது சரியா?"
+text = "நீங்கள் சொன்ன தொகை: {amount_words}. இது சரியா?"
 
 [lines."read_back.confirm_about"]
 design = "§5 step 8 for an amount said as 'about X' or 'X to Y': read back as said (P3a contract §4)"
@@ -189,11 +201,11 @@ text = "நீங்கள் சொன்ன தொகை சுமார் {a
 
 [lines."read_back.cover_confirm"]
 design = "coordinator decision (iteration 2): a cover figure the customer stated is read back and confirmed, like the premium; never the record's"
-text = "நீங்கள் சொன்ன தொகை: {amount_words}, அதாவது {amount_digits}. இது சரியா?"
+text = "நீங்கள் சொன்ன தொகை: {amount_words}. இது சரியா?"
 
 [lines."read_back.reconfirm"]
 design = "§5 step 8 after an unclear reply"
-text = "இன்னொரு முறை: {amount_words}, அதாவது {amount_digits}. இது சரியா, இல்லையா?"
+text = "இன்னொரு முறை: {amount_words}. இது சரியா, இல்லையா?"
 
 [lines."read_back.restate"]
 design = "§5 step 8: the customer said the figure is wrong and gave no other"
@@ -210,6 +222,10 @@ text = "தொடர்ந்து பேசலாமா?"
 [lines."stop_check.human"]
 design = "§5 step 2: the customer can ask for a human; a weak signal is checked with one question"
 text = "எங்கள் குழுவில் ஒருவர் உங்களிடம் பேச வேண்டும் என்று விரும்புகிறீர்களா?"
+
+[lines."stop_check.disengaged"]
+design = "§5: two unusable replies or three 'don't know' in a row get one 'ask on, or stop here?'"
+text = "இன்னும் கேட்கட்டுமா, அல்லது இங்கேயே நிறுத்தட்டுமா?"
 
 [lines."callback.when"]
 design = "§5 step 2: the customer can stop; one who asks for a later call is asked when, once"
@@ -246,6 +262,14 @@ text = "சரி, உங்கள் மொழியில் மீண்ட�
 [lines."end.no_response"]
 design = "§5: nothing heard twice in a row; the call ends and says nothing about a loan"
 text = "குரல் கேட்கவில்லை. பிறகு மீண்டும் முயற்சிக்கிறோம். வணக்கம்."
+
+[lines."end.do_not_call"]
+design = "§5 step 2: the customer asked not to be called again; the call ends and records it"
+text = "சரி, இனி அழைக்க வேண்டாம் என்பதைக் குறித்துக்கொண்டோம். நன்றி, வணக்கம்."
+
+[lines."end.written"]
+design = "§5 step 2: the customer asked for this in writing; the call ends and records it"
+text = "சரி, இதை எழுத்து மூலம் வேண்டும் என்று குறித்துக்கொண்டோம். நன்றி, வணக்கம்."
 
 [lines."close.thanks"]
 design = "§5 step 9: thank you; no other product is mentioned"

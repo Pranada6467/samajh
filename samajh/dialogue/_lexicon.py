@@ -75,7 +75,7 @@ _FOLD: dict[str, str] = {
     "hindi": "हिंदी", "tamil": "तमिल", "english": "इंग्लिश", "angrezi": "अंग्रेजी", "kannada": "कन्नड",
     "marathi": "मराठी", "telugu": "तेलुगु", "bengali": "बंगाली", "bangla": "बांग्ला", "gujarati": "गुजराती",
     "malayalam": "मलयालम", "punjabi": "पंजाबी", "odia": "उडिया", "oriya": "उडिया", "aati": "आती", "aata": "आता",
-    "diya": "दिया", "diye": "दिए", "paise": "पैसे", "paisa": "पैसा",
+    "bolo": "बोलो", "pooch": "पूछ", "lo": "लो", "batao": "बताओ", "kaho": "कहो", "namaste": "नमस्ते", "diya": "दिया", "diye": "दिए", "paise": "पैसे", "paisa": "पैसा",
 }  # fmt: skip
 
 _NUKTA = "़"
@@ -166,7 +166,9 @@ class Lexicon:
     # --- call v2 (P2). Empty by default: a language without a list simply never hears that signal.
     # A claim to be the person asked for. "बोलिए" or "go ahead" is not one: a relative says it too.
     identity_yes: frozenset[Phrase] = frozenset()
-    self_ok: frozenset[Phrase] = frozenset()  # words that may stand beside that claim ("जी", "sir", "मैं")
+    # Courtesy words that may stand beside the claim ("जी", "बोलिए", "मैं"). No title ("sir", "साहब"): a title
+    # may be about someone else ("साहब मीटिंग में हैं"), so a turn holding one is never settled by the rules.
+    self_ok: frozenset[Phrase] = frozenset()
     first_person: frozenset[Phrase] = frozenset()  # "मैं", "I": lets a name ride along ("मैं रमेश हूँ")
     # A relation or a third-person word: before the loan is named, a speaker who uses one is not the borrower.
     kin: frozenset[Phrase] = frozenset()
@@ -179,7 +181,7 @@ class Lexicon:
     call_words: frozenset[Phrase] = frozenset()  # with a time word, a request for a call at that time
     time_words: frozenset[Phrase] = frozenset()
     occupied: frozenset[Phrase] = frozenset()  # "I am driving": cannot talk now
-    hurry: frozenset[Phrase] = frozenset()  # "be quick": busy, but go on
+    hurry: frozenset[Phrase] = frozenset()  # "be quick", "but ask": busy, and still says go on
     # Third-person or habitual narration ("वो लोग हमेशा बोलते हैं", "they always hang up"): refusal words
     # inside such a turn are an account of the sale, not a refusal of this call.
     narrative: frozenset[Phrase] = frozenset()
@@ -190,6 +192,10 @@ class Lexicon:
     forced: frozenset[Phrase] = frozenset()  # "it was compulsory", "nobody asked me": cancels own_choice
     language_cue: frozenset[Phrase] = frozenset()  # with a language name: a request to speak it
     cannot_follow: frozenset[Phrase] = frozenset()  # "हिंदी नहीं आती": with the call's own language
+    year_ok: frozenset[Phrase] = (
+        frozenset()
+    )  # words a first-person birth-year reply may hold besides the year
+    written: frozenset[Phrase] = frozenset()  # "send it in writing"
 
     def __or__(self, other: Lexicon) -> Lexicon:
         return Lexicon(*(getattr(self, name) | getattr(other, name) for name in self.__dataclass_fields__))
@@ -226,7 +232,7 @@ _EN = Lexicon(
         "have to go", "got to go", "gotta go", "need to go", "dont ask", "do not ask", "stop asking", "rather not",
         "im done", "i am done", "thats it", "no more questions", "dont have time", "do not have time",
     ),
-    decline_short=_phrases("stop", "not now", "leave it", "enough", "not interested", "dont want to answer",
+    decline_short=_phrases("stop", "stop here", "not now", "leave it", "enough", "not interested", "dont want to answer",
                            "do not want to answer", "bye"),
     dont_know=_phrases("dont know", "do not know", "no idea", "not sure", "cant remember", "dont remember",
                        "do not remember", "cannot remember", "cant recall"),
@@ -239,8 +245,8 @@ _EN = Lexicon(
     recounts=_phrases("said", "told", "they", "was", "were"),
     identity_yes=_phrases("yes", "yeah", "yep", "ya", "correct", "right", "speaking", "thats me", "this is he",
                           "this is she", "its me", "it is me", "i am", "myself"),
-    self_ok=_phrases("sir", "madam", "hello", "hi", "tell me", "please", "here", "this is", "me", "go ahead", "ok",
-                     "okay", "good morning", "good afternoon", "good evening"),
+    self_ok=_phrases("hello", "hi", "tell me", "please", "go ahead", "ok", "okay", "good morning", "good afternoon",
+                     "good evening", "i", "am"),
     first_person=_phrases("i", "i am", "im", "this is", "myself", "speaking"),
     kin=_phrases("wife", "husband", "son", "daughter", "father", "mother", "dad", "mom", "mum", "mummy", "papa",
                  "daddy", "brother", "sister", "uncle", "aunt", "neighbour", "neighbor", "colleague", "assistant",
@@ -250,8 +256,14 @@ _EN = Lexicon(
     asks_who=_phrases("who is this", "whos this", "who is calling", "whos calling", "who are you", "who is speaking",
                       "where are you calling from", "calling from where", "where from", "is this real",
                       "is this genuine", "real call", "genuine call", "fake call", "fraud call", "scam",
-                      "is this a fraud", "how do i know", "how can i trust", "which bank", "which company"),
-    do_not_call=_phrases("dont call", "do not call", "stop calling", "never call", "remove my number"),
+                      "is this a fraud", "how do i know", "how can i trust", "which bank", "which company",
+                      "what is this about", "what is it about", "whats this about", "why are you calling",
+                      "what is this call"),
+    do_not_call=_phrases("dont call", "do not call", "stop calling", "never call", "remove my number",
+                         "take my number off"),
+    written=_phrases("in writing", "send it in writing", "write to me", "send me a letter", "by post", "by email",
+                     "send a letter"),
+    year_ok=_phrases("my", "birth", "year", "is", "born", "in", "i", "was", "yes", "its", "it"),
     call_later=_phrases("call later", "call me later", "call back later", "call me back", "call back", "later please",
                         "some other day", "some other time", "another day", "another time", "other day",
                         "talk later", "speak later"),
@@ -262,7 +274,7 @@ _EN = Lexicon(
     occupied=_phrases("driving", "in a meeting", "at work", "in office", "in the office", "on the way",
                       "in the hospital", "busy right now", "i am busy", "im busy", "busy now", "on another call",
                       "eating", "in a train", "on a train", "travelling", "traveling"),
-    hurry=_phrases("quick", "quickly", "fast", "make it quick", "be quick", "hurry"),
+    hurry=_phrases("quick", "quickly", "fast", "make it quick", "be quick", "hurry", "go ahead", "you can ask"),
     narrative=_phrases("they", "them", "their", "always", "keeps", "keep saying", "every time", "nobody", "no one",
                        "but", "the agent", "agent said", "the branch", "the bank", "bank people",
                        "manager said", "added", "in my loan", "this thing", "at that time", "picks up"),
@@ -320,7 +332,7 @@ _HI = Lexicon(
     decline_short=_phrases("बंद करो", "बंद कीजिए", "बंद करिए", "बंद कर दो", "बंद कर दीजिए", "बस करो", "बस कीजिए",
                            "रहने दो", "रहने दीजिए", "रहने दें", "फिर कभी", "नहीं बताना", "नहीं बताऊंगा",
                            "नहीं बताऊंगी", "टाइम नहीं है", "समय नहीं है", "बात नहीं कर सकता", "बात नहीं कर सकती",
-                           "बाय", "रखता हूं", "रखती हूं", "छोड़िए", "छोड़ो", "बस अब"),
+                           "बाय", "रखता हूं", "रखती हूं", "छोड़िए", "छोड़ो", "बस अब", "रोक दो", "रोक दीजिए", "रोक दें", "यहीं रोक*"),
     dont_know=_phrases("पता नहीं", "नहीं पता", "पता ही नहीं", "मालूम नहीं", "नहीं मालूम", "याद नहीं", "याद ही नहीं",
                        "नहीं याद", "ध्यान नहीं",
                        "जानकारी नहीं", "आइडिया नहीं", "नहीं जानता", "नहीं जानती", "क्या पता"),
@@ -333,8 +345,8 @@ _HI = Lexicon(
     recounts=_phrases("था", "थी", "थे", "उन्होंने", "उसने", "मैंने", "बोला", "बोली", "बोले", "कहा", "बताया"),
     identity_yes=_phrases("हां", "जी", "हांजी", "जी हां", "बिल्कुल", "सही", "यस", "करेक्ट", "राइट", "बोल रहा हूं",
                           "बोल रही हूं", "मैं ही", "मैं हूं"),
-    self_ok=_phrases("जी", "सर", "साहब", "मैडम", "बोलिए", "बताइए", "कहिए", "बोलो", "बताओ", "हेलो", "नमस्ते", "नमस्कार",
-                     "मैं", "ही", "हूं", "खुद", "बोल", "रहा", "रही", "ओके", "ठीक", "है", "प्रणाम", "राम राम"),
+    self_ok=_phrases("जी", "बोलिए", "बताइए", "कहिए", "बोलो", "बताओ", "हेलो", "नमस्ते", "नमस्कार", "मैं", "ही", "हूं",
+                     "खुद", "ओके", "ठीक", "है", "प्रणाम", "राम राम"),
     first_person=_phrases("मैं", "बोल रहा हूं", "बोल रही हूं", "हूं"),
     kin=_phrases("पापा", "पिताजी", "पिता", "डैडी", "डैड", "मम्मी", "मां", "माताजी", "बेटा", "बेटी", "पति", "पत्नी",
                  "वाइफ", "हस्बैंड", "मिसेज", "भाई", "भैया", "भाभी", "बहन", "दीदी", "चाचा", "चाची", "मामा", "मामी",
@@ -345,10 +357,14 @@ _HI = Lexicon(
     possessive=_phrases("का", "की", "के"),
     asks_who=_phrases("कौन बोल रहा", "कौन बोल रहे", "कौन बोल रही", "कौन हो", "कौन हैं", "आप कौन", "कहां से बोल*",
                       "कहां से हो", "कहां से हैं", "किधर से", "किस बैंक", "किस कंपनी", "बैंक से हो", "बैंक से हैं",
-                      "फ्रॉड कॉल", "फ्रॉड तो नहीं", "फ्राड", "असली", "नकली", "फर्जी", "स्कैम", "कैसे पता", "कैसे मानूं",
-                      "कैसे मान लूं", "भरोसा कैसे", "किसलिए कॉल", "क्यों कॉल"),
+                      "फ्रॉड कॉल", "फ्रॉड तो नहीं", "फ्राड", "असली कॉल", "असली है", "नकली", "फर्जी", "स्कैम", "कैसे पता",
+                      "कैसे मानूं", "कैसे मान लूं", "भरोसा कैसे", "किसलिए कॉल", "क्यों कॉल", "किस बारे में", "किस बात",
+                      "क्या बात है", "क्या काम है", "किसलिए", "किस लिए", "क्यों फोन"),
     do_not_call=_phrases("कॉल मत", "फोन मत", "कॉल नहीं चाहिए", "नंबर हटा*", "कॉल ना करें", "कॉल न करें",
                          "फोन ना करें", "फोन न करें", "दोबारा मत"),
+    written=_phrases("लिखकर भेज*", "लिख कर भेज*", "लिखित में", "चिट्ठी भेज*", "लेटर भेज*", "ईमेल पर भेज*"),
+    year_ok=_phrases("मेरा", "मेरी", "जन्म", "साल", "सन", "में", "हुआ", "था", "थी", "पैदा", "बर्थ", "ईयर", "है", "जी", "हां",
+                     "हूं", "का", "मैं"),
     call_later=_phrases("बाद में कॉल", "बाद में फोन", "बाद में बात", "बाद में करना", "बाद में करिए", "बाद में कीजिए",
                         "बाद में करो", "बाद में कर लेना", "बाद में कर लीजिए", "फिर कभी", "किसी और दिन", "दूसरे दिन",
                         "किसी और टाइम", "किसी और समय"),
@@ -362,7 +378,7 @@ _HI = Lexicon(
                       "खाना खा रही", "मेहमान", "ट्रेन में", "बस में हूं", "रास्ते में", "हॉस्पिटल में", "अस्पताल में",
                       "बिजी हूं", "व्यस्त हूं", "अभी बिजी", "बिजी है", "थोड़ा बिजी", "दूसरी कॉल पर", "नहा रहा",
                       "पूजा कर रहा", "पूजा कर रही"),
-    hurry=_phrases("जल्दी", "फटाफट", "शॉर्ट में"),
+    hurry=_phrases("जल्दी", "फटाफट", "शॉर्ट में", "पूछ लो", "पूछ लीजिए", "पूछिए", "पूछो", "बोल सकता", "बोल सकती", "बताइए"),
     narrative=_phrases("वो लोग", "वे लोग", "बैंक वाले", "ब्रांच वाले", "वाले", "एजेंट ने", "एजेंट बोल*", "एजेंट कह*",
                        "मैनेजर ने", "उन्होंने", "उन्होने", "उसने", "बोलते", "कहते", "देते", "सुनता", "सुनते",
                        "बोलता", "कहता", "उठाता", "उठाते", "बताते", "बताता", "टाल*", "हमेशा", "आज तक", "जब भी", "हर बार",
@@ -426,7 +442,7 @@ _TA = Lexicon(
     # call v2 additions: not human-reviewed; written to the reviewer's probes, with no fresh Tamil set
     identity_yes=_phrases("ஆமா", "ஆமாம்", "ஆம்", "ஆமாங்க", "நான்தான்", "நான் தான்", "பேசுறேன்", "பேசுகிறேன்", "aama",
                           "aamam"),
-    self_ok=_phrases("சொல்லுங்க", "சொல்லுங்கள்", "ஹலோ", "வணக்கம்", "நான்", "சார்", "மேடம்", "ஓகே", "சரி", "கேளுங்க"),
+    self_ok=_phrases("சொல்லுங்க", "சொல்லுங்கள்", "ஹலோ", "வணக்கம்", "நான்", "ஓகே", "சரி", "கேளுங்க"),
     first_person=_phrases("நான்", "நான்தான்", "பேசுறேன்", "பேசுகிறேன்"),
     kin=_phrases("மனைவி", "கணவர்", "வீட்டுக்காரர்", "அப்பா", "அம்மா", "தம்பி", "அண்ணன்", "அக்கா", "தங்கை", "மகன்", "மகள்",
                  "அவர்", "அவரு", "அவங்க", "அவன்", "அவள்", "இருக்காரு", "இருக்கார்", "போயிருக்கார்", "போயிருக்கான்",
@@ -481,7 +497,7 @@ _KN = Lexicon(
     recounts=frozenset(),
     # call v2 additions: not human-reviewed; written to the reviewer's probes, with no fresh Kannada set
     identity_yes=_phrases("ಹೌದು", "ಹೌದ್ರಿ", "ಹೂ", "ಹೂಂ", "ಹಾ", "ಹಾಂ", "ನಾನೇ", "ಮಾತಾಡ್ತಿದ್ದೀನಿ", "ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ", "houdu"),
-    self_ok=_phrases("ಹೇಳಿ", "ಹಲೋ", "ನಮಸ್ಕಾರ", "ನಾನು", "ಸರ್", "ಮೇಡಂ", "ಓಕೆ", "ಸರಿ", "ಕೇಳಿ"),
+    self_ok=_phrases("ಹೇಳಿ", "ಹಲೋ", "ನಮಸ್ಕಾರ", "ನಾನು", "ಓಕೆ", "ಸರಿ", "ಕೇಳಿ"),
     first_person=_phrases("ನಾನು", "ನಾನೇ", "ಮಾತಾಡ್ತಿದ್ದೀನಿ"),
     kin=_phrases("ಹೆಂಡತಿ", "ಗಂಡ", "ಅಪ್ಪ", "ಅಮ್ಮ", "ತಮ್ಮ", "ಅಣ್ಣ", "ಅಕ್ಕ", "ತಂಗಿ", "ಮಗ", "ಮಗಳು", "ಅವರು", "ಅವನು", "ಅವಳು",
                  "ಇದ್ದಾರೆ", "ಹೋಗಿದ್ದಾರೆ", "ಹೋಗಿದ್ದಾನೆ", "ಮಲಗಿದ್ದಾರೆ", "ಮೀಟಿಂಗ್*", "ಕರೀತೀನಿ", "ಆಫೀಸಿಗೆ"),

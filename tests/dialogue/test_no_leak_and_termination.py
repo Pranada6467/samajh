@@ -221,7 +221,9 @@ def test_the_default_budget_always_ends_a_call(language):
 def test_scripted_paths_leak_nothing(language):
     customer = CUSTOMERS[language]
     happy = customer.happy(products=2)
-    paths = [happy, happy[:-2] + [customer.correction, customer.confirm, customer.confirm], [customer.wrong_person],
+    k = happy.index(customer.confirm)  # the first read-back
+    corrected = [*happy[:k], customer.correction, customer.confirm, *happy[k + 1 :]]
+    paths = [happy, corrected, [customer.wrong_person],
              [customer.who, customer.filler], [customer.identity, customer.go_ahead, "1971", "1972"]]  # fmt: skip
     paths += [happy[:k] + [customer.decline] for k in range(len(happy))]
     paths += [happy[:k] + [customer.human] for k in range(len(happy))]

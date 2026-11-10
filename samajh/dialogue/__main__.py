@@ -124,6 +124,8 @@ def effect_of(language: Language, question_key: str, text: str, interpreter: Tur
             Outcome.wrong_party: "wrong_party",
             # call v2: a request for a later call ends the call too; the set's labels predate it
             Outcome.call_back_later: "decline",
+            Outcome.do_not_call: "decline",
+            Outcome.written_requested: "decline",
         }
         return ends.get(
             said.outcome, "confirmed" if said.outcome is Outcome.completed else said.outcome.value

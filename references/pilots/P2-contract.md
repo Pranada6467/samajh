@@ -92,3 +92,30 @@ call_seconds(transcript, *, words_per_second=2.5) -> float   # samajh.dialogue: 
   `callback_time`. `AtRecallFollowUp`, `AtSayAgain`, `AtCallbackTime` are new positions.
 - **`LlmFallbackInterpreter`** is also consulted on a weak stop signal from the word lists ("answer"
   clears it). It is never consulted at the first-name question.
+
+## 6. Review round 2 (after the iteration-2 verifier; wins over §5 where they differ)
+
+- **Line keys added:** `purpose.before_confirm` (no slots: "what is this about?" before anyone has
+  claimed to be the borrower), `verify.short` (`lender`; said with the birth-year question),
+  `cover.say_again`, `stop_check.disengaged`, `end.do_not_call`, `end.written`. None removed or
+  renamed. Reworded: `right_party.ask`, `end.third_party`, `disclosure.who`, `disclosure.recording`,
+  `disclosure.reask`, `verify.before_loan`, `verify.after_loan`, `context.loan`, `consent.ask`,
+  `consent.reask`, `read_back.confirm`, `read_back.cover_confirm`, `read_back.reconfirm`,
+  `stop_check.decline` ("क्या मैं आगे बढ़ूँ?"), `stop_check.human`, `end.human`.
+- **Slots:** every read-back line takes `amount_words` only; `amount_digits` is no longer used by any
+  line (the voice said the figure twice).
+- **Outcomes added:** `do_not_call`, `written_requested`. `FROM_DIALOGUE` in `samajh/ops/model.py`
+  needs both (P2 does not edit it).
+- **Who is believed:** only an explicit first-person claim confirms ("हाँ जी, मैं ही बोल रहा हूँ",
+  "speaking"); an acknowledgement ("हाँ जी", "बोलिए", "hello") is re-asked once and then ends as
+  `not_confirmed`. A reply with a name or a title goes to the classifier; with no classifier, or a
+  failed one, it does not confirm. At the birth-year question a year among other words confirms only
+  when the classifier reads it as the speaker's own.
+- **Expecting:** the cover question is now `amount`, so the phone fetches a second reading there.
+- **Classifier (`LlmFallbackInterpreter`, same constructor):** asked about every go-ahead reply and
+  every reading the word lists do not settle (`Interpretation.settled`); every label honoured;
+  any exception or a timeout leaves the turn readable. Later in the call a failed classifier gets one
+  "shall I go on?" per call.
+- **`EndOfCall.carried_forward` / `CallState.carried_forward`:** answers given in open recall and not
+  asked again (today: a single premium figure, read back after the kind question). **The extractor
+  must accept the recall turn as the premium's quote for these**, or the premium reads as a gap.
