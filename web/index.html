@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>Samajh demo phone</title>
+  <link rel="stylesheet" href="phone.css">
+  <script type="module" src="phone.js"></script>
+</head>
+<body data-state="idle">
+<main class="stage">
+  <section class="handset" aria-label="Demo phone">
+    <header class="hs-head">
+      <div class="caller">
+        <span class="avatar" aria-hidden="true">CC</span>
+        <div>
+          <div class="caller-name">Customer care · feedback call</div>
+          <div class="caller-num">+91 00000 00000 · demo number</div>
+        </div>
+      </div>
+      <div class="status-row">
+        <span class="dot" aria-hidden="true"></span>
+        <strong id="status" role="status" aria-live="polite" data-state="idle">Ready</strong>
+        <span id="status-detail"></span>
+      </div>
+    </header>
+
+    <div class="view" id="view-idle">
+      <p class="lead">Receive a short feedback call about a loan you took. The bot asks, you answer by voice or with a prepared clip, and Prisma transcribes each answer.</p>
+      <div class="settings">
+        <label for="line-rate">Line</label>
+        <select id="line-rate">
+          <option value="8000">8 kHz · phone line</option>
+          <option value="16000">16 kHz · wideband</option>
+        </select>
+        <label for="stt-model">Speech to text</label>
+        <select id="stt-model">
+          <option value="prisma-v3.0">prisma-v3.0</option>
+          <option value="prisma-v2.5">prisma-v2.5</option>
+        </select>
+        <label for="turn-mode">Turn-taking</label>
+        <select id="turn-mode">
+          <option value="handsfree">Hands-free</option>
+          <option value="ptt">Push to talk</option>
+        </select>
+      </div>
+      <p class="hint" id="server-note"></p>
+      <button id="place-call" class="btn primary wide" type="button">Place demo call</button>
+    </div>
+
+    <div class="view" id="view-ringing">
+      <div class="ring-art" aria-hidden="true"><span></span><span></span><span class="core">CC</span></div>
+      <p class="lead center">Incoming call</p>
+      <div class="ring-actions">
+        <button id="decline" class="btn round danger" type="button">Decline</button>
+        <button id="answer" class="btn round go" type="button">Answer</button>
+      </div>
+      <p class="hint center">Answer starts the audio and asks for the microphone.</p>
+    </div>
+
+    <div class="view" id="view-call">
+      <ol id="transcript" class="transcript" aria-label="Call transcript"></ol>
+
+      <div id="error-box" class="panel error" role="alert">
+        <div class="error-head">Failed at <span id="error-stage"></span> · <code id="error-code"></code></div>
+        <p id="error-message"></p>
+        <div class="row">
+          <button id="retry" class="btn primary" type="button">Send again</button>
+          <button id="continue" class="btn" type="button">Record the turn again</button>
+        </div>
+      </div>
+
+      <div id="turn-box" class="panel">
+        <div id="mic-row" class="mic-row">
+          <div id="level" class="level" role="meter" aria-label="Microphone level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+          <span id="speech-flag" class="flag">No speech</span>
+        </div>
+        <button id="ptt" class="btn primary wide" type="button">Hold to talk</button>
+        <p id="turn-note" class="hint" role="status"></p>
+        <div class="file-turn">
+          <label for="clip-select">Answer with a prepared clip</label>
+          <div class="row">
+            <select id="clip-select"></select>
+            <button id="send-clip" class="btn" type="button">Send clip</button>
+          </div>
+          <label for="file-input">or upload a WAV (30 s at most)</label>
+          <input id="file-input" type="file" accept=".wav,audio/wav,audio/x-wav">
+        </div>
+      </div>
+
+      <div id="summary" class="panel">
+        <h2>Call ended</h2>
+        <p id="summary-text"></p>
+        <p class="links">
+          <a id="log-link" href="#" target="_blank" rel="noopener">Session log (JSON)</a>
+          <a id="recording-link" href="#" target="_blank" rel="noopener">Call recording (WAV)</a>
+        </p>
+        <button id="new-call" class="btn wide" type="button">Back to start</button>
+      </div>
+
+      <button id="hangup" class="btn danger wide" type="button">Hang up</button>
+    </div>
+
+    <footer class="note">Demo. Synthetic data. Audio is sent to Gnani Prisma through this local server.</footer>
+  </section>
+
+  <aside class="monitor" aria-label="Line monitor">
+    <h2>Line monitor</h2>
+    <dl class="facts">
+      <dt>Session</dt><dd id="mon-session">none</dd>
+      <dt>Line rate</dt><dd id="mon-line"></dd>
+      <dt>STT model</dt><dd id="mon-model"></dd>
+      <dt>Turn-taking</dt><dd id="mon-mode"></dd>
+      <dt>Microphone</dt><dd id="mon-mic"></dd>
+      <dt>Server</dt><dd id="mon-server">checking</dd>
+    </dl>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Source</th><th>Audio</th><th>To transcript</th><th>STT</th><th>Cache</th></tr>
+        </thead>
+        <tbody id="mon-turns"></tbody>
+      </table>
+    </div>
+    <p class="hint">"To transcript" is end of speech to transcript for microphone turns, and upload to transcript for clips. Times are measured in this browser; the STT column is the server's own figure.</p>
+  </aside>
+</main>
+</body>
+</html>

@@ -2,7 +2,7 @@
 
 > A post-sale understanding callback for Indian lenders: a teach-back-style comprehension check. The customer explains in their own words, in their own language, what they bought with their loan. Plain code compares that against the bank's records, and every mismatch becomes a flag a human can act on.
 
-Status: **v2 design, 2026-11-10.** v2 applies the claims check in `references/claims/` (`design-corrections.md` for the edits, `claims-ledger.md` for the sources; ledger row ids such as A16 appear in brackets below). How we chose this idea: `IDEAS-HILLCLIMB.md` (5 rounds, final score 84/100). Amounts pilot: `references/pilots/amounts-pilot-2026-11-10.md`. Where the text says "our reading" or "our choice", the conclusion is ours and no regulator or court has ruled on it.
+Status: **v2 design, 2026-11-10.** v2 applies the claims check in `references/claims/` (`design-corrections.md` for the edits, `claims-ledger.md` for the sources; ledger row ids such as A16 appear in brackets below). How we chose this idea: `IDEAS-HILLCLIMB.md` (5 rounds, final score 84/100). Amounts pilot: `references/pilots/amounts-pilot-2026-11-10.md`. Amounts and phone-line evaluation (240 TTS sentences, no human speech): `eval/amounts/REPORT.md`. Where the text says "our reading" or "our choice", the conclusion is ours and no regulator or court has ruled on it.
 
 ---
 
@@ -81,9 +81,9 @@ right-party check → disclosure → second check → context → open recall
 3. **Second check, no secret.** One low-sensitivity fact, for example the year of birth (synthetic in the demo). The bot never asks for account digits.
 4. **Context.** Only now does the bot mention the loan.
 5. **Open recall (the key question).** *"Loan ke saath aapne kya-kya liya, aur kitne ka?"* This is asked before we mention any product, so we don't lead the answer.
-6. **Teach-back-style questions for each product on record.** "Is this insurance, FD or something else?"; "How much did it cost?"; "How was it paid — from the loan amount, or separately?"; "Was it required for the loan?"; "Were you told you could buy this cover from another company?"; "What does it cover, and for how long?"; "Were you told whether you can cancel this cover, and by when?" The bot compares the cancel answer with `cancel_window_days` on the record and never states a right itself.
+6. **Teach-back-style questions for each product on record.** "Is this insurance, FD or something else?"; "How much did it cost?"; "How was it paid — from the loan amount, or separately?"; "Was it required for the loan?"; "Were you told you could buy this cover from another company?"; "What does it cover, and for how long?"; "Were you told whether you can cancel this cover, and by when?"; "If you wanted this money back, could you get it, and when?" The bot compares the cancel answer with `cancel_window_days` on the record and never states a right itself. The money-back question is open and is asked for every product. What the customer believes about getting the money back is compared with the product's features (`belief_mismatch`, §6). It is how a belief such as "the money can be withdrawn after a year" (BNG-L-041-1617-0797) comes out.
 7. **Consent check.** "When you took the loan, what did you agree to buy, and how did you agree?" The bot compares the answer with the consent record. The call never *captures* consent.
-8. **Read-back.** Every critical amount is read back ("bavan hazaar, yaani 52,000 — sahi hai?"). The pilot showed why: in one pilot sentence (n = 1, TTS voice, simulated 8 kHz phone audio), Prisma v3.0 returned 2,00,000 for "paune do lakh".
+8. **Read-back.** Every critical amount is read back ("bavan hazaar, yaani 52,000 — sahi hai?"). The amounts evaluation showed why (§6; TTS audio only, no human speech): on simulated phone audio, Prisma v3.0 gave a wrong amount that the parser could not detect on 17 of 240 sentences. One pilot example (n = 1, TTS voice, simulated 8 kHz phone audio): Prisma v3.0 returned 2,00,000 for "paune do lakh".
 9. **Close.** "Thank you." If anything was flagged: "Someone from our team will call you within N days", with N set by the bank. It is a promise the bank must keep. The close mentions no other product.
 
 Unclear answers are asked once more in simpler words, then marked `unclear → human`. One re-ask and no more also avoids the "nagging" pattern in RBI's dark-pattern annex (A20). The bot never argues with the customer and never explains the product during the call. That would contaminate the test, and explaining belongs to a human follow-up. Where the bot names the insurer it uses the name on the record and adds nothing, because 85J bars a bank from presenting a third-party product as its own (A24). The call carries no sales content of any kind.
@@ -106,9 +106,9 @@ LOAN RECORD (synthetic)  ──►  SCRIPT BUILDER  ──►  bot prompts (Timb
                                                         │
                        customer audio (each turn) ◄─────┘
                                 │
-                     PRISMA REST (v3.0 transcribe; v2.5 for comparison)
+                     PRISMA REST (v3.0 transcribe; on amount turns v2.5 transcribe too)
                                 │
-                     AMOUNT NORMALISER (fraction-aware; tested in-sample)
+                     AMOUNT NORMALISER (fraction-aware; gaps being fixed; two readings compared, see Amounts below)
                                 │
                      EXTRACTOR (LLM via OpenRouter → strict schema, with a quoted span for each field)
                                 │
@@ -123,47 +123,79 @@ LOAN RECORD (synthetic)  ──►  SCRIPT BUILDER  ──►  bot prompts (Timb
 
 **Core types (sketch)**
 ```python
-Product   = {id, kind: "credit_life"|..., provider, premium_inr, cover_inr, term_months,
-             paid_from_loan: bool, required_for_loan: bool, risk_mitigant: bool,
-             provider_choice_offered: bool, cancel_window_days: int | None,
-             consent: {method, at} | None}
+# The lender's record (all frozen; unknown fields rejected)
+Product    = {id, kind: "credit_life", provider, premium_inr, cover_inr, term_months,
+              paid_from_loan: bool, required_for_loan: bool, risk_mitigant: bool,
+              provider_choice_offered: bool, cancel_window_days: int | None,
+              features: set of is_deposit|refundable_anytime|guaranteed_return|
+                               one_time_payment|withdrawable_after_period,   # claims true of it
+              consent: {method: signed_form|otp|digital_click|recorded_call|verbal, at: date} | None}
 LoanRecord = {loan_id, lender_type: "bank"|"nbfc", borrower (synthetic),
-              sanctioned_inr, disbursed_inr, products: [Product]}
-Answer     = {field, value, quote, turn_id}          # from the extractor; value=None if not said
-Flag       = {product_id, rule: "kind"|"premium"|"cover"|"term"|"cancel_window"|
-                                "consent"|"bundling"|"loan_funded"|"belief_mismatch",
-              clause, expected, heard, quote, ts, severity}   # clause = CLAUSES[lender_type][rule]
-Verdict    = "clear" | "flag_for_review" | "unclear_needs_human"   # per product
+              loan_kind: "personal"|"gold", sanctioned_inr, disbursed_inr, disbursed_on: date,
+              products: [Product]}
+
+# What the customer said: every answer is exactly one of four states
+Answer[T]  = NotAsked | Unclear(reason) | DontKnow(quote, turn_id) | Stated(value, quote, turn_id)
+
+# Two layers: the LLM only fills the first; deterministic code builds the second
+RawExtraction  # enums and verbatim text; amounts and durations stay as the customer's words
+  -> Beliefs   # rupees, months and days parsed; every quote found in the right customer turn
+
+Flag       = {rule_id, clause, product_id (None if case-level), severity: high|medium|low,
+              expected, heard, quote, turn_id}     # clause = CLAUSES[lender_type][rule_id]
+Gap        = {rule_id, clause, product_id, reason, quote, turn_id}   # a rule could not decide
+Verdict    = "clear" | "flag_for_review" | "unclear_needs_human"   # per product and per case
+rule_id    = kind | premium | cover | term | cancel_window | recall | recall_unmatched |
+             consent | loan_funded | bundling | belief_mismatch | sale_conduct | evidence
 
 CLAUSES = {   # the paragraph a rule may engage, by lender type (A5, A19)
-  "bank": {kind|premium|cover|term|cancel_window: "85Y",  consent: "85G",  bundling: "85V",
-           loan_funded: "85W",  belief_mismatch: "4(20A)(ii)"},
-  "nbfc": {kind|premium|cover|term|cancel_window: "101Y", consent: "101G", bundling: "101V",
-           loan_funded: "101W", belief_mismatch: "6(9A)(ii)"},
+  "bank": {kind|premium|cover|term|cancel_window|recall|recall_unmatched: "85Y",
+           consent: "85G",  bundling: "85V",  loan_funded: "85W",
+           belief_mismatch: "4(20A)(ii)",  sale_conduct|evidence: "internal"},
+  "nbfc": {kind|premium|cover|term|cancel_window|recall|recall_unmatched: "101Y",
+           consent: "101G", bundling: "101V", loan_funded: "101W",
+           belief_mismatch: "6(9A)(ii)",   sale_conduct|evidence: "internal"},
 }
 ```
-Rule ids are neutral and the paragraph is looked up by lender type. Housing finance companies follow the NBFC paragraphs through para 157A. Other lender types change only the numeric prefix and are not mapped in v1.
+The sketch matches `samajh/types.py`; the code wins if they differ. Rule ids are neutral and the paragraph is looked up by lender type. `internal` marks a check of our own that engages no paragraph. Housing finance companies follow the NBFC paragraphs through para 157A. Other lender types change only the numeric prefix and are not mapped in v1.
 
 **Rules.** These are deterministic and never call the LLM. The paragraph in brackets is the commercial-bank one:
 - `kind` (85Y): the customer's stated kind ≠ the record (e.g. "FD" vs credit_life) → flag.
-- `premium` (85Y): |heard − record| > 1% (after normalising) → flag; not stated → `unclear`.
-- `cover` / `term` / `cancel_window` (85Y): unaware or wrong → flag (lower severity). The cancel answer is compared with `cancel_window_days` on the record.
-- `consent` (85G): `consent is None` → flag (the record alone is enough; the call adds the customer's words). A consent record that the customer does not recognise → flag for review. A record on file does not clear 85G by itself.
+- `premium` (85Y): |heard − record| > 1% (after normalising) → flag; not stated → `unclear`. The premium **passes only after the customer has confirmed a read-back** of the amount they gave. An amount that matches the record but was never confirmed is `unclear`, and so is one whose read-back the customer rejected.
+- `cover` / `term` (85Y): unaware or wrong → flag (lower severity).
+- `cancel_window` (85Y): the customer says whether they were told they can cancel, and by when. The "by when" is read as days and compared with `cancel_window_days` on the record (1 day of tolerance). Not told, unsure whether they can cancel, a different "by when", or knowing they can cancel but not by when → flag (low). A missing "by when" (not asked, or no usable answer) → `unclear`. If the record shows no window and the customer says they were told they can cancel → flag (low). The code never states a right.
+- `recall` (85Y): asked what they took with the loan, the customer does not name a product that is on the record → flag (low severity). Open recall not asked → `unclear`.
+- `recall_unmatched` (85Y, case-level): the customer names an insurance, deposit or investment that is not on the record → flag (medium). A fee is ignored. Anything the extraction could not classify → `unclear`.
+- `consent` (85G): `consent is None` → flag (the record alone is enough; the call adds the customer's words). A record on file passes only when the customer's own account, given to the open consent question, includes this product **and** names the same method of agreeing as `consent.method` on the record. A product the customer does not recognise → flag (high). A customer who says they do not know what they agreed to buy → flag (medium). A different method → flag (medium). A customer who agrees they bought it but cannot say how they agreed (or gives no usable answer about the method) → `unclear`. A record on file does not clear 85G by itself.
 - `loan_funded` (85W): `paid_from_loan` and (no consent or the customer says it was paid separately / didn't know) → flag.
-- `bundling` (85V): the product was required for the loan (per the record or the customer) **and** either it is not a risk mitigant, or the customer was not offered a choice of provider (per the record or the customer) → flag for review. Required as a risk mitigant with a choice of provider, voluntary, or free of cost → no flag.
-- `belief_mismatch` (may engage 4(20A)(ii)): belief contradicts features (refundable / guaranteed return / FD) → flag. The paragraph is the definition of mis-selling, so it is shown as the paragraph the flag may engage and never as a verdict.
-- Any product with a flag → `flag_for_review`. A flag on `kind`, `premium`, `consent`, `bundling` or `loan_funded` also produces an evidence pack: the record, the customer's words with timestamps, and the paragraph engaged. The bot never says "mis-selling".
+- `bundling` (85V): the product was required for the loan (per the record or the customer) **and** at least one of these holds: the record says it is not a risk mitigant; the customer describes it as a deposit (not a risk mitigant on any reading, A16); the record shows no choice of provider was offered; the customer says they were not told they could buy it elsewhere. Each reason is its own flag (high). Required as a risk mitigant with a choice of provider that the customer confirms, or not required per the record and the customer → no flag. A question not asked or not usably answered → `unclear`. Products with no premium (free of cost) are not modelled in v1: `premium_inr` must be above 0.
+- `belief_mismatch` (may engage 4(20A)(ii)): belief contradicts the product's `features` (refundable / guaranteed return / FD) → flag. The money-back question (§5 step 6) must be asked: without a usable answer the product can be at best `unclear`, and "I don't know" is a flag (low). The paragraph is the definition of mis-selling, so it is shown as the paragraph the flag may engage and never as a verdict.
+- `sale_conduct` (internal, case-level): the customer voices a concern about how the sale or the confirmation was handled (told what to answer, learned of the product only after the sale, signed without an explanation) → flag (high).
+- `evidence` (internal): a quote that is not in the call transcript supports no verdict → `unclear`.
+- Any product with a flag → `flag_for_review`. Silence is never a pass: a question never asked or not usably answered is a gap, and a product with a gap and no flag is `unclear_needs_human`. A flag on `kind`, `premium`, `consent`, `bundling` or `loan_funded` also produces an evidence pack: the record, the customer's words with their turn ids, and the paragraph engaged. The bot never says "mis-selling".
 
 **Why an evidence pack and not a refund case.** The 85Z refund duty arises "in cases where mis-selling of a financial product / service is established". The text does not say who establishes it or whether a complaint is needed, sets no refund deadline, and leaves compensation to the bank's "approved policy". A flag is not established mis-selling (A18).
 
-**Amounts.** We use `format=transcribe`, then a fraction-aware parser (sawa / saadhe / paune / dedh / dhai; Tamil and Kannada 1.5 and 2.5). On the 20-sentence pilot (one TTS voice) it corrected all 8 transcripts where Prisma's digits ignored the fraction word. It was written after seeing those results and has no held-out test yet. A full word-to-number parser is only needed if we use `indic-auto`. Read-back covers real recognition misses.
+**Amounts.** We use `format=transcribe`, then a fraction-aware parser (sawa / saadhe / paune / dedh / dhai; Tamil and Kannada 1.5 and 2.5). This replaces the 20-sentence pilot as our evidence.
+
+*What was measured* (`eval/amounts/REPORT.md`, run 2026-11-10). **TTS audio only: no human speech was used**, so every figure is an upper bound for real callers and says nothing about them. The set is `data/amounts/amounts-v1.jsonl`, 240 sentences (60 each in Hindi, Hinglish, Tamil and Kannada; Tamil and Kannada not human-reviewed), sha256 `62b0dd71…5e0d76`, frozen before any audio. One Timbre voice per sentence, one amount per sentence, simulated phone audio (8 kHz mu-law), `format=transcribe` with the language set. Score: exact match on the rupee amount against the amount the generator used. Intervals are Wilson 95%.
+
+- **Parser against naive digit reading, phone audio, n = 240.** v3.0: parser 221 (92%, 88-95), naive 220 (92%, 87-95). v2.5: parser 214 (89%, 85-92), naive 156 (65%, 59-71). On v2.5 the parser recovers 58 sentences, 43 of them fractions. In these cells the naive reading was never right where the parser was wrong. The 7-sentence gap between the two models is not established (McNemar p = 0.32).
+- **v3.0 fails with confident wrong amounts.** 17 of its 19 phone failures are a wrong amount with no warning, 2 are no answer. 8 of the 19 are proven formatting errors by Prisma (its own `verbatim` output for the same sentence has the right words), 9 more have the same shape without a word output to prove it, and the parser can fix 1. Amounts that skip a group are the clearest case ("three lakh two hundred" comes back as 3,02,000): v3.0 reads 6 of 16 (38%, 18-61) against 161 of 164 other non-fraction amounts (98%, 95-99); v2.5 reads 15 of the 16. No parser can fix these from that transcript.
+- **v2.5 fails with no answer.** 20 of its 26 phone failures are no answer. By the report author's labels (one reader, Tamil and Kannada without fluency), 22 of the 26 are partly formatted output that the parser does not yet compose.
+- **Two readings that agree are almost always right.** On phone audio, v2.5 and v3.0 gave the same amount for 200 of 240 sentences and 199 of those 200 were right (the one miss is a sentence whose written form is suspect). In the other 40, where they differed or one gave no answer, at least one was right 37 times. Prisma returns no confidence score; agreement is a measured stand-in, at this n and on TTS audio only.
+- **Noise.** The phone channel cost nothing measurable: mu-law 8 kHz against clean 16 kHz gave 214 against 216 of 240 on v2.5 and 221 against 221 on v3.0. The band-limit, street noise at 10 and 5 dB, and babble at 10 dB each stayed within 4 sentences of phone audio on the same sentences (112 to 128 sentences per cell). Only babble at 5 dB hurt: v3.0 fell from 102 to 93 of 112 (12 lost, 3 gained, p = 0.035, before any correction for the ten comparisons in that table) and v2.5 from 102 to 97 (p = 0.27). The noise is synthetic.
+
+*Design consequence, adopted (coordinator decision, 2026-11-10; §15 item 16).* Each amount-bearing customer turn is transcribed by both Prisma v2.5 and v3.0. If the two readings give the same amount, that is the amount. If they differ, or either gives no reading, the bot always reads the amount back and the customer confirms. The read-back stays for every critical amount regardless of agreement. v3.0 alone is not enough: its wrong amounts come with no warning.
+
+*Status of the parser.* The report lists 14 parser gaps and 12 partly formatted shapes (Kannada spellings, English "X and a half" written in Devanagari, composition of partly formatted v2.5 output), with the ones that return a wrong amount to be fixed first. They are being fixed. The 240-sentence set is now a development set: scores after the fixes are tuned on it, so **a fresh held-out set (a new seed, frozen the same way) is needed before any headline amount number**. A full word-to-number parser is needed beyond this only if we use `indic-auto`.
 
 ## 7. Gnani models used
 
 | Model | Use |
 |---|---|
-| **Prisma STT v3.0** (`/stt/v3`, `format=transcribe`, language set per call) | Each customer turn (REST, ≤30 s) |
-| **Prisma STT v2.5** | The same turns, for the comparison reported in results |
+| **Prisma STT v3.0** (`/stt/v3`, `format=transcribe`, language set per call) | Each customer turn (REST, ≤30 s); the first reading on amount turns |
+| **Prisma STT v2.5** (`/stt/v3`, `format=transcribe`, language set per call) | The second reading on every amount-bearing customer turn, compared with v3.0 (§6, Amounts). It is also the other arm of the v2.5 vs v3.0 comparison in results |
 | **Prisma Batch** | Full-call transcript with segment timestamps and speaker labels, used for the evidence log |
 | **Timbre TTS v3.0** (8 kHz, `hi-IN` / `hi-en` / `ta-IN` / `kn-IN`) | Bot prompts and read-backs (pre-generated from records) and synthetic customer voices for testing |
 | Voice cloning | **Not used.** Nothing here needs it, cloning a bank officer's voice would be misleading, and voice patterns used for authentication are biometric data under the SPDI Rules 2011 (read in a mirror copy). No voiceprints either |
@@ -174,7 +206,7 @@ Rule ids are neutral and the paragraph is looked up by lender type. Housing fina
 - **Concurrency 1** (429 "Only 1 active request", seen in a burst test on 2026-11-10): one queue for all requests, exponential backoff, no parallel REST calls. Bot audio is pre-generated, so a live call only uses STT. In the probe a WebSocket streaming session did not occupy that slot; v1 still uses REST per turn, and streaming is open decision 12 in §15.
 - **Caching:** key = sha256(model, params, audio/text). Noise and 8 kHz variants are made offline, and only STT is re-run per condition.
 - **Measured cost** (pilot): about 0.02 credits per 3-second STT call (n = 78) and 0.06 per short TTS sentence (n = 20), from one dashboard reading with no saved screenshot. The four-language plan (~1,350 TTS + ~7,400 STT) is about 230 to 265 credits, which is about a quarter of the 1,000-credit project cap.
-- **Latency:** STT about 0.2 to 0.3 s and TTS about 0.6 to 0.8 s on short clips (pilot and client probe). Pre-generated prompts keep the bot responsive.
+- **Latency:** STT about 0.2 to 0.3 s and TTS about 0.6 to 0.8 s on short clips (pilot and client probe). Pre-generated prompts keep the bot responsive. In the amounts run (one run, one machine, not a benchmark) STT median was 0.21 s with p95 0.37 s on v2.5 and 0.33 s on v3.0. The second reading on an amount turn adds a call of about that size, and with concurrency 1 the two calls run one after the other.
 - **Backend proxy** (FastAPI): browsers can't set `X-API-Key-ID`. The Gnani and OpenRouter keys live in environment variables only.
 - **LLM hosting:** v1 sends only synthetic transcripts to OpenRouter. A real lender must check where transcripts may go first: for digital lenders, the Digital Lending Directions require storage in India and deletion within 24 hours of processing abroad (E2.9).
 - **Synthetic data only:** obviously fake names, loan IDs, years of birth and numbers. Ombudsman cases are re-created with invented parties, never quoted with real names.
@@ -185,9 +217,9 @@ Rule ids are neutral and the paragraph is looked up by lender type. Housing fina
 |---|---|---|---|
 | E1 | **Does a teach-back-style open question catch what yes/no misses?** (headline) | Misled customers caught: open questions vs yes/no on the same scenarios; **false-clear rate** (misled customer passes, the dangerous error) | All scenarios, both call styles |
 | E2 | Are the flags right? | Per-clause precision / recall; false flags on compliant scenarios | 96 scenarios: 4 clauses × 6 (3 violating, 3 compliant or near-miss) × 4 languages |
-| E3 | Are amounts heard correctly? | Exact match, naive vs normaliser vs normaliser + read-back; v2.5 vs v3.0 | Pilot items + every amount in E2 |
+| E3 | Are amounts heard correctly? | Exact match on the rupee amount: naive digit reading vs parser vs parser + read-back; v2.5 vs v3.0; dual-reading agreement (how often the two readings give the same amount and how often that amount is right; how often they differ or one is missing, and whether at least one is right) | The frozen 240-sentence amounts set (`data/amounts/amounts-v1.jsonl`, sha256 `62b0dd71…5e0d76`; first result in `eval/amounts/REPORT.md`, TTS audio only) plus every amount in the E2 scenario set. After the parser fixes the 240 set is in-sample, so a headline number needs a fresh frozen set |
 | E4 | Does it hold on real voices? | E1–E3 on human speech, per language | Target: ≥10 improvised calls per supported language (teammates or consenting friends, from a brief card, not a script). **None recorded yet** |
-| E5 | Does it survive phone audio? | E2/E3 by condition: clean, 8 kHz μ-law, 8 kHz + noise at 10 / 5 dB | Same audio, transformed offline |
+| E5 | Does it survive phone audio? | E2/E3 by condition: clean, 8 kHz μ-law, 8 kHz + noise at 10 / 5 dB | Same audio, transformed offline. The amounts part is done on TTS audio with synthetic noise (`eval/amounts/REPORT.md` §2.3); the E2 scenario part is not |
 
 **What teach-back is, and what we don't claim for it.** Teach-back means asking a person to explain in their own words what they were told. It is well studied in healthcare. Reviews report benefits, but the newest systematic review (2026) found no clear pattern of effect on knowledge. We found no study of teach-back for loan or insurance sales, and none by an automated voice. E1 is our own test of it. Most of this rests on abstracts, not full papers (C3).
 
@@ -247,7 +279,7 @@ Each scenario records the remedy in its source award. Relief varied: of the 22 a
 1. **The rule is new.** It was issued on 15 June 2026 and takes effect on 1 January 2027.
 2. **A low-cost survey is not excluded.** 85Y names surveys as an example and sets no channel, so a low-cost survey is not excluded by the text. A low-cost survey is the likely default. That is our inference. We found no bank or industry statement on how banks will comply.
 3. **Most voice-AI vendors lead with support, sales and collections.** Of 11 vendor sites checked on 10 November 2026, 10 list support, 9 sales and 8 collections. Seven also sell audit or compliance products, and some market adjacent post-sale checks (§11). None of those pages cites 85Y.
-4. **It's harder than it looks (our view).** It needs product records, deterministic comparison, and correct Indian amounts. In our 20-sentence TTS pilot (one voice), Prisma's digit output ignored the fraction word in 8 transcripts across 5 sentences.
+4. **It's harder than it looks (our view).** It needs product records, deterministic comparison, and correct Indian amounts. In our 20-sentence TTS pilot (one voice), Prisma's digit output ignored the fraction word in 8 transcripts across 5 sentences. In the 240-sentence set (TTS audio, phone) the naive digit reading was right on 9 of 60 fraction sentences on v2.5 and 54 of 60 on v3.0.
 
 What Samajh adds to the adjacent products: an open question before any product is named, a deterministic comparison with the lender's record, an evidence log, and a measured evaluation.
 
@@ -260,7 +292,8 @@ Unknowns: banks may build it in-house or adapt survey bots, and we found no publ
 | "SMS is enough, why voice?" | E1 compares teach-back with a yes/no confirmation. A yes/no SMS is the same question in text, so E1 bears on it, but E1 has no SMS arm and does not measure response rates |
 | Circularity (we write both the records and the answers) | Scenarios templated on awards; gold frozen with a hash; ≥10 improvised human calls per supported language (none recorded yet); TTS and human results reported separately |
 | No human voice recordings and no fluent Tamil/Kannada reviewer yet | Every language is reported as "TTS-only, not human-tested" and Tamil/Kannada text as "not human-reviewed" until the §4 bar is met |
-| Tamil/Kannada amounts and phone-line misses | Fraction-aware normaliser, read-back, v2.5 vs v3.0 reported |
+| Tamil/Kannada amounts and phone-line misses | Fraction-aware parser; two readings (v2.5 and v3.0) on amount turns with a read-back on any disagreement; read-back on every critical amount; v2.5 vs v3.0 reported. Measured on TTS audio only (§6, Amounts) |
+| Dual reading doubles STT calls on amount turns, and v2.5 returned 504 on 15 of 1,184 calls (1.3%; 14 of the 15 Tamil or Kannada) in the 2026-11-10 amounts run, each succeeding on a second attempt after a wait of about 30 s (inferred from ledger times; the header was not read). v3.0 returned 504 once in 1,456 calls | A short per-call timeout on the second reading, and a missing reading counts as a disagreement, so the turn falls back to the read-back instead of waiting out the retry. The timeout value is not set or measured yet |
 | Streaming STT: billing unknown, session cap undocumented | Measured 2026-11-10 (`references/pilots/api-probe-iter1.md` §5): an open streaming session does not occupy the one active-request slot, because REST STT returned 200 while a session was open, mid-audio and after close. Streaming was probed, not built. v1 uses REST per turn; adopting streaming is open decision 12 in §15 |
 | Judges know the adjacent vendors (SquadStack, Edesy, Ringg, NuSummit) | Name them ourselves and say what Samajh adds (§12) |
 | Regulatory wording drifts | Recheck RBI's notifications for amendments dated after 6 August 2026 before submission; quote text, not summaries |
@@ -292,3 +325,13 @@ From the claims check. These are judgement calls, so design v2 does not adopt th
 From the API probe (`references/pilots/api-probe-iter1.md`). Not adopted:
 
 12. **Live streaming STT for iteration 2.** A WebSocket streaming session did not occupy the one active-request slot (REST STT returned 200 while a session was open, mid-audio and after close), and two sessions could be open at once. The per-organisation session cap is undocumented, partial results and billing were not checked, and nothing is built. v1 stays with REST per turn.
+
+From the core report (`references/pilots/W1-core-report.md` §7). **Adopted** by the coordinator, 2026-11-10:
+
+13. **The money-back probe is part of the flow.** The open question about getting the money back (§5 step 6) is asked for every product. The rule engine requires it, so that no call comes out `clear` without it.
+14. **A product on record that the customer does not name in open recall is a low-severity flag** (the `recall` rule, §6). A compliant customer who leaves a product out of open recall therefore makes that product `flag_for_review`. This affects the false-flag rate in E2, and the scenario gold must follow the rule.
+15. **A customer who agrees they bought the product but cannot say how they agreed is `unclear_needs_human`.** A customer who names a different method than the one on the record is a medium-severity flag (the `consent` rule, §6).
+
+From the amounts evaluation (`eval/amounts/REPORT.md` §2.6, TTS audio only). **Adopted** by the coordinator, 2026-11-10:
+
+16. **Amount turns get two Prisma readings.** Each amount-bearing customer turn is transcribed by both v2.5 and v3.0. Agreement is taken as the amount; disagreement, or a missing reading, always triggers a spoken read-back. The read-back remains for every critical amount regardless. Basis: on 240 TTS sentences over simulated phone audio, the two readings agreed on 200 and 199 of those were right; v3.0 alone held a wrong amount with no warning on 17 of 240. Cost: more STT calls on amount turns and exposure to v2.5's 504s (§13).

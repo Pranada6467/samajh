@@ -9,19 +9,18 @@ It is built for Gnani AI's Great Indian AI Internship Challenge on Prisma STT an
 Done:
 - The Gnani client (STT, TTS, Batch) and the OpenRouter LLM client in `samajh/clients/`, proven against the live APIs. They share a cross-process lock, a cache, a ledger and a credit cap.
 - Claims verified: regulatory and case claims were checked against saved primary sources (`references/claims/`), and Gnani API behaviour was measured live (`references/pilots/api-probe-iter1.md`).
+- The core: types, the amount normaliser and the rule engine (`samajh/types.py`, `samajh/amounts/`, `samajh/rules/`). W1b took it over after a usage-limit stall. 1,100 core tests pass and ruff is clean. One independent review was done; the fixes made after it have not had a second one. Known gaps are in `references/pilots/W1-core-report.md` §7.
+- W8, the audio evaluation harness and the first evaluation (`samajh/audio/`, `samajh/evalkit/`, `eval/amounts/`, `data/amounts/`): done. Headline: on 240 Timbre-voiced sentences over simulated phone audio, our amount parser read the rupee amount right on 221 (Prisma v3.0, 92%) and 214 (Prisma v2.5, 89%) of them, most v3.0 failures were confident wrong amounts, and v2.5 and v3.0 agreeing was right 199 times in 200. **This is TTS audio only: no human speech was used, so it says nothing about real callers.** Report: `eval/amounts/REPORT.md`. The reviewer's fixes have not had a second review, and the parser gaps the report lists are still being fixed.
 
 In progress (nothing in this list is finished):
-- Core types, the amount normaliser and the rule engine (`samajh/types.py`, `samajh/amounts/`, `samajh/rules/`). A replacement worker (W1b) took this over after a usage-limit stall.
-- W7, voice transport: the FastAPI proxy, the browser phone, and turn-taking measured with REST against streaming (`samajh/server/`, `web/`). Started early, independent of the core.
-- W8, audio eval harness: phone-line transforms, a resumable voicing and STT runner, and an amounts test set at scale (`samajh/audio/`, `samajh/evalkit/`, `eval/amounts/`). Started early, independent of the core.
+- W4, scenarios: the 96 test scenarios and their frozen gold set.
+- W5, the LLM extractor, with a text-path evaluation.
+- W7, voice transport: the FastAPI proxy, the browser phone, and turn-taking measured with REST against streaming (`samajh/server/`, `web/`).
+- W9, dialogue: the call state machine and the prompt scripts in four languages (`samajh/dialogue/`, `data/prompts/`).
 
-Not started (waiting on the core):
-- The 96 test scenarios and their frozen gold set.
-- The LLM extractor.
+Not built yet: the half-yearly view. The core builds evidence packs as data (`EvidencePack`), but no view of them exists yet.
 
-Not built yet: the call flow (the scripted conversation and read-back) and the evidence pack and half-yearly view.
-
-No end-to-end run exists yet. No evaluation has been run, so there are no accuracy results. No human voice recordings exist.
+No end-to-end run exists yet. The amounts evaluation above is the only evaluation run so far; the scenario, extractor and call-flow evaluations (E1, E2) have not been run. No human voice recordings exist, so there are no results on human speech.
 
 ## Set up
 
@@ -55,4 +54,5 @@ The live tests spend Gnani credits; the client refuses to go past `GNANI_CREDIT_
 | `IDEAS-HILLCLIMB.md` | The 5-round evaluation that chose this idea |
 | `references/claims/` | Claims ledger, design corrections and the quote checker (saved sources are local-only) |
 | `references/pilots/` | Measured pilots: amounts, the Gnani API probe, the client report |
+| `eval/amounts/REPORT.md` | The spoken-amounts and phone-line evaluation: 240 TTS sentences, Prisma v2.5 and v3.0 (TTS audio only) |
 | `references/real-voice-datasets.md` | Licensed real-voice Indic datasets for evaluation |

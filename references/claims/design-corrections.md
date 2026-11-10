@@ -13,13 +13,13 @@ Where an item says "our reading", the source text is quoted and the conclusion i
 
 ## Work in progress that these corrections affect
 
-| Work package | Change | Item |
-|---|---|---|
-| W1 rule engine | The 85V rule must not flag "required for the loan" on its own. Add `provider_choice_offered` and `risk_mitigant` to `Product`. | 1 |
-| W1 rule engine | A flag produces an evidence pack, not a refund case, and only for kind, premium, 85G, 85V and 85W flags. | 7 |
-| W1 rule engine | A consent record on file must not clear 85G by itself. | 12 |
-| W4 scenarios | Drop AHD-L-021-1617-0367 as a mis-selling template. Treat AHD-L-001-1617-0203 as a complainant's account of coaching, not a "recorded yes" case. Do not use insurer-won awards as compliant gold. Gold verdicts state the real remedy. | 2, 6, 16 |
-| Iteration 2 call flow | Replace the identity check. Do not name the loan before the right person is confirmed. Ground each disclosure line. | 4, 5 |
+| Work package | Change | Item | Status |
+|---|---|---|---|
+| W1 rule engine | The 85V rule must not flag "required for the loan" on its own. Add `provider_choice_offered` and `risk_mitigant` to `Product`. | 1 | **Applied** (W1b, 2026-11-10): both fields are required on `Product`; `checks.bundling` flags only when the product is required and is not a risk mitigant, is described as a deposit, or had no choice of provider (`references/pilots/W1-core-report.md` §4) |
+| W1 rule engine | A flag produces an evidence pack, not a refund case, and only for kind, premium, 85G, 85V and 85W flags. | 7 | **Applied** (W1b, 2026-11-10): `EvidencePack` is built exactly for flags under `EVIDENCE_PACK_RULES` (kind, premium, consent, bundling, loan_funded) |
+| W1 rule engine | A consent record on file must not clear 85G by itself. | 12 | **Applied** (W1b, 2026-11-10): `checks.consent` passes only when the customer's own account includes the product and names the method on record (comparing the method is W1b's own reading of item 12) |
+| W4 scenarios | Drop AHD-L-021-1617-0367 as a mis-selling template. Treat AHD-L-001-1617-0203 as a complainant's account of coaching, not a "recorded yes" case. Do not use insurer-won awards as compliant gold. Gold verdicts state the real remedy. | 2, 6, 16 | |
+| Iteration 2 call flow | Replace the identity check. Do not name the loan before the right person is confirmed. Ground each disclosure line. | 4, 5 | |
 
 ## Edits, most important first
 
