@@ -5,9 +5,13 @@ from __future__ import annotations
 import struct
 import subprocess
 import threading
+from collections.abc import Sequence
 from typing import NamedTuple
 
+import numpy as np
+
 from samajh.clients.gnani import fix_wav_header
+from samajh.server.sessionlog import PauseStats
 
 MAX_TURN_SECONDS = 30.0  # Prisma REST limit, inclusive
 MIN_TURN_SECONDS = 0.1
@@ -19,6 +23,9 @@ _SOURCE_TAGS = frozenset({1, 3, 0xFFFE})
 _PCM_DECODERS = "pcm_u8,pcm_s16le,pcm_s24le,pcm_s32le,pcm_f32le,pcm_f64le"
 # A resample is CPU and memory for a moment; a burst of uploads must queue, not fan out.
 _ffmpeg_slots = threading.BoundedSemaphore(2)
+FRAME_MS = 20
+MIN_PAUSE_MS = 200
+MIN_NOISE_FLOOR = 0.004  # of full scale
 
 
 class AudioRejected(Exception):
@@ -142,3 +149,65 @@ def normalise_turn(data: bytes, line_rate: int) -> bytes:
     if seconds < MIN_TURN_SECONDS:
         raise AudioRejected("audio_too_short", f"a turn must be at least {MIN_TURN_SECONDS:g} s")
     return wav
+
+
+def _wav(pcm: bytes, rate: int) -> bytes:
+    header = struct.pack(
+        "<4sI4s4sIHHIIHH4sI", b"RIFF", 36 + len(pcm), b"WAVE", b"fmt ", 16, 1, 1, rate, rate * 2, 2, 16,
+        b"data", len(pcm),
+    )  # fmt: skip
+    return header + pcm
+
+
+def join_clips(
+    clips: Sequence[bytes], line_rate: int, gap_seconds: float
+) -> tuple[bytes, list[tuple[float, float]]]:
+    """Canonical clips joined in order with `gap_seconds` of silence between them: the joined
+    canonical WAV, and each clip's (start, end) in it in seconds."""
+    gap = bytes(2 * round(gap_seconds * line_rate))
+    pcm = bytearray()
+    spans: list[tuple[float, float]] = []
+    for clip in clips:
+        fmt = _fmt(clip)
+        if fmt is None or canonical_seconds(clip, line_rate) is None:
+            raise ValueError("a clip is not canonical audio at the line rate")
+        if spans:
+            pcm += gap
+        start = len(pcm)
+        pcm += clip[fmt.data_offset : fmt.data_offset + fmt.data_bytes]
+        spans.append((start / 2 / line_rate, len(pcm) / 2 / line_rate))
+    return _wav(bytes(pcm), line_rate), spans
+
+
+def pause_stats(wav: bytes) -> PauseStats | None:
+    """Where the speech and the pauses are in a mono 16-bit WAV, from frame energy alone.
+
+    A 20 ms frame is voiced when its RMS is at least three times the clip's noise floor: the 10th
+    percentile frame RMS, never lower than `MIN_NOISE_FLOOR`. The floor is also held to a tenth
+    of the 95th percentile, so a clip with no silence in it (a tightly cut TTS file) is read as
+    speech throughout and not as noise. None: not such a WAV, or no voiced frame.
+    """
+    fmt = _fmt(wav)
+    if fmt is None or (fmt.tag, fmt.channels, fmt.bits) != (1, 1, 16):
+        return None
+    frame = fmt.rate * FRAME_MS // 1000
+    count = fmt.data_bytes // 2 // frame if frame else 0
+    if count == 0:
+        return None
+    samples = np.frombuffer(wav, dtype="<i2", count=count * frame, offset=fmt.data_offset)
+    rms = np.sqrt(np.mean((samples.reshape(count, frame) / 32768.0) ** 2, axis=1))
+    low, high = np.percentile(rms, [10, 95])
+    floor = max(min(float(low), float(high) / 10), MIN_NOISE_FLOOR)
+    voiced = np.flatnonzero(rms >= 3 * floor)
+    if voiced.size == 0:
+        return None
+    first, last = int(voiced[0]), int(voiced[-1])
+    gaps = (np.diff(voiced) - 1) * FRAME_MS
+    pauses = [float(gap) for gap in gaps if gap >= MIN_PAUSE_MS]
+    return PauseStats(
+        speech_ms=float((last - first + 1) * FRAME_MS),
+        leading_ms=float(first * FRAME_MS),
+        trailing_ms=float((count - 1 - last) * FRAME_MS),
+        pauses_ms=pauses,
+        longest_pause_ms=max(pauses, default=0.0),
+    )

@@ -27,8 +27,9 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from samajh.clients.gnani import TtsLanguage
+from samajh.server.dialogue import ListenKind
 
-LOG_VERSION = 1
+LOG_VERSION = 2
 LineRate = Literal[8000, 16000]
 SttModelName = Literal["prisma-v3.0", "prisma-v2.5"]
 # Batch split two voices only when a pause separated them (api-probe-iter1.md section 1).
@@ -53,14 +54,24 @@ class TtsCall(_Model):
     request_id: str | None = None
 
 
-class SttCall(_Model):
-    mode: Literal["rest", "stream"]
-    model: str
+class SttReading(_Model):
+    """One speech model's transcript of a customer turn, with everything that was sent."""
+
+    role: Literal["primary", "second"]
+    mode: Literal["rest", "stream"] = "rest"
+    model: str  # the model asked for
     params: dict[str, str]  # every option sent with the audio (language_code, format, ...)
-    cache_hit: bool
-    seconds: float  # wall time of the Prisma call; 0 on a cache hit
-    attempts: int
-    est_credits: float
+    ok: bool = True
+    # Why a second reading is missing: "timeout", or the code of the client error. A missing
+    # reading has text "" and is handed to the dialogue as a disagreement, never as agreement.
+    error: str | None = None
+    text: str = ""
+    literal: str | None = None
+    detected_language: str | None = None
+    cache_hit: bool = False
+    seconds: float = 0.0  # wall time of the Prisma call, the wait for the key included
+    attempts: int = 0
+    est_credits: float = 0.0
     request_id: str | None = None
 
 
@@ -68,7 +79,8 @@ class TurnLatency(_Model):
     """Milliseconds. `server_ms` runs from the last request byte read to the response being ready."""
 
     normalise_ms: float  # decode and resample to the line rate
-    stt_ms: float
+    stt_ms: float  # the primary reading
+    second_stt_ms: float = 0.0  # the second reading, or the time waited for it before giving up
     dialogue_ms: float
     server_ms: float
     # Reported by the phone: from the last voiced frame to the moment the upload started
@@ -76,32 +88,74 @@ class TurnLatency(_Model):
     eos_wait_ms: float | None = None
 
 
+class PauseStats(_Model):
+    """Measured by the server on the stored turn audio (`samajh.server.audio.pause_stats`), so a
+    microphone turn, an uploaded file and a replayed call are measured the same way."""
+
+    speech_ms: float  # first voiced frame to last voiced frame
+    leading_ms: float
+    trailing_ms: float
+    pauses_ms: list[float]  # unvoiced gaps of at least 200 ms inside the speech, in order
+    longest_pause_ms: float  # 0 when there is none
+
+
+class PhoneTurn(_Model):
+    """What the phone says about how it took the turn. Untrusted: logged, never acted on."""
+
+    mode: Literal["vad", "ptt", "file"]
+    cut_ms: float | None = None  # the silence after which it sent this take
+    grace_ms: float | None = None  # how long after the last voiced frame the customer could resume
+
+
 class _Event(_Model):
     seq: int  # index in SessionLog.events
     at: float  # seconds since the session was created (wall clock)
     audio: str | None = None  # "audio/<name>.wav", relative to the session directory
     audio_seconds: float | None = None
-    rec_start: float | None = None  # position in call.wav; None when the event has no audio
+    rec_start: float | None = None  # position in call.wav; None when the event is not in it
     rec_end: float | None = None
+    # A longer take of the same customer turn replaced this event (a customer take and the bot's
+    # reply to it are superseded together). It stays in the log and is in no recording, no
+    # transcript and no dialogue state.
+    superseded: bool = False
+
+
+class BotLineLog(_Model):
+    key: str | None = None
+    text: str
+    tags: dict[str, str] = Field(default_factory=dict)
+    # Position of this line inside the event's audio; None until the audio has been made.
+    start_s: float | None = None
+    end_s: float | None = None
+    tts: TtsCall | None = None
 
 
 class BotEvent(_Event):
     type: Literal["bot"] = "bot"
-    text: str
+    text: str  # the lines joined with a space
+    lines: list[BotLineLog] = Field(default_factory=list)
     language: TtsLanguage
     end_call: bool
+    listen: ListenKind = "open"
+    second_reading: bool = False
     tags: dict[str, str] = Field(default_factory=dict)
-    tts: TtsCall | None = None  # None until the audio has been synthesised (on first fetch)
+    # Wall time to make this utterance's audio on its first fetch (every line's Timbre call or
+    # cache read, plus the join). None until then.
+    synth_ms: float | None = None
 
 
 class CustomerEvent(_Event):
     type: Literal["customer"] = "customer"
     source: Literal["mic", "file", "none"]  # "none": the customer said nothing; no audio, no STT
-    transcript: str
+    reply_to: int | None = None  # seq of the bot event this answers
+    part: int = 1  # 1 for the first take of the turn; a later, longer take has a higher number
+    transcript: str  # what the dialogue acted on: the primary reading
     literal: str | None = None
     detected_language: str | None = None
-    stt: SttCall | None = None
+    readings: list[SttReading] = Field(default_factory=list)  # primary first; [] when nothing was said
     latency: TurnLatency | None = None
+    pauses: PauseStats | None = None
+    phone: PhoneTurn | None = None
 
 
 class ErrorEvent(_Event):
@@ -118,8 +172,13 @@ Event = Annotated[BotEvent | CustomerEvent | ErrorEvent, Field(discriminator="ty
 
 
 class SttSettings(_Model):
+    """The primary reading of every turn, and the second reading of the turns that ask for one."""
+
     model: SttModelName = "prisma-v3.0"
     format: Literal["verbatim", "transcribe"] = "transcribe"
+    second_model: SttModelName = "prisma-v2.5"
+    second_format: Literal["verbatim", "transcribe"] = "transcribe"
+    second_timeout_s: float = 2.5
 
 
 class TtsSettings(_Model):
@@ -136,7 +195,7 @@ class Recording(_Model):
 
 
 class SessionLog(_Model):
-    version: Literal[1] = LOG_VERSION
+    version: Literal[2] = LOG_VERSION
     session_id: str
     created_at: str  # UTC ISO 8601
     dialogue: str
@@ -148,6 +207,13 @@ class SessionLog(_Model):
     ended_reason: Literal["dialogue", "hangup"] | None = None
     events: list[Event] = Field(default_factory=list)
     recording: Recording | None = None  # set once the call has ended and call.wav is written
+    # The Dialogue's state after the last event, and before the last customer turn (so that a
+    # longer take of that turn can replace it). Written in the same file as the events, so the
+    # two never disagree. Not served by the HTTP API.
+    dialogue_state: str | None = None
+    dialogue_undo: str | None = None
+    # Set when the after-call job first starts. From then on no take may replace another.
+    closed: bool = False
 
 
 def new_session_id() -> str:
@@ -159,12 +225,15 @@ def lay_out(events: list[Event], gap_seconds: float = RECORDING_GAP_SECONDS) -> 
     """Set `rec_start`/`rec_end` on every event that has audio, in seq order, in place.
 
     The first audio starts at 0; each next one starts `gap_seconds` after the previous ends.
-    Error events never enter the recording (their audio is evidence of a failed attempt only).
+    Error events never enter the recording (their audio is evidence of a failed attempt only),
+    and neither do superseded events.
     """
     cursor = 0.0
     for event in sorted(events, key=lambda e: e.seq):
         event.rec_start = event.rec_end = None
-        if isinstance(event, ErrorEvent) or event.audio is None or event.audio_seconds is None:
+        if isinstance(event, ErrorEvent) or event.superseded:
+            continue
+        if event.audio is None or event.audio_seconds is None:
             continue
         event.rec_start = round(cursor, 6)
         event.rec_end = round(cursor + event.audio_seconds, 6)
@@ -231,12 +300,13 @@ class SessionStore:
         return _read(self._audio(session_id, name))
 
     def assemble_recording(self, log: SessionLog) -> Recording:
-        """Write call.wav from the bot and customer events that have audio, in seq order, with
-        the gaps `lay_out` assumed. Idempotent: the same log and audio give the same bytes."""
+        """Write call.wav from the bot and customer events that have audio and are not
+        superseded, in seq order, with the gaps `lay_out` assumed. Idempotent: the same log and
+        audio give the same bytes."""
         gap = b"\0\0" * round(RECORDING_GAP_SECONDS * log.line_rate)
         parts: list[bytes] = []
         for event in sorted(log.events, key=lambda e: e.seq):
-            if isinstance(event, ErrorEvent) or event.audio is None:
+            if isinstance(event, ErrorEvent) or event.superseded or event.audio is None:
                 continue
             data = self.read_audio(log.session_id, event.audio.removeprefix("audio/"))
             if data is None:

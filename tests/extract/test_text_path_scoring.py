@@ -2,11 +2,12 @@
 
 import devset
 import e1
+import triage
 from scenario import GoldLabels
 from scoring import Tally, by_language, score_case, summarise
 
 from samajh.rules import evaluate, to_beliefs
-from samajh.types import RawExtraction, RuleId, Verdict
+from samajh.types import RawExtraction, RuleId, Tier, Verdict
 
 SCENARIOS = {s.id: s for s in devset.scenarios()}
 
@@ -168,3 +169,65 @@ def test_e1_reports_each_stratum_apart_and_counts_whole_base_cases():
     assert "| 2/3 calls (1/2 base cases in every language) |" in coached
     informed = next(line for line in lines if line.startswith("| informed"))
     assert "| clear |" in informed and "1/1 calls" in informed
+
+
+def test_a_call_carries_the_pipeline_tier_and_a_failed_call_has_none():
+    scenario = next(iter(SCENARIOS.values()))
+    assert scored(scenario).tier is evaluate(scenario.record, beliefs(scenario)).tier
+    assert scored(scenario, error="boom").tier is None
+
+
+def test_triage_groups_follow_the_customer_and_never_the_pipeline():
+    assert triage.group("misled", gold_clear=False) == "problem"
+    assert triage.group("unaware", gold_clear=False) == "problem"
+    assert triage.group("did_not_agree", gold_clear=False) == "problem"
+    assert triage.group("informed", gold_clear=True) == "informed_clear"
+    assert triage.group("informed", gold_clear=False) == "informed_flagged"
+    assert triage.group(None, gold_clear=True) == "gold_clear"
+    assert triage.group(None, gold_clear=False) == "gold_not_clear"
+
+
+def triage_row(id, group, tier, language="hi", ceiling=None):
+    return triage.TriageRow(id=id, base=id.split("-")[0], language=language, group=group, tier=tier, ceiling=ceiling)
+
+
+def test_a_miss_is_a_customer_with_a_problem_nobody_would_look_at():
+    rows = [
+        triage_row("B01-hi", "problem", Tier.refer),
+        triage_row("B02-hi", "problem", Tier.incomplete),
+        triage_row("B03-hi", "problem", Tier.understanding_gap),
+        triage_row("B04-hi", "problem", Tier.clear),
+        triage_row("B05-hi", "problem", None),
+        triage_row("U01-hi", "informed_clear", Tier.clear),
+        triage_row("U02-hi", "informed_clear", Tier.understanding_gap),
+    ]
+    assert [r.id for r in triage.misses(rows)] == ["B03-hi", "B04-hi"]
+    assert triage.false_referrals(rows) == []
+
+
+def test_a_false_referral_is_an_informed_customer_on_a_compliant_record_sent_to_review():
+    rows = [
+        triage_row("U01-hi", "informed_clear", Tier.refer),
+        triage_row("U02-hi", "informed_clear", Tier.incomplete),
+        triage_row("G03-hi", "informed_flagged", Tier.refer),
+        triage_row("B01-hi", "problem", Tier.refer),
+    ]
+    assert [r.id for r in triage.false_referrals(rows)] == ["U01-hi"]
+
+
+def test_the_triage_table_counts_calls_and_base_cases_and_keeps_tamil_and_kannada_apart():
+    rows = [
+        triage_row("B01-hi", "problem", Tier.refer, "hi"),
+        triage_row("B01-hi-en", "problem", Tier.clear, "hi-en"),
+        triage_row("B02-hi", "problem", Tier.refer, "hi"),
+        triage_row("B02-hi-en", "problem", Tier.refer, "hi-en"),
+        triage_row("B01-ta", "problem", Tier.understanding_gap, "ta", ceiling=Tier.refer),
+    ]
+    lines = triage.table(rows).splitlines()
+    headline = next(line for line in lines if line.startswith("| problem | hi + hi-en |"))
+    assert "| 4 (2) |" in headline
+    assert "25 per 100 (1/4;" in headline  # one of four calls is a miss
+    assert "50 per 100 (1/2;" in headline  # in one of two base cases
+    tamil = next(line for line in lines if line.startswith("| problem | ta (experimental) |"))
+    assert "100 per 100 (1/1;" in tamil and tamil.rstrip(" |").endswith("0 per 100 (0/1; 95% 0 to 79)")
+    assert not any(line.startswith("| informed_clear") for line in lines)

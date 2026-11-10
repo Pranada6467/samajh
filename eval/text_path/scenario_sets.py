@@ -62,6 +62,7 @@ def _frozen() -> tuple[str, tuple[Scenario, ...]]:
                 base=s.base,
                 yes_no=arm,
                 consent_reading=s.base in CONSENT_READING,
+                customer_state=s.customer_state.value,
             )
         )
     note = (

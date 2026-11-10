@@ -6,6 +6,7 @@ import hashlib
 import io
 import math
 import struct
+import time
 import wave
 from collections.abc import Callable
 
@@ -36,10 +37,13 @@ class FakeSpeech:
     cache keyed like the real one (same input, second call is a hit)."""
 
     def __init__(self, transcripts: list[str] | None = None) -> None:
-        self.transcripts = list(transcripts or [])
+        self.transcripts = list(transcripts or [])  # one per new clip, whichever model reads it
+        self.model_transcripts: dict[str, list[str]] = {}  # a model that reads clips its own way
         self.stt_calls: list[tuple[bytes, PrismaV30 | PrismaV25]] = []
         self.tts_calls: list[tuple[str, Timbre]] = []
-        self.stt_error: Exception | None = None
+        self.stt_error: Exception | None = None  # every model
+        self.model_errors: dict[str, Exception] = {}
+        self.model_delays: dict[str, float] = {}  # seconds slept before a model answers
         self.tts_error: Exception | None = None
         self.tts_audio: Callable[[Timbre], bytes] = lambda o: make_wav(0.4, o.sample_rate)
         self._seen: dict[str, str] = {}
@@ -55,12 +59,22 @@ class FakeSpeech:
 
     def stt(self, audio: bytes, options: PrismaV30 | PrismaV25, *, audio_format: str = "wav") -> Transcript:
         self.stt_calls.append((audio, options))
-        if self.stt_error is not None:
-            raise self.stt_error
+        time.sleep(self.model_delays.get(options.model, 0.0))
+        error = self.stt_error or self.model_errors.get(options.model)
+        if error is not None:
+            raise error
         key = hashlib.sha256(audio + options.model_dump_json().encode()).hexdigest()
         hit = key in self._seen
         if not hit:
-            self._seen[key] = self.transcripts.pop(0) if self.transcripts else "हाँ"
+            own = self.model_transcripts.get(options.model)
+            if own is not None:
+                self._seen[key] = own.pop(0) if own else "हाँ"
+            else:
+                # Models with no list of their own agree on what a clip says.
+                clip = hashlib.sha256(audio).hexdigest()
+                if clip not in self._seen:
+                    self._seen[clip] = self.transcripts.pop(0) if self.transcripts else "हाँ"
+                self._seen[key] = self._seen[clip]
         v25 = options.model == "prisma-v2.5"
         return Transcript(
             text=self._seen[key],
@@ -89,3 +103,18 @@ class FakeSpeech:
             request_id="req-fake",
             call=self._info(key, hit, 0.002 * len(text)),
         )
+
+
+def make_speech(parts: list[tuple[float, bool]], rate: int = 8000) -> bytes:
+    """A clip of (seconds, voiced) stretches: a tone where voiced, digital silence elsewhere."""
+    pcm = b""
+    for seconds, voiced in parts:
+        clip = make_wav(seconds, rate) if voiced else None
+        pcm += clip[44:] if clip else bytes(2 * round(seconds * rate))
+    out = io.BytesIO()
+    with wave.open(out, "wb") as f:
+        f.setnchannels(1)
+        f.setsampwidth(2)
+        f.setframerate(rate)
+        f.writeframes(pcm)
+    return out.getvalue()

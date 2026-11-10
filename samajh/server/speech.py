@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Any, Protocol, get_args
+from typing import Any, Literal, Protocol, get_args
 
 import httpx
 
@@ -101,9 +101,27 @@ def live_client(profile: ClientProfile, **overrides: Any) -> GnaniClient:
     return GnaniClient.from_env(**(settings | overrides))
 
 
-def stt_options(settings: SttSettings, bot_language: TtsLanguage) -> PrismaV30 | PrismaV25:
+def second_profile(bound: float) -> ClientProfile:
+    """One attempt, and no wait (for the key or for the response) longer than `bound`: the second
+    reading of a turn is worth having only if it is back in time."""
+    return ClientProfile(
+        RetryPolicy(max_attempts=1, base_delay=0.0, max_delay=0.0),
+        timeout=bound,
+        lock_timeout=bound,
+        deadline=bound,
+    )
+
+
+def stt_options(
+    settings: SttSettings, bot_language: TtsLanguage, role: Literal["primary", "second"] = "primary"
+) -> PrismaV30 | PrismaV25:
     """The customer answers in the language the bot asked in. ValueError if the model cannot take it."""
-    v30 = settings.model == "prisma-v3.0"
+    model, fmt = (
+        (settings.model, settings.format)
+        if role == "primary"
+        else (settings.second_model, settings.second_format)
+    )
+    v30 = model == "prisma-v3.0"
     language: str | tuple[str, ...]
     if bot_language == "hi-en":
         language = ("hi-IN", "en-IN") if v30 else "hi-IN"
@@ -112,14 +130,14 @@ def stt_options(settings: SttSettings, bot_language: TtsLanguage) -> PrismaV30 |
     elif bot_language in get_args(SttLanguage):
         language = bot_language
     else:
-        raise ValueError(f"{settings.model} cannot transcribe a reply to language {bot_language!r}")
+        raise ValueError(f"{model} cannot transcribe a reply to language {bot_language!r}")
     if v30:
-        return PrismaV30(language=language, format=settings.format)
-    return PrismaV25(language=language, format=settings.format)
+        return PrismaV30(language=language, format=fmt)
+    return PrismaV25(language=language, format=fmt)
 
 
 def stt_params(options: PrismaV30 | PrismaV25) -> dict[str, str]:
-    """The option set as it goes into `SttCall.params`."""
+    """The option set as it goes into `SttReading.params`."""
     language = options.language
     return {
         "language_code": language if isinstance(language, str) else ",".join(language),

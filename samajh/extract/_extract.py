@@ -12,24 +12,32 @@ The model never chooses the words kept as evidence. An answer quotes the custome
 and a recall item, a claim or a concern quotes the whole clauses around its span, so no quote can
 stop short of a "not" that the model left out. The two identity checks are never sent to the
 model: the right-party question names the borrower and the second check asks a birth year.
+
+The calls for one transcript run in parallel threads and are assembled in call order. A call that
+fails makes the fields of its reply `Unclear(extraction_failed)`, never the whole call a failure.
+A question asked more than once keeps its last usable answer, and differing answers are kept as
+an `AnswerConflict`.
 """
 
 import time
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
-from samajh.clients.errors import LlmOutputInvalid
+from samajh.amounts import has_doubt_word
+from samajh.clients.errors import BadResponse, LlmOutputInvalid, RateLimited, ServerError, TransportError
 from samajh.clients.llm import LlmResult, Message
-from samajh.extract._ground import Found, Reader, Reply, days, months, rupees, tighten
+from samajh.extract._ground import Found, Reply, comparison_form, days, months, rupees
 from samajh.extract._prompt import messages, screen_messages
 from samajh.extract._wire import (
     SCHEMA,
     CancelReply,
     ConsentReply,
     FeaturesReply,
+    FrequencyReply,
     KindReply,
     PaymentReply,
     ReadbackReply,
@@ -44,6 +52,7 @@ from samajh.extract._wire import (
 from samajh.rules.clauses import KIND_ON_RECORD
 from samajh.types import (
     Answer,
+    AnswerConflict,
     CallStep,
     ClaimEvidence,
     ConcernEvidence,
@@ -78,6 +87,9 @@ _SCREEN_MIN_WORDS = 3
 # matched to a product that no recall item describes correctly.
 _MISDESCRIBED = frozenset({KindClaim.deposit, KindClaim.investment, KindClaim.other})
 _IDENTITY = frozenset({CallStep.right_party_check, CallStep.second_check})
+# One reply's call failed in a way that says nothing about the next reply. Anything else (the
+# spend cap, a bad key, a bad configuration) would fail every call, so it is raised.
+_ONE_CALL_FAILED = (LlmOutputInvalid, BadResponse, TransportError, RateLimited, ServerError)
 
 
 class Llm(Protocol):
@@ -94,7 +106,10 @@ class Llm(Protocol):
 
 
 class ExtractionFailed(Exception):
-    """The model gave no schema-valid output for one reply. The call has no extraction at all."""
+    """No longer raised: a failed call now makes its fields `Unclear(extraction_failed)`.
+
+    Kept only until `eval/text_path/run.py` stops importing it.
+    """
 
     def __init__(self, call_id: str, turn_id: TurnId, kind: SlotKind, reason: str) -> None:
         self.call_id, self.turn_id, self.kind = call_id, turn_id, kind
@@ -131,6 +146,9 @@ class SlotTrace:
     pointers: int = 0  # answers the model backed with clause numbers
     bad_pointers: list[str] = field(default_factory=list)  # fields with no clause number, or one out of range
     inconsistent: list[str] = field(default_factory=list)  # "stated" without a value or a span
+    # The error type when the call gave no output; `model` is then the one asked for ("" for the
+    # client's default) and `usd` is 0.0 although failed attempts may have been paid for.
+    failed: str | None = None
 
 
 @dataclass(frozen=True)
@@ -179,6 +197,10 @@ class _Grounder:
         self.reply = Reply(slot.turn.text)
         self.turn_id = slot.turn.id
         self.trace = trace
+        self.hedged = has_doubt_word(slot.turn.text)  # code decides the marker, not the model
+
+    def whole(self) -> Evidence:
+        return self.evidence(self.reply.whole())
 
     def find(self, name: str, span: str | None) -> Found | None:
         if span is None or not span.strip():
@@ -198,7 +220,7 @@ class _Grounder:
         The model must point at a clause of the reply that carries the answer. The evidence kept
         is the whole reply, not the clause the model picked.
         """
-        whole = self.evidence(self.reply.whole())
+        whole = self.whole()
         if status is Status.unclear:
             return Unclear(evidence=whole)
         if status is Status.stated and value is None:
@@ -210,25 +232,50 @@ class _Grounder:
             return Unclear(reason=GapReason.quote_not_grounded)
         if status is Status.dont_know:
             return DontKnow(evidence=whole)
-        return Stated(value=value, evidence=whole)
+        return Stated(value=value, evidence=whole, hedged=self.hedged)
 
-    def spoken(
-        self, name: str, status: Status, span: str | None, clauses: tuple[int, ...], read: Reader
-    ) -> Answer:
-        """An amount or a duration: the value is a span of the reply, read by `read`."""
+    def spoken(self, name: str, status: Status, span: str | None, clauses: tuple[int, ...]) -> Answer:
+        """An amount or a duration: the value is the span, as it stands in the reply."""
         if status is not Status.stated:
             return self.pointed(name, status, None, clauses)
         if not (span and span.strip()):
             self.trace.inconsistent.append(name)
-            return Unclear(evidence=self.evidence(self.reply.whole()))
+            return Unclear(evidence=self.whole())
         found = self.find(name, span)
         if found is None:
             return Unclear(reason=GapReason.quote_not_grounded)
-        return Stated(value=tighten(found.words, read), evidence=self.evidence(self.reply.whole()))
+        return Stated(value=found.words, evidence=self.whole(), hedged=self.hedged)
 
 
-def _usable(answer: Answer) -> bool:
-    return isinstance(answer, (Stated, DontKnow))
+Usable = Stated | DontKnow
+
+# What a spoken value reads to, used only to tell whether two answers to one question differ.
+_READ: dict[str, Callable[[str], object]] = {
+    "premium": rupees,
+    "cover": rupees,
+    "term": months,
+    "cancel_window": days,
+}
+
+
+def _said(name: str, answer: Usable) -> object:
+    """Two usable answers to one question differ when this differs."""
+    if isinstance(answer, DontKnow):
+        return DontKnow
+    value = answer.value
+    if name in _READ:
+        reading = _READ[name](value)
+        return comparison_form(value) if reading is None else reading
+    return frozenset(value) if isinstance(value, tuple) else value
+
+
+def _changes(name: str, heard: Sequence[Usable]) -> list[Evidence]:
+    """The answers that differ from the one before them, the first included. One entry: no conflict."""
+    kept: list[Usable] = []
+    for answer in heard:
+        if not kept or _said(name, answer) != _said(name, kept[-1]):
+            kept.append(answer)
+    return [answer.evidence for answer in kept]
 
 
 class _Assembly:
@@ -236,17 +283,44 @@ class _Assembly:
 
     def __init__(self, on_record: Sequence[ProductId]) -> None:
         self.answers: dict[ProductId, dict[str, Answer]] = {pid: {} for pid in on_record}
+        # Every usable answer to a field, in call order, since the field was last replaced.
+        self.heard: dict[ProductId, dict[str, list[Usable]]] = {pid: {} for pid in on_record}
         self.claims: dict[ProductId, list[ClaimEvidence]] = {pid: [] for pid in on_record}
         self.concerns: list[ConcernEvidence] = []
         self.recall_answer: Evidence | None = None
+        self.recall_denial: Evidence | None = None
         self.recall_items: list[tuple[RawRecallItem, bool]] = []  # item, was its span in the reply
+        self.unscreened: list[Evidence] = []
 
     def put(self, slot: Slot, name: str, answer: Answer, replace: bool = False) -> None:
-        """A question asked twice keeps its last usable answer. `replace` always takes the new one."""
+        """A question asked twice keeps its last usable answer, and every usable answer is remembered.
+
+        `replace` is the read-back: the new answer is taken whatever it is, and the earlier ones
+        are forgotten, so a premium corrected at the read-back is not a conflict.
+        """
         for pid in slot.products:
-            old = self.answers[pid].get(name)
-            if replace or old is None or _usable(answer) or not _usable(old):
+            heard = self.heard[pid].setdefault(name, [])
+            if replace:
+                heard.clear()
+            if isinstance(answer, Usable):
+                heard.append(answer)
+            if replace or isinstance(answer, Usable) or not isinstance(self.answers[pid].get(name), Usable):
                 self.answers[pid][name] = answer
+
+    def conflicts(self, pid: ProductId) -> tuple[AnswerConflict, ...]:
+        found = []
+        for kind, names in _FIELDS.items():
+            if kind is SlotKind.readback:
+                continue  # the last read-back reply stands alone
+            differing: set[Evidence] = set()
+            for name in names:
+                changes = _changes(name, self.heard[pid].get(name, ()))
+                if len(changes) > 1:
+                    differing.update(changes)
+            if differing:
+                answers = tuple(sorted(differing, key=lambda e: e.turn_id))
+                found.append(AnswerConflict(question=Question(kind.value), answers=answers))
+        return tuple(found)
 
     def take(self, slot: Slot, wire: WireReply, g: _Grounder) -> None:
         _TAKE[slot.kind](self, slot, wire, g)
@@ -277,8 +351,23 @@ class _Assembly:
 
     def blank(self, slot: Slot) -> None:
         """Silence: asked, and nothing was said."""
+        self._no_answer(slot, Unclear())
+
+    def failed(self, slot: Slot, screen: bool) -> None:
+        """The call for this reply gave no output.
+
+        Open recall has no field that can say "not read", so its reply is listed with the
+        unscreened ones: the rules then cannot take the missing items for "named nothing".
+        """
+        whole = Evidence(quote=Reply(slot.turn.text).whole(), turn_id=slot.turn.id)
+        if screen or slot.kind is SlotKind.recall:
+            self._add(self.unscreened, whole)
+        else:
+            self._no_answer(slot, Unclear(reason=GapReason.extraction_failed, evidence=whole))
+
+    def _no_answer(self, slot: Slot, answer: Unclear) -> None:
         for name in _FIELDS[slot.kind]:
-            self.put(slot, name, Unclear(), replace=name == "premium_readback")
+            self.put(slot, name, answer, replace=name == "premium_readback")
 
     def _kind(self, slot: Slot, wire: KindReply, g: _Grounder) -> None:
         self.put(slot, "kind", g.pointed("kind", wire.status, wire.kind, wire.clauses))
@@ -286,29 +375,30 @@ class _Assembly:
     def _payment(self, slot: Slot, wire: PaymentReply, g: _Grounder) -> None:
         self.put(slot, "payment_source", g.pointed("source", wire.status, wire.source, wire.clauses))
 
+    def _frequency(self, slot: Slot, wire: FrequencyReply, g: _Grounder) -> None:
+        answer = g.pointed("frequency", wire.status, wire.frequency, wire.clauses)
+        self.put(slot, "payment_frequency", answer)
+
     def _yes_no(self, slot: Slot, wire: YesNoReply, g: _Grounder) -> None:
         (name,) = _FIELDS[slot.kind]
         self.put(slot, name, g.pointed("yes", wire.status, wire.yes, wire.clauses))
 
     def _span(self, slot: Slot, wire: SpanReply, g: _Grounder) -> None:
         (name,) = _FIELDS[slot.kind]
-        read = months if slot.kind is SlotKind.term else rupees
-        self.put(slot, name, g.spoken("span", wire.status, wire.span, wire.clauses, read))
+        self.put(slot, name, g.spoken("span", wire.status, wire.span, wire.clauses))
 
     def _readback(self, slot: Slot, wire: ReadbackReply, g: _Grounder) -> None:
         answer = g.pointed("confirms", wire.status, wire.confirms, wire.clauses)
         self.put(slot, "premium_readback", answer, replace=True)
         rejected = isinstance(answer, Stated) and answer.value is False
         if rejected and wire.corrected_amount_span:
-            corrected = g.spoken(
-                "corrected_amount_span", Status.stated, wire.corrected_amount_span, (), rupees
-            )
+            corrected = g.spoken("corrected_amount_span", Status.stated, wire.corrected_amount_span, ())
             self.put(slot, "premium", corrected, replace=True)
 
     def _cancel(self, slot: Slot, wire: CancelReply, g: _Grounder) -> None:
         allowed = g.pointed("allowed", wire.allowed_status, wire.allowed, wire.allowed_clauses)
         self.put(slot, "cancel_allowed", allowed)
-        window = g.spoken("window_span", wire.window_status, wire.window_span, wire.window_clauses, days)
+        window = g.spoken("window_span", wire.window_status, wire.window_span, wire.window_clauses)
         self.put(slot, "cancel_window", window)
 
     def _consent(self, slot: Slot, wire: ConsentReply, g: _Grounder) -> None:
@@ -322,19 +412,20 @@ class _Assembly:
         if wire.status is not Status.stated and claims:
             # "I do not know" together with a belief is two answers: neither is kept.
             g.trace.inconsistent.append("claims")
-            self.put(slot, "feature_probe", Unclear(evidence=g.evidence(g.reply.whole())))
+            self.put(slot, "feature_probe", Unclear(evidence=g.whole()))
             return
         self.put(slot, "feature_probe", g.pointed("claims", wire.status, claims, wire.clauses))
 
     def _recall(self, slot: Slot, wire: RecallReply, g: _Grounder) -> None:
-        self.recall_answer = g.evidence(g.reply.whole())
+        self.recall_answer = g.whole()
+        self.recall_denial = g.whole() if wire.took_nothing and not wire.items else None
         for item in wire.items:
             found = g.find("items", item.span)
             amount = g.find("items.amount_span", item.amount_span) if found else None
             raw = RawRecallItem(
                 evidence=g.evidence(found.clauses if found else item.span),
                 kind=item.kind,
-                amount_text=tighten(amount.words, rupees) if amount else None,
+                amount_text=amount.words if amount else None,
             )
             self.recall_items.append((raw, found is not None))
 
@@ -345,6 +436,7 @@ _TAKE: dict[SlotKind, Callable] = {
     SlotKind.premium: _Assembly._span,
     SlotKind.readback: _Assembly._readback,
     SlotKind.payment_source: _Assembly._payment,
+    SlotKind.payment_frequency: _Assembly._frequency,
     SlotKind.required_for_loan: _Assembly._yes_no,
     SlotKind.provider_choice: _Assembly._yes_no,
     SlotKind.cover: _Assembly._span,
@@ -361,6 +453,7 @@ _FIELDS: dict[SlotKind, tuple[str, ...]] = {
     SlotKind.premium: ("premium",),
     SlotKind.readback: ("premium_readback",),
     SlotKind.payment_source: ("payment_source",),
+    SlotKind.payment_frequency: ("payment_frequency",),
     SlotKind.required_for_loan: ("required_for_loan",),
     SlotKind.provider_choice: ("provider_choice_offered",),
     SlotKind.cover: ("cover",),
@@ -399,8 +492,10 @@ def attribute(items: Sequence[tuple[RawRecallItem, bool]], record: LoanRecord) -
     return tuple(item.model_copy(update={"product_id": matched.get(k)}) for k, (item, _) in enumerate(items))
 
 
-def _ask(llm: Llm, slot: Slot, transcript: Transcript, model: str | None, screen: bool) -> tuple:
-    """One LLM call about one reply: the answer call, or the screening call."""
+def _ask(
+    llm: Llm, slot: Slot, transcript: Transcript, model: str | None, screen: bool
+) -> tuple[WireReply | ScreenReply | None, SlotTrace]:
+    """One LLM call about one reply: the answer call, or the screening call. No output when it failed."""
     language, question, reply = transcript.language, slot.question, slot.turn.text
     schema = ScreenReply if screen else SCHEMA[slot.kind]
     request = (
@@ -408,54 +503,79 @@ def _ask(llm: Llm, slot: Slot, transcript: Transcript, model: str | None, screen
         if screen
         else messages(slot.kind, language, question, reply)
     )
+    trace = SlotTrace(
+        turn_id=slot.turn.id, kind=slot.kind, screen=screen, model=model or "", usd=0.0, seconds=0.0,
+        cache_hit=False, generation_id=None, prompt_tokens=0, completion_tokens=0,
+    )  # fmt: skip
     started = time.monotonic()
     try:
         result = llm.complete(schema, request, model=model, max_tokens=_MAX_TOKENS)
-    except LlmOutputInvalid as exc:
-        raise ExtractionFailed(transcript.call_id, slot.turn.id, slot.kind, str(exc)) from exc
-    trace = SlotTrace(
-        turn_id=slot.turn.id,
-        kind=slot.kind,
-        screen=screen,
-        model=result.model,
-        usd=result.usd,
-        seconds=time.monotonic() - started,
-        cache_hit=result.cache_hit,
-        generation_id=result.generation_id,
-        prompt_tokens=result.prompt_tokens,
-        completion_tokens=result.completion_tokens,
-    )
+    except _ONE_CALL_FAILED as exc:
+        trace.failed = type(exc).__name__  # the name only: the message may quote the reply
+        trace.seconds = time.monotonic() - started
+        return None, trace
+    trace.model, trace.usd, trace.seconds = result.model, result.usd, time.monotonic() - started
+    trace.cache_hit, trace.generation_id = result.cache_hit, result.generation_id
+    trace.prompt_tokens, trace.completion_tokens = result.prompt_tokens, result.completion_tokens
     return result.value, trace
 
 
-def extract_traced(
-    transcript: Transcript, record: LoanRecord, llm: Llm, *, model: str | None = None
-) -> Extraction:
-    """`extract`, plus what each LLM call cost and which spans were not in the reply.
-
-    Raises ValueError when the transcript is not a call about this loan, and `ExtractionFailed`
-    when the model gives no schema-valid output for a reply.
-    """
-    if transcript.loan_id != record.loan_id:
-        raise ValueError(f"transcript is for loan {transcript.loan_id}, record is {record.loan_id}")
-    on_record = tuple(p.id for p in record.products)
-    assembly = _Assembly(on_record)
-    traces: list[SlotTrace] = []
+def _plan(transcript: Transcript, record: LoanRecord) -> Iterator[tuple[Slot, bool | None]]:
+    """Each reply's calls in call order: False the answer call, True the screening call, None silence."""
     for slot in slots(transcript, record):
         if slot.step in _IDENTITY:
             continue
         reply = Reply(slot.turn.text)
         if reply.blank:
-            assembly.blank(slot)
+            yield slot, None
             continue
         if slot.kind is not SlotKind.other:
-            wire, trace = _ask(llm, slot, transcript, model, screen=False)
-            assembly.take(slot, wire, _Grounder(slot, trace))
-            traces.append(trace)
+            yield slot, False
         if reply.word_count >= _SCREEN_MIN_WORDS:
-            wire, trace = _ask(llm, slot, transcript, model, screen=True)
+            yield slot, True
+
+
+def extract_traced(
+    transcript: Transcript,
+    record: LoanRecord,
+    llm: Llm,
+    *,
+    model: str | None = None,
+    max_workers: int = 8,
+) -> Extraction:
+    """`extract`, plus what each LLM call cost, which spans were not in the reply and which calls failed.
+
+    Raises ValueError when the transcript is not a call about this loan, and the client's error
+    when no call can succeed (`CapExceeded`, `AuthError`, `ConfigError`).
+    """
+    if transcript.loan_id != record.loan_id:
+        raise ValueError(f"transcript is for loan {transcript.loan_id}, record is {record.loan_id}")
+    on_record = tuple(p.id for p in record.products)
+    plan = list(_plan(transcript, record))
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = [
+            pool.submit(_ask, llm, slot, transcript, model, screen) for slot, screen in plan if screen is not None
+        ]
+        try:
+            asked = iter([future.result() for future in futures])
+        except BaseException:
+            pool.shutdown(cancel_futures=True)
+            raise
+
+    assembly = _Assembly(on_record)
+    traces: list[SlotTrace] = []
+    for slot, screen in plan:
+        if screen is None:
+            assembly.blank(slot)
+            continue
+        wire, trace = next(asked)
+        traces.append(trace)
+        if wire is None:
+            assembly.failed(slot, screen)
+        elif screen:
             assembly.screen(slot, wire, _Grounder(slot, trace))
-            traces.append(trace)
+        else:
+            assembly.take(slot, wire, _Grounder(slot, trace))
 
     recall_asked = any(t.speaker is Speaker.bot and t.step is CallStep.open_recall for t in transcript.turns)
     raw = RawExtraction(
@@ -464,24 +584,34 @@ def extract_traced(
             asked=recall_asked,
             answer=assembly.recall_answer,
             items=attribute(assembly.recall_items, record),
+            denial=None if assembly.recall_items else assembly.recall_denial,
         ),
         products=tuple(
             RawProductAnswers(
-                product_id=pid, volunteered_claims=tuple(assembly.claims[pid]), **assembly.answers[pid]
+                product_id=pid,
+                volunteered_claims=tuple(assembly.claims[pid]),
+                conflicts=assembly.conflicts(pid),
+                **assembly.answers[pid],
             )
             for pid in on_record
         ),
         sale_concerns=tuple(assembly.concerns),
+        unscreened=tuple(assembly.unscreened),
     )
     return Extraction(raw=raw, slots=tuple(traces))
 
 
 def extract(
-    transcript: Transcript, record: LoanRecord, llm: Llm, *, model: str | None = None
+    transcript: Transcript,
+    record: LoanRecord,
+    llm: Llm,
+    *,
+    model: str | None = None,
+    max_workers: int = 8,
 ) -> RawExtraction:
     """What the customer said on the call, as enums and their own words. The one LLM step.
 
     The model is shown one bot question and one customer reply at a time, and nothing from the
     lender's record. A quote that is not in the reply never becomes an answer.
     """
-    return extract_traced(transcript, record, llm, model=model).raw
+    return extract_traced(transcript, record, llm, model=model, max_workers=max_workers).raw

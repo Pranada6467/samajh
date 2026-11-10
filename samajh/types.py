@@ -8,18 +8,21 @@ The LLM only fills RawExtraction: enums and verbatim text. Amounts and durations
 stay as the customer's words until deterministic code parses them into Beliefs.
 """
 
+from collections.abc import Iterable
 from datetime import date
 from enum import StrEnum
 from itertools import pairwise
-from typing import Annotated, Generic, Literal, NewType, TypeVar
+from typing import Annotated, Any, ClassVar, Generic, Literal, NewType, TypeVar
 
 from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    SerializerFunctionWrapHandler,
     StrictBool,
     StrictInt,
     StringConstraints,
+    model_serializer,
     model_validator,
 )
 from typing_extensions import TypeAliasType
@@ -34,9 +37,23 @@ Count = Annotated[
 
 
 class Frozen(BaseModel):
-    """Base for every model: immutable, unknown fields rejected."""
+    """Base for every model: immutable, unknown fields rejected.
+
+    `added_later` names fields added after scenario set version 3 was frozen. A dump leaves such
+    a field out while it holds its default, so a file written before the field existed keeps its
+    bytes and its hash, and still loads.
+    """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
+    added_later: ClassVar[frozenset[str]] = frozenset()
+
+    @model_serializer(mode="wrap")
+    def _omit_later_defaults(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        data = handler(self)
+        for name in self.added_later:
+            if name in data and getattr(self, name) == type(self).model_fields[name].default:
+                del data[name]
+        return data
 
 
 # --- enums -----------------------------------------------------------------
@@ -72,6 +89,13 @@ class PaymentSource(StrEnum):
 
     from_loan = "from_loan"
     separately = "separately"
+
+
+class PaymentFrequency(StrEnum):
+    """How often the customer says the product is paid for."""
+
+    one_time = "one_time"
+    recurring = "recurring"
 
 
 class FeatureClaim(StrEnum):
@@ -150,6 +174,7 @@ class Question(StrEnum):
     cancel_window = "cancel_window"
     features = "features"
     consent = "consent"
+    payment_frequency = "payment_frequency"
 
 
 class GapReason(StrEnum):
@@ -161,6 +186,8 @@ class GapReason(StrEnum):
     readback_rejected = "readback_rejected"
     readback_mismatch = "readback_mismatch"
     quote_not_grounded = "quote_not_grounded"
+    extraction_failed = "extraction_failed"  # the model gave no valid output for this reply
+    not_comparable = "not_comparable"  # a usable answer the record gives nothing to compare with
 
 
 class Severity(StrEnum):
@@ -172,7 +199,10 @@ class Severity(StrEnum):
 
 
 class Verdict(StrEnum):
-    """Outcome for a product or a case. Never a finding of wrongdoing."""
+    """The strict outcome: any flag is `flag_for_review`. The frozen gold is written in it.
+
+    Triage reads `Tier`. Never a finding of wrongdoing.
+    """
 
     clear = "clear"
     flag_for_review = "flag_for_review"
@@ -195,6 +225,138 @@ class RuleId(StrEnum):
     belief_mismatch = "belief_mismatch"
     sale_conduct = "sale_conduct"
     evidence = "evidence"
+
+
+class Tier(StrEnum):
+    """Triage of a product or a case, derived from its flags and gaps by `tier_of`. Never a finding.
+
+    `refer`: a human must look. `incomplete`: the call did not yield enough to decide.
+    `understanding_gap`: reported in aggregate, not queued. `clear`: every rule passed.
+    """
+
+    refer = "refer"
+    incomplete = "incomplete"
+    understanding_gap = "understanding_gap"
+    clear = "clear"
+
+
+class FlagReason(StrEnum):
+    """Each distinct reason a rule raises a flag. Keys of `samajh.rules.checks.SEVERITY` and `FLAG_TIER`."""
+
+    kind_differs = "kind_differs"
+    kind_dont_know = "kind_dont_know"
+    premium_differs_confirmed = "premium_differs_confirmed"  # customer confirmed the read-back
+    premium_differs = "premium_differs"  # a differing amount that no read-back confirmed
+    premium_dont_know = "premium_dont_know"
+    premium_approximate = "premium_approximate"  # within the approximate tolerance, not the exact one
+    cover_differs = "cover_differs"
+    cover_dont_know = "cover_dont_know"
+    term_differs = "term_differs"
+    term_dont_know = "term_dont_know"
+    cancel_unaware = "cancel_unaware"
+    cancel_dont_know = "cancel_dont_know"
+    cancel_window_differs = "cancel_window_differs"
+    cancel_window_dont_know = "cancel_window_dont_know"
+    cancel_not_on_record = "cancel_not_on_record"
+    recall_not_named = "recall_not_named"
+    recall_denied = "recall_denied"  # says they took nothing with the loan
+    recall_off_record = "recall_off_record"
+    consent_no_record = "consent_no_record"
+    consent_not_recognised = "consent_not_recognised"
+    consent_method_differs = "consent_method_differs"
+    consent_dont_know = "consent_dont_know"
+    funded_no_consent = "funded_no_consent"
+    funded_says_separately = "funded_says_separately"
+    funded_dont_know = "funded_dont_know"
+    unfunded_says_deducted = "unfunded_says_deducted"
+    bundled_not_mitigant = "bundled_not_mitigant"
+    bundled_described_as_deposit = "bundled_described_as_deposit"
+    bundled_no_choice_on_record = "bundled_no_choice_on_record"
+    bundled_no_choice_told = "bundled_no_choice_told"
+    feature_contradicted = "feature_contradicted"
+    feature_dont_know = "feature_dont_know"
+    frequency_recurring_on_single = "frequency_recurring_on_single"
+    frequency_dont_know = "frequency_dont_know"
+    sale_concern = "sale_concern"
+    answers_conflict = "answers_conflict"  # one question, asked more than once, differing answers
+
+
+# A gap under one of these rules leaves a question a reviewer would act on undecided: `incomplete`.
+# A gap under any other rule (cover, term, cancel window, recall) is an `understanding_gap`.
+REFER_RULES: frozenset[RuleId] = frozenset(
+    {
+        RuleId.kind,
+        RuleId.premium,
+        RuleId.consent,
+        RuleId.loan_funded,
+        RuleId.bundling,
+        RuleId.belief_mismatch,
+        RuleId.recall_unmatched,
+        RuleId.sale_conduct,
+        RuleId.evidence,
+    }
+)
+
+_R = FlagReason
+# The tier of every flag, by its reason. Tune here and nowhere else. `answers_conflict` is not
+# listed: its tier follows the rule it is raised under (`flag_tier`).
+FLAG_TIER: dict[FlagReason, Tier] = {
+    **dict.fromkeys(
+        (
+            _R.kind_differs,
+            _R.kind_dont_know,
+            _R.premium_differs_confirmed,
+            _R.recall_denied,
+            _R.recall_off_record,
+            _R.consent_no_record,
+            _R.consent_not_recognised,
+            _R.consent_method_differs,
+            _R.consent_dont_know,
+            _R.funded_no_consent,
+            _R.funded_says_separately,
+            _R.funded_dont_know,
+            _R.unfunded_says_deducted,
+            _R.bundled_not_mitigant,
+            _R.bundled_described_as_deposit,
+            _R.bundled_no_choice_on_record,
+            _R.bundled_no_choice_told,
+            _R.feature_contradicted,
+            _R.sale_concern,
+        ),
+        Tier.refer,
+    ),
+    # The amount differs but the customer never confirmed it: it may be a mis-hearing.
+    _R.premium_differs: Tier.incomplete,
+    **dict.fromkeys(
+        (
+            _R.premium_dont_know,
+            _R.premium_approximate,
+            _R.cover_differs,
+            _R.cover_dont_know,
+            _R.term_differs,
+            _R.term_dont_know,
+            _R.cancel_unaware,
+            _R.cancel_dont_know,
+            _R.cancel_window_differs,
+            _R.cancel_window_dont_know,
+            _R.cancel_not_on_record,
+            _R.recall_not_named,
+            _R.feature_dont_know,
+            _R.frequency_recurring_on_single,
+            _R.frequency_dont_know,
+        ),
+        Tier.understanding_gap,
+    ),
+}
+if set(FLAG_TIER) != set(FlagReason) - {FlagReason.answers_conflict}:
+    raise RuntimeError("FLAG_TIER must give a tier to every FlagReason except answers_conflict")
+
+
+def flag_tier(rule_id: RuleId, reason: FlagReason) -> Tier:
+    """The tier of one flag. Conflicting answers follow the rule they were raised under."""
+    if reason is FlagReason.answers_conflict:
+        return Tier.refer if rule_id in REFER_RULES else Tier.understanding_gap
+    return FLAG_TIER[reason]
 
 
 # A flag under one of these rules also gets an evidence pack for the lender's reviewer.
@@ -255,6 +417,8 @@ class LoanRecord(Frozen):
     disbursed_inr: Count
     disbursed_on: date
     products: tuple[Product, ...]
+    tenure_months: Count | None = None  # lets "as long as the loan runs" be compared with a term
+    added_later: ClassVar[frozenset[str]] = frozenset({"tenure_months"})
 
     @model_validator(mode="after")
     def _unique_product_ids(self) -> "LoanRecord":
@@ -340,11 +504,29 @@ class DontKnow(Frozen):
 
 
 class Stated(Frozen, Generic[T]):
-    """The customer gave an answer."""
+    """The customer gave an answer.
+
+    `hedged`: said with a word of doubt ("शायद", "I think"). `approximate`: an amount said as
+    "about X" or as a range; for a range `low` is its lower end and `value` its upper end.
+    These are markers. No rule lets one turn a wrong answer into a pass.
+    """
 
     status: Literal["stated"] = "stated"
     value: T
     evidence: Evidence
+    hedged: bool = False
+    approximate: bool = False
+    low: StrictInt | None = None
+    added_later: ClassVar[frozenset[str]] = frozenset({"hedged", "approximate", "low"})
+
+    @model_validator(mode="after")
+    def _a_range_is_an_approximate_amount(self) -> "Stated[T]":
+        is_amount = isinstance(self.value, int) and not isinstance(self.value, bool)
+        if self.approximate and not is_amount:
+            raise ValueError("only an amount can be approximate")
+        if self.low is not None and not (self.approximate and self.low < self.value):
+            raise ValueError("low is the lower end of an approximate range and must be under value")
+        return self
 
 
 Answer = TypeAliasType(
@@ -369,6 +551,13 @@ class ConcernEvidence(Frozen):
     evidence: Evidence
 
 
+class AnswerConflict(Frozen):
+    """One question asked more than once, with usable answers that differ. Each is a whole reply, in call order."""
+
+    question: Question
+    answers: Annotated[tuple[Evidence, ...], Field(min_length=2)]
+
+
 class _ProductAnswers(Frozen):
     """Per-product answers that need no parsing. Shared by the raw and normalised layers.
 
@@ -379,6 +568,8 @@ class _ProductAnswers(Frozen):
     `consent_given` and `consent_method` come from the open consent question: does the customer's
     own account of what they agreed to buy include this product, and how do they say they agreed.
     `feature_probe` is the reply to the open question about getting the money back: the claims made, or ().
+    `payment_frequency`: "do you pay for it once, or again and again?" Checked only when asked.
+    Each field holds the last usable answer; `conflicts` holds a question whose answers differed.
     """
 
     product_id: ProductId
@@ -391,19 +582,27 @@ class _ProductAnswers(Frozen):
     consent_given: Answer[StrictBool] = NotAsked()
     consent_method: Answer[ConsentMethod] = NotAsked()
     feature_probe: Answer[tuple[FeatureClaim, ...]] = NotAsked()
+    payment_frequency: Answer[PaymentFrequency] = NotAsked()
     volunteered_claims: tuple[ClaimEvidence, ...] = ()
+    conflicts: tuple[AnswerConflict, ...] = ()
+    added_later: ClassVar[frozenset[str]] = frozenset({"payment_frequency", "conflicts"})
 
 
 class _OpenRecall(Frozen):
-    """Open recall, shared by both layers. `answer` is the customer's whole reply."""
+    """Open recall, shared by both layers. `answer` is the customer's whole reply.
+
+    `denial`: the customer's words when they say they took nothing with the loan.
+    """
 
     asked: bool
     answer: Evidence | None = None
     items: tuple = ()
+    denial: Evidence | None = None
+    added_later: ClassVar[frozenset[str]] = frozenset({"denial"})
 
     @model_validator(mode="after")
     def _no_answer_without_a_question(self) -> "_OpenRecall":
-        if not self.asked and (self.items or self.answer):
+        if not self.asked and (self.items or self.answer or self.denial):
             raise ValueError("open recall has an answer but asked is false")
         return self
 
@@ -442,6 +641,8 @@ class RawExtraction(Frozen):
     recall: RawOpenRecall
     products: tuple[RawProductAnswers, ...]
     sale_concerns: tuple[ConcernEvidence, ...] = ()
+    unscreened: tuple[Evidence, ...] = ()  # replies whose screening call failed
+    added_later: ClassVar[frozenset[str]] = frozenset({"unscreened"})
 
 
 # --- layer 2: what the rules consume -----------------------------------------
@@ -482,6 +683,7 @@ class Beliefs(Frozen):
     products: tuple[ProductBeliefs, ...]
     sale_concerns: tuple[ConcernEvidence, ...] = ()
     ungrounded: tuple[Evidence, ...] = ()
+    unscreened: tuple[Evidence, ...] = ()  # replies nobody screened for claims and concerns
 
     def for_product(self, product_id: ProductId) -> ProductBeliefs:
         """Beliefs for one product. A product the call never covered reads as all NotAsked."""
@@ -506,10 +708,13 @@ class Flag(Frozen):
     """A mismatch for human review. `product_id` is None for a case-level flag.
 
     `clause` is the paragraph the flag may engage for this lender type. It is never a finding.
+    `claim` is the belief on a `feature_contradicted` flag. `also` holds further quotes: a
+    conflict flag lists every differing answer after `quote`.
     """
 
     outcome: Literal["flag"] = "flag"
     rule_id: RuleId
+    reason: FlagReason
     clause: str
     product_id: ProductId | None
     severity: Severity
@@ -517,6 +722,12 @@ class Flag(Frozen):
     heard: str
     quote: str | None = None
     turn_id: TurnId | None = None
+    claim: FeatureClaim | None = None
+    also: tuple[Evidence, ...] = ()
+
+    @property
+    def tier(self) -> Tier:
+        return flag_tier(self.rule_id, self.reason)
 
 
 class Gap(Frozen):
@@ -530,6 +741,10 @@ class Gap(Frozen):
     quote: str | None = None
     turn_id: TurnId | None = None
 
+    @property
+    def tier(self) -> Tier:
+        return Tier.incomplete if self.rule_id in REFER_RULES else Tier.understanding_gap
+
 
 Outcome = Annotated[Passed | Flag | Gap, Field(discriminator="outcome")]
 """What one rule returns for one product: it must commit to Passed, Flag or Gap."""
@@ -540,6 +755,12 @@ def _verdict(flags: tuple[Flag, ...], gaps: tuple[Gap, ...]) -> Verdict:
     if flags:
         return Verdict.flag_for_review
     return Verdict.unclear_needs_human if gaps else Verdict.clear
+
+
+def tier_of(flags: Iterable[Flag], gaps: Iterable[Gap]) -> Tier:
+    """The triage tier of a set of flags and gaps: the most serious tier any of them carries."""
+    found = {outcome.tier for outcome in (*flags, *gaps)}
+    return next((tier for tier in Tier if tier in found), Tier.clear)
 
 
 class EvidencePack(Frozen):
@@ -578,13 +799,14 @@ class EvidencePack(Frozen):
 
 
 class ProductResult(Frozen):
-    """Verdict and evidence for one product. The verdict must follow from the flags and gaps.
+    """Verdict, tier and evidence for one product. Both must follow from the flags and gaps.
 
     `evidence_pack` is present exactly when a flag falls under `EVIDENCE_PACK_RULES`.
     """
 
     product_id: ProductId
     verdict: Verdict
+    tier: Tier
     flags: tuple[Flag, ...] = ()
     gaps: tuple[Gap, ...] = ()
     passed: tuple[RuleId, ...] = ()
@@ -596,6 +818,8 @@ class ProductResult(Frozen):
             raise ValueError("a flag or gap belongs to another product")
         if self.verdict is not _verdict(self.flags, self.gaps):
             raise ValueError("product verdict does not follow from its flags and gaps")
+        if self.tier is not tier_of(self.flags, self.gaps):
+            raise ValueError("product tier does not follow from its flags and gaps")
         pack_flags = tuple(f for f in self.flags if f.rule_id in EVIDENCE_PACK_RULES)
         if (self.evidence_pack.flags if self.evidence_pack else ()) != pack_flags:
             raise ValueError("the evidence pack does not match the product's flags")
@@ -605,13 +829,14 @@ class ProductResult(Frozen):
 class CaseResult(Frozen):
     """Result of one call, for the case UI and the half-yearly report.
 
-    The verdict is the worst of the products and the case-level flags and gaps.
+    The verdict and the tier are the worst of the products and the case-level flags and gaps.
     """
 
     loan_id: str
     call_id: str
     language: Language
     verdict: Verdict
+    tier: Tier
     products: tuple[ProductResult, ...]
     case_flags: tuple[Flag, ...] = ()
     case_gaps: tuple[Gap, ...] = ()
@@ -623,6 +848,8 @@ class CaseResult(Frozen):
             raise ValueError("a case-level flag or gap names a product")
         if self.verdict is not _verdict(self.all_flags(), self.all_gaps()):
             raise ValueError("case verdict does not follow from the flags and gaps")
+        if self.tier is not tier_of(self.all_flags(), self.all_gaps()):
+            raise ValueError("case tier does not follow from the flags and gaps")
         return self
 
     def all_flags(self) -> tuple[Flag, ...]:

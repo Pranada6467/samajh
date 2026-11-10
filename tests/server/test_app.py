@@ -2,27 +2,39 @@
 
 from __future__ import annotations
 
+import asyncio
 import os
-from collections.abc import Iterator, Mapping
+import time
+from collections.abc import Callable, Iterator, Mapping
 from pathlib import Path
 
+import httpx
 import pytest
-from serverkit import FakeSpeech, make_wav, wav_shape
+from serverkit import FakeSpeech, make_speech, make_wav, wav_shape
 from starlette.testclient import TestClient
 
 from samajh.clients.errors import ServerError, TransportError
 from samajh.clients.gnani import PrismaV25, PrismaV30, wav_seconds
 from samajh.server import create_app
-from samajh.server.app import MAX_JSON_BYTES, MAX_TURN_BYTES, MAX_TURNS
-from samajh.server.dialogue import BotUtterance, CallView, Heard, StubDialogue
+from samajh.server.app import MAX_JSON_BYTES, MAX_TURN_BYTES, MAX_TURNS, sessions_of
+from samajh.server.dialogue import BotLine, BotUtterance, Heard, Step, StubDialogue, stub_factory
+from samajh.server.sessionlog import SessionStore, SttSettings
+from samajh.server.settings import load_settings
 
 ERROR_KEYS = {"stage", "code", "message", "retryable", "upstream_status"}
 ANSWER = make_wav(0.5)
+STUB = {"stub": stub_factory}
+
+
+def app_on(fake: FakeSpeech, state: Path, dialogues: Mapping = STUB, **more: object) -> TestClient:
+    return TestClient(
+        create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, dialogues=dialogues, **more)
+    )
 
 
 @pytest.fixture
 def phone(fake: FakeSpeech, state: Path) -> TestClient:
-    return TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=None))
+    return app_on(fake, state)
 
 
 def start(phone: TestClient, **body: object) -> dict:
@@ -31,8 +43,32 @@ def start(phone: TestClient, **body: object) -> dict:
     return response.json()
 
 
-def say(phone: TestClient, sid: str, audio: bytes = ANSWER, source: str = "file") -> dict:
-    response = phone.post(f"/api/sessions/{sid}/turns?source={source}", content=audio)
+def events(phone: TestClient, sid: str, kind: str | None = None) -> list[dict]:
+    log = phone.get(f"/api/sessions/{sid}").json()
+    return [e for e in log["events"] if kind in (None, e["type"])]
+
+
+def open_prompt(phone: TestClient, sid: str) -> int:
+    return [e["seq"] for e in events(phone, sid, "bot") if not e["superseded"]][-1]
+
+
+def post_turn(
+    phone: TestClient,
+    sid: str,
+    audio: bytes | None = ANSWER,
+    source: str = "file",
+    reply_to: int | None = None,
+    part: int = 1,
+    query: str = "",
+) -> httpx.Response:
+    if reply_to is None:
+        reply_to = open_prompt(phone, sid)
+    url = f"/api/sessions/{sid}/turns?source={source}&reply_to={reply_to}&part={part}{query}"
+    return phone.post(url, content=audio)
+
+
+def say(phone: TestClient, sid: str, audio: bytes | None = ANSWER, source: str = "file", **more) -> dict:
+    response = post_turn(phone, sid, audio, source, **more)
     assert response.status_code == 200, response.text
     return response.json()
 
@@ -45,21 +81,56 @@ def error_of(response, status: int, code: str) -> dict:
     return error
 
 
-def events(phone: TestClient, sid: str, kind: str | None = None) -> list[dict]:
-    log = phone.get(f"/api/sessions/{sid}").json()
-    return [e for e in log["events"] if kind in (None, e["type"])]
+def utter(*texts: str, language: str = "hi-IN", **more: object) -> BotUtterance:
+    return BotUtterance(lines=tuple(BotLine(text=t) for t in texts), language=language, **more)
+
+
+class Scripted:
+    """Stateless, as the protocol asks: the state is the number of customer turns applied.
+    `script(n, heard)` is what the bot says after turn `n`; `steps` lists every step taken."""
+
+    def __init__(self, script: Callable[[int, Heard | None], object]) -> None:
+        self.script = script
+        self.steps: list[tuple[int, Heard]] = []
+
+    def start(self) -> Step:
+        return Step(state="0", say=self.script(0, None))
+
+    def step(self, state: str, heard: Heard) -> Step:
+        turn = int(state) + 1
+        self.steps.append((turn, heard))
+        return Step(state=str(turn), say=self.script(turn, heard))
+
+
+def echo(n: int, heard: Heard | None) -> BotUtterance:
+    """Never ends; asks for a second reading after odd turns."""
+    return utter(f"q{n} after {heard.text if heard else '-'}", second_reading=n % 2 == 1)
+
+
+def scripted(script=echo) -> tuple[Scripted, dict]:
+    dialogue = Scripted(script)
+
+    def factory(params: Mapping[str, str]) -> Scripted:
+        if "bad" in params:
+            raise ValueError("secret detail")
+        return dialogue
+
+    return dialogue, {"scripted": factory}
 
 
 def test_a_full_stub_call(phone: TestClient, fake: FakeSpeech) -> None:
     created = start(phone)
     sid = created["session_id"]
-    assert (created["line_rate"], created["stt_model"]) == (8000, "prisma-v3.0")
+    assert (created["dialogue"], created["line_rate"]) == ("stub", 8000)
     assert created["bot"] == {
         "seq": 0,
         "text": StubDialogue.QUESTIONS[0],
+        "lines": [{"key": "stub.q1", "text": StubDialogue.QUESTIONS[0]}],
         "language": "hi-IN",
         "end_call": False,
         "audio_url": f"/api/sessions/{sid}/audio/bot-000.wav",
+        "listen": {"kind": "amount", "cut_ms": 1000, "grace_ms": 1600},
+        "second_reading": True,
     }
     bots = [created["bot"]]
     heard = []
@@ -71,27 +142,45 @@ def test_a_full_stub_call(phone: TestClient, fake: FakeSpeech) -> None:
         assert turn["ended"] is (n == 2) and turn["bot"]["end_call"] is (n == 2)
     assert heard == ["पचास हज़ार", "दो हज़ार", "बीमा"]
     assert bots[1]["text"] == "मैंने सुना: पचास हज़ार " + StubDialogue.QUESTIONS[1]
+    assert [line["key"] for line in bots[1]["lines"]] == [None, "stub.q2"]
     assert [b["seq"] for b in bots] == [0, 2, 4, 6]
     assert phone.get(bots[-1]["audio_url"]).status_code == 200
 
     log = phone.get(f"/api/sessions/{sid}").json()
-    assert (log["status"], log["ended_reason"]) == ("ended", "dialogue")
+    assert (log["version"], log["status"], log["ended_reason"]) == (2, "ended", "dialogue")
+    assert "dialogue_state" not in log and "dialogue_undo" not in log
+    assert (log["stt"], log["tts"]) == (
+        load_settings().stt.model_dump(),
+        {"model": "timbre-v3.0", "voice": "Shivani"},
+    )
     assert [e["type"] for e in log["events"]] == ["bot", "customer"] * 3 + ["bot"]
     assert [e["seq"] for e in log["events"]] == list(range(7))
     assert all(e["audio"] and e["rec_end"] > e["rec_start"] for e in log["events"])
-    assert all(e["tts"]["voice"] == "Shivani" for e in log["events"] if e["type"] == "bot")
+    spoken = [line for e in log["events"] if e["type"] == "bot" for line in e["lines"]]
+    assert all(line["tts"]["voice"] == "Shivani" for line in spoken)
     first = log["events"][1]
-    assert first["stt"]["params"] == {"language_code": "hi-IN", "format": "transcribe"}
-    assert first["stt"]["mode"] == "rest" and first["source"] == "file"
-    assert set(first["latency"]) == {"normalise_ms", "stt_ms", "dialogue_ms", "server_ms", "eos_wait_ms"}
-    assert fake.stt_calls[0][1] == PrismaV30(language="hi-IN", format="transcribe")
+    assert (first["reply_to"], first["part"], first["source"]) == (0, 1, "file")
+    assert [(r["role"], r["model"], r["mode"]) for r in first["readings"]] == [
+        ("primary", "prisma-v3.0", "rest"),
+        ("second", "prisma-v2.5", "rest"),
+    ]
+    assert first["readings"][0]["params"] == {"language_code": "hi-IN", "format": "transcribe"}
+    assert first["pauses"]["speech_ms"] == 500
+    # Only the first stub question asks for a second reading: four Prisma calls for three turns.
+    assert [options for _, options in fake.stt_calls] == [
+        PrismaV30(language="hi-IN", format="transcribe"),
+        PrismaV25(language="hi-IN", format="transcribe"),
+        PrismaV30(language="hi-IN", format="transcribe"),
+        PrismaV30(language="hi-IN", format="transcribe"),
+    ]
 
     recording = phone.get(f"/api/sessions/{sid}/recording.wav")
     assert recording.headers["content-type"] == "audio/wav"
     total = log["events"][-1]["rec_end"]
     assert wav_seconds(recording.content) == pytest.approx(total, abs=1e-6)
     assert log["recording"]["seconds"] == pytest.approx(total, abs=1e-6)
-    assert total == pytest.approx(4 * 0.4 + 0.5 + 0.6 + 0.7 + 6 * 0.5)
+    # Bot turns 2, 4 and 6 are two lines each, joined with 0.15 s of silence.
+    assert total == pytest.approx(0.4 + 3 * 0.95 + 0.5 + 0.6 + 0.7 + 6 * 0.5)
 
     summary = phone.post(f"/api/sessions/{sid}/end", json={"reason": "hangup"}).json()
     assert summary == {
@@ -106,21 +195,58 @@ def test_a_full_stub_call(phone: TestClient, fake: FakeSpeech) -> None:
 
 def test_the_turn_response_shape(phone: TestClient) -> None:
     sid = start(phone)["session_id"]
-    response = phone.post(f"/api/sessions/{sid}/turns?source=mic&eos_wait_ms=412.5", content=ANSWER)
-    turn = response.json()
+    turn = say(phone, sid, source="mic", query="&eos_wait_ms=412.5&mode=vad&cut_ms=1000&grace_ms=1600")
     assert set(turn) == {"customer", "bot", "ended"}
     customer = turn["customer"]
     assert set(customer) == {
-        "seq", "transcript", "literal", "detected_language", "audio_url", "audio_seconds", "stt", "latency",
+        "seq", "part", "transcript", "readings", "audio_url", "audio_seconds", "latency", "pauses",
     }  # fmt: skip
-    assert (customer["seq"], customer["detected_language"], customer["literal"]) == (1, "hi-IN", None)
+    assert (customer["seq"], customer["part"], customer["transcript"]) == (1, 1, "पचास हज़ार")
+    assert [set(r) for r in customer["readings"]] == [
+        {"role", "model", "ok", "error", "text", "cache_hit", "seconds"}
+    ] * 2
+    assert customer["readings"][1] == {
+        "role": "second",
+        "model": "prisma-v2.5",
+        "ok": True,
+        "error": None,
+        "text": "पचास हज़ार",
+        "cache_hit": False,
+        "seconds": 0.01,
+    }
     assert customer["audio_url"] == f"/api/sessions/{sid}/audio/customer-001.wav"
     assert customer["audio_seconds"] == 0.5
-    assert customer["stt"] == {"model": "prisma-v3.0", "cache_hit": False, "attempts": 1}
+    assert set(customer["latency"]) == {
+        "normalise_ms", "stt_ms", "second_stt_ms", "dialogue_ms", "server_ms", "eos_wait_ms",
+    }  # fmt: skip
     assert customer["latency"]["eos_wait_ms"] == 412.5
-    assert all(customer["latency"][k] >= 0 for k in ("normalise_ms", "stt_ms", "dialogue_ms", "server_ms"))
+    assert all(v >= 0 for v in customer["latency"].values())
+    assert customer["pauses"] == {
+        "speech_ms": 500,
+        "leading_ms": 0,
+        "trailing_ms": 0,
+        "pauses_ms": [],
+        "longest_pause_ms": 0,
+    }
+    assert set(turn["bot"]) == {
+        "seq", "text", "lines", "language", "end_call", "audio_url", "listen", "second_reading",
+    }  # fmt: skip
     assert phone.get(customer["audio_url"]).content == ANSWER  # a canonical upload keeps its bytes
-    assert events(phone, sid, "customer")[0]["source"] == "mic"
+    logged = events(phone, sid, "customer")[0]
+    assert logged["source"] == "mic"
+    assert logged["phone"] == {"mode": "vad", "cut_ms": 1000, "grace_ms": 1600}
+
+
+def test_the_pauses_of_a_turn_are_measured_on_the_stored_audio(phone: TestClient) -> None:
+    sid = start(phone)["session_id"]
+    clip = make_speech([(0.2, False), (0.5, True), (0.6, False), (0.5, True), (0.2, False)])
+    assert say(phone, sid, clip)["customer"]["pauses"] == {
+        "speech_ms": 1600,
+        "leading_ms": 200,
+        "trailing_ms": 200,
+        "pauses_ms": [600],
+        "longest_pause_ms": 600,
+    }
 
 
 def test_a_browser_recording_is_stored_at_the_line_rate(phone: TestClient, fake: FakeSpeech) -> None:
@@ -132,13 +258,29 @@ def test_a_browser_recording_is_stored_at_the_line_rate(phone: TestClient, fake:
     assert wav_shape(phone.get(turn["bot"]["audio_url"]).content)[2] == 16000
 
 
-def test_v25_is_selected_per_session_and_returns_the_literal(phone: TestClient, fake: FakeSpeech) -> None:
-    created = start(phone, stt_model="prisma-v2.5")
-    turn = say(phone, created["session_id"])
-    assert created["stt_model"] == "prisma-v2.5"
-    assert fake.stt_calls[0][1] == PrismaV25(language="hi-IN", format="transcribe")
-    assert turn["customer"]["literal"] == "शब्दों में"
-    assert turn["customer"]["detected_language"] is None
+def test_the_voice_and_the_speech_models_come_from_the_settings(fake: FakeSpeech, state: Path) -> None:
+    base = load_settings()
+    settings = base.model_copy(
+        update={
+            "stt": SttSettings(model="prisma-v2.5", second_model="prisma-v3.0", format="verbatim"),
+            "tts": base.tts.model_copy(update={"voice": base.tts.voice | {"ta": "Kavya"}}),
+        }
+    )
+    phone = app_on(fake, state, settings=settings)
+    tamil = start(phone, params={"language": "ta"})
+    phone.get(tamil["bot"]["audio_url"])
+    assert fake.tts_calls[0][1].voice == "Kavya"
+    other = start(phone, params={"language": "not a language"})
+    assert phone.get(f"/api/sessions/{other['session_id']}").json()["tts"]["voice"] == "Shivani"
+    say(phone, tamil["session_id"])
+    assert [options for _, options in fake.stt_calls] == [
+        PrismaV25(language="hi-IN", format="verbatim"),
+        PrismaV30(language="hi-IN", format="transcribe"),
+    ]
+    assert phone.post("/api/sessions", json={"stt_model": "prisma-v2.5"}).status_code == 422
+
+
+# --- bot audio ----------------------------------------------------------------
 
 
 def test_bot_audio_is_synthesised_on_first_fetch_and_then_served_from_the_session(
@@ -147,7 +289,8 @@ def test_bot_audio_is_synthesised_on_first_fetch_and_then_served_from_the_sessio
     created = start(phone)
     sid, url = created["session_id"], created["bot"]["audio_url"]
     assert fake.tts_calls == []
-    assert events(phone, sid)[0]["audio"] is None and events(phone, sid)[0]["tts"] is None
+    before = events(phone, sid)[0]
+    assert (before["audio"], before["synth_ms"], before["lines"][0]["tts"]) == (None, None, None)
 
     first = phone.get(url)
     assert first.status_code == 200 and first.headers["content-type"] == "audio/wav"
@@ -160,7 +303,66 @@ def test_bot_audio_is_synthesised_on_first_fetch_and_then_served_from_the_sessio
     assert len(fake.tts_calls) == 1
     event = events(phone, sid)[0]
     assert event["audio"] == "audio/bot-000.wav" and event["audio_seconds"] == 0.4
-    assert event["tts"]["cache_hit"] is False and event["tts"]["est_credits"] > 0
+    assert event["synth_ms"] >= 0
+    line = event["lines"][0]
+    assert (line["start_s"], line["end_s"]) == (0.0, 0.4)
+    assert line["tts"]["cache_hit"] is False and line["tts"]["est_credits"] > 0
+
+
+def test_a_long_utterance_is_spoken_line_by_line_and_joined(fake: FakeSpeech, state: Path) -> None:
+    lines = ["क" * 300 + "।", "ख" * 280 + "।", "क्या यह ठीक है?"]
+    tones = {lines[0]: 200.0, lines[1]: 300.0, lines[2]: 400.0}
+    lengths = {lines[0]: 0.6, lines[1]: 0.5, lines[2]: 0.3}
+    _, dialogues = scripted(lambda n, heard: utter(*lines, listen="yes_no"))
+    phone = app_on(fake, state, dialogues)
+    fake.tts = wrap_tts(fake, lambda text, o: make_wav(lengths[text], o.sample_rate, tone=tones[text]))
+
+    created = start(phone, dialogue="scripted")
+    bot = created["bot"]
+    assert len(bot["text"]) > 600 and bot["text"] == " ".join(lines)
+    assert [line["text"] for line in bot["lines"]] == lines
+    assert bot["listen"] == {"kind": "yes_no", "cut_ms": 700, "grace_ms": 1000}
+
+    audio = phone.get(bot["audio_url"]).content
+    assert [text for text, _ in fake.tts_calls] == lines
+    assert wav_seconds(audio) == pytest.approx(0.6 + 0.15 + 0.5 + 0.15 + 0.3)
+    event = events(phone, created["session_id"])[0]
+    assert event["audio_seconds"] == pytest.approx(1.7)
+    spans = [(line["start_s"], line["end_s"]) for line in event["lines"]]
+    assert spans == [(0.0, 0.6), (0.75, 1.25), (1.4, 1.7)]
+    pcm = audio[44:]
+    for text, (begin, end) in zip(lines, spans, strict=True):
+        assert (
+            pcm[round(begin * 8000) * 2 : round(end * 8000) * 2]
+            == make_wav(lengths[text], tone=tones[text])[44:]
+        )
+    assert pcm[round(0.6 * 8000) * 2 : round(0.75 * 8000) * 2] == bytes(2400)
+
+
+def wrap_tts(fake: FakeSpeech, audio: Callable) -> Callable:
+    """The fake's `tts`, with the clip chosen by the text spoken."""
+    plain = FakeSpeech.tts.__get__(fake)
+
+    def tts(text: str, options):
+        fake.tts_audio = lambda o: audio(text, o)
+        return plain(text, options)
+
+    return tts
+
+
+def test_a_line_shared_by_two_calls_is_synthesised_once(fake: FakeSpeech, state: Path) -> None:
+    _, dialogues = scripted(lambda n, heard: utter("सबके लिए एक ही पंक्ति।", f"कॉल की अपनी पंक्ति {id(heard)}"))
+    phone = app_on(fake, state, dialogues)
+    logged = []
+    for _ in range(2):
+        created = start(phone, dialogue="scripted")
+        assert phone.get(created["bot"]["audio_url"]).status_code == 200
+        logged.append(events(phone, created["session_id"])[0]["lines"])
+    assert [line["tts"]["cache_hit"] for line in logged[0]] == [False, False]
+    assert [line["tts"]["cache_hit"] for line in logged[1]] == [True, True]
+    assert logged[1][0]["tts"]["est_credits"] == 0
+    shared = [options for text, options in fake.tts_calls if text == "सबके लिए एक ही पंक्ति।"]
+    assert len(shared) == 2 and shared[0] == shared[1]  # the same request, so the client's cache hits
 
 
 def test_timbre_audio_with_a_streaming_header_is_stored_repaired(phone: TestClient, fake: FakeSpeech) -> None:
@@ -174,12 +376,40 @@ def test_timbre_audio_with_a_streaming_header_is_stored_repaired(phone: TestClie
     assert wav_shape(stored) == (1, 2, 8000, 3200)
 
 
+def test_a_tts_failure_is_logged_and_the_fetch_can_be_repeated(phone: TestClient, fake: FakeSpeech) -> None:
+    created = start(phone)
+    sid, url = created["session_id"], created["bot"]["audio_url"]
+    fake.tts_error = TransportError("ConnectTimeout on all 2 attempts")
+    error = error_of(phone.get(url), 504, "gnani_unreachable")
+    assert (error["stage"], error["retryable"]) == ("tts", True)
+    assert [(e["stage"], e["audio"]) for e in events(phone, sid, "error")] == [("tts", None)]
+    fake.tts_error = None
+    assert phone.get(url).status_code == 200
+    assert say(phone, sid)["customer"]["seq"] == 2
+
+
+def test_a_failed_prompt_fetched_many_times_is_logged_once(phone: TestClient, fake: FakeSpeech) -> None:
+    created = start(phone)
+    fake.tts_error = ServerError(status=503, code="DOWN", message="timbre is down", attempts=2)
+    for _ in range(5):
+        error_of(phone.get(created["bot"]["audio_url"]), 502, "gnani_server_error")
+    assert len(events(phone, created["session_id"], "error")) == 1
+
+
+def test_timbre_audio_that_is_not_a_wav_is_a_bad_response(phone: TestClient, fake: FakeSpeech) -> None:
+    fake.tts_audio = lambda options: b"ID3 not a wav"
+    error_of(phone.get(start(phone)["bot"]["audio_url"]), 502, "gnani_bad_response")
+
+
+# --- turns: nothing said, limits, bad requests ---------------------------------
+
+
 def test_nothing_said(phone: TestClient, fake: FakeSpeech) -> None:
     sid = start(phone)["session_id"]
-    turn = phone.post(f"/api/sessions/{sid}/turns?source=none").json()
+    turn = say(phone, sid, None, "none")
     customer = turn["customer"]
     assert (customer["transcript"], customer["audio_url"], customer["audio_seconds"]) == ("", None, None)
-    assert customer["stt"] is None
+    assert (customer["readings"], customer["pauses"]) == ([], None)
     assert turn["bot"]["text"].startswith(StubDialogue.NOTHING_HEARD)
     assert fake.stt_calls == []
     event = events(phone, sid, "customer")[0]
@@ -195,7 +425,7 @@ def test_empty_stt_text_is_passed_to_the_dialogue(phone: TestClient, fake: FakeS
 
 def test_a_body_over_the_limit_is_refused_with_content_length(phone: TestClient, fake: FakeSpeech) -> None:
     sid = start(phone)["session_id"]
-    response = phone.post(f"/api/sessions/{sid}/turns?source=mic", content=b"\0" * (MAX_TURN_BYTES + 1))
+    response = post_turn(phone, sid, b"\0" * (MAX_TURN_BYTES + 1), "mic")
     error = error_of(response, 413, "audio_too_large")
     assert (error["stage"], error["retryable"]) == ("audio", False)
     assert fake.stt_calls == []
@@ -209,7 +439,7 @@ def test_a_body_over_the_limit_is_refused_without_content_length(phone: TestClie
         for _ in range(MAX_TURN_BYTES // 65536 + 1):
             yield b"\0" * 65536
 
-    response = phone.post(f"/api/sessions/{sid}/turns?source=mic", content=chunks())
+    response = post_turn(phone, sid, chunks(), "mic", reply_to=0)
     assert "content-length" not in response.request.headers
     error_of(response, 413, "audio_too_large")
     assert events(phone, sid, "customer") == []
@@ -217,8 +447,7 @@ def test_a_body_over_the_limit_is_refused_without_content_length(phone: TestClie
 
 def test_a_body_at_the_limit_is_read(phone: TestClient) -> None:
     sid = start(phone)["session_id"]
-    response = phone.post(f"/api/sessions/{sid}/turns?source=mic", content=b"\0" * MAX_TURN_BYTES)
-    error_of(response, 422, "audio_unreadable")
+    error_of(post_turn(phone, sid, b"\0" * MAX_TURN_BYTES, "mic"), 422, "audio_unreadable")
 
 
 def test_a_json_body_over_its_limit_is_refused(phone: TestClient) -> None:
@@ -230,14 +459,7 @@ def test_a_json_body_over_its_limit_is_refused(phone: TestClient) -> None:
 
 @pytest.mark.parametrize(
     "body",
-    [
-        b"[",
-        b"[]",
-        b'{"line_rate": 44100}',
-        b'{"stt_model": "whisper"}',
-        b'{"nope": 1}',
-        b'{"params": {"a": 1}}',
-    ],
+    [b"[", b"[]", b'{"line_rate": 44100}', b'{"dialogue": 3}', b'{"nope": 1}', b'{"params": {"a": 1}}'],
 )
 def test_a_bad_create_body_is_a_request_error(phone: TestClient, body: bytes) -> None:
     error = error_of(phone.post("/api/sessions", content=body), 422, "invalid_request")
@@ -249,15 +471,619 @@ def test_create_takes_an_empty_body_and_refuses_an_unknown_dialogue(phone: TestC
     error_of(phone.post("/api/sessions", json={"dialogue": "nope"}), 422, "unknown_dialogue")
 
 
-def test_a_turn_needs_a_valid_source_and_wait(phone: TestClient) -> None:
+@pytest.mark.parametrize(
+    ("query", "code"),
+    [
+        ("reply_to=0", "invalid_source"),
+        ("source=&reply_to=0", "invalid_source"),
+        ("source=tape&reply_to=0", "invalid_source"),
+        ("source=MIC&reply_to=0", "invalid_source"),
+        ("source=mic", "reply_to_required"),
+        ("source=mic&reply_to=x", "invalid_reply_to"),
+        ("source=mic&reply_to=-1", "invalid_reply_to"),
+        ("source=mic&reply_to=1000", "invalid_reply_to"),
+        ("source=mic&reply_to=0&part=0", "invalid_part"),
+        ("source=mic&reply_to=0&part=two", "invalid_part"),
+        ("source=mic&reply_to=0&eos_wait_ms=abc", "invalid_eos_wait_ms"),
+        ("source=mic&reply_to=0&eos_wait_ms=nan", "invalid_eos_wait_ms"),
+        ("source=mic&reply_to=0&eos_wait_ms=-1", "invalid_eos_wait_ms"),
+        ("source=mic&reply_to=0&eos_wait_ms=inf", "invalid_eos_wait_ms"),
+        ("source=mic&reply_to=0&mode=guess", "invalid_mode"),
+        ("source=mic&reply_to=0&cut_ms=700", "invalid_mode"),
+        ("source=mic&reply_to=0&mode=vad&cut_ms=-5", "invalid_cut_ms"),
+        ("source=mic&reply_to=0&mode=vad&grace_ms=1e9", "invalid_grace_ms"),
+    ],
+)
+def test_a_turn_with_a_bad_query_is_refused_before_anything_happens(
+    phone: TestClient, fake: FakeSpeech, query: str, code: str
+) -> None:
     sid = start(phone)["session_id"]
-    for query in ("", "?source=", "?source=tape", "?source=MIC"):
-        error_of(phone.post(f"/api/sessions/{sid}/turns{query}", content=ANSWER), 422, "invalid_source")
-    for wait in ("abc", "nan", "-1", "inf"):
-        response = phone.post(f"/api/sessions/{sid}/turns?source=mic&eos_wait_ms={wait}", content=ANSWER)
-        error_of(response, 422, "invalid_eos_wait_ms")
-    assert len(events(phone, sid)) == 1
+    error = error_of(phone.post(f"/api/sessions/{sid}/turns?{query}", content=ANSWER), 422, code)
+    assert error["stage"] == "request"
+    assert len(events(phone, sid)) == 1 and fake.stt_calls == []
 
+
+def test_the_turn_limit(fake: FakeSpeech, state: Path) -> None:
+    _, dialogues = scripted()
+    phone = app_on(fake, state, dialogues)
+    sid = start(phone, dialogue="scripted")["session_id"]
+    for n in range(MAX_TURNS):
+        assert post_turn(phone, sid, None, "none", reply_to=2 * n).status_code == 200
+    assert MAX_TURNS == 60
+    # The last turn can still be replaced by a later take; a turn past the limit cannot be added.
+    assert post_turn(phone, sid, None, "none", reply_to=2 * MAX_TURNS - 2, part=2).status_code == 200
+    error = error_of(post_turn(phone, sid, None, "none"), 409, "turn_limit")
+    assert error["stage"] == "session"
+    assert phone.get("/api/health").json()["limits"]["max_turns"] == MAX_TURNS
+
+
+# --- exactly once ---------------------------------------------------------------
+
+
+def test_a_turn_sent_again_gets_the_stored_reply_and_does_not_advance(fake: FakeSpeech, state: Path) -> None:
+    dialogue, dialogues = scripted()
+    phone = app_on(fake, state, dialogues)
+    sid = start(phone, dialogue="scripted")["session_id"]
+    first = say(phone, sid, reply_to=0)
+    again = post_turn(phone, sid, make_wav(0.9), reply_to=0)
+    assert again.status_code == 200 and again.json() == first
+    assert len(fake.stt_calls) == 1 and len(events(phone, sid)) == 3 and len(dialogue.steps) == 1
+    second = say(phone, sid, reply_to=2)
+    # An earlier turn that was answered can still be asked for again, and nothing moves.
+    assert say(phone, sid, reply_to=0) == first and say(phone, sid, reply_to=2) == second
+    assert [n for n, _ in dialogue.steps] == [1, 2] and len(events(phone, sid)) == 5
+    for missing in (1, 3, 6, 40):
+        error_of(post_turn(phone, sid, reply_to=missing), 409, "turn_out_of_order")
+
+
+def test_the_closing_turn_can_be_sent_again_after_the_call_has_ended(phone: TestClient) -> None:
+    sid = start(phone)["session_id"]
+    for prompt in (0, 2, 4):
+        last = say(phone, sid, reply_to=prompt)
+    assert last["ended"]
+    assert say(phone, sid, reply_to=4) == last
+    error = error_of(post_turn(phone, sid, reply_to=6), 409, "session_not_active")
+    assert error["stage"] == "session"
+    assert len(events(phone, sid)) == 7
+
+
+def test_eight_identical_requests_at_once_advance_the_dialogue_once(fake: FakeSpeech, state: Path) -> None:
+    dialogue, dialogues = scripted()
+    fake.model_delays["prisma-v3.0"] = 0.05
+    app = create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, dialogues=dialogues)
+
+    async def call() -> tuple[str, list[httpx.Response], dict]:
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as http:
+            sid = (await http.post("/api/sessions", json={"dialogue": "scripted"})).json()["session_id"]
+            url = f"/api/sessions/{sid}/turns?source=mic&reply_to=0&part=1"
+            replies = await asyncio.gather(*(http.post(url, content=ANSWER) for _ in range(8)))
+            return sid, replies, (await http.get(f"/api/sessions/{sid}")).json()
+
+    sid, replies, log = asyncio.run(call())
+    assert [r.status_code for r in replies] == [200] * 8
+    assert all(r.json() == replies[0].json() for r in replies)
+    assert len(dialogue.steps) == 1 and len(fake.stt_calls) == 1
+    assert [e["type"] for e in log["events"]] == ["bot", "customer", "bot"]
+
+
+def test_a_turn_that_failed_before_its_save_is_replayed_cleanly(
+    fake: FakeSpeech, state: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    dialogue, dialogues = scripted()
+    app = create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, dialogues=dialogues)
+    phone = TestClient(app, raise_server_exceptions=False)
+    sid = start(phone, dialogue="scripted")["session_id"]
+    say(phone, sid)
+    before = phone.get(f"/api/sessions/{sid}").json()
+
+    def killed(self, log) -> None:
+        raise OSError("the process died here")
+
+    with monkeypatch.context() as patch:
+        patch.setattr(SessionStore, "save", killed)
+        assert post_turn(phone, sid, make_wav(0.7), reply_to=2).status_code == 500
+    # The turn's audio reached the disk, its events and the new state did not.
+    assert (state / "sessions" / sid / "audio" / "customer-003.wav").exists()
+    assert phone.get(f"/api/sessions/{sid}").json() == before
+
+    for client in (phone, app_on(fake, state, dialogues)):  # the same run, and a later one
+        turn = say(client, sid, make_wav(0.7), reply_to=2)
+        assert (turn["customer"]["seq"], turn["bot"]["text"]) == (3, "q2 after दो हज़ार")
+    assert [n for n, _ in dialogue.steps] == [1, 2, 2]  # stepped again from the same stored state
+    assert [e["type"] for e in events(phone, sid)] == ["bot", "customer", "bot", "customer", "bot"]
+
+
+# --- a later take of the same turn ---------------------------------------------
+
+
+def test_a_later_take_replaces_the_earlier_one(fake: FakeSpeech, state: Path) -> None:
+    dialogue, dialogues = scripted()
+    phone = app_on(fake, state, dialogues)
+    created = start(phone, dialogue="scripted")
+    sid = created["session_id"]
+    phone.get(created["bot"]["audio_url"])
+    say(phone, sid, make_wav(0.5), reply_to=0)
+
+    take_one = say(phone, sid, make_wav(0.6), reply_to=2)
+    assert take_one["bot"]["text"] == "q2 after दो हज़ार"
+    phone.get(take_one["bot"]["audio_url"])  # the phone had begun to play the reply
+    take_two = say(phone, sid, make_wav(1.3), reply_to=2, part=2)
+    assert (take_two["customer"]["seq"], take_two["customer"]["part"]) == (5, 2)
+    assert take_two["customer"]["transcript"] == "बीमा"
+    assert take_two["bot"]["seq"] == 6 and take_two["bot"]["text"] == "q2 after बीमा"
+    # Both takes were turn 2 of the dialogue: the second was heard from the state before the first.
+    assert [(n, heard.text) for n, heard in dialogue.steps] == [(1, "पचास हज़ार"), (2, "दो हज़ार"), (2, "बीमा")]
+
+    log = phone.get(f"/api/sessions/{sid}").json()
+    assert [(e["type"], e["superseded"]) for e in log["events"]] == [
+        ("bot", False),
+        ("customer", False),
+        ("bot", False),
+        ("customer", True),
+        ("bot", True),
+        ("customer", False),
+        ("bot", False),
+    ]
+    assert [e["rec_start"] for e in log["events"]] == [0.0, 0.9, None, None, None, 1.9, None]
+    recording = phone.get(f"/api/sessions/{sid}/recording.wav").content
+    assert wav_seconds(recording) == pytest.approx(0.4 + 0.5 + 0.5 + 0.5 + 1.3)
+    assert recording[44:][round(1.9 * 8000) * 2 :] == make_wav(1.3)[44:]
+
+    assert say(phone, sid, make_wav(1.3), reply_to=2, part=2) == take_two  # a repeat of the later take
+    error_of(post_turn(phone, sid, make_wav(0.6), reply_to=2, part=1), 409, "turn_superseded")
+    error_of(phone.get(take_one["bot"]["audio_url"].replace("004", "009")), 404, "audio_not_found")
+    # The call goes on from the later take, and the turn before it can no longer be replaced.
+    assert say(phone, sid, reply_to=6)["bot"]["text"] == "q3 after पचास हज़ार"
+    error_of(post_turn(phone, sid, reply_to=2, part=3), 409, "turn_out_of_order")
+    error_of(post_turn(phone, sid, reply_to=4, part=1), 409, "turn_out_of_order")
+    assert len(dialogue.steps) == 4
+
+
+def test_a_reply_that_was_superseded_before_it_was_spoken_is_never_spoken(
+    fake: FakeSpeech, state: Path
+) -> None:
+    _, dialogues = scripted()
+    phone = app_on(fake, state, dialogues)
+    sid = start(phone, dialogue="scripted")["session_id"]
+    take_one = say(phone, sid, reply_to=0)
+    say(phone, sid, make_wav(0.9), reply_to=0, part=2)
+    error_of(phone.get(take_one["bot"]["audio_url"]), 409, "turn_superseded")
+    assert fake.tts_calls == []
+
+
+def test_a_later_take_reopens_a_call_that_the_earlier_take_had_ended(fake: FakeSpeech, state: Path) -> None:
+    def script(n: int, heard: Heard | None) -> BotUtterance:
+        return utter(f"q{n}", end_call=heard is not None and heard.text == "बस")
+
+    fake.transcripts = ["बस", "बस इतना ही नहीं, और भी है", "बस"]
+    _, dialogues = scripted(script)
+    phone = app_on(fake, state, dialogues)
+    sid = start(phone, dialogue="scripted")["session_id"]
+    assert say(phone, sid, make_wav(0.4), reply_to=0)["ended"]
+    ended = phone.get(f"/api/sessions/{sid}").json()
+    assert (ended["status"], ended["ended_reason"]) == ("ended", "dialogue") and ended["recording"]
+
+    take_two = say(phone, sid, make_wav(1.5), reply_to=0, part=2)
+    assert not take_two["ended"]
+    reopened = phone.get(f"/api/sessions/{sid}").json()
+    assert (reopened["status"], reopened["ended_reason"], reopened["recording"]) == ("active", None, None)
+    assert say(phone, sid, make_wav(0.3), reply_to=take_two["bot"]["seq"])["ended"]
+    assert phone.get(f"/api/sessions/{sid}").json()["recording"]["seconds"] == pytest.approx(1.5 + 0.5 + 0.3)
+
+
+def test_no_later_take_once_the_call_is_closed_or_hung_up(fake: FakeSpeech, state: Path) -> None:
+    dialogue, dialogues = scripted(lambda n, heard: utter(f"q{n}", end_call=n == 1))
+    app = create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, dialogues=dialogues)
+    phone = TestClient(app)
+    closed = start(phone, dialogue="scripted")["session_id"]
+    first = say(phone, closed, reply_to=0)
+
+    async def close() -> None:  # what the after-call job does when it starts
+        sessions = sessions_of(app)
+        async with sessions.locked(closed) as log:
+            log.closed = True
+            sessions.save(log)
+
+    asyncio.run(close())
+    error = error_of(post_turn(phone, closed, make_wav(0.9), reply_to=0, part=2), 409, "turn_out_of_order")
+    assert "closed" in error["message"]
+    assert say(phone, closed, reply_to=0) == first  # the stored reply is still given
+    error_of(phone.get(first["bot"]["audio_url"]), 409, "session_not_active")  # the recording is final
+    assert SessionStore(state / "sessions").load(closed).closed is True
+
+    _, dialogues = scripted()
+    phone = app_on(fake, state, dialogues)
+    hung_up = start(phone, dialogue="scripted")["session_id"]
+    say(phone, hung_up, reply_to=0)
+    phone.post(f"/api/sessions/{hung_up}/end")
+    error_of(post_turn(phone, hung_up, make_wav(0.9), reply_to=0, part=2), 409, "session_not_active")
+    assert len(dialogue.steps) == 1
+
+
+def test_a_first_take_may_carry_any_part_number(phone: TestClient) -> None:
+    sid = start(phone)["session_id"]
+    turn = say(phone, sid, reply_to=0, part=3)  # takes 1 and 2 never reached the server
+    assert turn["customer"]["part"] == 3
+    error_of(post_turn(phone, sid, reply_to=0, part=2), 409, "turn_superseded")
+
+
+# --- a call continues in a later server run -------------------------------------
+
+
+def run_call(first: TestClient, later: TestClient, clips: list[bytes], switch_after: int) -> dict:
+    """A whole stub call, the first `switch_after` turns on one server and the rest on another."""
+    created = start(first)
+    sid, bot = created["session_id"], created["bot"]
+    texts = [bot["text"]]
+    for n, clip in enumerate(clips):
+        phone = first if n < switch_after else later
+        assert phone.get(bot["audio_url"]).status_code == 200
+        bot = say(phone, sid, clip, reply_to=bot["seq"])["bot"]
+        texts.append(bot["text"])
+    assert later.get(bot["audio_url"]).status_code == 200
+    return {"texts": texts, "log": later.get(f"/api/sessions/{sid}").json(), "sid": sid}
+
+
+def test_a_call_continues_in_a_later_server_run_as_if_uninterrupted(
+    fake: FakeSpeech, state: Path, tmp_path: Path
+) -> None:
+    clips = [make_wav(0.5), make_wav(0.6), make_wav(0.7)]
+    whole_phone = app_on(fake, tmp_path / "uninterrupted")
+    whole = run_call(whole_phone, whole_phone, clips, 3)
+
+    resumed = run_call(app_on(fake, state), app_on(fake, state), clips, 1)
+    assert resumed["texts"] == whole["texts"] and resumed["texts"][-1].endswith(StubDialogue.CLOSING)
+
+    def shape(log: dict) -> list:
+        return [
+            (e["type"], e["seq"], e.get("text") or e.get("transcript"), e["audio_seconds"], e["rec_start"])
+            for e in log["events"]
+        ]
+
+    log = resumed["log"]
+    assert shape(log) == shape(whole["log"])
+    assert (log["status"], log["ended_reason"]) == ("ended", "dialogue")
+    assert log["recording"]["seconds"] == whole["log"]["recording"]["seconds"]
+    at = [e["at"] for e in log["events"]]
+    assert at == sorted(at)  # still seconds since the session was created
+
+    third = app_on(fake, state)
+    assert third.get(f"/api/sessions/{resumed['sid']}").json() == log
+    recording = third.get(f"/api/sessions/{resumed['sid']}/recording.wav").content
+    assert wav_seconds(recording) == log["recording"]["seconds"]
+    assert third.post(f"/api/sessions/{resumed['sid']}/end").json()["ended_reason"] == "dialogue"
+
+
+def test_a_later_run_gives_stored_replies_takes_later_takes_and_hangs_up(
+    fake: FakeSpeech, state: Path
+) -> None:
+    dialogue, dialogues = scripted()
+    phone = app_on(fake, state, dialogues)
+    sid = start(phone, dialogue="scripted")["session_id"]
+    first = say(phone, sid, make_wav(0.5), reply_to=0)
+
+    later = app_on(fake, state, dialogues)
+    assert say(later, sid, make_wav(0.5), reply_to=0) == first
+    take_two = say(later, sid, make_wav(1.1), reply_to=0, part=2)
+    assert take_two["bot"]["text"] == "q1 after दो हज़ार"
+    assert [n for n, _ in dialogue.steps] == [1, 1]
+    # A prompt that an earlier run never spoke is spoken by whichever run is asked for it.
+    assert later.get(take_two["bot"]["audio_url"]).status_code == 200
+
+    last = app_on(fake, state, dialogues)
+    summary = last.post(f"/api/sessions/{sid}/end").json()
+    assert (summary["status"], summary["ended_reason"], summary["turns"]) == ("ended", "hangup", 1)
+    assert last.post(f"/api/sessions/{sid}/end").json() == summary
+    error_of(post_turn(last, sid, reply_to=take_two["bot"]["seq"]), 409, "session_not_active")
+
+
+def test_a_session_of_a_dialogue_this_server_does_not_have_can_be_read_and_ended_only(
+    fake: FakeSpeech, state: Path
+) -> None:
+    _, dialogues = scripted()
+    sid = start(app_on(fake, state, dialogues), dialogue="scripted")["session_id"]
+    later = app_on(fake, state)  # only the stub is registered
+    assert later.get(f"/api/sessions/{sid}").json()["dialogue"] == "scripted"
+    error_of(post_turn(later, sid, reply_to=0), 409, "session_not_active")
+    assert later.post(f"/api/sessions/{sid}/end").json()["ended_reason"] == "hangup"
+
+
+def test_a_log_that_does_not_parse_is_not_found(fake: FakeSpeech, state: Path) -> None:
+    sid = start(app_on(fake, state))["session_id"]
+    (state / "sessions" / sid / "session.json").write_text('{"version": 1}')
+    later = app_on(fake, state)
+    error_of(later.get(f"/api/sessions/{sid}"), 404, "session_not_found")
+    error_of(post_turn(later, sid, reply_to=0), 404, "session_not_found")
+    error_of(later.post(f"/api/sessions/{sid}/end"), 404, "session_not_found")
+
+
+def test_sessions_dropped_from_memory_are_read_back_from_their_logs(
+    phone: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("samajh.server.app.MAX_LIVE_SESSIONS", 2)
+    sids = [start(phone)["session_id"] for _ in range(4)]
+    for sid in sids:
+        assert say(phone, sid, reply_to=0)["bot"]["seq"] == 2
+    for sid in sids:
+        assert say(phone, sid, None, "none", reply_to=2)["bot"]["seq"] == 4
+        assert len(events(phone, sid)) == 5
+
+
+# --- two readings ----------------------------------------------------------------
+
+
+def heard_by(fake: FakeSpeech, state: Path, **more: object) -> tuple[TestClient, str, Scripted]:
+    """A call whose opening prompt does not ask for a second reading and whose next one does."""
+    dialogue, dialogues = scripted()
+    phone = app_on(fake, state, dialogues, **more)
+    sid = start(phone, dialogue="scripted")["session_id"]
+    say(phone, sid, make_wav(0.3), reply_to=0)
+    return phone, sid, dialogue
+
+
+def test_a_turn_that_was_not_asked_for_a_second_reading_makes_one_stt_call(
+    fake: FakeSpeech, state: Path
+) -> None:
+    phone, sid, dialogue = heard_by(fake, state)
+    assert [options.model for _, options in fake.stt_calls] == ["prisma-v3.0"]
+    assert dialogue.steps[0][1] == Heard(text="पचास हज़ार", detected_language="hi-IN", second=None)
+    customer = events(phone, sid, "customer")[0]
+    assert [r["role"] for r in customer["readings"]] == ["primary"]
+    assert customer["latency"]["second_stt_ms"] == 0
+
+
+def test_two_readings_that_agree(fake: FakeSpeech, state: Path) -> None:
+    phone, sid, dialogue = heard_by(fake, state)
+    turn = say(phone, sid, make_wav(0.8), reply_to=2)
+    assert [(r["role"], r["model"], r["ok"], r["text"]) for r in turn["customer"]["readings"]] == [
+        ("primary", "prisma-v3.0", True, "दो हज़ार"),
+        ("second", "prisma-v2.5", True, "दो हज़ार"),
+    ]
+    assert dialogue.steps[1][1] == Heard(text="दो हज़ार", detected_language="hi-IN", second="दो हज़ार")
+    assert [options.model for _, options in fake.stt_calls[1:]] == ["prisma-v3.0", "prisma-v2.5"]
+    assert fake.stt_calls[1][0] == fake.stt_calls[2][0]  # the same audio, one model after the other
+    logged = events(phone, sid, "customer")[1]["readings"][1]
+    assert logged["params"] == {"language_code": "hi-IN", "format": "transcribe"}
+    assert logged["literal"] == "शब्दों में"
+
+
+def test_two_readings_that_disagree(fake: FakeSpeech, state: Path) -> None:
+    fake.model_transcripts["prisma-v2.5"] = ["दो हज़ार पाँच सौ"]
+    phone, sid, dialogue = heard_by(fake, state)
+    turn = say(phone, sid, make_wav(0.8), reply_to=2)
+    assert [r["text"] for r in turn["customer"]["readings"]] == ["दो हज़ार", "दो हज़ार पाँच सौ"]
+    assert turn["customer"]["transcript"] == "दो हज़ार"  # the dialogue acts on the primary reading
+    assert (dialogue.steps[1][1].text, dialogue.steps[1][1].second) == ("दो हज़ार", "दो हज़ार पाँच सौ")
+
+
+def test_a_second_reading_that_fails_is_logged_and_does_not_fail_the_turn(
+    fake: FakeSpeech, state: Path
+) -> None:
+    fake.model_errors["prisma-v2.5"] = ServerError(status=504, code="TIMEOUT", message="x", attempts=1)
+    phone, sid, dialogue = heard_by(fake, state)
+    turn = say(phone, sid, make_wav(0.8), reply_to=2)
+    assert turn["customer"]["readings"][1] == {
+        "role": "second",
+        "model": "prisma-v2.5",
+        "ok": False,
+        "error": "gnani_server_error",
+        "text": "",
+        "cache_hit": False,
+        "seconds": turn["customer"]["readings"][1]["seconds"],
+    }
+    assert (dialogue.steps[1][1].text, dialogue.steps[1][1].second) == ("दो हज़ार", "")
+    assert turn["bot"]["text"] == "q2 after दो हज़ार" and events(phone, sid, "error") == []
+
+
+def test_a_second_reading_that_is_late_is_given_up_at_the_bound(fake: FakeSpeech, state: Path) -> None:
+    settings = load_settings().model_copy(update={"stt": SttSettings(second_timeout_s=0.2)})
+    fake.model_delays["prisma-v2.5"] = 1.5
+    phone, sid, dialogue = heard_by(fake, state, settings=settings)
+    started = time.monotonic()
+    turn = say(phone, sid, make_wav(0.8), reply_to=2)
+    assert time.monotonic() - started < 1.0
+    second = turn["customer"]["readings"][1]
+    assert (second["ok"], second["error"], second["text"]) == (False, "timeout", "")
+    assert 0.2 <= second["seconds"] < 1.0
+    assert 200 <= turn["customer"]["latency"]["second_stt_ms"] < 1000
+    assert dialogue.steps[1][1].second == ""
+    assert turn["bot"]["text"] == "q2 after दो हज़ार"
+
+
+def test_a_separate_client_can_serve_the_second_reading(fake: FakeSpeech, state: Path) -> None:
+    other = FakeSpeech(["दूसरा"])
+    phone, sid, dialogue = heard_by(fake, state, second=other)
+    say(phone, sid, make_wav(0.8), reply_to=2)
+    assert [options.model for _, options in other.stt_calls] == ["prisma-v2.5"]
+    assert [options.model for _, options in fake.stt_calls] == ["prisma-v3.0"] * 2
+    assert dialogue.steps[1][1].second == "दूसरा"
+
+
+# --- failures -------------------------------------------------------------------
+
+
+def test_an_stt_failure_leaves_the_dialogue_where_it_was(phone: TestClient, fake: FakeSpeech) -> None:
+    sid = start(phone)["session_id"]
+    fake.stt_error = ServerError(status=503, code="UPSTREAM", message="down", attempts=2)
+    error = error_of(post_turn(phone, sid, source="mic"), 502, "gnani_server_error")
+    assert error == {
+        "stage": "stt",
+        "code": "gnani_server_error",
+        "message": "UPSTREAM: down",
+        "retryable": True,
+        "upstream_status": 503,
+    }
+    logged = events(phone, sid)
+    assert [e["type"] for e in logged] == ["bot", "error"]
+    failed = logged[1]
+    assert (failed["stage"], failed["status"], failed["code"]) == ("stt", 502, "gnani_server_error")
+    assert (failed["audio"], failed["audio_seconds"], failed["rec_start"]) == (
+        "audio/customer-001.wav",
+        0.5,
+        None,
+    )
+    assert phone.get(f"/api/sessions/{sid}/audio/customer-001.wav").content == ANSWER
+
+    fake.stt_error = None
+    again = say(phone, sid, reply_to=0)
+    assert again["customer"]["seq"] == 2
+    assert again["bot"]["text"] == "मैंने सुना: पचास हज़ार " + StubDialogue.QUESTIONS[1]
+    assert [e["type"] for e in events(phone, sid)] == ["bot", "error", "customer", "bot"]
+    # The failed attempt's audio stays out of the recording.
+    assert wav_seconds(phone.get(f"/api/sessions/{sid}/recording.wav").content) == 0.5
+
+
+def test_an_unreadable_upload_is_logged_and_the_turn_can_be_sent_again(
+    phone: TestClient, fake: FakeSpeech
+) -> None:
+    sid = start(phone)["session_id"]
+    error = error_of(post_turn(phone, sid, b"junk", "mic"), 422, "audio_unreadable")
+    assert error["stage"] == "audio"
+    error_of(post_turn(phone, sid, None, "mic"), 422, "audio_unreadable")
+    error_of(post_turn(phone, sid, make_wav(0.05), "mic"), 422, "audio_too_short")
+    error_of(post_turn(phone, sid, make_wav(30.5), "mic"), 422, "audio_too_long")
+    assert fake.stt_calls == []
+    logged = events(phone, sid, "error")
+    assert [e["stage"] for e in logged] == ["audio"] * 4 and all(e["audio"] is None for e in logged)
+    assert say(phone, sid)["bot"]["text"].endswith(StubDialogue.QUESTIONS[1])
+
+
+def test_a_dialogue_exception_is_logged_by_class_name_and_does_not_advance(
+    fake: FakeSpeech, state: Path
+) -> None:
+    broken = True
+
+    def script(n: int, heard: Heard | None) -> BotUtterance:
+        if n and broken:
+            raise RuntimeError("secret /path/to/thing")
+        return utter(f"question {n}", language="en-IN")
+
+    dialogue, dialogues = scripted(script)
+    phone = app_on(fake, state, dialogues)
+    sid = start(phone, dialogue="scripted")["session_id"]
+    error = error_of(post_turn(phone, sid, source="mic"), 500, "dialogue_failed")
+    assert (error["stage"], error["message"], error["retryable"]) == ("dialogue", "RuntimeError", False)
+    failed = events(phone, sid)[-1]
+    assert (failed["type"], failed["stage"], failed["audio"]) == (
+        "error",
+        "dialogue",
+        "audio/customer-001.wav",
+    )
+    assert "secret" not in phone.get(f"/api/sessions/{sid}").text
+
+    broken = False
+    assert say(phone, sid, reply_to=0)["bot"]["text"] == "question 1"
+    assert [n for n, _ in dialogue.steps] == [1, 1]
+    assert len(fake.stt_calls) == 2 and fake.stt_calls[0][1].language == "en-IN"
+
+
+def test_a_dialogue_that_fails_at_the_start_creates_no_session(fake: FakeSpeech, state: Path) -> None:
+    def script(n: int, heard: Heard | None) -> BotUtterance:
+        raise RuntimeError("boom")
+
+    _, dialogues = scripted(script)
+    phone = app_on(fake, state, dialogues)
+    error = error_of(phone.post("/api/sessions", json={"dialogue": "scripted"}), 500, "dialogue_failed")
+    assert error["message"] == "RuntimeError"
+    assert not (state / "sessions").exists()
+    bad = phone.post("/api/sessions", json={"dialogue": "scripted", "params": {"bad": "1"}})
+    assert "secret" not in error_of(bad, 422, "invalid_params")["message"]
+    health = phone.get("/api/health").json()
+    assert (health["dialogues"], health["default_dialogue"]) == (["scripted"], "scripted")
+
+
+@pytest.mark.parametrize(
+    "said",
+    [
+        "not an utterance",
+        utter("any language", language="auto", second_reading=True),  # prisma-v2.5 has no auto
+        utter("no such language", language="mr-IN", second_reading=True),
+    ],
+)
+def test_an_utterance_the_session_cannot_handle_is_a_dialogue_error(
+    fake: FakeSpeech, state: Path, said
+) -> None:
+    class Wrong:
+        def start(self):
+            return Step(state="0", say=said) if isinstance(said, BotUtterance) else said
+
+    phone = app_on(fake, state, {"wrong": lambda params: Wrong()})
+    error_of(phone.post("/api/sessions", json={"dialogue": "wrong"}), 500, "dialogue_failed")
+
+
+def test_tags_and_params_reach_the_log(fake: FakeSpeech, state: Path) -> None:
+    line = BotLine(text="प्रश्न", key="q.loan_amount", tags={"asks": "amount"})
+    said = BotUtterance(lines=(line,), language="hi-IN", tags={"outcome": "open"}, listen="short")
+    _, dialogues = scripted(lambda n, heard: said)
+    phone = app_on(fake, state, dialogues)
+    sid = start(phone, dialogue="scripted", params={"scenario": "A1"})["session_id"]
+    log = phone.get(f"/api/sessions/{sid}").json()
+    event = log["events"][0]
+    assert (log["params"], event["tags"], event["listen"]) == (
+        {"scenario": "A1"},
+        {"outcome": "open"},
+        "short",
+    )
+    assert (event["lines"][0]["key"], event["lines"][0]["tags"]) == ("q.loan_amount", {"asks": "amount"})
+
+
+# --- hanging up, the recording --------------------------------------------------
+
+
+def test_hanging_up_ends_the_call_and_is_idempotent(phone: TestClient) -> None:
+    created = start(phone)
+    sid = created["session_id"]
+    phone.get(created["bot"]["audio_url"])
+    say(phone, sid)
+    first = phone.post(f"/api/sessions/{sid}/end", json={"reason": "hangup"})
+    assert first.status_code == 200
+    assert first.json() == {
+        "session_id": sid,
+        "status": "ended",
+        "ended_reason": "hangup",
+        "events": 3,
+        "turns": 1,
+        "recording_seconds": pytest.approx(0.4 + 0.5 + 0.5),
+    }
+    assert phone.post(f"/api/sessions/{sid}/end").json() == first.json()
+    error_of(post_turn(phone, sid, None, "none"), 409, "session_not_active")
+    error_of(phone.post(f"/api/sessions/{sid}/end", json={"reason": "bored"}), 422, "invalid_request")
+
+
+def test_the_closing_prompt_fetched_after_the_end_refreshes_the_recording(phone: TestClient) -> None:
+    sid = start(phone)["session_id"]
+    for _ in range(3):
+        last = say(phone, sid)
+    assert last["ended"]
+    before = phone.get(f"/api/sessions/{sid}").json()["recording"]["seconds"]
+    assert before == pytest.approx(3 * 0.5 + 2 * 0.5)  # three answers, two gaps, no prompt fetched
+    assert phone.get(last["bot"]["audio_url"]).status_code == 200
+    log = phone.get(f"/api/sessions/{sid}").json()
+    assert log["recording"]["seconds"] == pytest.approx(before + 0.5 + 0.95)
+    assert wav_seconds(phone.get(f"/api/sessions/{sid}/recording.wav").content) == log["recording"]["seconds"]
+
+
+def test_nothing_is_spoken_after_a_hang_up(phone: TestClient, fake: FakeSpeech) -> None:
+    sid = start(phone)["session_id"]
+    turn = say(phone, sid)
+    assert phone.post(f"/api/sessions/{sid}/end").json()["recording_seconds"] == 0.5
+    error_of(phone.get(turn["bot"]["audio_url"]), 409, "session_not_active")
+    assert fake.tts_calls == []
+    assert phone.get(f"/api/sessions/{sid}").json()["recording"]["seconds"] == 0.5
+
+
+def test_a_recording_of_a_call_in_progress_is_assembled_on_demand(phone: TestClient) -> None:
+    created = start(phone)
+    sid = created["session_id"]
+    phone.get(created["bot"]["audio_url"])
+    say(phone, sid)
+    assert wav_seconds(phone.get(f"/api/sessions/{sid}/recording.wav").content) == pytest.approx(1.4)
+    log = phone.get(f"/api/sessions/{sid}").json()
+    assert log["status"] == "active" and log["recording"] is None
+
+
+# --- what may be reached ---------------------------------------------------------
 
 SID_ATTACKS = [
     "..",
@@ -280,7 +1106,7 @@ def test_a_malformed_or_unknown_session_id_is_not_found(phone: TestClient, state
         phone.get(f"/api/sessions/{sid}"),
         phone.get(f"/api/sessions/{sid}/recording.wav"),
         phone.get(f"/api/sessions/{sid}/audio/bot-000.wav"),
-        phone.post(f"/api/sessions/{sid}/turns?source=none"),
+        phone.post(f"/api/sessions/{sid}/turns?source=none&reply_to=0"),
         phone.post(f"/api/sessions/{sid}/end"),
     ]
     for response in requests:
@@ -318,6 +1144,27 @@ def test_audio_is_served_only_by_a_name_the_log_refers_to(phone: TestClient, sta
     assert b"SECRET" not in response.content and b"session_id" not in response.content
 
 
+def test_the_dialogue_state_is_never_served(fake: FakeSpeech, state: Path) -> None:
+    class Secretive(StubDialogue):
+        def start(self) -> Step:
+            return Step(state="STATE-NOT-FOR-THE-PHONE", say=super().start().say)
+
+        def step(self, state: str, heard: Heard) -> Step:
+            return Step(state=state + "-2", say=StubDialogue().step('{"asked": 1}', heard).say)
+
+    phone = app_on(fake, state, {"s": lambda params: Secretive()})
+    created = phone.post("/api/sessions", json={"dialogue": "s"})
+    sid = created.json()["session_id"]
+    turn = post_turn(phone, sid, reply_to=0)
+    served = [created, turn, phone.get(f"/api/sessions/{sid}"), phone.post(f"/api/sessions/{sid}/end")]
+    assert all("STATE-NOT-FOR-THE-PHONE" not in r.text for r in served)
+    stored = SessionStore(state / "sessions").load(sid)
+    assert (stored.dialogue_state, stored.dialogue_undo) == (
+        "STATE-NOT-FOR-THE-PHONE-2",
+        "STATE-NOT-FOR-THE-PHONE",
+    )
+
+
 def test_clips_are_listed_and_served_by_listed_name_only(
     fake: FakeSpeech, state: Path, tmp_path: Path
 ) -> None:
@@ -331,7 +1178,7 @@ def test_clips_are_listed_and_served_by_listed_name_only(
     (clips / "sub" / "deep.wav").write_bytes(make_wav(0.5))
     (tmp_path / "secret.wav").write_bytes(make_wav(0.3))
     os.symlink(tmp_path / "secret.wav", clips / "link.wav")
-    phone = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=clips))
+    phone = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=clips, dialogues=STUB))
 
     assert phone.get("/api/clips").json() == {
         "clips": [{"name": "hi-01.wav", "seconds": 0.5}, {"name": "hi-02.wav", "seconds": 1.25}]
@@ -346,7 +1193,9 @@ def test_clips_are_listed_and_served_by_listed_name_only(
 
 
 def test_a_missing_clips_directory_is_an_empty_list(fake: FakeSpeech, state: Path, tmp_path: Path) -> None:
-    phone = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=tmp_path / "nope"))
+    phone = TestClient(
+        create_app(gnani=fake, state=state, web_dir=None, clips_dir=tmp_path / "nope", dialogues=STUB)
+    )
     assert phone.get("/api/clips").json() == {"clips": []}
     assert phone.get("/api/clips/a.wav").status_code == 404
 
@@ -356,95 +1205,8 @@ def test_clips_directory_from_the_environment(
 ) -> None:
     (tmp_path / "a.wav").write_bytes(make_wav(0.2))
     monkeypatch.setenv("SAMAJH_CLIPS_DIR", str(tmp_path))
-    phone = TestClient(create_app(gnani=fake, state=state, web_dir=None))
+    phone = TestClient(create_app(gnani=fake, state=state, web_dir=None, dialogues=STUB))
     assert phone.get("/api/clips").json() == {"clips": [{"name": "a.wav", "seconds": 0.2}]}
-
-
-def test_no_turn_after_the_end(phone: TestClient) -> None:
-    sid = start(phone)["session_id"]
-    for _ in range(3):
-        say(phone, sid)
-    error = error_of(
-        phone.post(f"/api/sessions/{sid}/turns?source=file", content=ANSWER), 409, "session_not_active"
-    )
-    assert error["stage"] == "session"
-    assert len(events(phone, sid)) == 7
-
-
-def test_hanging_up_ends_the_call_and_is_idempotent(phone: TestClient) -> None:
-    created = start(phone)
-    sid = created["session_id"]
-    phone.get(created["bot"]["audio_url"])
-    say(phone, sid)
-    first = phone.post(f"/api/sessions/{sid}/end", json={"reason": "hangup"})
-    assert first.status_code == 200
-    assert first.json() == {
-        "session_id": sid,
-        "status": "ended",
-        "ended_reason": "hangup",
-        "events": 3,
-        "turns": 1,
-        "recording_seconds": pytest.approx(0.4 + 0.5 + 0.5),
-    }
-    assert phone.post(f"/api/sessions/{sid}/end").json() == first.json()
-    error_of(phone.post(f"/api/sessions/{sid}/turns?source=none"), 409, "session_not_active")
-    error_of(phone.post(f"/api/sessions/{sid}/end", json={"reason": "bored"}), 422, "invalid_request")
-
-
-def test_the_closing_prompt_fetched_after_the_end_refreshes_the_recording(phone: TestClient) -> None:
-    sid = start(phone)["session_id"]
-    for _ in range(3):
-        last = say(phone, sid)
-    assert last["ended"]
-    before = phone.get(f"/api/sessions/{sid}").json()["recording"]["seconds"]
-    assert before == pytest.approx(3 * 0.5 + 2 * 0.5)  # three answers, two gaps, no prompt fetched
-    assert phone.get(last["bot"]["audio_url"]).status_code == 200
-    log = phone.get(f"/api/sessions/{sid}").json()
-    assert log["recording"]["seconds"] == pytest.approx(before + 0.5 + 0.4)
-    assert wav_seconds(phone.get(f"/api/sessions/{sid}/recording.wav").content) == log["recording"]["seconds"]
-
-
-def test_nothing_is_spoken_after_a_hang_up(phone: TestClient, fake: FakeSpeech) -> None:
-    sid = start(phone)["session_id"]
-    turn = say(phone, sid)
-    assert phone.post(f"/api/sessions/{sid}/end").json()["recording_seconds"] == 0.5
-    error_of(phone.get(turn["bot"]["audio_url"]), 409, "session_not_active")
-    assert fake.tts_calls == []
-    assert phone.get(f"/api/sessions/{sid}").json()["recording"]["seconds"] == 0.5
-
-
-def test_a_turn_sent_again_gets_the_stored_reply_and_does_not_advance(
-    phone: TestClient, fake: FakeSpeech
-) -> None:
-    sid = start(phone)["session_id"]
-    first = phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to=0", content=ANSWER).json()
-    again = phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to=0", content=ANSWER)
-    assert again.status_code == 200 and again.json() == first
-    assert len(fake.stt_calls) == 1 and len(events(phone, sid)) == 3
-    # The closing turn can be sent again too, although the call has ended by then.
-    for prompt in (first["bot"]["seq"], first["bot"]["seq"] + 2):
-        last = phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to={prompt}", content=ANSWER).json()
-    assert last["ended"]
-    again = phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to={prompt}", content=ANSWER)
-    assert again.status_code == 200 and again.json() == last
-    error_of(
-        phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to=1", content=ANSWER),
-        409,
-        "turn_out_of_order",
-    )
-    error_of(
-        phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to=x", content=ANSWER),
-        422,
-        "invalid_reply_to",
-    )
-
-
-def test_a_failed_prompt_fetched_many_times_is_logged_once(phone: TestClient, fake: FakeSpeech) -> None:
-    created = start(phone)
-    fake.tts_error = ServerError(status=503, code="DOWN", message="timbre is down", attempts=2)
-    for _ in range(5):
-        error_of(phone.get(created["bot"]["audio_url"]), 502, "gnani_server_error")
-    assert len(events(phone, created["session_id"], "error")) == 1
 
 
 @pytest.mark.parametrize(
@@ -465,247 +1227,37 @@ def test_a_request_for_another_host_or_from_another_site_is_refused(
     assert phone.post("/api/sessions", json={}, headers={"origin": "http://testserver"}).status_code == 201
 
 
-def test_a_finished_call_is_dropped_before_one_in_progress(
-    phone: TestClient, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    monkeypatch.setattr("samajh.server.app.MAX_LIVE_SESSIONS", 2)
-    in_progress = start(phone)["session_id"]
-    finished = start(phone)["session_id"]
-    phone.post(f"/api/sessions/{finished}/end")
-    start(phone)
-    assert phone.post(f"/api/sessions/{in_progress}/turns?source=none").status_code == 200
-
-
-def test_a_recording_of_a_call_in_progress_is_assembled_on_demand(phone: TestClient) -> None:
-    created = start(phone)
-    sid = created["session_id"]
-    phone.get(created["bot"]["audio_url"])
-    say(phone, sid)
-    assert wav_seconds(phone.get(f"/api/sessions/{sid}/recording.wav").content) == pytest.approx(1.4)
-    log = phone.get(f"/api/sessions/{sid}").json()
-    assert log["status"] == "active" and log["recording"] is None
-
-
-def test_a_session_of_an_earlier_server_run_can_be_read_but_not_continued(
-    phone: TestClient, fake: FakeSpeech, state: Path
-) -> None:
-    created = start(phone)
-    sid = created["session_id"]
-    spoken = phone.get(created["bot"]["audio_url"]).content
-    turn = say(phone, sid)
-    log = phone.get(f"/api/sessions/{sid}").json()
-
-    later = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=None))
-    assert later.get(f"/api/sessions/{sid}").json() == log
-    assert later.get(created["bot"]["audio_url"]).content == spoken
-    assert later.get(f"/api/sessions/{sid}/recording.wav").status_code == 200
-    error_of(later.post(f"/api/sessions/{sid}/turns?source=none"), 409, "session_not_active")
-    error_of(later.post(f"/api/sessions/{sid}/end"), 409, "session_not_active")
-    # Its second prompt was never spoken, and only the run that owns the call may synthesise it.
-    error_of(later.get(turn["bot"]["audio_url"]), 409, "session_not_active")
-    assert len(fake.tts_calls) == 1
-
-    phone.post(f"/api/sessions/{sid}/end")
-    assert later.post(f"/api/sessions/{sid}/end").json()["ended_reason"] == "hangup"
-
-
-def test_an_stt_failure_leaves_the_dialogue_where_it_was(phone: TestClient, fake: FakeSpeech) -> None:
-    sid = start(phone)["session_id"]
-    fake.stt_error = ServerError(status=503, code="UPSTREAM", message="down", attempts=2)
-    response = phone.post(f"/api/sessions/{sid}/turns?source=mic", content=ANSWER)
-    error = error_of(response, 502, "gnani_server_error")
-    assert error == {
-        "stage": "stt",
-        "code": "gnani_server_error",
-        "message": "UPSTREAM: down",
-        "retryable": True,
-        "upstream_status": 503,
-    }
-    logged = events(phone, sid)
-    assert [e["type"] for e in logged] == ["bot", "error"]
-    failed = logged[1]
-    assert (failed["stage"], failed["status"], failed["code"]) == ("stt", 502, "gnani_server_error")
-    assert (failed["audio"], failed["audio_seconds"], failed["rec_start"]) == (
-        "audio/customer-001.wav",
-        0.5,
-        None,
-    )
-    assert phone.get(f"/api/sessions/{sid}/audio/customer-001.wav").content == ANSWER
-
-    fake.stt_error = None
-    again = say(phone, sid)
-    assert again["customer"]["seq"] == 2
-    assert again["bot"]["text"] == "मैंने सुना: पचास हज़ार " + StubDialogue.QUESTIONS[1]
-    assert [e["type"] for e in events(phone, sid)] == ["bot", "error", "customer", "bot"]
-    # The failed attempt's audio stays out of the recording.
-    assert wav_seconds(phone.get(f"/api/sessions/{sid}/recording.wav").content) == 0.5
-
-
-def test_an_unreadable_upload_is_logged_and_the_turn_can_be_sent_again(
-    phone: TestClient, fake: FakeSpeech
-) -> None:
-    sid = start(phone)["session_id"]
-    error = error_of(
-        phone.post(f"/api/sessions/{sid}/turns?source=mic", content=b"junk"), 422, "audio_unreadable"
-    )
-    assert error["stage"] == "audio"
-    error_of(phone.post(f"/api/sessions/{sid}/turns?source=mic"), 422, "audio_unreadable")
-    error_of(
-        phone.post(f"/api/sessions/{sid}/turns?source=mic", content=make_wav(0.05)), 422, "audio_too_short"
-    )
-    error_of(
-        phone.post(f"/api/sessions/{sid}/turns?source=mic", content=make_wav(30.5)), 422, "audio_too_long"
-    )
-    assert fake.stt_calls == []
-    logged = events(phone, sid, "error")
-    assert [e["stage"] for e in logged] == ["audio"] * 4 and all(e["audio"] is None for e in logged)
-    assert say(phone, sid)["bot"]["text"].endswith(StubDialogue.QUESTIONS[1])
-
-
-def test_a_tts_failure_is_logged_and_the_fetch_can_be_repeated(phone: TestClient, fake: FakeSpeech) -> None:
-    created = start(phone)
-    sid, url = created["session_id"], created["bot"]["audio_url"]
-    fake.tts_error = TransportError("ConnectTimeout on all 2 attempts")
-    error = error_of(phone.get(url), 504, "gnani_unreachable")
-    assert (error["stage"], error["retryable"]) == ("tts", True)
-    assert [(e["stage"], e["audio"]) for e in events(phone, sid, "error")] == [("tts", None)]
-    fake.tts_error = None
-    assert phone.get(url).status_code == 200
-    assert say(phone, sid)["customer"]["seq"] == 2
-
-
-def test_timbre_audio_that_is_not_a_wav_is_a_bad_response(phone: TestClient, fake: FakeSpeech) -> None:
-    fake.tts_audio = lambda options: b"ID3 not a wav"
-    error_of(phone.get(start(phone)["bot"]["audio_url"]), 502, "gnani_bad_response")
-
-
-class Scripted:
-    """Says whatever `script` returns for the number of exchanges so far."""
-
-    def __init__(self, script) -> None:
-        self.script = script
-
-    def next(self, call: CallView, heard: Heard | None) -> object:
-        return self.script(len(call.exchanges), heard)
-
-
-def phone_with(script, fake: FakeSpeech, state: Path) -> TestClient:
-    def factory(params: Mapping[str, str]) -> Scripted:
-        if "bad" in params:
-            raise ValueError("secret detail")
-        return Scripted(script)
-
-    app = create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, dialogues={"scripted": factory})
-    return TestClient(app)
-
-
-def test_a_dialogue_exception_is_logged_by_class_name_and_does_not_advance(
-    fake: FakeSpeech, state: Path
-) -> None:
-    broken = True
-
-    def script(asked: int, heard: Heard | None) -> BotUtterance:
-        if asked and broken:
-            raise RuntimeError("secret /path/to/thing")
-        return BotUtterance(text=f"question {asked}", language="en-IN")
-
-    phone = phone_with(script, fake, state)
-    sid = start(phone, dialogue="scripted")["session_id"]
-    response = phone.post(f"/api/sessions/{sid}/turns?source=mic", content=ANSWER)
-    error = error_of(response, 500, "dialogue_failed")
-    assert (error["stage"], error["message"], error["retryable"]) == ("dialogue", "RuntimeError", False)
-    failed = events(phone, sid)[-1]
-    assert (failed["type"], failed["stage"], failed["audio"]) == (
-        "error",
-        "dialogue",
-        "audio/customer-001.wav",
-    )
-    assert "secret" not in phone.get(f"/api/sessions/{sid}").text
-
-    broken = False
-    assert say(phone, sid)["bot"]["text"] == "question 1"
-    assert len(fake.stt_calls) == 2 and fake.stt_calls[0][1].language == "en-IN"
-
-
-def test_a_dialogue_that_fails_at_the_start_creates_no_session(fake: FakeSpeech, state: Path) -> None:
-    def script(asked: int, heard: Heard | None) -> BotUtterance:
-        raise RuntimeError("boom")
-
-    phone = phone_with(script, fake, state)
-    error = error_of(phone.post("/api/sessions", json={"dialogue": "scripted"}), 500, "dialogue_failed")
-    assert error["message"] == "RuntimeError"
-    assert not (state / "sessions").exists()
-    bad = phone.post("/api/sessions", json={"dialogue": "scripted", "params": {"bad": "1"}})
-    assert "secret" not in error_of(bad, 422, "invalid_params")["message"]
-    assert phone.get("/api/health").json()["dialogues"] == ["scripted"]
-
-
-@pytest.mark.parametrize("said", ["not an utterance", BotUtterance(text="any language", language="auto")])
-def test_an_utterance_the_session_cannot_handle_is_a_dialogue_error(
-    fake: FakeSpeech, state: Path, said
-) -> None:
-    phone = phone_with(lambda asked, heard: said, fake, state)
-    response = phone.post("/api/sessions", json={"dialogue": "scripted", "stt_model": "prisma-v2.5"})
-    error_of(response, 500, "dialogue_failed")
-
-
-def test_the_dialogue_sees_the_call_so_far(fake: FakeSpeech, state: Path) -> None:
-    views: list[CallView] = []
-
-    class Watching:
-        def next(self, call: CallView, heard: Heard | None) -> BotUtterance:
-            views.append(call)
-            return BotUtterance(text=f"q{len(call.exchanges)}", language="hi-IN", tags={"step": "s"})
-
-    app = create_app(
-        gnani=fake, state=state, web_dir=None, clips_dir=None, dialogues={"w": lambda p: Watching()}
-    )
-    phone = TestClient(app)
-    sid = start(phone, dialogue="w", params={"scenario": "A1"})["session_id"]
-    say(phone, sid)
-    phone.post(f"/api/sessions/{sid}/turns?source=none")
-    last = views[-1]
-    assert (last.session_id, dict(last.params)) == (sid, {"scenario": "A1"})
-    assert [(x.bot.text, x.heard.text) for x in last.exchanges] == [("q0", "पचास हज़ार"), ("q1", "")]
-    assert views[0].exchanges == ()
-    assert events(phone, sid, "bot")[0]["tags"] == {"step": "s"}
-
-
-def test_the_turn_limit(fake: FakeSpeech, state: Path) -> None:
-    phone = phone_with(lambda asked, heard: BotUtterance(text="again", language="hi-IN"), fake, state)
-    sid = start(phone, dialogue="scripted")["session_id"]
-    for _ in range(MAX_TURNS):
-        assert phone.post(f"/api/sessions/{sid}/turns?source=none").status_code == 200
-    error = error_of(phone.post(f"/api/sessions/{sid}/turns?source=none"), 409, "turn_limit")
-    assert error["stage"] == "session"
-    assert phone.get("/api/health").json()["limits"]["max_turns"] == MAX_TURNS
-
-
-def test_the_oldest_live_call_is_dropped_past_the_cap(
-    phone: TestClient, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    monkeypatch.setattr("samajh.server.app.MAX_LIVE_SESSIONS", 2)
-    first, second, third = (start(phone)["session_id"] for _ in range(3))
-    error_of(phone.post(f"/api/sessions/{first}/turns?source=none"), 409, "session_not_active")
-    assert phone.get(f"/api/sessions/{first}").json()["status"] == "active"  # still readable
-    for sid in (second, third):
-        assert phone.post(f"/api/sessions/{sid}/turns?source=none").status_code == 200
+LANGUAGES = [
+    {"id": "hi", "label": "Hindi", "experimental": False},
+    {"id": "hi-en", "label": "Hinglish", "experimental": False},
+    {"id": "ta", "label": "Tamil", "experimental": True},
+    {"id": "kn", "label": "Kannada", "experimental": True},
+]
 
 
 def test_health_without_a_key(state: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     # Set but empty: the client's .env loader leaves a variable that exists alone.
     monkeypatch.setenv("GNANI_API_KEY", "")
     monkeypatch.setenv("SAMAJH_STATE_DIR", str(state))
-    phone = TestClient(create_app(state=state, web_dir=None, clips_dir=None))
+    phone = TestClient(create_app(state=state, web_dir=None, clips_dir=None, dialogues=STUB))
     assert phone.get("/api/health").json() == {
         "status": "ok",
         "gnani_key_configured": False,
         "dialogues": ["stub"],
+        "default_dialogue": "stub",
         "line_rates": [8000, 16000],
         "stt_models": ["prisma-v3.0", "prisma-v2.5"],
         "streaming": False,
+        "languages": LANGUAGES,
+        "turn_taking": {
+            "yes_no": {"cut_ms": 700, "grace_ms": 1000},
+            "short": {"cut_ms": 800, "grace_ms": 1200},
+            "amount": {"cut_ms": 1000, "grace_ms": 1600},
+            "open": {"cut_ms": 1100, "grace_ms": 1800},
+        },
         "limits": {"max_turn_bytes": MAX_TURN_BYTES, "max_turn_seconds": 30, "max_turns": MAX_TURNS},
     }
+    assert phone.get("/api/records").json() == {"records": [], "languages": LANGUAGES}
     # The call starts without a key; speaking the prompt is what needs one.
     created = start(phone)
     error = error_of(phone.get(created["bot"]["audio_url"]), 500, "server_misconfigured")
@@ -717,9 +1269,26 @@ def test_health_reports_a_key_as_a_bool_and_nothing_else(
 ) -> None:
     monkeypatch.setenv("GNANI_API_KEY", "test-key-not-real")
     monkeypatch.setenv("SAMAJH_STATE_DIR", str(state))
-    response = TestClient(create_app(state=state, web_dir=None, clips_dir=None)).get("/api/health")
+    phone = TestClient(create_app(state=state, web_dir=None, clips_dir=None, dialogues=STUB))
+    response = phone.get("/api/health")
     assert response.json()["gnani_key_configured"] is True
     assert "test-key-not-real" not in response.text + str(response.headers)
+
+
+def test_the_default_app_runs_the_samajh_dialogue_on_a_listed_record(fake: FakeSpeech, state: Path) -> None:
+    phone = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=None))
+    health = phone.get("/api/health").json()
+    assert (health["dialogues"], health["default_dialogue"]) == (["samajh", "stub"], "samajh")
+    listed = phone.get("/api/records").json()
+    assert listed["languages"] == LANGUAGES
+    assert all(set(r) == {"id", "label", "description", "first_name", "language"} for r in listed["records"])
+    created = start(phone, params={"record": listed["records"][0]["id"], "language": "hi"})
+    assert created["dialogue"] == "samajh"
+    bot = created["bot"]
+    assert bot["lines"] and bot["language"] == "hi-IN" and not bot["end_call"]
+    error_of(
+        phone.post("/api/sessions", json={"params": {"record": "no-such-record"}}), 422, "invalid_params"
+    )
 
 
 def test_errors_have_one_shape_on_every_route(phone: TestClient) -> None:
@@ -740,12 +1309,14 @@ def test_the_phone_page_is_served_after_the_api(fake: FakeSpeech, state: Path, t
     (web / "index.html").write_text("<h1>phone</h1>")
     (web / "app.js").write_text("// js")
     (tmp_path / "secret.txt").write_text("SECRET")
-    phone = TestClient(create_app(gnani=fake, state=state, web_dir=web, clips_dir=None))
+    phone = TestClient(create_app(gnani=fake, state=state, web_dir=web, clips_dir=None, dialogues=STUB))
     assert phone.get("/").text == "<h1>phone</h1>"
     assert phone.get("/app.js").status_code == 200
     assert phone.get("/api/health").json()["status"] == "ok"
     for path in ("/..%2fsecret.txt", "/%2e%2e/secret.txt", "/../secret.txt", "/api/..%2f..%2fsecret.txt"):
         response = phone.get(path)
         assert response.status_code == 404 and "SECRET" not in response.text
-    missing = TestClient(create_app(gnani=fake, state=state, web_dir=tmp_path / "nope", clips_dir=None))
+    missing = TestClient(
+        create_app(gnani=fake, state=state, web_dir=tmp_path / "nope", clips_dir=None, dialogues=STUB)
+    )
     assert missing.get("/").status_code == 404 and missing.get("/api/health").status_code == 200

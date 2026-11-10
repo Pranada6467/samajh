@@ -1,0 +1,34 @@
+| language | condition | stt | output | method | correct/n (rate, Wilson 95%) |
+| --- | --- | --- | --- | --- | --- |
+| hi | clean16k | v3.0 transcribe item | text | naive | 119/140 (85%, 78-90) |
+| hi | clean16k | v3.0 transcribe item | text | parser | 120/140 (86%, 79-91) |
+| hi | clean16k | v3.0 verbatim item | text | naive | 0/140 (0%, 0-3) |
+| hi | clean16k | v3.0 verbatim item | text | parser | 139/140 (99%, 96-100) |
+| hi | clean16k | v2.5 transcribe item | text | naive | 125/140 (89%, 83-93) |
+| hi | clean16k | v2.5 transcribe item | text | parser | 139/140 (99%, 96-100) |
+| hi | clean16k | v2.5 transcribe item | literal | naive | 0/140 (0%, 0-3) |
+| hi | clean16k | v2.5 transcribe item | literal | parser | 139/140 (99%, 96-100) |
+| hi | phone | v3.0 transcribe item | text | naive | 121/140 (86%, 80-91) |
+| hi | phone | v3.0 transcribe item | text | parser | 121/140 (86%, 80-91) |
+| hi | phone | v3.0 verbatim item | text | naive | 0/140 (0%, 0-3) |
+| hi | phone | v3.0 verbatim item | text | parser | 139/140 (99%, 96-100) |
+| hi | phone | v2.5 transcribe item | text | naive | 125/140 (89%, 83-93) |
+| hi | phone | v2.5 transcribe item | text | parser | 139/140 (99%, 96-100) |
+| hi | phone | v2.5 transcribe item | literal | naive | 0/140 (0%, 0-3) |
+| hi | phone | v2.5 transcribe item | literal | parser | 139/140 (99%, 96-100) |
+| hi-en | clean16k | v3.0 transcribe item | text | naive | 113/140 (81%, 73-86) |
+| hi-en | clean16k | v3.0 transcribe item | text | parser | 113/140 (81%, 73-86) |
+| hi-en | clean16k | v3.0 verbatim item | text | naive | 0/140 (0%, 0-3) |
+| hi-en | clean16k | v3.0 verbatim item | text | parser | 136/140 (97%, 93-99) |
+| hi-en | clean16k | v2.5 transcribe item | text | naive | 110/140 (79%, 71-85) |
+| hi-en | clean16k | v2.5 transcribe item | text | parser | 127/140 (91%, 85-94) |
+| hi-en | clean16k | v2.5 transcribe item | literal | naive | 0/140 (0%, 0-3) |
+| hi-en | clean16k | v2.5 transcribe item | literal | parser | 140/140 (100%, 97-100) |
+| hi-en | phone | v3.0 transcribe item | text | naive | 114/140 (81%, 74-87) |
+| hi-en | phone | v3.0 transcribe item | text | parser | 114/140 (81%, 74-87) |
+| hi-en | phone | v3.0 verbatim item | text | naive | 0/140 (0%, 0-3) |
+| hi-en | phone | v3.0 verbatim item | text | parser | 136/140 (97%, 93-99) |
+| hi-en | phone | v2.5 transcribe item | text | naive | 115/140 (82%, 75-88) |
+| hi-en | phone | v2.5 transcribe item | text | parser | 129/140 (92%, 86-96) |
+| hi-en | phone | v2.5 transcribe item | literal | naive | 0/140 (0%, 0-3) |
+| hi-en | phone | v2.5 transcribe item | literal | parser | 140/140 (100%, 97-100) |

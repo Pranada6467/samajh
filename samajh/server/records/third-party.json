@@ -1,0 +1,39 @@
+{
+  "id": "third-party",
+  "label": "Sunita: someone else answers",
+  "description": "Synthetic demo. The loan is Sunita's; play a family member who picks up her phone. Shows the call ending before the lender or the loan is named.",
+  "lender_name": "नमूना बैंक",
+  "record": {
+    "loan_id": "LN-DEMO-0003",
+    "lender_type": "bank",
+    "borrower": {
+      "name": "Sunita Udaharan",
+      "dob": "1979-03-08",
+      "language": "hi"
+    },
+    "loan_kind": "personal",
+    "sanctioned_inr": 300000,
+    "disbursed_inr": 281500,
+    "disbursed_on": "2026-10-27",
+    "products": [
+      {
+        "id": "P1",
+        "kind": "credit_life",
+        "provider": "Udaharan Suraksha (synthetic)",
+        "premium_inr": 18500,
+        "cover_inr": 300000,
+        "term_months": 36,
+        "paid_from_loan": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "provider_choice_offered": false,
+        "cancel_window_days": 30,
+        "features": [],
+        "consent": {
+          "method": "otp",
+          "at": "2026-10-27"
+        }
+      }
+    ]
+  }
+}

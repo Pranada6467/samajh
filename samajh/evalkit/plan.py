@@ -100,6 +100,9 @@ class Experiment(Frozen):
     voice_seed: int = 0
     # Voices are rotated within each (language, this tag) group so no stratum hears one voice only.
     balance_by: str | None = None
+    # Items of one language that share a value of this tag are voiced by the same voice, so a
+    # matched pair differs in its words only. An item without the tag stands alone.
+    voice_group: str | None = None
     conditions: dict[str, tuple[Step, ...]]
     arms: tuple[Arm, ...] = Field(min_length=1)
 
@@ -145,21 +148,30 @@ class Cell(Frozen):
 def assign_voices(items: tuple[Item, ...], experiment: Experiment) -> dict[str, VoiceSpec]:
     """One voice per item, by a seeded shuffle inside each (language, balance tag) group.
 
-    Depends only on the manifest and the experiment, so a rerun voices every item the same way.
+    With `voice_group`, the shuffle is over groups of items that share that tag, and a group
+    takes the balance tag of its first item. Depends only on the manifest and the experiment, so
+    a rerun voices every item the same way.
     """
-    groups: dict[tuple[str, str], list[Item]] = {}
-    for item in items:
-        tag = item.tags.get(experiment.balance_by, "") if experiment.balance_by else ""
-        groups.setdefault((item.language.value, tag), []).append(item)
+    units: dict[tuple[str, str], list[Item]] = {}
+    for item in sorted(items, key=lambda item: item.id):
+        shared = item.tags.get(experiment.voice_group) if experiment.voice_group else None
+        units.setdefault((item.language.value, item.id if shared is None else f"group:{shared}"), []).append(
+            item
+        )
+    groups: dict[tuple[str, str], list[list[Item]]] = {}
+    for (language, _), unit in units.items():
+        tag = unit[0].tags.get(experiment.balance_by, "") if experiment.balance_by else ""
+        groups.setdefault((language, tag), []).append(unit)
     assigned: dict[str, VoiceSpec] = {}
     for offset, ((language, tag), members) in enumerate(sorted(groups.items())):
         voices = experiment.voices.get(Language(language))
         if not voices:
             continue
-        members = sorted(members, key=lambda item: item.id)
+        members = sorted(members, key=lambda unit: unit[0].id)
         random.Random(f"{experiment.voice_seed}:{language}:{tag}").shuffle(members)
-        for rank, item in enumerate(members):
-            assigned[item.id] = voices[(rank + offset) % len(voices)]
+        for rank, unit in enumerate(members):
+            for item in unit:
+                assigned[item.id] = voices[(rank + offset) % len(voices)]
     return assigned
 
 

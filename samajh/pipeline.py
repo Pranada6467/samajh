@@ -44,8 +44,10 @@ def default_llm() -> Llm:
     return client if takes_temperature(client._model) else WithoutTemperature(client)
 
 
-def run_text(transcript: Transcript, record: LoanRecord, llm: Llm, *, model: str | None = None) -> TextRun:
-    extraction = extract_traced(transcript, record, llm, model=model)
+def run_text(
+    transcript: Transcript, record: LoanRecord, llm: Llm, *, model: str | None = None, max_workers: int = 8
+) -> TextRun:
+    extraction = extract_traced(transcript, record, llm, model=model, max_workers=max_workers)
     beliefs = to_beliefs(extraction.raw, record, transcript)
     return TextRun(extraction=extraction, beliefs=beliefs, result=evaluate(record, beliefs))
 

@@ -1,0 +1,59 @@
+# Held-out amounts, Hindi and Hinglish. Run: uv run python -m samajh.evalkit run eval/amounts_v2/experiment.toml
+name = "amounts-v2"
+manifest = "../../data/amounts_v2/amounts-v2.jsonl"
+manifest_sha256 = "1beea924ba961370950d09c9cfbbdb28dd35e8878861b8b2d388f6acbcd11fe1"
+scorer = "amount"
+budget_credits = 85
+tts_sample_rate = 16000
+voice_seed = 20261111
+balance_by = "block"
+# A skipped-group item and its matched control are spoken by the same voice.
+voice_group = "pair"
+
+# Eight voices per language, one per item. Gender and preferred language of a voice are from the
+# docs only ([unverified]); timbre-v3.0 voices are documented as multilingual.
+[voices]
+hi = [
+  { model = "timbre-v3.0", voice = "Shivani" },
+  { model = "timbre-v3.0", voice = "Avinash" },
+  { model = "timbre-v3.0", voice = "Kalpana" },
+  { model = "timbre-v3.0", voice = "Devansh" },
+  { model = "timbre-v3.0", voice = "Vasudha" },
+  { model = "timbre-v2.5", voice = "Bhavna" },
+  { model = "timbre-v2.5", voice = "Vikrant" },
+  { model = "timbre-v2.5", voice = "Urmila" },
+]
+hi-en = [
+  { model = "timbre-v3.0", voice = "Riyaa" },
+  { model = "timbre-v3.0", voice = "Shubham" },
+  { model = "timbre-v3.0", voice = "Yashraj" },
+  { model = "timbre-v3.0", voice = "Tarika" },
+  { model = "timbre-v3.0", voice = "Devansh" },
+  { model = "timbre-v3.0", voice = "Kalpana" },
+  { model = "timbre-v3.0", voice = "Vasudha" },
+  { model = "timbre-v2.5", voice = "Poorvi" },
+]
+
+[conditions]
+clean16k = []
+phone = [{ kind = "mulaw" }]
+
+# Three requests per clip. v2.5 transcribe also returns `output.literal`, its words before
+# number formatting, which is scored as a fourth reading.
+[[arm]]
+name = "readings"
+conditions = ["clean16k", "phone"]
+stt = [
+  { model = "prisma-v3.0", format = "transcribe" },
+  { model = "prisma-v3.0", format = "verbatim" },
+  { model = "prisma-v2.5", format = "transcribe" },
+]
+
+# Written before any audio was made (the readings and schemes are in samajh/evalkit/readings.py).
+# Headline cell: phone audio, parser reading, exact match on whole rupees, a refusal is not correct.
+# A "silent wrong amount" is a clip for which a reading returns an amount that is not gold.
+# The reference scheme accepts an amount when v3.0 transcribe and v2.5 transcribe give the same
+# one (two requests). A cheaper scheme "keeps the two-model level" if, on phone audio, it accepts
+# no more wrong amounts than the reference does on the held-out TTS set and on the real-voice
+# set, each taken alone. Among schemes that do, the recommendation is the one with the fewest
+# requests, then the highest share of clips accepted.

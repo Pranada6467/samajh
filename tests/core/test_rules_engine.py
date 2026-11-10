@@ -28,6 +28,7 @@ from samajh.types import (
     EvidencePack,
     FeatureClaim,
     Flag,
+    FlagReason,
     Gap,
     GapReason,
     KindClaim,
@@ -240,6 +241,8 @@ ANSWER_FIELDS = {
 # Read only in some cases: the read-back with the premium, the choice of provider when the
 # product was required, the way of agreeing when the customer says they agreed.
 CONDITIONAL_FIELDS = {"premium_readback", "provider_choice_offered", "consent_method"}
+# Checked only when the call asks it: never asked is neither a gap nor a pass.
+OPTIONAL_FIELDS = {"payment_frequency"}
 RULES_NEEDING_AN_ANSWER = {rule for rule, _ in ANSWER_FIELDS.values()}
 DONT_KNOW_FLAGS = [field for field, (_, severity) in ANSWER_FIELDS.items() if severity]
 
@@ -248,7 +251,7 @@ def test_answer_field_table_covers_every_answer_field():
     answer_fields = {
         name for name, value in product_beliefs() if isinstance(value, (NotAsked, Unclear, DontKnow, Stated))
     }
-    assert answer_fields == set(ANSWER_FIELDS) | CONDITIONAL_FIELDS
+    assert answer_fields == set(ANSWER_FIELDS) | CONDITIONAL_FIELDS | OPTIONAL_FIELDS
 
 
 @pytest.mark.parametrize("field", ANSWER_FIELDS)
@@ -346,11 +349,18 @@ def test_premium_within_one_percent_passes(heard):
     assert result.verdict is CLEAR
 
 
+# Confirmed at the read-back. Within 10% of the stated figure is low; further off is high.
 @pytest.mark.parametrize(
-    "heard, heard_text", [(52_521, "₹52,521"), (51_479, "₹51,479"), (5_200_000, "₹52,00,000"), (520, "₹520")]
+    "heard, heard_text, severity",
+    [
+        (52_521, "₹52,521", LOW),
+        (51_479, "₹51,479", LOW),
+        (5_200_000, "₹52,00,000", HIGH),
+        (520, "₹520", HIGH),
+    ],
 )
-def test_premium_more_than_one_percent_off_flags(heard, heard_text):
-    flag = assert_one_flag(run(belief_changes={"premium_inr": said(heard)}), RuleId.premium, HIGH)
+def test_premium_more_than_one_percent_off_flags(heard, heard_text, severity):
+    flag = assert_one_flag(run(belief_changes={"premium_inr": said(heard)}), RuleId.premium, severity)
     assert "₹52,000" in flag.expected
     assert heard_text in flag.heard
 
@@ -909,7 +919,15 @@ def test_flags_dominate_gaps():
 def test_verdict_of():
     passed = Passed(rule_id=RuleId.kind, product_id=P1)
     gap = Gap(rule_id=RuleId.kind, clause="x", product_id=P1, reason=GapReason.not_asked)
-    flag = Flag(rule_id=RuleId.kind, clause="x", product_id=P1, severity=LOW, expected="a", heard="b")
+    flag = Flag(
+        rule_id=RuleId.kind,
+        reason=FlagReason.kind_differs,
+        clause="x",
+        product_id=P1,
+        severity=LOW,
+        expected="a",
+        heard="b",
+    )
     assert verdict_of([]) is CLEAR
     assert verdict_of([passed]) is CLEAR
     assert verdict_of([passed, gap]) is UNCLEAR

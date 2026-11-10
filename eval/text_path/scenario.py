@@ -9,6 +9,7 @@ from samajh.types import (
     ProductId,
     RawExtraction,
     RuleId,
+    Tier,
     Transcript,
     Verdict,
 )
@@ -23,6 +24,7 @@ class GoldLabels:
     verdict: Verdict
     products: tuple[tuple[ProductId, Verdict], ...]
     flags: frozenset[FlagKey]
+    tier: Tier | None = None  # None for hand-written gold, which is in verdicts and has no tier
 
     @classmethod
     def of(cls, result: CaseResult) -> "GoldLabels":
@@ -30,6 +32,7 @@ class GoldLabels:
             verdict=result.verdict,
             products=tuple((p.product_id, p.verdict) for p in result.products),
             flags=frozenset((f.product_id, f.rule_id) for f in result.all_flags()),
+            tier=result.tier,
         )
 
 
@@ -61,6 +64,7 @@ class Scenario:
     base: str | None = None  # the base case this scenario is one language version of
     yes_no: YesNoArm | None = None
     consent_reading: bool = False  # see `scenario_sets.CONSENT_READING`
+    customer_state: str | None = None  # informed, misled, unaware or did_not_agree, when the set says
 
     @property
     def language(self) -> Language:

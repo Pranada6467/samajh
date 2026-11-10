@@ -6,17 +6,25 @@ words. A span that is not a run of consecutive whole words of the reply is not f
 
 Nothing here returns the LLM's text. A clause number or a found span comes back as a slice of
 the reply itself, so the evidence stored downstream is the customer's transcript, never model
-output.
+output. A found span is never shortened: a word next to a number may change the number
+("साढ़े" heard as "सारे"), so the rules get the span whole and accept it only if it reads exactly.
+
+`rupees`, `months` and `days` say what a span reads to. They are used only to tell whether two
+answers to one question differ, never to accept a value.
 """
 
 import re
 import unicodedata
-from collections.abc import Callable
 from dataclasses import dataclass
 
-from samajh.amounts import CLAUSE_END, Parsed, parse_amount, parse_duration_days, parse_duration_months
-
-Reader = Callable[[str, bool], int | None]  # (text, exact) -> number, or None when unsure
+from samajh.amounts import (
+    CLAUSE_END,
+    Approximate,
+    Parsed,
+    parse_approx_amount,
+    parse_duration_days,
+    parse_duration_months,
+)
 
 _WORD = re.compile(r"\S+")
 
@@ -112,34 +120,19 @@ class Reply:
         return None
 
 
-def rupees(text: str, exact: bool) -> int | None:
-    result = parse_amount(text, exact=exact)
-    return result.rupees if isinstance(result, Parsed) else None
+def rupees(text: str) -> tuple[int, int] | None:
+    """The amount a span reads to, as (low, high): equal for one figure, apart for a spoken range."""
+    result = parse_approx_amount(text)
+    if isinstance(result, Parsed):
+        return result.rupees, result.rupees
+    if isinstance(result, Approximate):
+        return result.low, result.high
+    return None
 
 
-def months(text: str, exact: bool) -> int | None:
-    return parse_duration_months(text, exact=exact)
+def months(text: str) -> int | None:
+    return parse_duration_months(text)
 
 
-def days(text: str, exact: bool) -> int | None:
-    return parse_duration_days(text, exact=exact)
-
-
-def tighten(words: str, read: Reader) -> str:
-    """Trim a found span to the words that are the number and nothing else.
-
-    The engine accepts a value span only when it reads, exactly, to the number in the reply.
-    A model often copies a word too many ("बावन हज़ार कटे"). The parser, not the model, decides
-    which sub-run is the number. A span that does not read to one number is returned unchanged
-    and the engine marks it `value_not_parsed`.
-    """
-    number = read(words, False)
-    if number is None or read(words, True) == number:
-        return words
-    tokens = words.split()
-    for size in range(len(tokens) - 1, 0, -1):
-        for k in range(len(tokens) - size + 1):
-            candidate = " ".join(tokens[k : k + size])
-            if read(candidate, True) == number:
-                return candidate
-    return words
+def days(text: str) -> int | None:
+    return parse_duration_days(text)

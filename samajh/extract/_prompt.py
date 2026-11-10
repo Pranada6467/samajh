@@ -33,15 +33,18 @@ order, consecutive words only. Never translate, transliterate, fix spelling, tur
 words, reorder words or join words that stand apart.
 4. No arithmetic and no conversion. An amount or a duration is a span, exactly as spoken.
 5. status:
-   - "stated": the customer answers THIS question.
-   - "dont_know": the customer says they do not know or do not remember the answer.
+   - "stated": the customer answers THIS question. An answer given with doubt is still "stated", \
+with the answer they lean to: "शायद", "लगता है", "मेरे ख्याल से", "maybe", "I think", or "ठीक से याद \
+नहीं" followed by an answer. Another step notes the doubt; you record the answer.
+   - "dont_know": the customer says they do not know or do not remember, and gives no answer at all.
    - "unclear": everything else. A filler or a greeting, a question back, an off-topic reply, an \
-answer to a different question, a guess the customer marks as a guess (शायद, maybe, "I think, not \
-sure"), or two different answers without settling on one.
+answer to a different question, or two different answers without settling on one.
    With "stated" or "dont_know", `clauses` must name at least one clause. With "unclear", the \
 value is null and `clauses` is empty.
 6. If the customer corrects themselves inside the reply, record the final answer and point at the \
 clause with the final answer.
+7. Doubt is not denial. "X था शायद" leans to X. "X था, ऐसा नहीं है" and "X, ऐसा किसी ने नहीं कहा" \
+say that X is NOT the answer: never record X from such a reply.
 """
 
 _CLAIMS = """\
@@ -126,9 +129,15 @@ _KINDS = """\
 - "other": the customer names something that fits none of these."""
 
 _AMOUNT = """\
-The span is the amount and nothing else: the digits or number words with their thousand or lakh \
-word. Leave out the currency word and every other word ("बावन हज़ार", "52,000", "1.5 lakh", "डेढ़ लाख"). \
-A range, or two different amounts with no final one, is "unclear"."""
+The span is the amount words only: the digits or number words with their thousand or lakh word \
+("बावन हज़ार", "52,000", "1.5 lakh"). Keep every word that changes the amount:
+- a fraction word, and any word standing directly before the number that could be a misheard \
+fraction word ("साढ़े तीन लाख", "डेढ़ लाख", "पौने दो लाख", "सारे तीन लाख");
+- an approximation word ("करीब पचास हज़ार", "लगभग 40,000", "around 30 thousand", "बीस हज़ार के आसपास");
+- both ends of a range ("पचास बावन हज़ार के आसपास", "50 से 52 हज़ार").
+Leave out the currency word, the verb and every other word. An amount said approximately or as a \
+range is "stated". Two different amounts for the same thing that are neither a range nor a \
+correction are "unclear"."""
 
 _QUESTION: dict[SlotKind, str] = {
     SlotKind.kind: f"""\
@@ -158,7 +167,9 @@ and `clauses` points at the words that say so.
 
 Examples
 Reply: "करीब अड़तीस हज़ार रुपये कटे थे उसके।"  Clauses: [1] करीब अड़तीस हज़ार रुपये कटे थे उसके
-{{"status":"stated","span":"अड़तीस हज़ार","clauses":[1]}}
+{{"status":"stated","span":"करीब अड़तीस हज़ार","clauses":[1]}}
+Reply: "पक्का याद नहीं, बीस बाईस हज़ार के आसपास रहा होगा।"  Clauses: [1] पक्का याद नहीं [2] बीस बाईस हज़ार के आसपास रहा होगा
+{{"status":"stated","span":"बीस बाईस हज़ार के आसपास","clauses":[2]}}
 Reply: "24,500 rupees था premium."  Clauses: [1] 24,500 rupees था premium
 {{"status":"stated","span":"24,500","clauses":[1]}}
 Reply: "அது, ஞாபகம் இல்லை."  Clauses: [1] அது [2] ஞாபகம் இல்லை
@@ -175,19 +186,24 @@ and `clauses` points at the words that say so.
 Examples
 Reply: "तीन लाख का कवर बताया था।"  Clauses: [1] तीन लाख का कवर बताया था
 {{"status":"stated","span":"तीन लाख","clauses":[1]}}
+Reply: "शायद ढाई लाख का है, loan जितना."  Clauses: [1] शायद ढाई लाख का है [2] loan जितना
+{{"status":"stated","span":"ढाई लाख","clauses":[1]}}
 Reply: "Cover? उसका तो idea नहीं है."  Clauses: [1] Cover [2] उसका तो idea नहीं है
 {{"status":"dont_know","span":null,"clauses":[2]}}
 """,
     SlotKind.term: """\
 The question asks how long the product runs.
 The span is the duration and nothing else: the number and its unit ("तीन साल", "36 months", \
-"2 வருஷம்"). No number with a unit means "unclear".
+"2 வருஷம்"). A duration tied to the loan is also "stated", with the words that say so as the span \
+("जब तक लोन चलेगा", "loan के साथ ही खत्म होगा"). Anything else with no number and unit is "unclear".
 With "stated", `span` is the duration and `clauses` may stay empty. With "dont_know", `span` is \
 null and `clauses` points at the words that say so.
 
 Examples
 Reply: "चार साल तक चलेगा।"  Clauses: [1] चार साल तक चलेगा
 {"status":"stated","span":"चार साल","clauses":[1]}
+Reply: "जब तक लोन चलता रहेगा, तब तक।"  Clauses: [1] जब तक लोन चलता रहेगा [2] तब तक
+{"status":"stated","span":"जब तक लोन चलता रहेगा","clauses":[1]}
 Reply: "எவ்வளவு நாள்னு சொல்லலை, தெரியாது."  Clauses: [1] எவ்வளவு நாள்னு சொல்லலை [2] தெரியாது
 {"status":"dont_know","span":null,"clauses":[2]}
 """,
@@ -205,6 +221,27 @@ Reply: "लोन के पैसे में से ही काट लि�
 {"status":"stated","source":"from_loan","clauses":[1]}
 Reply: "ನಾನೇ ಕ್ಯಾಶ್ ಕೊಟ್ಟೆ, ಲೋನ್‌ನಿಂದ ಅಲ್ಲ."  Clauses: [1] ನಾನೇ ಕ್ಯಾಶ್ ಕೊಟ್ಟೆ [2] ಲೋನ್‌ನಿಂದ ಅಲ್ಲ
 {"status":"stated","source":"separately","clauses":[1,2]}
+""",
+    SlotKind.payment_frequency: """\
+The question asks whether the product is paid for once, or again and again.
+frequency:
+- "one_time": paid only once, a single payment, nothing more to pay ("एकमुश्त", "एक ही बार दिया", \
+"one time payment है").
+- "recurring": paid again and again: every year, every month, with each EMI, in instalments \
+("हर साल भरना है", "हर महीने EMI के साथ कटता है").
+A reply that says only how much was paid, or from where, is "unclear".
+
+Examples
+Reply: "एकमुश्त दिया था, बस।"  Clauses: [1] एकमुश्त दिया था [2] बस
+{"status":"stated","frequency":"one_time","clauses":[1]}
+Reply: "One time payment है, दोबारा नहीं देना."  Clauses: [1] One time payment है [2] दोबारा नहीं देना
+{"status":"stated","frequency":"one_time","clauses":[1,2]}
+Reply: "हर साल भरना पड़ता है।"  Clauses: [1] हर साल भरना पड़ता है
+{"status":"stated","frequency":"recurring","clauses":[1]}
+Reply: "शायद हर महीने EMI के साथ कटता है."  Clauses: [1] शायद हर महीने EMI के साथ कटता है
+{"status":"stated","frequency":"recurring","clauses":[1]}
+Reply: "एक बार देना है या हर साल, यह किसी ने नहीं बताया।"  Clauses: [1] एक बार देना है या हर साल [2] यह किसी ने नहीं बताया
+{"status":"dont_know","frequency":null,"clauses":[1,2]}
 """,
     SlotKind.required_for_loan: """\
 The question asks whether the product was required to get the loan.
@@ -263,6 +300,8 @@ without any of them.
 
 Examples
 Reply: "वापस नहीं मिलेगा, बीमा है ना।"  Clauses: [1] वापस नहीं मिलेगा [2] बीमा है ना
+{{"status":"stated","claims":[],"clauses":[1]}}
+Reply: "मेरे ख्याल से तो नहीं लौटाते, पॉलिसी है।"  Clauses: [1] मेरे ख्याल से तो नहीं लौटाते [2] पॉलिसी है
 {{"status":"stated","claims":[],"clauses":[1]}}
 Reply: "नहीं लौटाते, हाँ पंद्रह दिन के भीतर बंद करवा दो तो लौटा देते हैं।"  Clauses: [1] नहीं लौटाते \
 [2] हाँ पंद्रह दिन के भीतर बंद करवा दो तो लौटा देते हैं
@@ -325,6 +364,9 @@ items: each separate thing the customer says they took or were given along with 
 than the loan itself. One item per thing; never two items for the same thing. If the customer \
 corrects the name of a thing, keep only the corrected one. Empty when they name nothing ("just the \
 loan", "nothing", "I do not know", a bare "yes").
+took_nothing: true only when the customer says they took or were given nothing along with the \
+loan, only the loan itself. false in every other case: when they name anything, when they do not \
+know or do not remember, for a bare "yes" or a filler.
 - span: the words that name the thing, copied from the reply.
 - kind: what the customer calls it; null when the words do not show what kind of thing it is.
 {_KINDS}
@@ -335,11 +377,15 @@ The loan and its amount are not an item.
 Examples
 Reply: "एक पॉलिसी दी थी, इकतीस हज़ार की, और फाइल चार्ज लगा था।"
 {{"items":[{{"span":"एक पॉलिसी","kind":"insurance","amount_span":"इकतीस हज़ार"}},\
-{{"span":"फाइल चार्ज","kind":"fee","amount_span":null}}]}}
+{{"span":"फाइल चार्ज","kind":"fee","amount_span":null}}],"took_nothing":false}}
 Reply: "बस loan लिया था, और कुछ नहीं."
-{{"items":[]}}
+{{"items":[],"took_nothing":true}}
+Reply: "अभी याद नहीं आ रहा।"
+{{"items":[],"took_nothing":false}}
+Reply: "कोई plan था शायद, बीस बाईस हज़ार के आसपास कुछ कटा था."
+{{"items":[{{"span":"कोई plan","kind":null,"amount_span":"बीस बाईस हज़ार के आसपास"}}],"took_nothing":false}}
 Reply: "ஒரு டெபாசிட் போட சொன்னாங்க, 40,000."
-{{"items":[{{"span":"ஒரு டெபாசிட்","kind":"deposit","amount_span":"40,000"}}]}}
+{{"items":[{{"span":"ஒரு டெபாசிட்","kind":"deposit","amount_span":"40,000"}}],"took_nothing":false}}
 """,
 }
 

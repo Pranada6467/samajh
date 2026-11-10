@@ -15,6 +15,9 @@ Units and gold standards:
   * verdict: per product and per call, three-way.
   * false clear: a call whose gold verdict is flag_for_review or unclear_needs_human and whose
     pipeline verdict is clear. A call the extractor failed on has no verdict and is never clear.
+  * tier: the triage outcome of the call (`samajh.types.Tier`). The hand-written gold is in
+    verdicts and has no tier, so tiers are reported by customer group in `triage.py`, not scored
+    against a gold tier.
 """
 
 from collections import Counter
@@ -32,13 +35,14 @@ from samajh.types import (
     ProductId,
     RuleId,
     Stated,
+    Tier,
     Verdict,
 )
 
 ANSWER_FIELDS = (
     "kind", "premium_inr", "premium_readback", "payment_source", "required_for_loan",
     "provider_choice_offered", "cover_inr", "term_months", "cancel_allowed", "cancel_window_days",
-    "feature_probe", "consent_given", "consent_method",
+    "feature_probe", "consent_given", "consent_method", "payment_frequency",
 )  # fmt: skip
 LIST_FIELDS = ("recall_items", "volunteered_claims", "sale_concerns")
 LANGUAGES = ("hi", "hi-en", "ta", "kn")
@@ -74,6 +78,7 @@ class CaseScore:
     gold_flags: frozenset[FlagKey] = frozenset()
     flags: frozenset[FlagKey] = frozenset()
     product_verdicts: tuple[tuple[Verdict, Verdict | None], ...] = ()  # (gold, got) per product
+    tier: Tier | None = None  # None: the pipeline gave no result
 
     @property
     def false_clear(self) -> bool:
@@ -151,6 +156,7 @@ def score_case(
         gold_flags=gold.flags,
         flags=labels.flags if labels else frozenset(),
         product_verdicts=tuple((verdict, got_products.get(pid)) for pid, verdict in gold.products),
+        tier=got.tier if got else None,
     )
 
 
@@ -189,6 +195,7 @@ class Summary:
     flag_fp: Counter = field(default_factory=Counter)
     flag_fn: Counter = field(default_factory=Counter)
     confusion: Counter = field(default_factory=Counter)  # (gold verdict, got verdict or "error")
+    tiers: Counter = field(default_factory=Counter)  # (gold verdict, tier or "no result")
 
     def precision(self, rule: RuleId | None = None) -> Tally:
         tp, fp = self._count(self.flag_tp, rule), self._count(self.flag_fp, rule)
@@ -209,6 +216,7 @@ def summarise(scores: Iterable[CaseScore]) -> Summary:
         s.cases += 1
         s.errors += c.error is not None
         s.confusion[(c.gold_verdict.value, c.verdict.value if c.verdict else "error")] += 1
+        s.tiers[(c.gold_verdict.value, c.tier.value if c.tier else "no result")] += 1
         if c.gold_verdict is Verdict.clear:
             s.false_alarm.add(c.verdict is not Verdict.clear)
         else:

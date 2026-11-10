@@ -6,11 +6,12 @@ Every worker reads this file, `CLAUDE.md` and `DESIGN.md` before starting. `DESI
 
 | Work | Model | Effort |
 |---|---|---|
-| Planning, architecture, reviewing | Fable (`claude-fable-5-2`) | high |
-| Writing code | Fable (`claude-fable-5-2`) | medium |
-| Fact and claims research | Sonnet | default |
+| Orchestrating: planning, writing instructions for subagents, deciding | Fable (`claude-fable-5-2`) | high |
+| Building: writing code, tests, data | Opus (`model: "opus"`) | medium |
+| Verifying: independent review, attacks, reproduction | Opus (`model: "opus"`) | high |
+| Fact and claims research, documentation updates | Sonnet | default |
 
-An execution manager (an Orca worker) owns one work package. It does not write the bulk of the code itself. It runs the loop below with its own subagents, passing `model` and `effort` on each `Agent` call as in the table.
+Changed by the user on 2026-11-10 (iteration 2). Fable is used only to give instructions: the coordinator and each execution manager (an Orca worker) run on Fable and do not write the product code or run the review themselves. An execution manager owns one work package, splits it into small tasks, and hands each to a subagent with `model` and `effort` set on the `Agent` call as in the table: Opus medium to build, a separate Opus high subagent that wrote none of the code to verify. This replaces any older line in a task spec that says to do the work yourself or names Fable for building or reviewing.
 
 ## The loop, per work package
 

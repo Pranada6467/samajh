@@ -1,0 +1,55 @@
+# Settings of the voice transport. `SAMAJH_SERVER_SETTINGS` names another file to load instead.
+# Nothing here was set on human audio: no person has used the phone yet.
+
+[tts]
+model = "timbre-v3.0"
+
+# The bot's voice, one per call language (samajh.types.Language values). Timbre v3.0 voices are
+# not tied to a language. Shivani is the one voice this project has run end to end: in the
+# iteration 1 call Prisma Batch labelled her and a male customer voice as two speakers (n = 1).
+# Nobody has compared the voices by ear, so this is a default and not a judgement of quality.
+[tts.voice]
+hi = "Shivani"
+hi-en = "Shivani"
+ta = "Shivani"
+kn = "Shivani"
+
+[stt]
+model = "prisma-v3.0"
+format = "transcribe"
+# The second reading of a turn that may carry a figure. The two calls run one after the other
+# (the key allows one request at a time). v2.5 answered in a median 0.2 s on short clips and its
+# 504s arrived after about 5 s, so a reading that is not back in time is counted as missing.
+second_model = "prisma-v2.5"
+second_format = "transcribe"
+second_timeout_s = 2.5
+
+# How long the phone waits through silence, by the kind of reply the bot asked for.
+#   cut_ms    silence after which the phone sends the turn so far.
+#   grace_ms  time after the last voiced frame in which the customer can still go on. The bot's
+#             next line does not start before it has passed. If the customer resumes, the phone
+#             sends the whole turn again as a later take and the server reads it afresh.
+# The verifier saw a 700 ms cut split answers at a 600 ms pause in Chrome, so open questions get
+# more patience than yes/no questions. Set these on human pauses once some are recorded (each
+# turn's pauses are in the session log).
+[turn_taking.yes_no]
+cut_ms = 700
+grace_ms = 1000
+
+[turn_taking.short]
+cut_ms = 800
+grace_ms = 1200
+
+[turn_taking.amount]
+cut_ms = 1000
+grace_ms = 1600
+
+[turn_taking.open]
+cut_ms = 1100
+grace_ms = 1800
+
+# The dialogue's LLM second opinion for a live turn its word lists cannot place. It runs inside
+# the turn, so it gets a short timeout and one attempt; when it fails the turn is read as unclear.
+[fallback]
+enabled = true
+timeout_s = 3.0

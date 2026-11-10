@@ -9,7 +9,15 @@ call, so every field is required and has no default. `samajh.extract._extract` t
 
 from enum import StrEnum
 
-from samajh.types import ConsentMethod, FeatureClaim, Frozen, KindClaim, PaymentSource, SaleConcern
+from samajh.types import (
+    ConsentMethod,
+    FeatureClaim,
+    Frozen,
+    KindClaim,
+    PaymentFrequency,
+    PaymentSource,
+    SaleConcern,
+)
 
 
 class SlotKind(StrEnum):
@@ -20,6 +28,7 @@ class SlotKind(StrEnum):
     premium = "premium"
     readback = "readback"
     payment_source = "payment_source"
+    payment_frequency = "payment_frequency"
     required_for_loan = "required_for_loan"
     provider_choice = "provider_choice"
     cover = "cover"
@@ -65,6 +74,12 @@ class KindReply(Frozen):
 class PaymentReply(Frozen):
     status: Status
     source: PaymentSource | None
+    clauses: Clauses
+
+
+class FrequencyReply(Frozen):
+    status: Status
+    frequency: PaymentFrequency | None
     clauses: Clauses
 
 
@@ -123,11 +138,13 @@ class WireRecallItem(Frozen):
 
 class RecallReply(Frozen):
     items: tuple[WireRecallItem, ...]
+    took_nothing: bool  # the customer says they took nothing with the loan besides the loan
 
 
 WireReply = (
     KindReply
     | PaymentReply
+    | FrequencyReply
     | YesNoReply
     | SpanReply
     | ReadbackReply
@@ -144,6 +161,7 @@ SCHEMA: dict[SlotKind, type[WireReply]] = {
     SlotKind.premium: SpanReply,
     SlotKind.readback: ReadbackReply,
     SlotKind.payment_source: PaymentReply,
+    SlotKind.payment_frequency: FrequencyReply,
     SlotKind.required_for_loan: YesNoReply,
     SlotKind.provider_choice: YesNoReply,
     SlotKind.cover: SpanReply,

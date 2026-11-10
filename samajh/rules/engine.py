@@ -21,6 +21,7 @@ from samajh.types import (
     ProductResult,
     RuleId,
     Verdict,
+    tier_of,
 )
 
 Outcomes = tuple[Outcome, ...]
@@ -143,11 +144,23 @@ def _check_ids(record: LoanRecord, beliefs: Beliefs) -> None:
 
 
 def evaluate(record: LoanRecord, beliefs: Beliefs) -> CaseResult:
-    """Run every rule. The case verdict is the worst outcome of any product or case-level rule."""
+    """Run every rule. The case verdict and tier are the worst of any product or case-level rule.
+
+    A question whose answers differed adds an `answers_conflict` flag under its rule and takes
+    away that rule's pass for the product; the rule's own flags and gaps stay.
+    """
     _check_ids(record, beliefs)
+    rules = {spec.id: Rule(spec.id, spec.clause(record.lender_type)) for spec in RULES}
     outcomes: list[Outcome] = []
     for spec in RULES:
-        outcomes += spec.check(Rule(spec.id, spec.clause(record.lender_type)), record, beliefs)
+        outcomes += spec.check(rules[spec.id], record, beliefs)
+    for product in record.products:
+        conflicting = checks.conflicts(rules, product, beliefs)
+        contested = {(flag.rule_id, flag.product_id) for flag in conflicting}
+        outcomes = [
+            o for o in outcomes if not (isinstance(o, Passed) and (o.rule_id, o.product_id) in contested)
+        ]
+        outcomes += conflicting
 
     def result_for(product: Product) -> ProductResult:
         own = [o for o in outcomes if o.product_id == product.id]
@@ -162,21 +175,26 @@ def evaluate(record: LoanRecord, beliefs: Beliefs) -> CaseResult:
                 product=product,
                 flags=pack_flags,
             )
+        gaps = tuple(o for o in own if isinstance(o, Gap))
         return ProductResult(
             product_id=product.id,
             verdict=verdict_of(own),
+            tier=tier_of(flags, gaps),
             flags=flags,
-            gaps=tuple(o for o in own if isinstance(o, Gap)),
+            gaps=gaps,
             passed=tuple(o.rule_id for o in own if isinstance(o, Passed)),
             evidence_pack=pack,
         )
 
     case_level = [o for o in outcomes if o.product_id is None]
+    every_flag = tuple(o for o in outcomes if isinstance(o, Flag))
+    every_gap = tuple(o for o in outcomes if isinstance(o, Gap))
     return CaseResult(
         loan_id=record.loan_id,
         call_id=beliefs.call_id,
         language=beliefs.language,
         verdict=verdict_of(outcomes),
+        tier=tier_of(every_flag, every_gap),
         products=tuple(result_for(p) for p in record.products),
         case_flags=tuple(o for o in case_level if isinstance(o, Flag)),
         case_gaps=tuple(o for o in case_level if isinstance(o, Gap)),

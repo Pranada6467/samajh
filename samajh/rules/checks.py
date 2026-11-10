@@ -1,15 +1,18 @@
 """One small function per rule. Pure: record and beliefs in, outcomes out.
 
 Every rule commits to Passed, Flag or Gap. Silence is never a pass: a question that was
-not asked or not answered usably is a Gap, and "I do not know" is a Flag.
+not asked or not answered usably is a Gap, and "I do not know" is a Flag. The one exception
+is the payment-frequency question, which is judged only when the call asks it.
+
+A flag's triage tier follows from its reason (`samajh.types.FLAG_TIER`), not from its severity.
 """
 
 from collections.abc import Callable
-from enum import StrEnum
 from typing import NamedTuple, TypeVar
 
 from samajh.rules.clauses import KIND_ON_RECORD
 from samajh.types import (
+    REFER_RULES,
     Answer,
     Beliefs,
     ConsentMethod,
@@ -17,6 +20,7 @@ from samajh.types import (
     Evidence,
     FeatureClaim,
     Flag,
+    FlagReason,
     Gap,
     GapReason,
     KindClaim,
@@ -24,10 +28,12 @@ from samajh.types import (
     NotAsked,
     Outcome,
     Passed,
+    PaymentFrequency,
     PaymentSource,
     Product,
     ProductBeliefs,
     ProductId,
+    Question,
     RecallItem,
     RuleId,
     SaleConcern,
@@ -47,40 +53,7 @@ class Rule(NamedTuple):
     clause: str
 
 
-class Why(StrEnum):
-    """Each distinct reason a rule raises a flag. Keys of `SEVERITY`."""
-
-    kind_differs = "kind_differs"
-    kind_dont_know = "kind_dont_know"
-    premium_differs_confirmed = "premium_differs_confirmed"  # customer confirmed the read-back
-    premium_differs = "premium_differs"
-    premium_dont_know = "premium_dont_know"
-    cover_differs = "cover_differs"
-    cover_dont_know = "cover_dont_know"
-    term_differs = "term_differs"
-    term_dont_know = "term_dont_know"
-    cancel_unaware = "cancel_unaware"
-    cancel_dont_know = "cancel_dont_know"
-    cancel_window_differs = "cancel_window_differs"
-    cancel_window_dont_know = "cancel_window_dont_know"
-    cancel_not_on_record = "cancel_not_on_record"
-    recall_not_named = "recall_not_named"
-    recall_off_record = "recall_off_record"
-    consent_no_record = "consent_no_record"
-    consent_not_recognised = "consent_not_recognised"
-    consent_method_differs = "consent_method_differs"
-    consent_dont_know = "consent_dont_know"
-    funded_no_consent = "funded_no_consent"
-    funded_says_separately = "funded_says_separately"
-    funded_dont_know = "funded_dont_know"
-    unfunded_says_deducted = "unfunded_says_deducted"
-    bundled_not_mitigant = "bundled_not_mitigant"
-    bundled_described_as_deposit = "bundled_described_as_deposit"
-    bundled_no_choice_on_record = "bundled_no_choice_on_record"
-    bundled_no_choice_told = "bundled_no_choice_told"
-    feature_contradicted = "feature_contradicted"
-    feature_dont_know = "feature_dont_know"
-    sale_concern = "sale_concern"
+Why = FlagReason  # the old name; rules use it as a short alias
 
 
 # Review priority of every flag. Tune here and nowhere else.
@@ -116,9 +89,15 @@ SEVERITY: dict[Why, Severity] = {
     Why.feature_contradicted: Severity.high,
     Why.feature_dont_know: Severity.low,
     Why.sale_concern: Severity.high,
-}
+    Why.premium_approximate: Severity.low,
+    Why.recall_denied: Severity.high,
+    Why.frequency_recurring_on_single: Severity.low,
+    Why.frequency_dont_know: Severity.low,
+}  # answers_conflict is not listed: its severity follows the rule it is raised under
 
 AMOUNT_TOLERANCE_PERCENT = 1  # a stated amount may differ from the record by up to this much
+# "About fifty thousand", or a range: the record may lie this far outside what was said.
+APPROX_AMOUNT_TOLERANCE_PERCENT = 10
 TERM_TOLERANCE_MONTHS = 0
 CANCEL_TOLERANCE_DAYS = 1  # "one month" is read as 30 days and "two weeks" as 14
 
@@ -157,6 +136,21 @@ FEATURE_LABEL: dict[FeatureClaim, str] = {
     FeatureClaim.withdrawable_after_period: "the money can be withdrawn after a period",
 }
 
+# The rule that answers a question, and so the rule its conflicting answers are flagged under.
+QUESTION_RULE: dict[Question, RuleId] = {
+    Question.kind: RuleId.kind,
+    Question.premium: RuleId.premium,
+    Question.payment_source: RuleId.loan_funded,
+    Question.required_for_loan: RuleId.bundling,
+    Question.provider_choice: RuleId.bundling,
+    Question.cover: RuleId.cover,
+    Question.term: RuleId.term,
+    Question.cancel_window: RuleId.cancel_window,
+    Question.features: RuleId.belief_mismatch,
+    Question.payment_frequency: RuleId.belief_mismatch,
+    Question.consent: RuleId.consent,
+}
+
 
 # --- building outcomes -------------------------------------------------------
 
@@ -183,9 +177,11 @@ def _flag(
     expected: str,
     heard: str,
     evidence: Evidence | None = None,
+    claim: FeatureClaim | None = None,
 ) -> Flag:
     return Flag(
         rule_id=rule.id,
+        reason=why,
         clause=rule.clause,
         product_id=product_id,
         severity=SEVERITY[why],
@@ -193,6 +189,7 @@ def _flag(
         heard=heard,
         quote=evidence.quote if evidence else None,
         turn_id=evidence.turn_id if evidence else None,
+        claim=claim,
     )
 
 
@@ -250,10 +247,13 @@ def _kind_sources(p: Product, beliefs: Beliefs) -> list[tuple[KindClaim, Evidenc
 
 
 def _claims(b: ProductBeliefs) -> list[tuple[FeatureClaim, Evidence]]:
-    """Every feature claim the customer made about this product, volunteered or probed."""
+    """Every feature claim the customer made about this product: volunteered, probed, or "paid once"."""
     claims = [(c.claim, c.evidence) for c in b.volunteered_claims]
     if isinstance(b.feature_probe, Stated):
         claims += [(claim, b.feature_probe.evidence) for claim in b.feature_probe.value]
+    frequency = b.payment_frequency
+    if isinstance(frequency, Stated) and frequency.value is PaymentFrequency.one_time:
+        claims.append((FeatureClaim.one_time_payment, frequency.evidence))
     return claims
 
 
@@ -285,11 +285,41 @@ def _differs(heard: int, on_record: int) -> bool:
     return abs(heard - on_record) * 100 > on_record * AMOUNT_TOLERANCE_PERCENT
 
 
+def _exact(a: Stated[int], on_record: int) -> bool:
+    """One figure within the exact tolerance of the record. A range is never exact."""
+    return a.low is None and not _differs(a.value, on_record)
+
+
+def _near(a: Stated[int], on_record: int) -> bool:
+    """The record lies within the approximate tolerance of the figure, or of the range, said.
+
+    The tolerance is taken on what the customer said: "about 50,000" reaches from 45,000 to
+    55,000, and "50 to 55 thousand" from 45,000 to 60,500. Integer arithmetic only.
+    """
+    low = a.value if a.low is None else a.low
+    return (
+        low * (100 - APPROX_AMOUNT_TOLERANCE_PERCENT)
+        <= on_record * 100
+        <= a.value * (100 + APPROX_AMOUNT_TOLERANCE_PERCENT)
+    )
+
+
+def _heard_amount(a: Stated[int]) -> str:
+    if a.low is not None:
+        return f"customer said {rupees(a.low)} to {rupees(a.value)}"
+    return f"customer said {'about ' if a.approximate else ''}{rupees(a.value)}"
+
+
 def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
-    """The premium passes only when the customer confirmed the read-back.
+    """The premium passes only when the customer confirmed the read-back of an exact figure.
 
     Speech recognition can drop a word ("paune do lakh" heard as "do lakh"), so an amount that
     matches the record but was never confirmed may not be what the customer said.
+
+    Confirmed: exact passes, near is a low flag (the customer knows roughly what it cost),
+    anything else is a high flag. Not confirmed: exact is a gap, and so is an answer the
+    customer gave as approximate that is near; any other differing amount is a medium flag.
+    A hedge or an approximation never moves an answer that is not near.
     """
     b = beliefs.for_product(p.id)
     readback = b.premium_readback
@@ -299,11 +329,14 @@ def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
         if isinstance(readback, Stated) and not readback.value:
             return (_gap(rule, p.id, GapReason.readback_rejected, readback.evidence),)
         confirmed = isinstance(readback, Stated)
-        if _differs(a.value, p.premium_inr):
-            why = Why.premium_differs_confirmed if confirmed else Why.premium_differs
-            return (_flag(rule, p.id, why, expected, f"customer said {rupees(a.value)}", a.evidence),)
-        if confirmed:
+        exact, near = _exact(a, p.premium_inr), _near(a, p.premium_inr)
+        if confirmed and exact:
             return _passed(rule, p.id)
+        if confirmed:
+            why = Why.premium_approximate if near else Why.premium_differs_confirmed
+            return (_flag(rule, p.id, why, expected, _heard_amount(a), a.evidence),)
+        if not (exact or (near and a.approximate)):
+            return (_flag(rule, p.id, Why.premium_differs, expected, _heard_amount(a), a.evidence),)
         if isinstance(readback, DontKnow):
             return (_gap(rule, p.id, GapReason.no_usable_answer, readback.evidence),)
         return (_gap_for(rule, p.id, readback),)
@@ -314,13 +347,13 @@ def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
 
 
 def cover(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
+    """One figure must be within the exact tolerance; an answer given as approximate may be near."""
     expected = f"cover of {rupees(p.cover_inr)}"
 
     def stated(a: Stated[int]) -> Outcomes:
-        if _differs(a.value, p.cover_inr):
-            heard = f"customer said {rupees(a.value)}"
-            return (_flag(rule, p.id, Why.cover_differs, expected, heard, a.evidence),)
-        return _passed(rule, p.id)
+        if _exact(a, p.cover_inr) or (a.approximate and _near(a, p.cover_inr)):
+            return _passed(rule, p.id)
+        return (_flag(rule, p.id, Why.cover_differs, expected, _heard_amount(a), a.evidence),)
 
     answer = beliefs.for_product(p.id).cover_inr
     return _decide(rule, p.id, answer, stated=stated, dont_know=Why.cover_dont_know, expected=expected)
@@ -391,16 +424,15 @@ def recall(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
         return (_gap(rule, p.id, GapReason.not_asked),)
     if _matched(p, beliefs):
         return _passed(rule, p.id)
-    return (
-        _flag(
-            rule,
-            p.id,
-            Why.recall_not_named,
-            "customer names this product when asked what they took with the loan",
-            "customer did not name this product unprompted",
-            beliefs.recall.answer,
-        ),
-    )
+    expected = "customer names this product when asked what they took with the loan"
+    denial = beliefs.recall.denial
+    answer = beliefs.for_product(p.id).kind
+    named_later = isinstance(answer, Stated) and answer.value is KIND_ON_RECORD[p.kind]
+    if denial is not None and not named_later:
+        heard = "customer said they took nothing with the loan"
+        return (_flag(rule, p.id, Why.recall_denied, expected, heard, denial),)
+    heard = "customer did not name this product unprompted"
+    return (_flag(rule, p.id, Why.recall_not_named, expected, heard, beliefs.recall.answer),)
 
 
 def recall_unmatched(rule: Rule, record: LoanRecord, beliefs: Beliefs) -> Outcomes:
@@ -560,7 +592,27 @@ def bundling(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
 # --- features ----------------------------------------------------------------
 
 
+def _frequency(rule: Rule, p: Product, b: ProductBeliefs) -> Outcomes:
+    """What the payment-frequency answer adds. Never asked adds nothing: most calls do not ask it.
+
+    "Paid once" is a feature claim and is judged with the others (`_claims`).
+    """
+    answer = b.payment_frequency
+    expected = "customer knows whether the product is paid for once or again and again"
+    if isinstance(answer, Unclear):
+        return (_gap_for(rule, p.id, answer),)
+    if isinstance(answer, DontKnow):
+        return (_flag(rule, p.id, Why.frequency_dont_know, expected, DONT_KNOW, answer.evidence),)
+    paid_once = FeatureClaim.one_time_payment in p.features
+    if isinstance(answer, Stated) and answer.value is PaymentFrequency.recurring and paid_once:
+        heard = "customer said it is paid again and again; the record shows a single payment"
+        why = Why.frequency_recurring_on_single
+        return (_flag(rule, p.id, why, expected, heard, answer.evidence),)
+    return ()
+
+
 def belief_mismatch(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
+    """Contradicted beliefs, else the money-back probe; the payment-frequency answer is added to either."""
     b = beliefs.for_product(p.id)
     claims = _claims(b)
     claims += [(FeatureClaim.is_deposit, ev) for k, ev in _kind_sources(p, beliefs) if k is KindClaim.deposit]
@@ -569,19 +621,24 @@ def belief_mismatch(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
         if claim not in p.features:
             contradicted.setdefault(claim, ev)
     expected = "what the customer believes matches the product's features"
+    frequency = _frequency(rule, p, b)
     if contradicted:
-        return tuple(
-            _flag(
-                rule,
-                p.id,
-                Why.feature_contradicted,
-                expected,
-                f"customer believes {FEATURE_LABEL[claim]}; the product does not have this feature",
-                ev,
-            )
-            for claim, ev in contradicted.items()
+        return (
+            *(
+                _flag(
+                    rule,
+                    p.id,
+                    Why.feature_contradicted,
+                    expected,
+                    f"customer believes {FEATURE_LABEL[claim]}; the product does not have this feature",
+                    ev,
+                    claim,
+                )
+                for claim, ev in contradicted.items()
+            ),
+            *frequency,
         )
-    return _decide(
+    probe = _decide(
         rule,
         p.id,
         b.feature_probe,
@@ -589,6 +646,9 @@ def belief_mismatch(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
         dont_know=Why.feature_dont_know,
         expected=expected,
     )
+    if frequency and isinstance(probe[0], Passed):
+        return frequency
+    return (*probe, *frequency)
 
 
 # --- conduct of the sale -----------------------------------------------------
@@ -616,5 +676,39 @@ def evidence(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
 
 
 def evidence_case(rule: Rule, record: LoanRecord, beliefs: Beliefs) -> Outcomes:
-    """Case-level: ungrounded quotes that belong to no product (for example in open recall)."""
-    return tuple(_gap(rule, None, GapReason.quote_not_grounded, ev) for ev in beliefs.ungrounded)
+    """Case-level: quotes that belong to no product and are not in the transcript, and replies
+    that no screening call read for claims and concerns."""
+    return (
+        *(_gap(rule, None, GapReason.quote_not_grounded, ev) for ev in beliefs.ungrounded),
+        *(_gap(rule, None, GapReason.extraction_failed, ev) for ev in beliefs.unscreened),
+    )
+
+
+# --- conflicting answers -----------------------------------------------------
+
+
+def conflicts(rules: dict[RuleId, Rule], p: Product, beliefs: Beliefs) -> tuple[Flag, ...]:
+    """One flag per question whose answers differed, under the rule that question belongs to.
+
+    The field holds only the last answer, so without this an earlier "FD" followed by
+    "insurance" would leave no trace. The reviewer gets every answer, in call order.
+    """
+    found = []
+    for conflict in beliefs.for_product(p.id).conflicts:
+        rule = rules[QUESTION_RULE[conflict.question]]
+        first, *others = conflict.answers
+        found.append(
+            Flag(
+                rule_id=rule.id,
+                reason=Why.answers_conflict,
+                clause=rule.clause,
+                product_id=p.id,
+                severity=Severity.high if rule.id in REFER_RULES else Severity.low,
+                expected="one consistent answer to the question",
+                heard=f"customer gave {len(conflict.answers)} differing answers when asked more than once",
+                quote=first.quote,
+                turn_id=first.turn_id,
+                also=tuple(others),
+            )
+        )
+    return tuple(found)

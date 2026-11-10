@@ -98,7 +98,7 @@ def test_normalised_amounts_must_be_integers_even_when_built_in_python():
 
 def test_every_answer_defaults_to_not_asked():
     for model in (RawProductAnswers(product_id="P1"), ProductBeliefs(product_id="P1")):
-        answers = [v for k, v in model if k not in {"product_id", "volunteered_claims", "ungrounded"}]
+        answers = [v for k, v in model if k not in {"product_id", "volunteered_claims", "ungrounded", "conflicts"}]
         assert answers and all(a == NotAsked() for a in answers)
 
 
@@ -241,13 +241,16 @@ def test_case_result_round_trips_through_json():
             "call_id": "c1",
             "language": "ta",
             "verdict": "flag_for_review",
+            "tier": "refer",
             "products": [
                 {
                     "product_id": "P1",
                     "verdict": "flag_for_review",
+                    "tier": "refer",
                     "flags": [
                         {
                             "rule_id": "kind",
+                            "reason": "kind_differs",
                             "clause": "101Y",
                             "product_id": "P1",
                             "severity": "high",
@@ -274,6 +277,7 @@ def test_case_result_round_trips_through_json():
                         "flags": [
                             {
                                 "rule_id": "kind",
+                                "reason": "kind_differs",
                                 "clause": "101Y",
                                 "product_id": "P1",
                                 "severity": "high",

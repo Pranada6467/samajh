@@ -102,6 +102,46 @@ def test_lay_out_skips_error_events_and_clears_stale_positions() -> None:
     assert (events[2].rec_start, events[2].rec_end) == (1.5, 2.5)
 
 
+def test_superseded_events_are_in_no_layout_and_no_recording(tmp_path: Path) -> None:
+    events = [bot(0, 1.0), customer(1, 2.0), bot(2, 0.7), customer(3, 3.0), bot(4, 0.5)]
+    events[1].superseded = events[2].superseded = True
+    log = log_of(events)
+    store = store_with_audio(tmp_path, log)
+    store.save(log)
+    assert [(e.rec_start, e.rec_end) for e in log.events] == [
+        (0.0, 1.0),
+        (None, None),
+        (None, None),
+        (1.5, 4.5),
+        (5.0, 5.5),
+    ]
+    assert store.assemble_recording(log).seconds == 5.5
+    pcm = store.read_recording(SID)[44:]
+    take_two = store.read_audio(SID, "customer-003.wav")[44:]
+    assert pcm[round(1.5 * 8000) * 2 :][: len(take_two)] == take_two
+
+
+def test_the_dialogue_state_is_stored_with_the_events(tmp_path: Path) -> None:
+    store = SessionStore(tmp_path)
+    log = log_of([bot(0, None)])
+    log.dialogue_state, log.dialogue_undo, log.closed = '{"asked": 2}', '{"asked": 1}', True
+    store.save(log)
+    loaded = store.load(SID)
+    assert (loaded.dialogue_state, loaded.dialogue_undo, loaded.closed) == (
+        '{"asked": 2}',
+        '{"asked": 1}',
+        True,
+    )
+
+
+def test_a_log_of_an_earlier_version_does_not_load(tmp_path: Path) -> None:
+    store = SessionStore(tmp_path)
+    store.save(log_of([]))
+    path = tmp_path / SID / "session.json"
+    path.write_text(path.read_text().replace('"version": 2', '"version": 1'))
+    assert store.load(SID) is None
+
+
 def test_save_then_load_round_trips_and_lays_out(tmp_path: Path) -> None:
     store = SessionStore(tmp_path)
     log = log_of([bot(0, 1.0), customer(1, 2.0)])

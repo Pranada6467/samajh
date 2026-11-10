@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 from collections import Counter
+from pathlib import Path
 
 import pytest
 from evalkit_bench import ROWS, write_manifest
@@ -63,6 +65,31 @@ def test_voices_are_balanced_within_each_stratum_and_stable(bench):
     per_group = Counter((row["language"], row["tags"]["stratum"], voices[row["id"]].voice) for row in ROWS)
     assert set(per_group.values()) == {2}
     assert {voices[row["id"]].voice for row in ROWS if row["language"] == "ta"} == {"Lakshmi", "Asmita"}
+
+
+def test_items_sharing_the_voice_group_tag_get_one_voice(bench):
+    rows = [{**row, "tags": {**row["tags"], "pair": f"p{n // 2}"}} for n, row in enumerate(ROWS[:8])]
+    rows += ROWS[8:]  # the Tamil rows carry no pair tag: each stands alone
+    bench.digest = write_manifest(bench.manifest, rows)
+    bench.raw |= {"manifest_sha256": bench.digest, "voice_group": "pair"}
+    voices = assign_voices(bench.items, bench.experiment)
+    for n in range(0, 8, 2):
+        assert voices[rows[n]["id"]] == voices[rows[n + 1]["id"]]
+    per_stratum = Counter((row["tags"]["stratum"], voices[row["id"]].voice) for row in rows[:8])
+    assert set(per_stratum.values()) == {2}
+    tamil = Counter((row["tags"]["stratum"], voices[row["id"]].voice) for row in rows[8:])
+    assert set(tamil.values()) == {2}
+
+
+def test_without_a_voice_group_the_paid_v1_run_keeps_its_voices():
+    root = Path(__file__).parents[2] / "eval" / "amounts"
+    experiment = load_experiment(root / "experiment.toml")
+    items = load_manifest(experiment.manifest, expect_sha256=experiment.manifest_sha256)
+    paid = {
+        row["item_id"]: row["voice"]
+        for row in map(json.loads, (root / "run" / "voice.jsonl").read_text().splitlines())
+    }
+    assert {key: voice.model_dump() for key, voice in assign_voices(items, experiment).items()} == paid
 
 
 def test_requests_follow_the_item_language(bench):

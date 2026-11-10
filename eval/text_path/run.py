@@ -22,6 +22,7 @@ from pathlib import Path
 import devset
 import e1
 import scenario_sets
+import triage
 from scenario import Scenario
 from scoring import ANSWER_FIELDS, LIST_FIELDS, CaseScore, Summary, by_language, score_case
 
@@ -32,6 +33,7 @@ from samajh.extract import ExtractionFailed, Llm, SlotKind, SlotTrace, slots
 from samajh.extract._ground import comparison_form
 from samajh.pipeline import TextRun, WithoutTemperature, run_text, takes_temperature
 from samajh.rules import to_beliefs
+from samajh.rules.summary import summarise as summarise_case
 from samajh.types import Beliefs, CallStep, GapReason, RuleId, Speaker, Verdict
 
 RUNS = Path(__file__).parent / "runs"
@@ -43,6 +45,7 @@ _ASKED_BY: dict[str, tuple[SlotKind, ...]] = {
     "premium_inr": (SlotKind.premium, SlotKind.readback),
     "premium_readback": (SlotKind.readback,),
     "payment_source": (SlotKind.payment_source,),
+    "payment_frequency": (SlotKind.payment_frequency,),
     "required_for_loan": (SlotKind.required_for_loan,),
     "provider_choice_offered": (SlotKind.provider_choice,),
     "cover_inr": (SlotKind.cover,),
@@ -169,8 +172,11 @@ def _failures(runs: list[CaseRun]) -> str:
         if not (wrong or missed or extra or r.error or s.verdict is not s.gold_verdict):
             continue
         got = s.verdict.value if s.verdict else "no verdict"
+        tier = s.tier.value if s.tier else "no result"
         mark = " **FALSE CLEAR**" if s.false_clear else ""
-        lines.append(f"\n### {s.id} ({s.language}): gold `{s.gold_verdict.value}`, pipeline `{got}`{mark}")
+        lines.append(
+            f"\n### {s.id} ({s.language}): gold `{s.gold_verdict.value}`, pipeline `{got}`, tier `{tier}`{mark}"
+        )
         if r.scenario.note:
             lines.append(f"Scenario: {r.scenario.note}")
         if r.error:
@@ -342,6 +348,53 @@ def _clusters(runs: list[CaseRun]) -> str:
     return "\n".join(lines)
 
 
+def triage_rows(runs: list[CaseRun]) -> list[triage.TriageRow]:
+    return [
+        triage.TriageRow(
+            id=r.scenario.id,
+            base=r.scenario.base,
+            language=r.score.language,
+            group=triage.group(r.scenario.customer_state, r.score.gold_verdict is Verdict.clear),
+            tier=r.score.tier,
+            ceiling=r.scenario.perfect.tier if r.scenario.perfect else None,
+        )
+        for r in runs
+    ]
+
+
+def _issue_lines(r: CaseRun) -> list[str]:
+    """The reviewer's summary of one call, so a miss or a false referral can be read in place."""
+    if r.run is None:
+        return [f"  - no result: `{r.error}`"]
+    summary = summarise_case(r.scenario.record, r.run.result)
+    return [
+        f"  - {line.tier.value}: {line.title} | record: {line.record_value} | quote: \"{line.quote}\""
+        for line in summary.lines
+    ]
+
+
+def _triage(runs: list[CaseRun]) -> str:
+    rows = triage_rows(runs)
+    by_id = {r.scenario.id: r for r in runs}
+    lines = [triage.table(rows), ""]
+    for title, found in (
+        ("Misses (a customer with a problem ends `clear` or `understanding_gap`)", triage.misses(rows)),
+        ("False referrals (an informed customer on a compliant record ends `refer`)", triage.false_referrals(rows)),
+    ):
+        lines.append(f"{title}: {len(found)}.")
+        for row in found:
+            lines.append(f"- {row.id}: tier `{row.tier.value}`")
+            lines += _issue_lines(by_id[row.id])
+        lines.append("")
+    lines.append(
+        "A miss is counted only for customers the set labels misled, unaware or did not agree. "
+        "`incomplete` is not a miss and not a referral: the call did not yield enough to decide. "
+        "The last column runs the rule engine on the set's own extraction, so a miss there is the "
+        "rules', not the extractor's. Base cases, not calls, are the independent unit."
+    )
+    return "\n".join(lines)
+
+
 def _e1(runs: list[CaseRun]) -> str:
     rows = [
         e1.E1Row(
@@ -441,11 +494,22 @@ def report(set_name: str, note: str, model: str, runs: list[CaseRun], cost: Cost
             "extractor's."
         ),
         "",
+        "## Triage: where each kind of customer ended up",
+        "",
+        _triage(runs),
+        "",
         "## Verdicts, gold against pipeline (all calls)",
         "",
         _table(
             ["gold", "pipeline", "calls"],
             [[gold, got, str(n)] for (gold, got), n in sorted(everything.confusion.items())],
+        ),
+        "",
+        "## Tiers by gold verdict (all calls)",
+        "",
+        _table(
+            ["gold verdict", "pipeline tier", "calls"],
+            [[gold, got, str(n)] for (gold, got), n in sorted(everything.tiers.items())],
         ),
         "",
         "## Extraction accuracy per field",
