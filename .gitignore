@@ -21,3 +21,6 @@ references/claims/sources/
 # Real-voice evaluation audio (public consent-based datasets): local only, never in the repo
 .samajh-realvoice/
 data/realvoice/
+
+# Human-call material (consent messages, call log, recordings): local only
+.samajh-human/
