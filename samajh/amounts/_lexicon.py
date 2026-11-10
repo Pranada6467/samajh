@@ -387,3 +387,36 @@ _add(KN, "ಮುಕ್ಕಾಲು", Morph((n("0.75"),), head=True))
 _add(KN, "ವರೆ", Morph((n("0.5"),), head=True, suffix_only=True))  # ಒಂದುವರೆ = 1.5
 _add(KN, "ಸೊನ್ನೆ", Morph((n(0),)))
 _add(KN, "ಪಾಯಿಂಟ್", Morph((PT,)))
+
+# --- near misses of fraction and unit words ------------------------------------------
+# A word the lexicon does not know that is one or two letters from सवा/साढ़े/पौने or from a unit
+# word may be that word misspelt: "सारे तीन लाख", "pauney 2 lakh", "दो लाख पचास हजर". Dropping
+# it would give a confident wrong amount, so the parser refuses the number next to it.
+# Keys are `norm_key` forms (no nukta, chandrabindu as anusvara). Our spellings: whether
+# Prisma writes any of them is not known.
+_NEAR_FRACTION = re.compile(
+    r"सा[ढडदर][ेैीिं]*|स्?व(्व)?[ाे]ं?|प[ौो]न[ाीेैि]?ं?"
+    r"|s[au]+[vw]+a+|sa+(r|d|dd)h?[aeiy]*[eiy][aeiy]*|p(au|aw|av|ou|ow|o)[vw]?n[aeiy]*[eiy][aeiy]*"
+)
+_NEAR_UNITS = tuple(norm_key(w) for w in ("lakh", "thousand", "hazaar", "crore", "hundred", "million", "लाख", "हज़ार", "करोड़"))
+
+
+def _distance(a: str, b: str) -> int:
+    """Levenshtein distance."""
+    row = list(range(len(b) + 1))
+    for i, ca in enumerate(a, start=1):
+        prev, row[0] = row[0], i
+        for j, cb in enumerate(b, start=1):
+            prev, row[j] = row[j], min(row[j] + 1, row[j - 1] + 1, prev + (ca != cb))
+    return row[-1]
+
+
+def near_fraction(word: str) -> bool:
+    """`word` looks like a misspelt सवा, साढ़े or पौने: "सारे", "पौना", "sarhe", "pauney"."""
+    return _NEAR_FRACTION.fullmatch(norm_key(word)) is not None
+
+
+def near_unit(word: str) -> bool:
+    """`word` is one letter (two, for a long word) from a unit word: "लख", "हजर", "lak", "thousnd"."""
+    key = norm_key(word)
+    return any(_distance(key, unit) <= (1 if len(unit) <= 5 else 2) for unit in _NEAR_UNITS)

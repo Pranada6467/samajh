@@ -17,6 +17,8 @@ from samajh.amounts._lexicon import (
     TA_ONE_BEFORE_NOUN,
     THOUSAND,
     Atom,
+    near_fraction,
+    near_unit,
     norm_key,
 )
 from samajh.amounts._text import Tok, scan
@@ -119,6 +121,9 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
 
     def kind(k: int, after: int) -> str:
         return toks[k].kind if touching(*sorted((k, after))) else ""
+
+    def word_at(k: int) -> str:
+        return text[toks[k].start : toks[k].end]
 
     def counts_times(k: int) -> bool:
         """Token k stands directly before a noun of occurrence: "एक बार", "एक ही बार"."""
@@ -234,6 +239,14 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
             # A unit with no number: the word before it may be a number we do not know
             # ("साथ हज़ार", "bavan hazaar", "कई लाख"), and "lakhs of rupees" names none.
             value = Value(None)
+        before = i - 2 if kind(i - 1, i) in _CURRENCY else i - 1
+        misspelt = (kind(before, before + 1) == "other" and near_fraction(word_at(before))) or (
+            after == "other" and near_unit(word_at(j + 1))
+        )
+        if misspelt:
+            # "सारे तीन लाख", "pauney 2 lakh", "एक लख पचास हज़ार": the unknown word may be a
+            # fraction or unit word misspelt, and dropping it would give a wrong amount.
+            value = Value(None)
         if after == "dur" and tuple(atoms) == TA_ONE_BEFORE_NOUN:
             value = Value(Decimal(1))  # ஒரு வருடம்
         if after == "curpfx" and kind(j + 2, j + 1) == "num" and toks[j + 2].atoms[0].kind == "d":
@@ -243,8 +256,9 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
         # that no currency word follows (so the word is not a misspelt unit).
         modifier = counts_times(j) or (i == j and determiner(j))
         strong = (
+            misspelt
             # "ஆயிரம் ரூபாய் ஒரே தடவை", "हज़ार रुपये एक बार": that currency word closes the amount before it
-            (currency and not (article or modifier))
+            or (currency and not (article or modifier))
             or after in ("cur", "curpfx", "bad")
             or any(a.kind == "m" or (a.kind in "nd" and a.value >= 100) for a in atoms)
         )

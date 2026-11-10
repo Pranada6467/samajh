@@ -17,7 +17,6 @@ from test_rules_engine import (
     product_beliefs,
     recall_of,
     record,
-    run,
     said,
 )
 
