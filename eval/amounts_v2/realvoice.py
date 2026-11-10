@@ -327,7 +327,7 @@ class DatasetAudio:
         return self._client.stt(audio, options)
 
 
-def run(max_items: int | None, budget: float | None) -> int:
+def run(max_items: int | None, budget: float | None, skip: frozenset[str] = frozenset()) -> int:
     from samajh.clients._runtime import Ledger, load_defaults, state_dir
     from samajh.clients.gnani import GnaniClient
     from samajh.evalkit.manifest import load_manifest
@@ -337,6 +337,9 @@ def run(max_items: int | None, budget: float | None) -> int:
 
     experiment = load_experiment(EXPERIMENT)
     items = load_manifest(experiment.manifest, expect_sha256=experiment.manifest_sha256)
+    # A clip the API's edge refuses on every attempt (an HTML 403, not a Prisma error) is left
+    # out by id; the report names it.
+    items = tuple(item for item in items if item.id not in skip)
     for item in items:
         wav = (ROOT / "audio" / f"{item.id}.wav").read_bytes()
         if hashlib.sha256(wav).hexdigest() != item.tags["audio_sha256"]:
@@ -370,9 +373,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("command", choices=["select", "fetch", "freeze", "run"])
     parser.add_argument("--max-items", type=int)
     parser.add_argument("--budget", type=float)
+    parser.add_argument("--skip", action="append", default=[], help="leave out this item id (repeatable)")
     args = parser.parse_args(argv)
     if args.command == "run":
-        return run(args.max_items, args.budget)
+        return run(args.max_items, args.budget, frozenset(args.skip))
     return {"select": select, "fetch": fetch, "freeze": freeze}[args.command]()
 
 

@@ -1,0 +1,28 @@
+# Real voices: IndicVoices and Kathbath Hindi clips with a rupee amount in the reference transcript.
+# Run: uv run python eval/amounts_v2/realvoice.py run   (audio and transcripts stay in .samajh-realvoice/)
+name = "realvoice-v1"
+manifest = "../../data/amounts_v2/realvoice-v1.jsonl"
+manifest_sha256 = "569274f8550feed17afcd28400b202d6a7d5e77b1e8eed3c40feebacb7ceab42"
+scorer = "amount"
+# 895 s of audio, six requests per clip, 0.010 credits a second: about 54 credits.
+budget_credits = 58
+
+# Not used: realvoice.py's DatasetAudio returns the dataset recording in place of Timbre.
+# The runner's plan needs one voice per language.
+[voices]
+hi = [{ model = "timbre-v3.0", voice = "Shivani" }]
+
+# Every clip is a 16 kHz recording (freeze leaves out anything else), so `native16k` is the
+# recording as published and `phone` is the same recording through 8 kHz mu-law.
+[conditions]
+native16k = []
+phone = [{ kind = "mulaw" }]
+
+[[arm]]
+name = "readings"
+conditions = ["native16k", "phone"]
+stt = [
+  { model = "prisma-v3.0", format = "transcribe" },
+  { model = "prisma-v3.0", format = "verbatim" },
+  { model = "prisma-v2.5", format = "transcribe" },
+]
