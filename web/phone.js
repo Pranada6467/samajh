@@ -3,6 +3,8 @@ import { createVad } from "./vad.js";
 import { encodeWav } from "./wav.js";
 
 const NO_SPEECH_MS = 8000;
+const CASE_POLL_MS = 1500;
+const CASE_WAIT_MS = 15 * 60 * 1000;
 const MAX_TURN_MS = 28000; // the server refuses more than 30 s
 const PREROLL_MS = 300;
 const TAIL_MS = 200; // silence kept after the last voiced frame
@@ -57,7 +59,8 @@ function newCall() {
   return {
     settings: {
       lineRate: Number($("line-rate").value),
-      model: $("stt-model").value,
+      record: $("record").value,
+      language: $("language").value,
       mode: $("turn-mode").value,
     },
     sessionId: null,
@@ -67,6 +70,8 @@ function newCall() {
     failure: null,
     summary: null,
     endError: null,
+    caseFile: null, // the after-call case file, as the server last reported it
+    caseError: null,
     mic: { status: "off", reason: "" }, // off | asking | on | unavailable
   };
 }
@@ -95,6 +100,7 @@ function guard() {
 const LEAVE = {
   ringing: stopRing,
   listening() {
+    clearTimeout(listen?.graceTimer);
     // What this turn learned about the room's noise carries to the next one. Capped, and taken
     // only between utterances, so a loud turn cannot deafen the detector.
     const heard = listen?.vad?.state();
@@ -124,11 +130,12 @@ const ENTER = {
         if (!live()) return void (call === mine && closeMic());
         render();
       }
-      const s = await api.createSession({ line_rate: call.settings.lineRate, stt_model: call.settings.model });
+      const params = call.settings.record ? { record: call.settings.record, language: call.settings.language } : {};
+      const s = await api.createSession({ line_rate: call.settings.lineRate, params });
       if (!live()) return void api.endSession(s.session_id).catch(() => {});
       call.sessionId = s.session_id;
       call.settings.lineRate = s.line_rate;
-      call.settings.model = s.stt_model;
+      call.dialogue = s.dialogue;
       call.bot = s.bot;
       dispatch("SESSION");
     } catch (e) {
@@ -143,7 +150,14 @@ const ENTER = {
     try {
       const bytes = await api.bytes(bot.audio_url);
       if (!live()) return;
-      await play(bytes, live);
+      await play(bytes, live, () => {
+        // End of the customer's speech (or of the upload) to the first sample of the reply.
+        const last = call.turns.at(-1);
+        if (last && last.botSeq === bot.seq && last.latency.bot_start_ms == null) {
+          last.latency.bot_start_ms = performance.now() - last.voiceEndAt;
+          render();
+        }
+      });
       if (live()) dispatch("BOT_DONE");
     } catch (e) {
       if (live()) dispatch("FAIL", e);
@@ -152,14 +166,22 @@ const ENTER = {
 
   listening() {
     const handsFree = call.settings.mode === "handsfree" && call.mic.status === "on";
+    // How patient to be is the bot's to say: it knows whether it asked a yes/no or an open question.
+    const patience = call.bot.listen ?? { kind: "open", cut_ms: 1100, grace_ms: 1800 };
     listen = {
       vad: handsFree
         ? createVad({
             sampleRate: audio.ctx.sampleRate,
             minSpeechMs: VAD_MIN_SPEECH_MS,
+            hangoverMs: patience.cut_ms,
             initialNoiseRms: call.noiseRms ?? 0,
           })
         : null,
+      patience,
+      started: false, // speech has begun in this turn: from then on nothing captured is dropped
+      take: null, // the take sent at the last cut, waiting out the grace window
+      part: 0,
+      graceTimer: null,
       prerollMs: PREROLL_MS + (handsFree ? VAD_MIN_SPEECH_MS : 0),
       openAt: performance.now() + (audio.ctx.outputLatency || 0) * 1000 + ECHO_GUARD_MS,
       chunks: [],
@@ -176,24 +198,16 @@ const ENTER = {
 
   async transcribing(data, from, event) {
     if (event === "TURN") {
-      // Measured once: a second send after an error screen must not count the time spent on it.
-      const eosWaitMs = data.source === "mic" ? performance.now() - data.voiceEndAt : null;
-      call.pending = { ...data, tries: 0, eosWaitMs };
+      // A take sent at the cut is already on its way; anything else is sent now.
+      call.pending = data.take ?? newTake(data.source, data.body, data.voiceEndAt ?? performance.now(), 1);
     }
     const turn = call.pending;
     const live = guard();
-    turn.tries += 1;
-    const sentAt = performance.now();
+    if (!turn.request) turn.request = sendTake(turn);
     const eosWaitMs = turn.eosWaitMs;
     try {
-      const reply = await api.postTurn(call.sessionId, {
-        source: turn.source,
-        body: turn.body,
-        eosWaitMs,
-        // Names the prompt being answered, so a turn sent twice is answered once.
-        replyTo: call.bot.seq,
-      });
-      const postMs = performance.now() - sentAt;
+      const reply = await turn.request;
+      const postMs = performance.now() - turn.sentAt;
       if (!live()) return;
       const c = reply.customer;
       const record = {
@@ -204,9 +218,19 @@ const ENTER = {
         detected_language: c.detected_language,
         audio_url: c.audio_url,
         audio_seconds: c.audio_seconds,
-        stt: c.stt,
+        readings: c.readings,
+        part: c.part,
         sends: turn.tries,
-        latency: { ...c.latency, eos_wait_ms: eosWaitMs, post_ms: postMs, headline_ms: (eosWaitMs ?? 0) + postMs },
+        botSeq: reply.bot.seq,
+        voiceEndAt: turn.voiceEndAt,
+        latency: {
+          ...c.latency,
+          eos_wait_ms: eosWaitMs,
+          post_ms: postMs,
+          headline_ms: (eosWaitMs ?? 0) + postMs,
+          bot_start_ms: null,
+        },
+        pauses: c.pauses,
       };
       call.turns.push(record);
       addCustomerBubble(record, call.bot.language);
@@ -214,6 +238,7 @@ const ENTER = {
       call.pending = null;
       dispatch("REPLY");
     } catch (e) {
+      turn.request = null; // Try again sends the same take once more; the server answers it once
       if (live()) dispatch("FAIL", e);
     }
   },
@@ -231,9 +256,55 @@ const ENTER = {
     } catch (e) {
       call.endError = asApiError(e);
     }
-    if (live()) render();
+    if (!live()) return;
+    render();
+    if (!call.endError) await followCase(live);
   },
 };
+
+// The after-call job: start it, then poll until the case file is ready or a step has failed.
+async function followCase(live) {
+  const mine = call;
+  const until = performance.now() + CASE_WAIT_MS;
+  try {
+    mine.caseFile = await api.startCase(mine.sessionId);
+    while (mine.caseFile.status === "running" && performance.now() < until) {
+      if (live()) render();
+      await new Promise((done) => setTimeout(done, CASE_POLL_MS));
+      if (call !== mine) return;
+      mine.caseFile = await api.getCase(mine.sessionId);
+    }
+    if (mine.caseFile.status === "running") {
+      mine.caseError = new ApiError({ stage: "case", code: "case_timeout", message: "The case file was not ready after 15 minutes." });
+    }
+  } catch (e) {
+    mine.caseError = asApiError(e);
+  }
+  if (call === mine) render();
+}
+
+function newTake(source, body, voiceEndAt, part) {
+  return { source, body, voiceEndAt, part, tries: 0, request: null, sentAt: 0, eosWaitMs: null, botSeq: call.bot.seq };
+}
+
+function sendTake(take) {
+  take.tries += 1;
+  take.sentAt = performance.now();
+  // Measured once: a second send after an error screen must not count the time spent on it.
+  if (take.eosWaitMs == null) take.eosWaitMs = take.source === "mic" ? take.sentAt - take.voiceEndAt : null;
+  const p = listen?.patience ?? call.bot.listen;
+  return api.postTurn(call.sessionId, {
+    source: take.source,
+    body: take.body,
+    eosWaitMs: take.eosWaitMs,
+    // Names the prompt being answered, so a turn sent twice is answered once.
+    replyTo: take.botSeq,
+    part: take.part,
+    mode: take.source === "file" ? "file" : call.settings.mode === "ptt" ? "ptt" : "vad",
+    cutMs: take.source === "mic" && call.settings.mode !== "ptt" ? p?.cut_ms : null,
+    graceMs: take.source === "mic" && call.settings.mode !== "ptt" ? p?.grace_ms : null,
+  });
+}
 
 function asApiError(e) {
   if (e instanceof ApiError) return e;
@@ -242,7 +313,7 @@ function asApiError(e) {
 
 // ---- audio out -----------------------------------------------------------------------------
 
-async function play(bytes, live) {
+async function play(bytes, live, onStart = () => {}) {
   const ctx = audio.ctx;
   if (ctx.state !== "running") {
     await Promise.race([ctx.resume(), new Promise((done) => setTimeout(done, 1000))]);
@@ -274,6 +345,7 @@ async function play(bytes, live) {
     source.onended = done;
     audio.playing = source;
     source.start();
+    onStart();
   });
 }
 
@@ -376,30 +448,60 @@ function onFrame(samples) {
   L.chunks.push(samples);
   L.buffered += samples.length;
   L.stream += samples.length;
-  if (!L.speaking && !L.ptt) {
+  // Before the first word only the preroll is kept. After it nothing is dropped: an answer the
+  // detector cut at a pause may go on, and the next take carries the whole answer.
+  if (!L.started && !L.ptt) {
     while (toMs(L.buffered - L.chunks[0].length) >= L.prerollMs) L.buffered -= L.chunks.shift().length;
   }
 
   for (const ev of L.vad?.push(samples) ?? []) {
     if (ev.type === "speech_start") {
       L.speaking = true;
+      L.started = true;
+      if (L.take) resumed(L);
       render();
     } else if (L.speaking) {
+      L.speaking = false;
       const keepUntil = Math.round(((ev.lastVoicedMs + TAIL_MS) * rate) / 1000);
       const drop = Math.max(0, L.stream - keepUntil);
-      return sendMic(L.buffered - drop, performance.now() - (ev.atMs - ev.lastVoicedMs));
+      const voiceEndAt = performance.now() - (ev.atMs - ev.lastVoicedMs);
+      cut(L, L.buffered - drop, voiceEndAt);
+      render();
     }
   }
-  if (L.silenceTimer && !L.speaking && toMs(L.stream) >= NO_SPEECH_MS) {
+  if (L.silenceTimer && !L.started && toMs(L.stream) >= NO_SPEECH_MS) {
     return dispatch("TURN", { source: "none", body: null });
   }
   if ((L.speaking || L.ptt) && toMs(L.buffered) >= MAX_TURN_MS) sendMic(L.buffered, performance.now());
 }
 
-// voiceEndAt: when the customer stopped (hands-free: last voiced frame; push to talk: release).
+// The detector heard a pause as long as the cut: send what was said so far at once, so its
+// readings are under way, and wait out the grace window before the bot may answer it.
+function cut(L, sampleCount, voiceEndAt) {
+  L.part += 1;
+  const take = newTake("mic", encodeWav(L.chunks, audio.ctx.sampleRate, sampleCount), voiceEndAt, L.part);
+  take.request = sendTake(take);
+  take.request.catch(() => {}); // a take that is replaced may fail unread
+  L.take = take;
+  clearTimeout(L.graceTimer);
+  const wait = Math.max(0, L.patience.grace_ms - (performance.now() - voiceEndAt));
+  L.graceTimer = setTimeout(() => {
+    if (listen === L && state === "listening" && L.take === take) dispatch("TURN", { source: "mic", take });
+  }, wait);
+}
+
+// The customer went on within the grace window: the take sent at the cut will be replaced by a
+// later one holding the whole answer, and its reply is never played.
+function resumed(L) {
+  clearTimeout(L.graceTimer);
+  L.take = null;
+}
+
+// voiceEndAt: when the customer stopped (push to talk: release; a turn at the length limit: now).
 function sendMic(sampleCount, voiceEndAt) {
-  const body = encodeWav(listen.chunks, audio.ctx.sampleRate, sampleCount);
-  dispatch("TURN", { source: "mic", body, voiceEndAt });
+  listen.part += 1;
+  const take = newTake("mic", encodeWav(listen.chunks, audio.ctx.sampleRate, sampleCount), voiceEndAt, listen.part);
+  dispatch("TURN", { source: "mic", take });
 }
 
 const canPtt = () =>
@@ -432,7 +534,7 @@ async function sendFileTurn(read) {
   note("");
   try {
     const body = await read();
-    if (live()) dispatch("TURN", { source: "file", body });
+    if (live()) dispatch("TURN", { source: "file", body, voiceEndAt: performance.now() });
   } catch (e) {
     if (live()) note(e instanceof ApiError ? `${e.code}: ${e.message}` : `Could not read the file (${e.message}).`);
   }
@@ -498,11 +600,15 @@ function addCustomerBubble(turn, botLanguage) {
     ["Request (upload, server, reply)", fmtMs(t.post_ms)],
     ["Server total", fmtMs(t.server_ms)],
     turn.audio_url && ["Server: resample to line rate", fmtMs(t.normalise_ms)],
-    turn.stt && ["Server: Prisma STT", fmtMs(t.stt_ms)],
+    turn.readings.length > 0 && ["Server: Prisma, first reading", fmtMs(t.stt_ms)],
+    turn.readings.length > 1 && ["Server: Prisma, second reading", fmtMs(t.second_stt_ms)],
     ["Server: dialogue", fmtMs(t.dialogue_ms)],
-    turn.stt && ["Model", turn.stt.model],
-    turn.stt && ["Cache hit", turn.stt.cache_hit ? "yes" : "no"],
-    turn.stt && ["STT attempts", String(turn.stt.attempts)],
+    ...turn.readings.map((r) => [
+      `Reading by ${r.model}`,
+      r.ok ? `${r.text || "(no text)"}${r.cache_hit ? " · cached" : ""}` : `missing (${r.error})`,
+    ]),
+    turn.part > 1 && ["Takes of this answer", `${turn.part} (resumed after a pause)`],
+    turn.pauses && ["Longest pause inside the answer", fmtMs(turn.pauses.longest_pause_ms)],
     turn.audio_seconds != null && ["Audio on the line", `${turn.audio_seconds.toFixed(2)} s`],
     turn.sends > 1 && ["Sent from this phone", `${turn.sends} times`],
   ].filter(Boolean);
@@ -565,6 +671,7 @@ function detail() {
     case "listening":
       if (mic.status !== "on") return fileMode;
       if (call.settings.mode === "ptt") return listen?.ptt ? "Recording. Release to send." : "Hold the button or the Space key to talk.";
+      if (listen?.take) return "Heard a pause. Keep talking to add to your answer, or wait for the reply.";
       if (listen?.speaking) return "Speech detected. Stop talking to send.";
       return listen?.silenceTimer ? "Waiting for speech. Silence is reported after 8 s." : "Waiting for speech or a clip.";
     case "transcribing":
@@ -613,13 +720,14 @@ function render() {
     $("error-message").textContent = error.message + upstream;
     const resendable = error.retryable || ["stt", "tts", "dialogue", "playback", "network"].includes(error.stage);
     $("retry").hidden = !resendable;
-    $("retry").textContent = from === "transcribing" && call.pending.body ? "Send again" : "Try again";
+    $("retry").textContent = from === "transcribing" && call.pending?.body ? "Send again" : "Try again";
     $("continue").hidden = from === "connecting";
     $("continue").textContent = from === "transcribing" ? "Record the turn again" : "Continue without this audio";
   }
 
   if (state === "ended") {
     $("summary-text").textContent = summaryText();
+    renderCase();
     $("log-link").hidden = $("recording-link").hidden = !call.sessionId;
     if (call.sessionId) {
       $("log-link").href = api.logUrl(call.sessionId);
@@ -630,7 +738,8 @@ function render() {
 
   $("mon-session").textContent = call.sessionId ?? "none";
   $("mon-line").textContent = `${call.settings.lineRate / 1000} kHz`;
-  $("mon-model").textContent = call.settings.model;
+  $("mon-record").textContent = call.settings.record ? `${call.settings.record} · ${call.settings.language}` : "none (stub dialogue)";
+  $("mon-listen").textContent = state === "listening" && listen ? `${listen.patience.kind}: cut ${listen.patience.cut_ms} ms, grace ${listen.patience.grace_ms} ms` : "n/a";
   $("mon-mode").textContent = call.settings.mode === "ptt" ? "push to talk" : "hands-free";
   $("mon-mic").textContent = { off: "not requested", asking: "asking", on: "on", unavailable: `file mode (${call.mic.reason})` }[call.mic.status];
   $("mon-turns").replaceChildren(
@@ -642,9 +751,10 @@ function render() {
           t.seq,
           t.source,
           t.audio_seconds == null ? "none" : `${t.audio_seconds.toFixed(1)} s`,
-          fmtMs(t.latency.headline_ms),
-          t.stt ? fmtMs(t.latency.stt_ms) : "none",
-          t.stt ? (t.stt.cache_hit ? "hit" : "miss") : "none",
+          String(t.part ?? 1),
+          fmtMs(t.latency.bot_start_ms),
+          t.readings.length ? fmtMs(t.latency.stt_ms + (t.latency.second_stt_ms ?? 0)) : "none",
+          t.readings.length ? t.readings.map((r) => (r.cache_hit ? "hit" : "miss")).join("/") : "none",
         ].map((v) => el("td", { textContent: String(v) })),
       ),
     ),
@@ -657,10 +767,10 @@ function preset(select, value) {
   if ([...select.options].some((o) => o.value === value)) select.value = value;
 }
 preset($("line-rate"), params.get("line"));
-preset($("stt-model"), params.get("model"));
+preset($("language"), params.get("lang"));
 preset($("turn-mode"), params.get("mode") === "hands-free" ? "handsfree" : params.get("mode"));
 
-for (const id of ["line-rate", "stt-model", "turn-mode"]) {
+for (const id of ["line-rate", "record", "language", "turn-mode"]) {
   $(id).addEventListener("change", () => {
     if (state === "idle") {
       call = newCall();
@@ -726,10 +836,77 @@ document.addEventListener("keyup", (e) => {
 window.samajhPhone = {
   state: () => state,
   log: () => structuredClone(call.turns),
+  caseFile: () => structuredClone({ file: call.caseFile, error: call.caseError ? { code: call.caseError.code, message: call.caseError.message } : null }),
 };
+
+async function loadRecords() {
+  const select = $("record");
+  try {
+    const { records } = await api.records();
+    select.replaceChildren(...records.map((r) => new Option(`${r.label} · ${r.first_name}`, r.id)));
+    if (!records.length) select.add(new Option("No records: the stub dialogue runs", ""));
+    preset(select, params.get("record"));
+    const describe = () => {
+      const r = records.find((x) => x.id === select.value);
+      $("record-note").textContent = r ? `${r.description} Synthetic record.` : "";
+    };
+    select.addEventListener("change", describe);
+    describe();
+  } catch (e) {
+    select.replaceChildren(new Option(`Records unavailable (${e.code})`, ""));
+  }
+  if (state === "idle") {
+    call = newCall();
+    render();
+  }
+}
+
+const TIER_TEXT = {
+  refer: "Refer to a reviewer",
+  incomplete: "Incomplete: not enough to decide",
+  understanding_gap: "Understanding gap (reported in aggregate)",
+  clear: "Clear",
+};
+
+function renderCase() {
+  const box = $("case");
+  const c = call.caseFile;
+  const err = call.caseError;
+  box.hidden = !call.sessionId || call.endError != null;
+  $("case-link").hidden = !c;
+  if (call.sessionId) $("case-link").href = api.caseUrl(call.sessionId);
+  let status;
+  let lines = [];
+  if (err && err.code === "no_case_file") status = "This call's dialogue makes no case file.";
+  else if (err) status = `The case file could not be made. ${err.code}: ${err.message}`;
+  else if (!c) status = "Starting the case file.";
+  else if (c.status === "running") status = "Preparing the case file: Prisma Batch on the recording, then extraction and the rules.";
+  else if (c.status === "failed") {
+    // A failed step is never shown as a result, whatever the other steps found.
+    const failed = c.steps.filter((x) => !x.ok).map((x) => `${x.name} (${x.error})`);
+    status = `The case file is not complete. Failed: ${failed.join("; ")}.`;
+  } else {
+    status = `${TIER_TEXT[c.tier] ?? c.tier}. Call outcome: ${c.call_outcome.replaceAll("_", " ")}.`;
+    lines = c.summary?.lines ?? [];
+  }
+  box.dataset.status = err ? "failed" : (c?.status ?? "running");
+  $("case-status").textContent = status;
+  $("case-lines").replaceChildren(
+    ...lines.map((l) =>
+      el(
+        "li",
+        {},
+        el("span", { className: "tier", textContent: `${TIER_TEXT[l.tier] ?? l.tier}: ` }),
+        l.title,
+        ...(l.quote ? [setLang(el("q", { textContent: l.quote }), call.bot?.language)] : []),
+      ),
+    ),
+  );
+}
 
 render();
 loadClips();
+loadRecords();
 api.health().then(
   (h) => {
     $("mon-server").textContent = h.gnani_key_configured ? "ok, Gnani key configured" : "ok, no Gnani key configured";

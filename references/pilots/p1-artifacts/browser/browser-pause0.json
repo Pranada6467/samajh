@@ -1,0 +1,90 @@
+{
+ "final_state": "ended",
+ "case": null,
+ "turns": [
+  {
+   "seq": 1,
+   "source": "mic",
+   "transcript": "हाँ जी, बोल रहा हूँ।",
+   "audio_url": "/api/sessions/20261110T103734-261d0a69f2ed/audio/customer-001.wav",
+   "audio_seconds": 1.58,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "हाँ जी, बोल रहा हूँ।",
+     "cache_hit": false,
+     "seconds": 0.211
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 2,
+   "voiceEndAt": 9077.100000143051,
+   "latency": {
+    "normalise_ms": 96.3,
+    "stt_ms": 317.1,
+    "second_stt_ms": 0,
+    "dialogue_ms": 1.5,
+    "server_ms": 417.4,
+    "eos_wait_ms": 701.7999999523163,
+    "post_ms": 438.59999990463257,
+    "headline_ms": 1140.3999998569489,
+    "bot_start_ms": 1195.7000000476837
+   },
+   "pauses": {
+    "speech_ms": 1080,
+    "leading_ms": 300,
+    "trailing_ms": 200,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  }
+ ],
+ "states": [
+  [
+   14,
+   "loading"
+  ],
+  [
+   145,
+   "idle"
+  ],
+  [
+   699,
+   "ringing"
+  ],
+  [
+   719,
+   "connecting"
+  ],
+  [
+   970,
+   "bot_speaking"
+  ],
+  [
+   3906,
+   "listening"
+  ],
+  [
+   10033,
+   "transcribing"
+  ],
+  [
+   10193,
+   "bot_speaking"
+  ],
+  [
+   55548,
+   "listening"
+  ],
+  [
+   55552,
+   "ended"
+  ]
+ ],
+ "status_text": "Call ended",
+ "console": []
+}

@@ -19,6 +19,7 @@ from collections.abc import AsyncIterator, Callable, Mapping, Sequence
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from functools import cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, TypeVar, get_args
 from urllib.parse import urlsplit
@@ -35,6 +36,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from samajh.clients._runtime import state_dir
 from samajh.clients.errors import BadResponse, ConfigError
 from samajh.clients.gnani import PrismaV25, PrismaV30, Transcript, wav_seconds
+from samajh.extract import Llm
 from samajh.server.audio import (
     MAX_TURN_SECONDS,
     AudioRejected,
@@ -43,6 +45,7 @@ from samajh.server.audio import (
     pause_stats,
     to_line_pcm,
 )
+from samajh.server.casefile import CaseFile, StepResult, build_case, new_case
 from samajh.server.dialogue import Dialogue, DialogueFactory, Heard, Step, stub_factory
 from samajh.server.errors import ApiProblem, Stage, problem_from
 from samajh.server.review_routes import review_router
@@ -54,6 +57,7 @@ from samajh.server.sessionlog import (
     ErrorEvent,
     LineRate,
     PhoneTurn,
+    Recording,
     SessionLog,
     SessionStore,
     SttModelName,
@@ -77,7 +81,7 @@ from samajh.server.speech import (
 from samajh.types import Language
 
 if TYPE_CHECKING:
-    from samajh.server.records import RecordBook
+    from samajh.server.records import CallRecord, RecordBook
 
 REPO = Path(__file__).resolve().parents[2]
 WEB_DIR = REPO / "web"
@@ -691,6 +695,114 @@ class Sessions:
         return data
 
 
+class CaseJobs:
+    """The after-call job of each closed Samajh call: one thread per call, at most one at a time.
+
+    `case.json` is the job's state. A job that a server run left "running" (it stopped
+    mid-job) is started again by the next request for the case; the clients' caches make the
+    rerun cost nothing for the steps that had finished. A "failed" case is rerun on request.
+    """
+
+    def __init__(
+        self,
+        sessions: Sessions,
+        records: RecordBook | None,
+        batch: _Gnani,
+        llm: Callable[[], Llm],
+    ) -> None:
+        self.sessions, self.records, self.batch, self.llm = sessions, records, batch, llm
+        self._threads: dict[str, threading.Thread] = {}
+        self._lock = threading.Lock()
+
+    def _record(self, log: SessionLog) -> CallRecord:
+        if log.dialogue != "samajh" or self.records is None:
+            raise ApiProblem(409, "session", "no_case_file", "only a Samajh call has a case file")
+        try:
+            return self.records.get(log.params.get("record", ""))
+        except KeyError:
+            raise ApiProblem(
+                409, "session", "no_case_file", "the call's record is not on this server"
+            ) from None
+
+    def read(self, session_id: str) -> CaseFile | None:
+        data = self.sessions.store.read_case(session_id)
+        if data is None:
+            return None
+        try:
+            return CaseFile.model_validate_json(data)
+        except ValidationError:
+            return None
+
+    def running(self, session_id: str) -> bool:
+        with self._lock:
+            thread = self._threads.get(session_id)
+            return thread is not None and thread.is_alive()
+
+    def start(self, live: _Live) -> dict[str, Any]:
+        """Close the call if need be and start its job, unless one is running or has finished.
+        The caller holds the session's lock."""
+        log = live.log
+        record = self._record(log)
+        if log.status != "ended":
+            raise ApiProblem(409, "session", "session_active", "the call has not ended")
+        case = self.read(log.session_id)
+        if case is not None and (case.status == "ready" or self.running(log.session_id)):
+            return case.model_dump(mode="json")
+        if not log.closed:
+
+            def close(draft: SessionLog) -> None:
+                draft.closed = True
+
+            self.sessions._commit(live, close)
+        snapshot = live.log.model_copy(deep=True)
+        case = new_case(snapshot, record)
+        self.sessions.store.write_case(snapshot.session_id, case.model_dump_json(indent=2).encode())
+        thread = threading.Thread(
+            target=self._run, args=(snapshot, record), daemon=True, name=f"case-{snapshot.session_id}"
+        )
+        with self._lock:
+            self._threads[snapshot.session_id] = thread
+        thread.start()
+        return case.model_dump(mode="json")
+
+    def _run(self, log: SessionLog, record: CallRecord) -> None:
+        store, settings = self.sessions.store, self.sessions.settings
+
+        def recording() -> tuple[Recording, bytes]:
+            made = store.assemble_recording(log)
+            data = store.read_recording(log.session_id)
+            if data is None:
+                raise ValueError("call.wav was not written")
+            return made, data
+
+        try:
+            case = build_case(
+                log,
+                record,
+                recording=recording,
+                batch=self.batch.get,
+                llm=self.llm,
+                batch_model=settings.batch.model,
+                num_speakers=settings.batch.num_speakers,
+                batch_timeout_s=settings.batch.timeout_s,
+            )
+        except Exception as exc:  # noqa: BLE001 - the case must never be left "running" by a bug
+            case = new_case(log, record)
+            case.status, case.failed = "failed", ["transcript"]
+            case.steps = [StepResult(name="transcript", ok=False, error=f"{type(exc).__name__}", seconds=0.0)]
+        store.write_case(log.session_id, case.model_dump_json(indent=2).encode())
+
+    def get(self, live: _Live) -> dict[str, Any]:
+        log = live.log
+        self._record(log)
+        case = self.read(log.session_id)
+        if case is None:
+            raise ApiProblem(404, "session", "case_not_started", "the case file has not been started")
+        if case.status == "running" and not self.running(log.session_id):
+            return self.start(live)
+        return case.model_dump(mode="json")
+
+
 def sessions_of(app: FastAPI) -> Sessions:
     """The seam for a router that lives outside this module (the after-call case file)."""
     sessions: Sessions = app.state.sessions
@@ -799,6 +911,13 @@ class _LocalOnly:
         await self.app(scope, receive, send)
 
 
+@cache
+def _default_llm() -> Llm:
+    from samajh.pipeline import default_llm
+
+    return default_llm()
+
+
 def _clips(clips_dir: Path | None) -> dict[str, Path]:
     if clips_dir is None or not clips_dir.is_dir():
         return {}
@@ -829,9 +948,13 @@ def create_app(
     clips_dir: Path | None = None,
     profile: Literal["live", "patient"] = "live",
     allowed_hosts: Sequence[str] = LOCAL_HOSTS,
+    batch: SpeechClient | None = None,
+    llm: Callable[[], Llm] | None = None,
 ) -> FastAPI:
     """`second` is the client for the second reading of a turn; without it an injected `gnani`
-    serves both, and the real second client gives up at the settings' bound."""
+    serves both, and the real second client gives up at the settings' bound. `batch` runs Prisma
+    Batch after the call (an injected `gnani` by default, else the patient real client), and
+    `llm` builds the extraction client (default `samajh.pipeline.default_llm`)."""
     settings = settings or load_settings()
     if dialogues is None:
         # Imported here so that an app given its own dialogues does not need these modules.
@@ -850,9 +973,11 @@ def create_app(
         settings,
         "samajh" if "samajh" in registry else next(iter(registry)),
     )
+    jobs = CaseJobs(calls, records, _Gnani(batch or gnani, PATIENT), llm or _default_llm)
     clips_dir = clips_dir or _default_clips_dir()
     app = FastAPI(title="Samajh voice transport", docs_url=None, redoc_url=None, openapi_url=None)
     app.state.sessions = calls
+    app.state.cases = jobs
     app.add_middleware(_LocalOnly, hosts=frozenset(h.lower() for h in allowed_hosts))
 
     @app.exception_handler(ApiProblem)
@@ -966,6 +1091,16 @@ def create_app(
         async with calls.use(session_id) as live, live.lock:
             data = await anyio.to_thread.run_sync(calls.recording, live)
         return Response(data, media_type="audio/wav")
+
+    @app.post("/api/sessions/{session_id}/case")
+    async def start_case(session_id: str) -> dict[str, Any]:
+        async with calls.use(session_id) as live, live.lock:
+            return await anyio.to_thread.run_sync(jobs.start, live)
+
+    @app.get("/api/sessions/{session_id}/case")
+    async def get_case(session_id: str) -> dict[str, Any]:
+        async with calls.use(session_id) as live, live.lock:
+            return await anyio.to_thread.run_sync(jobs.get, live)
 
     app.include_router(review_router(state or state_dir()))
     if web_dir is not None and web_dir.is_dir():

@@ -1,0 +1,311 @@
+{
+  "session_id": "20261110T103149-31a023316d9e",
+  "status": "ended",
+  "ended_reason": "dialogue",
+  "turns": [
+    {
+      "seq": 1,
+      "file": "01.wav",
+      "transcript": "Yes speaking",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "Yes speaking",
+          "cache_hit": false,
+          "seconds": 0.1359
+        }
+      ],
+      "stt_ms": 240.1,
+      "dialogue_ms": 0.7
+    },
+    {
+      "seq": 3,
+      "file": "02.wav",
+      "transcript": "हाँ, okay।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "हाँ, okay।",
+          "cache_hit": false,
+          "seconds": 0.1764
+        }
+      ],
+      "stt_ms": 268.8,
+      "dialogue_ms": 0.7
+    },
+    {
+      "seq": 5,
+      "file": "03.wav",
+      "transcript": "1984",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "1984",
+          "cache_hit": false,
+          "seconds": 0.2094
+        }
+      ],
+      "stt_ms": 316.1,
+      "dialogue_ms": 0.9
+    },
+    {
+      "seq": 7,
+      "file": "04.wav",
+      "transcript": "एक क्रेडिट लाइफ इंश्योरेंस लिया था 52,000 का।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "एक क्रेडिट लाइफ इंश्योरेंस लिया था 52,000 का।",
+          "cache_hit": false,
+          "seconds": 1.5309
+        }
+      ],
+      "stt_ms": 1631.8,
+      "dialogue_ms": 1079.3
+    },
+    {
+      "seq": 9,
+      "file": "05.wav",
+      "transcript": "लाइफ इंश्योरेंस है, अगर मुझे कुछ हो गया तो लोन उससे चुक जाएगा।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "लाइफ इंश्योरेंस है, अगर मुझे कुछ हो गया तो लोन उससे चुक जाएगा।",
+          "cache_hit": false,
+          "seconds": 0.265
+        }
+      ],
+      "stt_ms": 383.7,
+      "dialogue_ms": 1473.1
+    },
+    {
+      "seq": 11,
+      "file": "06.wav",
+      "transcript": "52,000",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "52,000",
+          "cache_hit": false,
+          "seconds": 0.1813
+        },
+        {
+          "role": "second",
+          "model": "prisma-v2.5",
+          "ok": true,
+          "error": null,
+          "text": "52 थाउज़ंड",
+          "cache_hit": false,
+          "seconds": 0.1657
+        }
+      ],
+      "stt_ms": 569.0,
+      "dialogue_ms": 1.0
+    },
+    {
+      "seq": 13,
+      "file": "07.wav",
+      "transcript": "लोन amount में से कट हुआ",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "लोन amount में से कट हुआ",
+          "cache_hit": false,
+          "seconds": 0.1711
+        }
+      ],
+      "stt_ms": 273.3,
+      "dialogue_ms": 1483.4
+    },
+    {
+      "seq": 15,
+      "file": "08.wav",
+      "transcript": "जरूरी नहीं था, मेरी अपनी मर्जी थी।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "जरूरी नहीं था, मेरी अपनी मर्जी थी।",
+          "cache_hit": false,
+          "seconds": 0.2084
+        }
+      ],
+      "stt_ms": 324.8,
+      "dialogue_ms": 1.2
+    },
+    {
+      "seq": 17,
+      "file": "09.wav",
+      "transcript": "बोला था किसी भी company से ले सकते हो, मैंने यही चुना।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "बोला था किसी भी company से ले सकते हो, मैंने यही चुना।",
+          "cache_hit": false,
+          "seconds": 0.2519
+        }
+      ],
+      "stt_ms": 364.0,
+      "dialogue_ms": 817.1
+    },
+    {
+      "seq": 19,
+      "file": "10.wav",
+      "transcript": "मुझे कुछ हुआ तो 5,00,000 तक का लोन कवर होता है।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "मुझे कुछ हुआ तो 5,00,000 तक का लोन कवर होता है।",
+          "cache_hit": false,
+          "seconds": 1.3858
+        }
+      ],
+      "stt_ms": 1487.7,
+      "dialogue_ms": 745.8
+    },
+    {
+      "seq": 21,
+      "file": "11.wav",
+      "transcript": "2 years.",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "2 years.",
+          "cache_hit": false,
+          "seconds": 0.4271
+        }
+      ],
+      "stt_ms": 530.7,
+      "dialogue_ms": 769.0
+    },
+    {
+      "seq": 23,
+      "file": "12.wav",
+      "transcript": "हाँ 30 days में cancel करा सकते हैं।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "हाँ 30 days में cancel करा सकते हैं।",
+          "cache_hit": false,
+          "seconds": 0.3255
+        }
+      ],
+      "stt_ms": 437.3,
+      "dialogue_ms": 1.8
+    },
+    {
+      "seq": 25,
+      "file": "13.wav",
+      "transcript": "वापस नहीं मिलता, यह insurance है investment नहीं।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "वापस नहीं मिलता, यह insurance है investment नहीं।",
+          "cache_hit": false,
+          "seconds": 0.3976
+        }
+      ],
+      "stt_ms": 481.7,
+      "dialogue_ms": 2236.6
+    },
+    {
+      "seq": 27,
+      "file": "14.wav",
+      "transcript": "loan form पर sign किया था, insurance के लिए भी अलग से हाँ की थी।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "loan form पर sign किया था, insurance के लिए भी अलग से हाँ की थी।",
+          "cache_hit": false,
+          "seconds": 0.2732
+        }
+      ],
+      "stt_ms": 383.4,
+      "dialogue_ms": 1574.3
+    },
+    {
+      "seq": 29,
+      "file": "15.wav",
+      "transcript": "Yes correct",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "Yes correct",
+          "cache_hit": false,
+          "seconds": 0.1375
+        },
+        {
+          "role": "second",
+          "model": "prisma-v2.5",
+          "ok": true,
+          "error": null,
+          "text": "येस करेक्ट",
+          "cache_hit": false,
+          "seconds": 0.2045
+        }
+      ],
+      "stt_ms": 545.5999999999999,
+      "dialogue_ms": 2.5
+    }
+  ],
+  "recording_seconds": 160.27,
+  "est_credits": 0.5024,
+  "case": {
+    "status": "ready",
+    "failed": [],
+    "call_outcome": "completed",
+    "tier": "refer",
+    "lines": [
+      {
+        "tier": "refer",
+        "title": "Customer said they agreed by word of mouth only.",
+        "quote": "loan form पर sign किया था, insurance के लिए भी अलग से हाँ की थी।"
+      }
+    ]
+  },
+  "session_dir": null
+}

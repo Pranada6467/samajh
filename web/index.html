@@ -27,17 +27,22 @@
     </header>
 
     <div class="view" id="view-idle">
-      <p class="lead">Receive a short feedback call about a loan you took. The bot asks, you answer by voice or with a prepared clip, and Prisma transcribes each answer.</p>
+      <p class="lead">Receive a short feedback call about a loan you took. The bot asks, you answer by voice or with a prepared clip, and Prisma transcribes each answer. Every record is synthetic.</p>
+      <p class="hint" id="record-note"></p>
       <div class="settings">
         <label for="line-rate">Line</label>
         <select id="line-rate">
           <option value="8000">8 kHz · phone line</option>
           <option value="16000">16 kHz · wideband</option>
         </select>
-        <label for="stt-model">Speech to text</label>
-        <select id="stt-model">
-          <option value="prisma-v3.0">prisma-v3.0</option>
-          <option value="prisma-v2.5">prisma-v2.5</option>
+        <label for="record">Loan record</label>
+        <select id="record"><option value="">Loading the demo records</option></select>
+        <label for="language">Language</label>
+        <select id="language">
+          <option value="hi">Hindi</option>
+          <option value="hi-en">Hinglish</option>
+          <option value="ta">Tamil (experimental, not human-reviewed)</option>
+          <option value="kn">Kannada (experimental, not human-reviewed)</option>
         </select>
         <label for="turn-mode">Turn-taking</label>
         <select id="turn-mode">
@@ -92,6 +97,12 @@
       <div id="summary" class="panel">
         <h2>Call ended</h2>
         <p id="summary-text"></p>
+        <div id="case" class="case" aria-live="polite">
+          <h3>Case file</h3>
+          <p id="case-status"></p>
+          <ol id="case-lines" class="case-lines"></ol>
+          <a id="case-link" href="#" target="_blank" rel="noopener" hidden>Case file (JSON)</a>
+        </div>
         <p class="links">
           <a id="log-link" href="#" target="_blank" rel="noopener">Session log (JSON)</a>
           <a id="recording-link" href="#" target="_blank" rel="noopener">Call recording (WAV)</a>
@@ -110,7 +121,8 @@
     <dl class="facts">
       <dt>Session</dt><dd id="mon-session">none</dd>
       <dt>Line rate</dt><dd id="mon-line"></dd>
-      <dt>STT model</dt><dd id="mon-model"></dd>
+      <dt>Record</dt><dd id="mon-record"></dd>
+      <dt>Listening for</dt><dd id="mon-listen">n/a</dd>
       <dt>Turn-taking</dt><dd id="mon-mode"></dd>
       <dt>Microphone</dt><dd id="mon-mic"></dd>
       <dt>Server</dt><dd id="mon-server">checking</dd>
@@ -118,12 +130,12 @@
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>#</th><th>Source</th><th>Audio</th><th>To transcript</th><th>STT</th><th>Cache</th></tr>
+          <tr><th>#</th><th>Source</th><th>Audio</th><th>Takes</th><th>Speech end to bot</th><th>STT</th><th>Cache</th></tr>
         </thead>
         <tbody id="mon-turns"></tbody>
       </table>
     </div>
-    <p class="hint">"To transcript" is end of speech to transcript for microphone turns, and upload to transcript for clips. Times are measured in this browser; the STT column is the server's own figure.</p>
+    <p class="hint">"Speech end to bot" runs from the last voiced frame (microphone) or the upload (clip) to the start of the bot's reply audio, measured in this browser; it includes the wait through the grace window. "Takes" counts the sends of one answer: a customer who resumes after a pause is heard again on the whole answer. The STT column is the server's own figure, both readings included.</p>
   </aside>
 </main>
 </body>

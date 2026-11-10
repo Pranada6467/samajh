@@ -10,7 +10,18 @@ import time
 import wave
 from collections.abc import Callable
 
-from samajh.clients.gnani import CallInfo, PrismaV25, PrismaV30, Speech, Timbre, Transcript
+from samajh.clients.gnani import (
+    BatchOptions,
+    BatchTranscript,
+    CallInfo,
+    PrismaV25,
+    PrismaV30,
+    Segment,
+    Speech,
+    Timbre,
+    Transcript,
+    wav_seconds,
+)
 
 
 def make_wav(seconds: float, rate: int = 8000, channels: int = 1, tone: float = 220.0) -> bytes:
@@ -46,6 +57,10 @@ class FakeSpeech:
         self.model_delays: dict[str, float] = {}  # seconds slept before a model answers
         self.tts_error: Exception | None = None
         self.tts_audio: Callable[[Timbre], bytes] = lambda o: make_wav(0.4, o.sample_rate)
+        self.batch_calls: list[tuple[bytes, BatchOptions]] = []
+        self.batch_error: Exception | None = None
+        # Segments of a Batch result: by default one per second of audio, speakers alternating.
+        self.batch_segments: Callable[[float], list[Segment]] | None = None
         self._seen: dict[str, str] = {}
 
     def _info(self, key: str, hit: bool, credits: float) -> CallInfo:
@@ -102,6 +117,32 @@ class FakeSpeech:
             audio_seconds=0.4,
             request_id="req-fake",
             call=self._info(key, hit, 0.002 * len(text)),
+        )
+
+    def batch_transcribe(self, audio: bytes, options: BatchOptions, **kwargs: object) -> BatchTranscript:
+        self.batch_calls.append((audio, options))
+        if self.batch_error is not None:
+            raise self.batch_error
+        seconds = wav_seconds(audio) or 0.0
+        if self.batch_segments is not None:
+            segments = self.batch_segments(seconds)
+        else:
+            segments = [
+                Segment(
+                    index=i, start=float(i), end=min(seconds, i + 1.0), text="…", speaker=i % 2, language="hi"
+                )
+                for i in range(int(seconds) + 1)
+                if i < seconds
+            ]
+        return BatchTranscript(
+            segments=tuple(segments),
+            text=" ".join(s.text for s in segments),
+            duration_seconds=seconds,
+            language="hi-IN",
+            model=options.model,
+            job_id="job-fake",
+            file_id="file-fake",
+            call=self._info(hashlib.sha256(audio).hexdigest(), False, 0.01 * seconds),
         )
 
 

@@ -4,6 +4,7 @@
     <state>/sessions/<session_id>/audio/bot-000.wav      one file per event that has audio,
     <state>/sessions/<session_id>/audio/customer-001.wav named <speaker>-<seq>.wav
     <state>/sessions/<session_id>/call.wav          the whole call, bot and customer in order
+    <state>/sessions/<session_id>/case.json         the after-call case file, once started
 
 Every audio file is mono 16-bit PCM WAV at the session's line rate, so the call recording is a
 plain concatenation with `RECORDING_GAP_SECONDS` of silence between events. Two clocks appear:
@@ -332,3 +333,10 @@ class SessionStore:
 
     def read_recording(self, session_id: str) -> bytes | None:
         return _read(self._dir(session_id) / "call.wav")
+
+    def write_case(self, session_id: str, data: bytes) -> None:
+        """The after-call case file (`samajh.server.casefile`), written atomically."""
+        _write_atomic(self._dir(session_id) / "case.json", data)
+
+    def read_case(self, session_id: str) -> bytes | None:
+        return _read(self._dir(session_id) / "case.json")

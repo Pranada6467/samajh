@@ -53,3 +53,10 @@ grace_ms = 1800
 [fallback]
 enabled = true
 timeout_s = 3.0
+
+# After the call: Prisma Batch on the whole recording, for segment times and speaker labels.
+# Two speakers: the bot and the person who answered.
+[batch]
+model = "prisma-v3.0"
+num_speakers = 2
+timeout_s = 600

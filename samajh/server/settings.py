@@ -49,11 +49,20 @@ class Fallback(_Frozen):
     timeout_s: float = Field(gt=0, le=30)
 
 
+class BatchConfig(_Frozen):
+    """Prisma Batch on the whole call, after it ends: segment times and speaker labels."""
+
+    model: Literal["prisma-v3.0", "prisma-v2.5"] = "prisma-v3.0"
+    num_speakers: int | None = Field(default=2, ge=1, le=8)
+    timeout_s: float = Field(default=600.0, gt=0, le=3600)
+
+
 class Settings(_Frozen):
     tts: TtsConfig
     stt: SttSettings
     turn_taking: dict[ListenKind, Patience]
     fallback: Fallback
+    batch: BatchConfig = BatchConfig()
 
     @model_validator(mode="after")
     def _every_listen_kind(self) -> Settings:

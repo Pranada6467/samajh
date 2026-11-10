@@ -299,3 +299,12 @@ th { color: var(--muted); font-weight: 600; font-size: 0.75rem; }
   .ring-art span { opacity: 0.5; }
   .ring-art span:nth-child(2) { inset: 13px; }
 }
+
+.case { display: flex; flex-direction: column; gap: 6px; padding-top: 8px; border-top: 1px solid var(--line); }
+.case h3 { margin: 0; font-size: 0.9375rem; }
+#case-status { margin: 0; overflow-wrap: anywhere; }
+.case[data-status="failed"] #case-status { color: var(--danger); font-weight: 600; }
+.case-lines { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; font-size: 0.875rem; }
+.case-lines:empty { display: none; }
+.case-lines .tier { font-weight: 600; }
+.case-lines q { display: block; color: var(--muted); }

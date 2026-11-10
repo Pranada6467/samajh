@@ -1,0 +1,20 @@
+{
+  "persona": "third party: the borrower's husband answers and says he is not her",
+  "voice": {
+    "model": "timbre-v3.0",
+    "voice": "Shubham",
+    "language": "hi-IN"
+  },
+  "synthetic": true,
+  "params": {
+    "record": "third-party",
+    "language": "hi"
+  },
+  "turns": [
+    {
+      "file": "01.wav",
+      "answers": "right_party.ask",
+      "text": "नहीं, मैं उनका पति बोल रहा हूँ, वो अभी घर पर नहीं हैं"
+    }
+  ]
+}

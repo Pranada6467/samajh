@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pytest
-from test_samajh_dialogue import happy  # the scripted customer's replies for a whole call
+from test_samajh_dialogue import answer  # the scripted customer's reply to a prompt
 
 from samajh.clients.errors import ClientError, ConfigError
 from samajh.clients.gnani import CallInfo, Speech, Timbre
@@ -18,7 +18,8 @@ from samajh.types import Language
 SETTINGS = load_settings()
 BOOK = load_book(PACKAGED_DIR)
 RECORDS = [BOOK.get(record_id) for record_id in BOOK.ids()]
-ON_DEMAND = {"read_back.confirm", "read_back.reconfirm"}
+# A line that says the customer's figure back cannot be made before the call.
+ON_DEMAND = {key for key, spec in LINES.items() if spec.slots & {"amount_words", "amount_digits"}}
 
 
 class FakeTimbre:
@@ -92,14 +93,19 @@ def test_a_call_after_a_build_finds_every_fixed_line_in_the_cache(language: str)
     call = samajh_factory(BOOK, SETTINGS)({"record": "hero", "language": language})
     step = call.start()
     made_on_the_call = set()
-    for reply in happy(language):
+    while not step.say.end_call:
         for line in step.say.lines:
             options = speech.tts_options(SETTINGS.tts_for(Language(language)), step.say.language, 8000)
             if not client.tts(line.text, options).call.cache_hit:
                 made_on_the_call.add(line.key)
+        reply = answer(language, step.say)
         step = call.step(step.state, Heard(text=reply, second=reply if step.say.second_reading else None))
+    for line in step.say.lines:
+        options = speech.tts_options(SETTINGS.tts_for(Language(language)), step.say.language, 8000)
+        if not client.tts(line.text, options).call.cache_hit:
+            made_on_the_call.add(line.key)
 
-    assert step.say.end_call and built > 40
+    assert built > 40
     assert made_on_the_call == {"read_back.confirm"}
 
 
@@ -113,7 +119,9 @@ def test_a_second_build_is_all_cache_hits() -> None:
     for before, after in zip(first, second, strict=True):
         assert before.lines == before.new_calls == after.lines == after.cache_hits > 0
         assert (before.cache_hits, after.new_calls, after.est_credits, after.failed) == (0, 0, 0.0, [])
-        assert before.est_credits == pytest.approx(0.002 * prompts.fixed_lines(before.language, RECORDS).chars)
+        assert before.est_credits == pytest.approx(
+            0.002 * prompts.fixed_lines(before.language, RECORDS).chars
+        )
     assert [report.language for report in first] == languages
 
 
@@ -136,7 +144,7 @@ def test_the_dry_run_makes_no_call_and_prints_the_totals(capsys: pytest.CaptureF
     for line, language in zip(out, (Language.hi, Language.hi_en), strict=True):
         fixed = prompts.fixed_lines(language, RECORDS)
         assert line.startswith(f"{language.value}: {len(fixed.clips)} lines, {fixed.chars} characters, ")
-        assert f"about {fixed.chars * 0.002:.2f} credits" in line and "2 on demand" in line
+        assert f"about {fixed.chars * 0.002:.2f} credits" in line and f"{len(ON_DEMAND)} on demand" in line
 
 
 def test_a_real_run_prints_hits_and_new_calls_and_exits_zero(capsys: pytest.CaptureFixture[str]) -> None:
@@ -146,7 +154,9 @@ def test_a_real_run_prints_hits_and_new_calls_and_exits_zero(capsys: pytest.Capt
     assert prompts.main(["build", "--lang", "hi", "--record", "hero"], client=client) == 0
     assert f"hi: {lines} lines, 0 cache hits, {lines} new calls" in capsys.readouterr().out
     assert prompts.main(["build", "--lang", "hi", "--record", "hero"], client=client) == 0
-    assert f"hi: {lines} lines, {lines} cache hits, 0 new calls, about 0.00 credits" in capsys.readouterr().out
+    assert (
+        f"hi: {lines} lines, {lines} cache hits, 0 new calls, about 0.00 credits" in capsys.readouterr().out
+    )
     assert {options.sample_rate for _, options in client.requests} == {8000}
 
 

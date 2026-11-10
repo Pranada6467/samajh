@@ -36,7 +36,6 @@ from samajh.server.settings import load_settings
 from samajh.types import Language, Speaker
 
 
-
 def _dialogue_kit():
     """The scripted customers of the dialogue's own tests, so these calls follow its questions."""
     if "dialogue_kit" not in sys.modules:
@@ -408,7 +407,9 @@ def _log(steps: list[Step], replies: list[str], *, silent: frozenset[int] = froz
 
     def bot(step: Step) -> None:
         lines = [
-            BotLineLog(key=line.key, text=line.text, tags=dict(line.tags), start_s=1.65 * k, end_s=1.65 * k + 1.5)
+            BotLineLog(
+                key=line.key, text=line.text, tags=dict(line.tags), start_s=1.65 * k, end_s=1.65 * k + 1.5
+            )
             for k, line in enumerate(step.say.lines)
         ]
         events.append(
@@ -507,4 +508,3 @@ def test_a_log_that_does_not_match_its_state_is_refused() -> None:
         call_transcript(log.model_copy(update={"events": log.events[:-2] + log.events[-1:]}))
     with pytest.raises(ValueError, match="no dialogue state"):
         call_state(log.model_copy(update={"dialogue_state": None}))
-

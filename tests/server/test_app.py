@@ -263,13 +263,13 @@ def test_the_voice_and_the_speech_models_come_from_the_settings(fake: FakeSpeech
     settings = base.model_copy(
         update={
             "stt": SttSettings(model="prisma-v2.5", second_model="prisma-v3.0", format="verbatim"),
-            "tts": base.tts.model_copy(update={"voice": base.tts.voice | {"ta": "Kavya"}}),
+            "tts": base.tts.model_copy(update={"voice": base.tts.voice | {"ta": "Kalpana"}}),
         }
     )
     phone = app_on(fake, state, settings=settings)
     tamil = start(phone, params={"language": "ta"})
     phone.get(tamil["bot"]["audio_url"])
-    assert fake.tts_calls[0][1].voice == "Kavya"
+    assert fake.tts_calls[0][1].voice == "Kalpana"
     other = start(phone, params={"language": "not a language"})
     assert phone.get(f"/api/sessions/{other['session_id']}").json()["tts"]["voice"] == "Shivani"
     say(phone, tamil["session_id"])
@@ -310,7 +310,7 @@ def test_bot_audio_is_synthesised_on_first_fetch_and_then_served_from_the_sessio
 
 
 def test_a_long_utterance_is_spoken_line_by_line_and_joined(fake: FakeSpeech, state: Path) -> None:
-    lines = ["क" * 300 + "।", "ख" * 280 + "।", "क्या यह ठीक है?"]
+    lines = ["क" * 320 + "।", "ख" * 280 + "।", "क्या यह ठीक है?"]
     tones = {lines[0]: 200.0, lines[1]: 300.0, lines[2]: 400.0}
     lengths = {lines[0]: 0.6, lines[1]: 0.5, lines[2]: 0.3}
     _, dialogues = scripted(lambda n, heard: utter(*lines, listen="yes_no"))
@@ -560,7 +560,7 @@ def test_eight_identical_requests_at_once_advance_the_dialogue_once(fake: FakeSp
             replies = await asyncio.gather(*(http.post(url, content=ANSWER) for _ in range(8)))
             return sid, replies, (await http.get(f"/api/sessions/{sid}")).json()
 
-    sid, replies, log = asyncio.run(call())
+    _sid, replies, log = asyncio.run(call())
     assert [r.status_code for r in replies] == [200] * 8
     assert all(r.json() == replies[0].json() for r in replies)
     assert len(dialogue.steps) == 1 and len(fake.stt_calls) == 1
@@ -632,7 +632,7 @@ def test_a_later_take_replaces_the_earlier_one(fake: FakeSpeech, state: Path) ->
 
     assert say(phone, sid, make_wav(1.3), reply_to=2, part=2) == take_two  # a repeat of the later take
     error_of(post_turn(phone, sid, make_wav(0.6), reply_to=2, part=1), 409, "turn_superseded")
-    error_of(phone.get(take_one["bot"]["audio_url"].replace("004", "009")), 404, "audio_not_found")
+    error_of(phone.get(take_one["bot"]["audio_url"].replace("bot-004", "bot-009")), 404, "audio_not_found")
     # The call goes on from the later take, and the turn before it can no longer be replaced.
     assert say(phone, sid, reply_to=6)["bot"]["text"] == "q3 after पचास हज़ार"
     error_of(post_turn(phone, sid, reply_to=2, part=3), 409, "turn_out_of_order")
@@ -998,7 +998,6 @@ def test_a_dialogue_that_fails_at_the_start_creates_no_session(fake: FakeSpeech,
     [
         "not an utterance",
         utter("any language", language="auto", second_reading=True),  # prisma-v2.5 has no auto
-        utter("no such language", language="mr-IN", second_reading=True),
     ],
 )
 def test_an_utterance_the_session_cannot_handle_is_a_dialogue_error(

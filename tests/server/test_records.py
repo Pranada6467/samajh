@@ -77,7 +77,9 @@ def test_an_unknown_id_is_a_key_error() -> None:
         BOOK.get("nobody")
 
 
-def test_records_from_several_directories_make_one_book(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_records_from_several_directories_make_one_book(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     write(tmp_path, "eval-0001.json", HERO | {"id": "eval-0001"})
 
     assert load_book(PACKAGED_DIR, tmp_path).ids() == ["eval-0001", "hero", "informed", "third-party"]
@@ -104,7 +106,10 @@ def test_a_duplicate_id_is_refused(tmp_path: Path) -> None:
         ("hero.json", HERO | {"premium_hint": "52000"}),
         ("hero.json", HERO | {"lender_name": "  "}),
         ("hero.json", HERO | {"record": HERO["record"] | {"products": "none"}}),
-        ("hero.json", HERO | {"record": HERO["record"] | {"borrower": HERO["record"]["borrower"] | {"name": " "}}}),
+        (
+            "hero.json",
+            HERO | {"record": HERO["record"] | {"borrower": HERO["record"]["borrower"] | {"name": " "}}},
+        ),
         ("other.json", HERO),
         ("Hero.json", HERO | {"id": "Hero"}),
         ("a_b.json", HERO | {"id": "a_b"}),

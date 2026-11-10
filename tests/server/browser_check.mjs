@@ -3,7 +3,10 @@
 //
 //   node tests/server/browser_check.mjs --url http://127.0.0.1:8085 --mic FILE.wav
 //        [--clips 02-emi.wav,03-what-else.wav] [--query "line=8000"] [--shot OUT.png]
-//        [--width 390 --height 844] [--timeout 120]
+//        [--width 390 --height 844] [--timeout 120] [--case]
+//
+// --query takes the phone's URL parameters, e.g. "record=hero&lang=hi&mode=hands-free".
+// --case waits after the call for the case file and prints it (as the phone last saw it).
 //
 // Without --mic the microphone permission is refused and every turn comes from --clips.
 //
@@ -140,6 +143,7 @@ async function main() {
   const turns = () => evaluate("window.samajhPhone.log().length");
 
   await until(["idle"], "the idle screen");
+  for (let i = 0; i < 100 && !(await evaluate("document.querySelector('#record')?.value || ''")); i++) await sleep(50);
   if (args.shot) await shot(args.shot.replace(/\.png$/, "-idle.png"));
   await evaluate("document.querySelector('#place-call').click()");
   await until(["ringing"], "ringing");
@@ -172,9 +176,28 @@ async function main() {
     }
     done = await turns();
   }
+  let caseFile = null;
+  if (args.case) {
+    while (Date.now() - started < timeoutMs) {
+      caseFile = await evaluate("window.samajhPhone.caseFile()");
+      if (caseFile.error || (caseFile.file && caseFile.file.status !== "running")) break;
+      await sleep(500);
+    }
+    await evaluate("document.querySelector('#case')?.scrollIntoView()");
+  }
   if (args.shot) await shot(args.shot);
   return {
     final_state: await state(),
+    case: caseFile && {
+      error: caseFile.error,
+      status: caseFile.file?.status,
+      failed: caseFile.file?.failed,
+      tier: caseFile.file?.tier,
+      call_outcome: caseFile.file?.call_outcome,
+      session_id: caseFile.file?.session_id,
+      lines: caseFile.file?.summary?.lines?.map((l) => [l.tier, l.title]),
+      case_text: await evaluate("document.querySelector('#case-status')?.textContent"),
+    },
     turns: await evaluate("window.samajhPhone.log()"),
     states,
     status_text: await evaluate("document.querySelector('#status')?.textContent?.trim()"),

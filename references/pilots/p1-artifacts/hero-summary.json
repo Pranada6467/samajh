@@ -1,0 +1,331 @@
+{
+  "session_id": "20261110T103108-9f2e34f8dfdf",
+  "status": "ended",
+  "ended_reason": "dialogue",
+  "turns": [
+    {
+      "seq": 1,
+      "file": "01.wav",
+      "transcript": "हाँ जी, बोल रहा हूँ।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "हाँ जी, बोल रहा हूँ।",
+          "cache_hit": false,
+          "seconds": 0.2089
+        }
+      ],
+      "stt_ms": 305.2,
+      "dialogue_ms": 0.7
+    },
+    {
+      "seq": 3,
+      "file": "02.wav",
+      "transcript": "हाँ, ठीक है।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "हाँ, ठीक है।",
+          "cache_hit": false,
+          "seconds": 0.1491
+        }
+      ],
+      "stt_ms": 237.0,
+      "dialogue_ms": 0.3
+    },
+    {
+      "seq": 5,
+      "file": "03.wav",
+      "transcript": "1984",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "1984",
+          "cache_hit": false,
+          "seconds": 0.1214
+        }
+      ],
+      "stt_ms": 219.4,
+      "dialogue_ms": 0.6
+    },
+    {
+      "seq": 7,
+      "file": "04.wav",
+      "transcript": "बस एक FD करवाई थी loan की security के लिए 52,000 की।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "बस एक FD करवाई थी loan की security के लिए 52,000 की।",
+          "cache_hit": false,
+          "seconds": 0.4307
+        }
+      ],
+      "stt_ms": 537.3,
+      "dialogue_ms": 1497.0
+    },
+    {
+      "seq": 9,
+      "file": "05.wav",
+      "transcript": "FD है।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "FD है।",
+          "cache_hit": false,
+          "seconds": 0.3087
+        }
+      ],
+      "stt_ms": 425.9,
+      "dialogue_ms": 910.9
+    },
+    {
+      "seq": 11,
+      "file": "06.wav",
+      "transcript": "52,000",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "52,000",
+          "cache_hit": false,
+          "seconds": 0.3946
+        },
+        {
+          "role": "second",
+          "model": "prisma-v2.5",
+          "ok": true,
+          "error": null,
+          "text": "52 हज़ार।",
+          "cache_hit": false,
+          "seconds": 0.2012
+        }
+      ],
+      "stt_ms": 831.5,
+      "dialogue_ms": 1.4
+    },
+    {
+      "seq": 13,
+      "file": "07.wav",
+      "transcript": "लोन में से कट गया",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "लोन में से कट गया",
+          "cache_hit": false,
+          "seconds": 0.1471
+        }
+      ],
+      "stt_ms": 244.1,
+      "dialogue_ms": 1753.0
+    },
+    {
+      "seq": 15,
+      "file": "08.wav",
+      "transcript": "हाँ, बोला था जरूरी है, उसके बिना loan नहीं मिलेगा।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "हाँ, बोला था जरूरी है, उसके बिना loan नहीं मिलेगा।",
+          "cache_hit": false,
+          "seconds": 0.3287
+        }
+      ],
+      "stt_ms": 441.1,
+      "dialogue_ms": 1.2
+    },
+    {
+      "seq": 17,
+      "file": "09.wav",
+      "transcript": "कुछ नहीं बताया",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "कुछ नहीं बताया",
+          "cache_hit": false,
+          "seconds": 0.119
+        }
+      ],
+      "stt_ms": 234.3,
+      "dialogue_ms": 0.6
+    },
+    {
+      "seq": 19,
+      "file": "10.wav",
+      "transcript": "पैसा सुरक्षित रहेगा",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "पैसा सुरक्षित रहेगा",
+          "cache_hit": false,
+          "seconds": 0.1098
+        }
+      ],
+      "stt_ms": 201.5,
+      "dialogue_ms": 1398.0
+    },
+    {
+      "seq": 21,
+      "file": "11.wav",
+      "transcript": "दो साल",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "दो साल",
+          "cache_hit": false,
+          "seconds": 0.1335
+        }
+      ],
+      "stt_ms": 242.2,
+      "dialogue_ms": 673.1
+    },
+    {
+      "seq": 23,
+      "file": "12.wav",
+      "transcript": "नहीं बताया",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "नहीं बताया",
+          "cache_hit": false,
+          "seconds": 0.1554
+        }
+      ],
+      "stt_ms": 269.7,
+      "dialogue_ms": 0.9
+    },
+    {
+      "seq": 25,
+      "file": "13.wav",
+      "transcript": "एक साल बाद ब्याज के साथ निकाल सकते हैं।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "एक साल बाद ब्याज के साथ निकाल सकते हैं।",
+          "cache_hit": false,
+          "seconds": 0.2313
+        }
+      ],
+      "stt_ms": 333.0,
+      "dialogue_ms": 1961.6
+    },
+    {
+      "seq": 27,
+      "file": "14.wav",
+      "transcript": "form पर sign किया था बस।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "form पर sign किया था बस।",
+          "cache_hit": false,
+          "seconds": 0.1633
+        }
+      ],
+      "stt_ms": 255.2,
+      "dialogue_ms": 1014.7
+    },
+    {
+      "seq": 29,
+      "file": "15.wav",
+      "transcript": "हाँ, सही है।",
+      "readings": [
+        {
+          "role": "primary",
+          "model": "prisma-v3.0",
+          "ok": true,
+          "error": null,
+          "text": "हाँ, सही है।",
+          "cache_hit": false,
+          "seconds": 0.123
+        },
+        {
+          "role": "second",
+          "model": "prisma-v2.5",
+          "ok": true,
+          "error": null,
+          "text": "हाँ, सही है",
+          "cache_hit": false,
+          "seconds": 0.1893
+        }
+      ],
+      "stt_ms": 489.2,
+      "dialogue_ms": 1.6
+    }
+  ],
+  "recording_seconds": 157.47,
+  "est_credits": 0.4024,
+  "case": {
+    "status": "ready",
+    "failed": [],
+    "call_outcome": "completed",
+    "tier": "refer",
+    "lines": [
+      {
+        "tier": "refer",
+        "title": "Customer described the product as a deposit (FD); the record shows insurance.",
+        "quote": "FD है।"
+      },
+      {
+        "tier": "refer",
+        "title": "The record has no consent for this product; the premium was deducted from the loan without a recorded consent.",
+        "quote": "लोन में से कट गया"
+      },
+      {
+        "tier": "refer",
+        "title": "Customer says it was required for the loan; the record shows no choice of provider was offered; customer says they were not told they could buy it from another provider.",
+        "quote": "कुछ नहीं बताया"
+      },
+      {
+        "tier": "refer",
+        "title": "Customer believes the money can be withdrawn after a period and it gives a guaranteed return; the record does not list this feature.",
+        "quote": "एक साल बाद ब्याज के साथ निकाल सकते हैं।"
+      },
+      {
+        "tier": "understanding_gap",
+        "title": "Customer did not know, or gave a different answer about: the cancellation window; the cover.",
+        "quote": "नहीं बताया"
+      }
+    ]
+  },
+  "session_dir": null
+}

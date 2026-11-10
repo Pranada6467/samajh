@@ -1,0 +1,834 @@
+{
+ "final_state": "ended",
+ "case": {
+  "error": null,
+  "status": "ready",
+  "failed": [],
+  "tier": "refer",
+  "call_outcome": "completed",
+  "session_id": "20261110T103439-10efda4cc6ab",
+  "lines": [
+   [
+    "refer",
+    "Customer described the product as a deposit (FD); the record shows insurance."
+   ],
+   [
+    "refer",
+    "The record has no consent for this product; the premium was deducted from the loan without a recorded consent."
+   ],
+   [
+    "refer",
+    "Customer says it was required for the loan; the record shows no choice of provider was offered; customer says they were not told they could buy it from another provider."
+   ],
+   [
+    "refer",
+    "Customer believes the money can be withdrawn after a period and it gives a guaranteed return; the record does not list this feature."
+   ],
+   [
+    "understanding_gap",
+    "Customer did not know, or gave a different answer about: the cancellation window; the cover."
+   ]
+  ],
+  "case_text": "Refer to a reviewer. Call outcome: completed."
+ },
+ "turns": [
+  {
+   "seq": 3,
+   "source": "mic",
+   "transcript": "हाँ जी, बोल रहा हूँ।",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-003.wav",
+   "audio_seconds": 2.541375,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "हाँ जी, बोल रहा हूँ।",
+     "cache_hit": false,
+     "seconds": 0.1942
+    }
+   ],
+   "part": 2,
+   "sends": 1,
+   "botSeq": 4,
+   "voiceEndAt": 13361.699999809265,
+   "latency": {
+    "normalise_ms": 47.5,
+    "stt_ms": 280,
+    "second_stt_ms": 0,
+    "dialogue_ms": 0.5,
+    "server_ms": 329.3,
+    "eos_wait_ms": 701.3000001907349,
+    "post_ms": 332.5,
+    "headline_ms": 1033.8000001907349,
+    "bot_start_ms": 1086.9000000953674
+   },
+   "pauses": {
+    "speech_ms": 2060,
+    "leading_ms": 300,
+    "trailing_ms": 180,
+    "pauses_ms": [
+     860
+    ],
+    "longest_pause_ms": 860
+   }
+  },
+  {
+   "seq": 5,
+   "source": "file",
+   "transcript": "हाँ, ठीक है।",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-005.wav",
+   "audio_seconds": 1.36,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "हाँ, ठीक है।",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 6,
+   "voiceEndAt": 59832.699999809265,
+   "latency": {
+    "normalise_ms": 0.2,
+    "stt_ms": 4.8,
+    "second_stt_ms": 0,
+    "dialogue_ms": 6.3,
+    "server_ms": 13.7,
+    "eos_wait_ms": null,
+    "post_ms": 18.200000047683716,
+    "headline_ms": 18.200000047683716,
+    "bot_start_ms": 30.300000190734863
+   },
+   "pauses": {
+    "speech_ms": 1000,
+    "leading_ms": 100,
+    "trailing_ms": 260,
+    "pauses_ms": [
+     300
+    ],
+    "longest_pause_ms": 300
+   }
+  },
+  {
+   "seq": 7,
+   "source": "file",
+   "transcript": "1984",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-007.wav",
+   "audio_seconds": 2,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "1984",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 8,
+   "voiceEndAt": 68512.29999995232,
+   "latency": {
+    "normalise_ms": 0.2,
+    "stt_ms": 1.7,
+    "second_stt_ms": 0,
+    "dialogue_ms": 2.9,
+    "server_ms": 7.2,
+    "eos_wait_ms": null,
+    "post_ms": 11.099999904632568,
+    "headline_ms": 11.099999904632568,
+    "bot_start_ms": 22.700000047683716
+   },
+   "pauses": {
+    "speech_ms": 1020,
+    "leading_ms": 80,
+    "trailing_ms": 900,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 9,
+   "source": "file",
+   "transcript": "बस एक FD करवाई थी loan की security के लिए 52,000 की।",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-009.wav",
+   "audio_seconds": 4.56,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "बस एक FD करवाई थी loan की security के लिए 52,000 की।",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 10,
+   "voiceEndAt": 78773.69999980927,
+   "latency": {
+    "normalise_ms": 0.2,
+    "stt_ms": 7.8,
+    "second_stt_ms": 0,
+    "dialogue_ms": 7.1,
+    "server_ms": 25.2,
+    "eos_wait_ms": null,
+    "post_ms": 67.80000019073486,
+    "headline_ms": 67.80000019073486,
+    "bot_start_ms": 93.40000009536743
+   },
+   "pauses": {
+    "speech_ms": 4500,
+    "leading_ms": 60,
+    "trailing_ms": 0,
+    "pauses_ms": [
+     500,
+     400
+    ],
+    "longest_pause_ms": 500
+   }
+  },
+  {
+   "seq": 11,
+   "source": "file",
+   "transcript": "FD है।",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-011.wav",
+   "audio_seconds": 0.96,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "FD है।",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 12,
+   "voiceEndAt": 85498.89999985695,
+   "latency": {
+    "normalise_ms": 0.3,
+    "stt_ms": 1.6,
+    "second_stt_ms": 0,
+    "dialogue_ms": 20.9,
+    "server_ms": 25.4,
+    "eos_wait_ms": null,
+    "post_ms": 32.700000047683716,
+    "headline_ms": 32.700000047683716,
+    "bot_start_ms": 52.40000009536743
+   },
+   "pauses": {
+    "speech_ms": 600,
+    "leading_ms": 60,
+    "trailing_ms": 300,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 13,
+   "source": "file",
+   "transcript": "52,000",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-013.wav",
+   "audio_seconds": 1.36,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "52,000",
+     "cache_hit": true,
+     "seconds": 0
+    },
+    {
+     "role": "second",
+     "model": "prisma-v2.5",
+     "ok": true,
+     "error": null,
+     "text": "52 हज़ार।",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 14,
+   "voiceEndAt": 87327.59999990463,
+   "latency": {
+    "normalise_ms": 0.2,
+    "stt_ms": 2.2,
+    "second_stt_ms": 1.7,
+    "dialogue_ms": 1.9,
+    "server_ms": 9,
+    "eos_wait_ms": null,
+    "post_ms": 15.200000047683716,
+    "headline_ms": 15.200000047683716,
+    "bot_start_ms": 29.59999990463257
+   },
+   "pauses": {
+    "speech_ms": 880,
+    "leading_ms": 40,
+    "trailing_ms": 440,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 15,
+   "source": "file",
+   "transcript": "लोन में से कट गया",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-015.wav",
+   "audio_seconds": 1.36,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "लोन में से कट गया",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 16,
+   "voiceEndAt": 89566.79999995232,
+   "latency": {
+    "normalise_ms": 0,
+    "stt_ms": 0.9,
+    "second_stt_ms": 0,
+    "dialogue_ms": 5.6,
+    "server_ms": 7.4,
+    "eos_wait_ms": null,
+    "post_ms": 10.799999952316284,
+    "headline_ms": 10.799999952316284,
+    "bot_start_ms": 20.399999856948853
+   },
+   "pauses": {
+    "speech_ms": 1160,
+    "leading_ms": 80,
+    "trailing_ms": 120,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 17,
+   "source": "file",
+   "transcript": "हाँ, बोला था जरूरी है, उसके बिना loan नहीं मिलेगा।",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-017.wav",
+   "audio_seconds": 3.76,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "हाँ, बोला था जरूरी है, उसके बिना loan नहीं मिलेगा।",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 18,
+   "voiceEndAt": 95651.79999995232,
+   "latency": {
+    "normalise_ms": 0.2,
+    "stt_ms": 1.8,
+    "second_stt_ms": 0,
+    "dialogue_ms": 2,
+    "server_ms": 12.3,
+    "eos_wait_ms": null,
+    "post_ms": 17.59999990463257,
+    "headline_ms": 17.59999990463257,
+    "bot_start_ms": 31.59999990463257
+   },
+   "pauses": {
+    "speech_ms": 3420,
+    "leading_ms": 140,
+    "trailing_ms": 200,
+    "pauses_ms": [
+     300,
+     500
+    ],
+    "longest_pause_ms": 500
+   }
+  },
+  {
+   "seq": 19,
+   "source": "file",
+   "transcript": "कुछ नहीं बताया",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-019.wav",
+   "audio_seconds": 1.12,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "कुछ नहीं बताया",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 20,
+   "voiceEndAt": 99559.59999990463,
+   "latency": {
+    "normalise_ms": 0,
+    "stt_ms": 0.6,
+    "second_stt_ms": 0,
+    "dialogue_ms": 1,
+    "server_ms": 2.6,
+    "eos_wait_ms": null,
+    "post_ms": 6.700000047683716,
+    "headline_ms": 6.700000047683716,
+    "bot_start_ms": 16.200000047683716
+   },
+   "pauses": {
+    "speech_ms": 800,
+    "leading_ms": 100,
+    "trailing_ms": 220,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 21,
+   "source": "file",
+   "transcript": "पैसा सुरक्षित रहेगा",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-021.wav",
+   "audio_seconds": 1.6,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "पैसा सुरक्षित रहेगा",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 22,
+   "voiceEndAt": 103404.39999985695,
+   "latency": {
+    "normalise_ms": 0.2,
+    "stt_ms": 5,
+    "second_stt_ms": 0,
+    "dialogue_ms": 8,
+    "server_ms": 20.3,
+    "eos_wait_ms": null,
+    "post_ms": 29.5,
+    "headline_ms": 29.5,
+    "bot_start_ms": 43.799999952316284
+   },
+   "pauses": {
+    "speech_ms": 1280,
+    "leading_ms": 100,
+    "trailing_ms": 220,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 23,
+   "source": "file",
+   "transcript": "दो साल",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-023.wav",
+   "audio_seconds": 0.88,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "दो साल",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 24,
+   "voiceEndAt": 105241.09999990463,
+   "latency": {
+    "normalise_ms": 0.3,
+    "stt_ms": 4.3,
+    "second_stt_ms": 0,
+    "dialogue_ms": 7.8,
+    "server_ms": 15.4,
+    "eos_wait_ms": null,
+    "post_ms": 25.40000009536743,
+    "headline_ms": 25.40000009536743,
+    "bot_start_ms": 37.799999952316284
+   },
+   "pauses": {
+    "speech_ms": 680,
+    "leading_ms": 40,
+    "trailing_ms": 160,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 25,
+   "source": "file",
+   "transcript": "नहीं बताया",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-025.wav",
+   "audio_seconds": 0.88,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "नहीं बताया",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 26,
+   "voiceEndAt": 111369,
+   "latency": {
+    "normalise_ms": 0.8,
+    "stt_ms": 2.5,
+    "second_stt_ms": 0,
+    "dialogue_ms": 13.3,
+    "server_ms": 28.7,
+    "eos_wait_ms": null,
+    "post_ms": 72.20000004768372,
+    "headline_ms": 72.20000004768372,
+    "bot_start_ms": 95.69999980926514
+   },
+   "pauses": {
+    "speech_ms": 600,
+    "leading_ms": 140,
+    "trailing_ms": 140,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 27,
+   "source": "file",
+   "transcript": "एक साल बाद ब्याज के साथ निकाल सकते हैं।",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-027.wav",
+   "audio_seconds": 2.64,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "एक साल बाद ब्याज के साथ निकाल सकते हैं।",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 28,
+   "voiceEndAt": 116130.09999990463,
+   "latency": {
+    "normalise_ms": 0.2,
+    "stt_ms": 1.1,
+    "second_stt_ms": 0,
+    "dialogue_ms": 3.7,
+    "server_ms": 7.6,
+    "eos_wait_ms": null,
+    "post_ms": 14,
+    "headline_ms": 14,
+    "bot_start_ms": 23.299999952316284
+   },
+   "pauses": {
+    "speech_ms": 2360,
+    "leading_ms": 100,
+    "trailing_ms": 180,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 29,
+   "source": "file",
+   "transcript": "form पर sign किया था बस।",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-029.wav",
+   "audio_seconds": 1.68,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "form पर sign किया था बस।",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 30,
+   "voiceEndAt": 120513.5,
+   "latency": {
+    "normalise_ms": 0.7,
+    "stt_ms": 4.3,
+    "second_stt_ms": 0,
+    "dialogue_ms": 7.4,
+    "server_ms": 23.5,
+    "eos_wait_ms": null,
+    "post_ms": 38.09999990463257,
+    "headline_ms": 38.09999990463257,
+    "bot_start_ms": 50.59999990463257
+   },
+   "pauses": {
+    "speech_ms": 1240,
+    "leading_ms": 160,
+    "trailing_ms": 280,
+    "pauses_ms": [],
+    "longest_pause_ms": 0
+   }
+  },
+  {
+   "seq": 31,
+   "source": "file",
+   "transcript": "हाँ, सही है।",
+   "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-031.wav",
+   "audio_seconds": 1.28,
+   "readings": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "ok": true,
+     "error": null,
+     "text": "हाँ, सही है।",
+     "cache_hit": true,
+     "seconds": 0
+    },
+    {
+     "role": "second",
+     "model": "prisma-v2.5",
+     "ok": true,
+     "error": null,
+     "text": "हाँ, सही है",
+     "cache_hit": true,
+     "seconds": 0
+    }
+   ],
+   "part": 1,
+   "sends": 1,
+   "botSeq": 32,
+   "voiceEndAt": 125083.09999990463,
+   "latency": {
+    "normalise_ms": 0.4,
+    "stt_ms": 2.7,
+    "second_stt_ms": 1.6,
+    "dialogue_ms": 10.1,
+    "server_ms": 20.4,
+    "eos_wait_ms": null,
+    "post_ms": 55.200000047683716,
+    "headline_ms": 55.200000047683716,
+    "bot_start_ms": 72.59999990463257
+   },
+   "pauses": {
+    "speech_ms": 1100,
+    "leading_ms": 80,
+    "trailing_ms": 100,
+    "pauses_ms": [
+     460
+    ],
+    "longest_pause_ms": 460
+   }
+  }
+ ],
+ "states": [
+  [
+   17,
+   "loading"
+  ],
+  [
+   70,
+   "idle"
+  ],
+  [
+   673,
+   "ringing"
+  ],
+  [
+   770,
+   "connecting"
+  ],
+  [
+   4320,
+   "bot_speaking"
+  ],
+  [
+   7300,
+   "listening"
+  ],
+  [
+   14317,
+   "bot_speaking"
+  ],
+  [
+   59722,
+   "listening"
+  ],
+  [
+   59776,
+   "bot_speaking"
+  ],
+  [
+   68406,
+   "listening"
+  ],
+  [
+   68462,
+   "bot_speaking"
+  ],
+  [
+   78634,
+   "listening"
+  ],
+  [
+   78711,
+   "transcribing"
+  ],
+  [
+   78770,
+   "bot_speaking"
+  ],
+  [
+   85350,
+   "listening"
+  ],
+  [
+   85432,
+   "transcribing"
+  ],
+  [
+   85486,
+   "bot_speaking"
+  ],
+  [
+   87222,
+   "listening"
+  ],
+  [
+   87277,
+   "bot_speaking"
+  ],
+  [
+   89467,
+   "listening"
+  ],
+  [
+   89521,
+   "bot_speaking"
+  ],
+  [
+   95522,
+   "listening"
+  ],
+  [
+   95593,
+   "bot_speaking"
+  ],
+  [
+   99459,
+   "listening"
+  ],
+  [
+   99518,
+   "bot_speaking"
+  ],
+  [
+   103278,
+   "listening"
+  ],
+  [
+   103345,
+   "bot_speaking"
+  ],
+  [
+   105118,
+   "listening"
+  ],
+  [
+   105187,
+   "bot_speaking"
+  ],
+  [
+   111138,
+   "listening"
+  ],
+  [
+   111283,
+   "transcribing"
+  ],
+  [
+   111397,
+   "bot_speaking"
+  ],
+  [
+   116021,
+   "listening"
+  ],
+  [
+   116082,
+   "bot_speaking"
+  ],
+  [
+   120392,
+   "listening"
+  ],
+  [
+   120453,
+   "transcribing"
+  ],
+  [
+   120508,
+   "bot_speaking"
+  ],
+  [
+   124960,
+   "listening"
+  ],
+  [
+   125020,
+   "transcribing"
+  ],
+  [
+   125072,
+   "bot_speaking"
+  ],
+  [
+   128588,
+   "ended"
+  ]
+ ],
+ "status_text": "Call ended",
+ "console": []
+}

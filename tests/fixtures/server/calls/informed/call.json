@@ -1,0 +1,90 @@
+{
+  "persona": "informed: can say what he bought, what it cost, how it was paid and how he agreed",
+  "voice": {
+    "model": "timbre-v3.0",
+    "voice": "Avinash",
+    "language": "hi-en"
+  },
+  "synthetic": true,
+  "params": {
+    "record": "informed",
+    "language": "hi-en"
+  },
+  "turns": [
+    {
+      "file": "01.wav",
+      "answers": "right_party.ask",
+      "text": "yes, speaking"
+    },
+    {
+      "file": "02.wav",
+      "answers": "disclosure.go_ahead",
+      "text": "हाँ okay"
+    },
+    {
+      "file": "03.wav",
+      "answers": "second_check.ask",
+      "text": "nineteen eighty four"
+    },
+    {
+      "file": "04.wav",
+      "answers": "open_recall.ask",
+      "text": "एक credit life insurance लिया था, fifty two thousand का"
+    },
+    {
+      "file": "05.wav",
+      "answers": "kind.ask",
+      "text": "life insurance है, अगर मुझे कुछ हो गया तो loan उससे चुक जाएगा"
+    },
+    {
+      "file": "06.wav",
+      "answers": "premium.ask",
+      "text": "fifty two thousand"
+    },
+    {
+      "file": "07.wav",
+      "answers": "payment_source.ask",
+      "text": "loan amount में से cut हुआ"
+    },
+    {
+      "file": "08.wav",
+      "answers": "required_for_loan.ask",
+      "text": "ज़रूरी नहीं था, मेरी अपनी मर्ज़ी थी"
+    },
+    {
+      "file": "09.wav",
+      "answers": "provider_choice.ask",
+      "text": "बोला था किसी भी company से ले सकते हो, मैंने यही चुना"
+    },
+    {
+      "file": "10.wav",
+      "answers": "cover.ask",
+      "text": "मुझे कुछ हुआ तो five lakh तक का loan cover होता है"
+    },
+    {
+      "file": "11.wav",
+      "answers": "term.ask",
+      "text": "two years"
+    },
+    {
+      "file": "12.wav",
+      "answers": "cancel_window.ask",
+      "text": "हाँ, thirty days में cancel करा सकते हैं"
+    },
+    {
+      "file": "13.wav",
+      "answers": "features.ask",
+      "text": "वापस नहीं मिलता, ये insurance है, investment नहीं"
+    },
+    {
+      "file": "14.wav",
+      "answers": "consent.ask",
+      "text": "loan form पर sign किया था, insurance के form पर भी अलग से sign किया था"
+    },
+    {
+      "file": "15.wav",
+      "answers": "read_back.confirm",
+      "text": "yes, correct"
+    }
+  ]
+}
