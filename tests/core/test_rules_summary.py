@@ -150,7 +150,7 @@ def test_a_confirmed_differing_premium_is_one_refer_line():
 def test_a_denial_in_recall_is_one_line():
     denial = ev("kuch nahin liya", 3)
     summary = summary_of({}, {"kind": said(KindClaim.insurance)}, recall=OpenRecall(asked=True, denial=denial))
-    assert len(lines(summary, REFER)) == 1  # naming the right kind afterwards does not undo a denial
+    assert not lines(summary, REFER)  # naming the right kind afterwards retracts the denial
     summary = summary_of({}, {"kind": NotAsked()}, recall=OpenRecall(asked=True, denial=denial))
     line = one_line(summary)
     assert line.rule_ids == (RuleId.recall,) and line.quote == "kuch nahin liya"

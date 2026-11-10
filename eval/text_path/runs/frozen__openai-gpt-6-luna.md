@@ -1,6 +1,6 @@
 # Text path on the `frozen` set, model `openai/gpt-6-luna`
 
-Run at 2026-11-10T11:11:13+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
+Run at 2026-11-10T11:19:19+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
 
 ## Headline
 
@@ -29,11 +29,11 @@ False clear: gold is flag_for_review or unclear_needs_human and the pipeline say
 | informed_clear | hi-en | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
 | informed_clear | ta (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
 | informed_clear | kn (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
-| informed_flagged | hi + hi-en | 16 (8) | refer 10, incomplete 2, understanding_gap 4 | 25 per 100 (4/16; 95% 10 to 49) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (10/16; 95% 39 to 82) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (6/16; 95% 18 to 61) |
-| informed_flagged | hi | 8 (8) | refer 5, incomplete 1, understanding_gap 2 | 25 per 100 (2/8; 95% 7 to 59) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (5/8; 95% 31 to 86) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | hi-en | 8 (8) | refer 5, incomplete 1, understanding_gap 2 | 25 per 100 (2/8; 95% 7 to 59) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (5/8; 95% 31 to 86) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | ta (experimental) | 8 (8) | refer 5, incomplete 1, understanding_gap 2 | 25 per 100 (2/8; 95% 7 to 59) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (5/8; 95% 31 to 86) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | kn (experimental) | 8 (8) | refer 5, incomplete 1, understanding_gap 2 | 25 per 100 (2/8; 95% 7 to 59) | 25 per 100 (2/8; 95% 7 to 59) | 62 per 100 (5/8; 95% 31 to 86) | 62 per 100 (5/8; 95% 31 to 86) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | hi + hi-en | 16 (8) | refer 8, incomplete 2, understanding_gap 6 | 38 per 100 (6/16; 95% 18 to 61) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (8/16; 95% 28 to 72) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (6/16; 95% 18 to 61) |
+| informed_flagged | hi | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | hi-en | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | ta (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | kn (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
 
 Misses (a customer with a problem ends `clear` or `understanding_gap`): 5.
 - U07-hi: tier `understanding_gap`
@@ -66,8 +66,8 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 | clear | clear | 36 |
 | flag_for_review | clear | 1 |
 | flag_for_review | incomplete | 8 |
-| flag_for_review | refer | 79 |
-| flag_for_review | understanding_gap | 12 |
+| flag_for_review | refer | 75 |
+| flag_for_review | understanding_gap | 16 |
 | unclear_needs_human | incomplete | 8 |
 
 ## Extraction accuracy per field

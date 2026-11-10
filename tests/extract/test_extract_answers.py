@@ -592,15 +592,25 @@ def test_a_denial_survives_a_re_asked_recall():
     transcript, llm = build([first, again, *BASE[1:]])
     run = run_text(transcript, record(), llm)
     assert run.extraction.raw.recall.denial.quote == "कुछ नहीं लिया, बस लोन।"
+    # The customer names insurance at the kind question, so the denial is retracted.
+    assert "recall_not_named" in [f.reason.value for f in run.result.all_flags()]
+    assert run.result.tier is Tier.understanding_gap
+
+
+def test_a_denial_stands_when_the_customer_later_calls_it_an_fd():
+    first = recall_row("कुछ नहीं लिया, बस लोन।", took_nothing=True)
+    fd = kind_row("एफ़डी है।", status="stated", kind="deposit", clauses=[1])
+    transcript, llm = build(swap(swap(BASE, None, first), "kind", fd))
+    run = run_text(transcript, record(), llm)
     assert "recall_denied" in [f.reason.value for f in run.result.all_flags()]
     assert run.result.tier is Tier.refer
 
 
-def test_a_denial_stays_a_referral_after_the_customer_names_the_kind():
-    """Verifier iter2 case 12: the rest of the call is informed."""
+def test_a_denial_is_retracted_when_the_customer_names_the_kind():
+    """Verifier iter2 case 12, under the coordinator's rule: the rest of the call is informed."""
     transcript, llm = build(swap(BASE, None, recall_row("कुछ नहीं लिया, बस लोन।", took_nothing=True)))
     run = run_text(transcript, record(), llm)
-    assert run.result.tier is Tier.refer
+    assert run.result.tier is Tier.understanding_gap
 
 
 def test_a_denial_next_to_a_named_item_is_not_kept():

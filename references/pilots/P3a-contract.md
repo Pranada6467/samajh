@@ -39,7 +39,14 @@ Changed 2026-11-10 after the iteration-2 verifier (additive):
   `cover_differs_confirmed` (refer) once the customer confirmed a read-back of that figure, and
   `cover_differs_unconfirmed` (incomplete) until then. Hedged or approximate stays `cover_differs`
   (understanding_gap); "I don't know" stays `cover_dont_know`. Term and window are unchanged.
-- `recall_denied` is refer whatever the customer says afterwards, including naming the product.
+- `recall_denied` is refer while the denial stands (coordinator decision, second round). If the
+  customer then names this product themselves as the kind on record (a later recall reply, or the
+  kind question), the denial is retracted: `recall_not_named` (understanding_gap), quote = the
+  denial, `also` = the naming. Another kind, "I don't know" or nothing asked: it stands.
+- A stated answer whose reply takes it back in a later clause ("…, ऐसा तो नहीं था", "नहीं नहीं",
+  "मतलब वो नहीं", "galat bola", "actually no") is `Unclear(no_usable_answer)`; with a different
+  answer after the retraction it is also an `answers_conflict` (two clause quotes from the one
+  reply). Read by code over the whole reply (`samajh.rules.normalise.retraction`).
 - A confirmed range wider than `MAX_RANGE_RATIO` (2) times its low end never passes: a
   `not_comparable` gap on premium or cover.
 

@@ -307,16 +307,28 @@ def test_denying_any_product_in_recall_is_a_high_flag_quoting_the_denial(kind):
     assert result.tier is Tier.refer
 
 
-def test_a_denial_stays_a_referral_when_the_kind_on_record_is_named_afterwards():
-    """Verifier iter2 case 12."""
-    result = run(recall=denied())
+def test_a_denial_is_retracted_when_the_customer_names_the_kind_on_record_at_the_kind_question():
+    """Coordinator decision 2026-11-10: the denial does not stand; both quotes are kept."""
+    result = run(recall=denied(), belief_changes={"kind": said(KindClaim.insurance, "bima hai", 9)})
     flag = one_flag(result, RuleId.recall)
-    assert (flag.reason, flag.severity, flag.tier) == (R.recall_denied, HIGH, Tier.refer)
+    assert (flag.reason, flag.tier) == (R.recall_not_named, Tier.understanding_gap)
+    assert flag.quote == DENIAL.quote and [e.quote for e in flag.also] == ["bima hai"]
 
 
-def test_a_denial_stays_a_referral_even_when_a_later_recall_reply_names_the_product():
+def test_a_denial_is_retracted_when_a_later_recall_reply_names_the_product():
     result = run(recall=OpenRecall(asked=True, items=(named(P1),), denial=DENIAL))
-    assert one_flag(result, RuleId.recall).reason is R.recall_denied
+    flag = one_flag(result, RuleId.recall)
+    assert flag.reason is R.recall_not_named
+    assert named(P1).evidence in flag.also  # the recall item (the baseline kind answer may follow)
+
+
+@pytest.mark.parametrize(
+    "kind", [said(KindClaim.deposit), dont_know(), NotAsked()], ids=["names_another_kind", "dont_know", "not_asked"]
+)
+def test_a_denial_stands_and_is_a_referral_unless_the_customer_names_the_kind_on_record(kind):
+    result = run(recall=denied(), belief_changes={"kind": kind})
+    flag = next(f for f in result.all_flags() if f.rule_id is RuleId.recall)
+    assert (flag.reason, flag.severity, flag.tier) == (R.recall_denied, HIGH, Tier.refer)
 
 
 # --- payment frequency ------------------------------------------------------------

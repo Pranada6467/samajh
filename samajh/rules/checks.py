@@ -449,14 +449,25 @@ def cancel_window(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
 
 def recall(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     """A customer who said they took nothing, while the record holds this product, is a referral
-    whatever they say afterwards: naming it later, or at the kind question, does not undo it."""
+    while the denial stands (coordinator decision 2026-11-10). It is retracted only when the
+    customer then names this product themselves, as the kind on record: in a later recall reply
+    or at the kind question. Then the finding is `recall_not_named`, with the denial as the quote
+    and the naming in `also`. Naming another kind, "I don't know", or nothing asked: it stands."""
     if not beliefs.recall.asked:
         return (_gap(rule, p.id, GapReason.not_asked),)
     expected = "customer names this product when asked what they took with the loan"
     denial = beliefs.recall.denial
-    if denial is not None:
+    named = [i.evidence for i in _matched(p, beliefs)]
+    answer = beliefs.for_product(p.id).kind
+    if isinstance(answer, Stated) and answer.value is KIND_ON_RECORD[p.kind]:
+        named.append(answer.evidence)
+    if denial is not None and not named:
         heard = "customer said they took nothing with the loan"
         return (_flag(rule, p.id, Why.recall_denied, expected, heard, denial),)
+    if denial is not None:
+        heard = "customer first said they took nothing with the loan, then named this product"
+        flag = _flag(rule, p.id, Why.recall_not_named, expected, heard, denial)
+        return (flag.model_copy(update={"also": tuple(named)}),)
     if _matched(p, beliefs):
         return _passed(rule, p.id)
     heard = "customer did not name this product unprompted"

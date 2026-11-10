@@ -94,3 +94,9 @@ Frozen set, Hindi + Hinglish, from the cache (0 USD, 3,391 requests, all cache h
 - Informed, compliant record: referrals 0 of 18 → 0 of 18.
 - Informed, fault on the record: referrals 8 of 16 → 10 of 16. The two new ones are R01 (an informed customer who says "only the loan" in recall, then names the insurance): the denial rule of item 3.
 - Strict verdicts 143 of 144; fields 2,166 of 2,180 (was 2,163: U07-hi's cover reads again).
+
+## 7. Third pass (2026-11-10)
+
+- **Retraction in a later clause** (`samajh.rules.normalise.retraction`, Hindi, Hinglish, English): the stated value from the earlier clause is dropped (`no_usable_answer` gap); a different answer after the retraction adds an `answers_conflict`. Probe cases 9 and 10 were `clear`, now `incomplete`. A "नहीं" that opens the reply, or that is part of the answer, is not a retraction.
+- **Denial retracted by naming**: `recall_denied` (refer) only while the denial stands; naming the product as the kind on record later makes it `recall_not_named` with both quotes. Probe cases 11 and 12 now end `understanding_gap`: in both the customer names insurance at the kind question, which is the record's kind. A later FD, "don't know" or no question keeps it `refer` (tests in `tests/core/test_rules_triage.py`).
+- Frozen set, Hindi + Hinglish, from the cache: problem misses 2 of 38 calls (1 of 19 base cases); informed on a compliant record 0 of 18 referred; informed with a record fault 8 of 16 referred (R01 is back to `understanding_gap`). Verdicts 143 of 144, fields 2,166 of 2,180: the retraction rule changed no frozen call.

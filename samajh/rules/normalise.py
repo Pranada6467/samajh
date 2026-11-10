@@ -175,6 +175,40 @@ def widen(reply: str, span: str) -> str:
     return span
 
 
+# Words that take back what was said earlier in the same reply. Hindi, Hinglish and English only.
+# Past tense on purpose: "ऐसा नहीं है" ("it is not like that") usually agrees with what came before.
+_L = "[\\w\u0900-\u0963\u0966-\u0dff]"
+_RETRACTION = re.compile(
+    rf"(?<!{_L})(?:"
+    r"ऐसा\s+(?:तो\s+)?नहीं\s+(?:था|थी|हुआ)|नहीं\W+नहीं|मतलब\s+(?:वो|वह)\s+नहीं|(?:वो|वह)\s+नहीं\s+था"
+    r"|ग\u093c?लत\s+(?:बोला|बोल\s+दिया|कहा)|सॉरी"
+    r"|aisa\s+(?:to\s+)?nahi?n?\s+(?:tha|thi|hua)|nahi?n?\W+nahi?n?\b|matlab\s+(?:wo|woh|vo|voh)\s+nahi?n?"
+    r"|galat\s+(?:bola|bol\s+diya|kaha)|actually\s+no|no\s+wait|not\s+that|sorry"
+    rf")(?!{_L})",
+    re.IGNORECASE,
+)
+
+
+def retraction(reply: str) -> tuple[str, str | None] | None:
+    """(what was said before, the correction after) when a later clause takes the answer back.
+
+    "यह बीमा है, ऐसा तो नहीं था" -> ("यह बीमा है", None); "बीमा है, नहीं नहीं, एफ़डी है" ->
+    ("बीमा है", "नहीं नहीं, एफ़डी है"). None when no clause after the first one retracts: a "नहीं"
+    that opens the reply, or one that is part of the answer, is not a retraction. Both parts are
+    whole clauses of the reply.
+    """
+    for match in _RETRACTION.finditer(reply):
+        ends = [m.end() for m in CLAUSE_END.finditer(reply, 0, match.start())]
+        if not ends or not _norm(reply[: ends[-1]]):
+            continue  # nothing said before it in an earlier clause
+        cut = ends[-1]
+        before = reply[:cut].rstrip(" ,.;।!?…").strip()
+        after = reply[cut:].strip(" ,.;।!?…")
+        corrected = _norm(reply[match.end() :])
+        return before, (after if corrected else None)
+    return None
+
+
 def _rupees(text: str, exact: bool) -> int | None:
     result = parse_amount(text, exact=exact)
     return result.rupees if isinstance(result, Parsed) else None
@@ -326,15 +360,34 @@ def _product_beliefs(
     asked: frozenset[_Asks],
     tenure: int | None,
 ) -> ProductBeliefs:
+    taken_back: dict[Question, AnswerConflict] = {}
+
+    def kept(answer: Answer, question: Question, read_back: bool) -> Answer:
+        """A stated answer whose reply takes it back in a later clause is unusable; with a
+        different answer after the retraction it is also a conflict (code reads the reply, not the
+        model's span)."""
+        if not isinstance(answer, Stated) or answer.evidence.turn_id not in replies:
+            return answer
+        found = retraction(replies[answer.evidence.turn_id].text)
+        if found is None:
+            return answer
+        before, after = found
+        if after is not None and not read_back:
+            turn = answer.evidence.turn_id
+            answers = (Evidence(quote=before, turn_id=turn), Evidence(quote=after, turn_id=turn))
+            taken_back.setdefault(question, AnswerConflict(question=question, answers=answers))
+        return Unclear(reason=GapReason.no_usable_answer, evidence=answer.evidence)
+
     def ground(answer: Answer, question: Question, read_back: bool = False) -> Answer:
         asks = (raw.product_id, question, read_back)
-        return _ground(answer, frozenset({asks}), asks in asked, replies, ungrounded)
+        return _ground(kept(answer, question, read_back), frozenset({asks}), asks in asked, replies, ungrounded)
 
     def amount(answer: Answer[str], readback: Answer[bool], question: Question) -> tuple[Answer, Answer]:
         """An amount and the reply to its read-back: the premium, or the cover. The amount may also
         come from a correction made in reply to the read-back."""
         own, again = (raw.product_id, question, False), (raw.product_id, question, True)
-        figure = _read_amount(_ground(answer, frozenset({own, again}), own in asked, replies, ungrounded), replies)
+        grounded = _ground(kept(answer, question, False), frozenset({own, again}), own in asked, replies, ungrounded)
+        figure = _read_amount(grounded, replies)
         readback = ground(readback, question, read_back=True)
         return _confirm(figure, readback, replies)
 
@@ -348,26 +401,33 @@ def _product_beliefs(
         else:
             ungrounded.append(claim.evidence)
 
+    answers = {
+        "kind": ground(raw.kind, Question.kind),
+        "payment_source": ground(raw.payment_source, Question.payment_source),
+        "required_for_loan": ground(raw.required_for_loan, Question.required_for_loan),
+        "provider_choice_offered": ground(raw.provider_choice_offered, Question.provider_choice),
+        "cancel_allowed": ground(raw.cancel_allowed, Question.cancel_window),
+        "consent_given": ground(raw.consent_given, Question.consent),
+        "consent_method": ground(raw.consent_method, Question.consent),
+        "feature_probe": ground(raw.feature_probe, Question.features),
+        "payment_frequency": ground(raw.payment_frequency, Question.payment_frequency),
+        "term_months": _read_term(ground(raw.term, Question.term), tenure, replies),
+        "cancel_window_days": _read(ground(raw.cancel_window, Question.cancel_window), _days, replies),
+    }
+    # After every answer is grounded: a retraction found on the way adds its conflict here.
+    conflicts = _conflicts(
+        raw.model_copy(update={"conflicts": (*raw.conflicts, *taken_back.values())}), ungrounded, replies
+    )
     return ProductBeliefs(
         product_id=raw.product_id,
-        kind=ground(raw.kind, Question.kind),
         premium_readback=readback,
-        payment_source=ground(raw.payment_source, Question.payment_source),
-        required_for_loan=ground(raw.required_for_loan, Question.required_for_loan),
-        provider_choice_offered=ground(raw.provider_choice_offered, Question.provider_choice),
-        cancel_allowed=ground(raw.cancel_allowed, Question.cancel_window),
-        consent_given=ground(raw.consent_given, Question.consent),
-        consent_method=ground(raw.consent_method, Question.consent),
-        feature_probe=ground(raw.feature_probe, Question.features),
-        payment_frequency=ground(raw.payment_frequency, Question.payment_frequency),
         volunteered_claims=tuple(claims),
-        conflicts=_conflicts(raw, ungrounded, replies),
+        conflicts=conflicts,
         premium_inr=premium,
         cover_readback=cover_readback,
         cover_inr=cover,
-        term_months=_read_term(ground(raw.term, Question.term), tenure, replies),
-        cancel_window_days=_read(ground(raw.cancel_window, Question.cancel_window), _days, replies),
         ungrounded=tuple(ungrounded),
+        **answers,
     )
 
 

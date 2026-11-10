@@ -949,7 +949,7 @@ def test_a_grounded_denial_in_recall_is_a_referral():
     beliefs = to_beliefs(extraction, record(), call)
     assert beliefs.recall.denial == Evidence(**said)
     reasons = [f.reason.value for f in judge(extraction, call, record()).all_flags()]
-    assert reasons == ["recall_denied"]  # naming it later, at the kind question, does not undo it
+    assert reasons == ["recall_not_named"]  # named at the kind question: the denial is retracted
     unnamed = raw(recall={"asked": True, "answer": said, "items": [], "denial": said}, kind=dont_know("यह बीमा है", 4))
     result = judge(unnamed, call)
     assert "recall_denied" in [f.reason.value for f in result.all_flags()]
@@ -1026,3 +1026,39 @@ def test_an_earlier_reply_kept_with_an_answer_must_be_in_the_call():
     beliefs = to_beliefs(extraction, record(), transcript())
     assert beliefs.for_product("P1").kind.also == ()
     assert Evidence(quote="पता नहीं", turn_id=4) in beliefs.for_product("P1").ungrounded
+
+
+# --- a later clause that takes the answer back (verifier iter2 cases 9 and 10) -----------
+
+
+@pytest.mark.parametrize(
+    ("turn", "field", "reply", "value", "rule"),
+    [
+        (4, "kind", "यह बीमा है, ऐसा तो नहीं था।", "insurance", RuleId.kind),
+        (6, "premium", "बावन हज़ार रुपये, ऐसा तो नहीं था।", "बावन हज़ार", RuleId.premium),
+        (10, "payment_source", "लोन की रकम से कटे थे, मतलब वो नहीं।", "from_loan", RuleId.loan_funded),
+        (4, "kind", "bima hai, galat bola.", "insurance", RuleId.kind),
+        (4, "kind", "यह बीमा है, पक्का, आपने पूछा तो, actually no.", "insurance", RuleId.kind),  # two clauses later
+        (6, "premium", "बावन हज़ार रुपये, उतना ही था, ऐसा नहीं था।", "बावन हज़ार", RuleId.premium),
+    ],
+)
+def test_an_answer_taken_back_in_a_later_clause_is_a_gap_never_a_pass(turn, field, reply, value, rule):
+    result = judge(raw(**{field: stated(value, reply, turn)}), swap({turn: reply}))
+    assert (rule, GapReason.no_usable_answer) in product_gaps(result)
+    assert result.verdict is not CLEAR
+
+
+def test_a_retraction_followed_by_another_answer_is_a_conflict():
+    reply = "यह बीमा है, नहीं नहीं, एफ़डी है।"
+    result = judge(raw(kind=stated("deposit", reply, 4)), swap({4: reply}))
+    conflict = [f for f in result.all_flags() if f.reason.value == "answers_conflict"]
+    assert conflict and conflict[0].rule_id is RuleId.kind
+    assert result.tier.value == "refer"
+
+
+@pytest.mark.parametrize(
+    "reply",
+    ["नहीं नहीं, यह बीमा है।", "यह बीमा है, एफ़डी नहीं है।", "यह बीमा है, पैसा वापस नहीं मिलता।"],
+)
+def test_a_negation_that_is_part_of_the_answer_is_not_a_retraction(reply):
+    assert judge(raw(kind=stated("insurance", reply, 4)), swap({4: reply})).verdict is CLEAR
