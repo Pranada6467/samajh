@@ -42,21 +42,25 @@ LINES: dict[str, LineSpec] = {
     "disclosure.who": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
     "disclosure.not_sales": LineSpec(CallStep.disclosure),
     "disclosure.recording": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
-    "disclosure.rights": LineSpec(CallStep.disclosure),
-    "disclosure.verify": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
-    "disclosure.never_ask": LineSpec(CallStep.disclosure),
     "disclosure.go_ahead": LineSpec(CallStep.disclosure),
     "disclosure.reask": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
+    "disclosure.never_ask": LineSpec(CallStep.second_check),  # said with the birth-year question
+    "disclosure.rights": LineSpec(CallStep.context),  # said with the first mention of the loan
+    "verify.before_loan": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
+    "verify.after_loan": LineSpec(CallStep.context, slots=frozenset({"lender"})),
     "second_check.ask": LineSpec(CallStep.second_check),
     "second_check.reask": LineSpec(CallStep.second_check),
     "context.loan": LineSpec(CallStep.context, slots=frozenset({"lender"})),
     "open_recall.ask": LineSpec(CallStep.open_recall),
     "open_recall.reask": LineSpec(CallStep.open_recall),
+    "open_recall.nothing": LineSpec(CallStep.open_recall),
     "teach_back.intro": LineSpec(CallStep.teach_back),
     "teach_back.intro_nth": LineSpec(CallStep.teach_back, slots=_ORDINAL),
     **_question("kind", Question.kind),
     **_question("premium", Question.premium),
+    "premium.say_again": LineSpec(CallStep.teach_back, Question.premium),
     **_question("payment_source", Question.payment_source),
+    **_question("payment_frequency", Question.payment_frequency),
     **_question("required_for_loan", Question.required_for_loan),
     **_question("provider_choice", Question.provider_choice),
     **_question("cover", Question.cover),
@@ -65,19 +69,26 @@ LINES: dict[str, LineSpec] = {
     **_question("features", Question.features),
     "consent.ask": LineSpec(CallStep.consent_check, Question.consent),
     "consent.reask": LineSpec(CallStep.consent_check, Question.consent),
-    "read_back.intro_nth": LineSpec(CallStep.read_back, slots=_ORDINAL),
     "read_back.confirm": LineSpec(CallStep.read_back, Question.premium, _AMOUNT),
+    "read_back.confirm_about": LineSpec(CallStep.read_back, Question.premium, frozenset({"amount_words"})),
+    "read_back.cover_confirm": LineSpec(CallStep.read_back, Question.cover, _AMOUNT),
     "read_back.reconfirm": LineSpec(CallStep.read_back, Question.premium, _AMOUNT),
     "read_back.restate": LineSpec(CallStep.read_back, Question.premium),
     "bridge.moving_on": LineSpec(CallStep.teach_back),
     "stop_check.decline": LineSpec(CallStep.close),
     "stop_check.human": LineSpec(CallStep.close),
+    "callback.when": LineSpec(CallStep.close),
+    "end.third_party": LineSpec(CallStep.close, slots=frozenset({"first_name"})),
     "end.neutral": LineSpec(CallStep.close),
     "end.check_failed": LineSpec(CallStep.close, slots=frozenset({"lender"})),
     "end.declined": LineSpec(CallStep.close),
     "end.human": LineSpec(CallStep.close),
+    "end.call_back": LineSpec(CallStep.close),
+    "end.language": LineSpec(CallStep.close),
+    "end.no_response": LineSpec(CallStep.close),
     "close.thanks": LineSpec(CallStep.close),
     "close.may_call_back": LineSpec(CallStep.close),
+    "close.verify": LineSpec(CallStep.close, slots=frozenset({"lender"})),
     "close.bye": LineSpec(CallStep.close),
 }
 
@@ -87,6 +98,7 @@ PRODUCT_QUESTIONS: tuple[Question, ...] = (
     Question.kind,
     Question.premium,
     Question.payment_source,
+    Question.payment_frequency,
     Question.required_for_loan,
     Question.provider_choice,
     Question.cover,
@@ -108,6 +120,7 @@ class PromptPack:
     language: Language
     review: str  # who has read the wording; "not human-reviewed" for Tamil and Kannada
     ordinals: tuple[str, ...]
+    range_word: str  # joins the two ends of a spoken range in a read-back ("पचास हज़ार से बावन हज़ार")
     templates: dict[str, str]
     design: dict[str, str]  # key -> the DESIGN.md paragraph the line implements
 
@@ -157,4 +170,7 @@ def load_prompts(language: Language, directory: Path = PROMPT_DIR) -> PromptPack
     review = data.get("review")
     if not isinstance(review, str) or not review.strip():
         raise ValueError(f"{path.name}: `review` must say who has read the wording")
-    return PromptPack(language, review, ordinals, templates, design)
+    range_word = data.get("range_word")
+    if not isinstance(range_word, str) or not range_word.strip() or slots_of(range_word):
+        raise ValueError(f"{path.name}: `range_word` must be a plain word")
+    return PromptPack(language, review, ordinals, range_word.strip(), templates, design)

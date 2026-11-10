@@ -9,7 +9,15 @@ import tomllib
 import pytest
 from dialogue_kit import LANGUAGES
 
-from samajh.amounts import NOT_HUMAN_REVIEWED, Parsed, format_inr, parse_amount, spoken_amount
+from samajh.amounts import (
+    NOT_HUMAN_REVIEWED,
+    Approximate,
+    Parsed,
+    format_inr,
+    parse_amount,
+    parse_approx_amount,
+    spoken_amount,
+)
 from samajh.dialogue import LINES, load_prompts
 from samajh.dialogue.lint import lint_line
 from samajh.dialogue.prompts import PROMPT_DIR, slots_of
@@ -42,7 +50,9 @@ def test_templates_use_only_their_declared_slots(language):
         if not key.startswith("read_back."):
             assert slots_of(template) <= allowed_anywhere, key
     amount_lines = {key for key, spec in LINES.items() if "amount_words" in spec.slots}
-    assert amount_lines == {"read_back.confirm", "read_back.reconfirm"}
+    assert amount_lines == {
+        "read_back.confirm", "read_back.confirm_about", "read_back.cover_confirm", "read_back.reconfirm"
+    }  # fmt: skip
 
 
 @pytest.mark.parametrize("language", LANGUAGES)
@@ -81,13 +91,25 @@ def test_a_read_back_line_parses_back_to_the_amount_it_reads(language):
         rng.randrange(100_000, 50_000_000) for _ in range(700)
     }
     amounts |= {k * 1000 for k in range(1, 200)} | {k * 100 for k in range(1, 100)} | {52000, 55000, 175000}
-    for key in ("read_back.confirm", "read_back.reconfirm"):
+    for key in ("read_back.confirm", "read_back.cover_confirm", "read_back.reconfirm"):
         for amount in amounts:
             text = pack.render(
                 key, amount_words=spoken_amount(amount, language), amount_digits=format_inr(amount)
             )
             heard = parse_amount(text)
             assert isinstance(heard, Parsed) and heard.rupees == amount, text
+
+
+@pytest.mark.parametrize("language", [Language.hi, Language.hi_en])
+def test_an_approximate_read_back_parses_back_to_the_range_it_reads(language):
+    """P3a contract §4: the rules read an approximate read-back with `parse_approx_amount`."""
+    pack = load_prompts(language)
+    for low, high in [(50_000, 52_000), (50_000, 50_000), (1_500, 2_000), (2_00_000, 2_50_000), (900, 900)]:
+        words = spoken_amount(high, language)
+        if low != high:
+            words = f"{spoken_amount(low, language)} {pack.range_word} {words}"
+        heard = parse_approx_amount(pack.render("read_back.confirm_about", amount_words=words))
+        assert isinstance(heard, Approximate) and (heard.low, heard.high) == (low, high), words
 
 
 BAD_LINES = [
@@ -141,7 +163,7 @@ def test_a_prompt_file_with_banned_wording_or_a_wrong_slot_does_not_load(tmp_pat
         load_prompts.cache_clear()
 
     for change, error in [
-        (("आपके हिसाब से वो चीज़ क्या है?", "क्या वो चीज़ बीमा है?"), "banned wording"),
+        (("वो क्या है? अपने शब्दों में बताइए।", "क्या वो चीज़ बीमा है?"), "banned wording"),
         (("उसके लिए आपने कितने पैसे दिए?", "{first_name}, उसके लिए आपने कितने पैसे दिए?"), "uses slots"),
         (("उसके लिए आपने कितने पैसे दिए?", "क्या आपने {amount_digits} दिए?"), "uses slots"),
         (('[lines."close.bye"]', '[lines."close.extra"]'), "missing lines"),

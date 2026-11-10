@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import time
 from types import SimpleNamespace
 
 import pytest
 from dialogue_kit import CUSTOMERS, play, record
 
 from samajh.clients.errors import CapExceeded, LlmOutputInvalid, RateLimited, TransportError
-from samajh.dialogue import UNCLEAR, Expecting, Intent, Outcome
+from samajh.dialogue import Expecting, Intent, Outcome
 from samajh.dialogue.llm_fallback import FALLBACK_MODEL, LlmFallbackInterpreter
 from samajh.types import Language
 
@@ -37,6 +38,7 @@ def read(llm: FakeLlm, text: str, expecting: Expecting, question: str = "आप�
     "text, expecting",
     [
         ("हाँ जी, बोल रहा हूँ", Expecting.identity),
+        ("जी बताइए, क्या बात है", Expecting.identity),
         ("मुझे बात नहीं करनी", Expecting.open),
         ("किसी इंसान से बात कराइए", Expecting.open),
         ("पता नहीं", Expecting.open),
@@ -49,6 +51,7 @@ def read(llm: FakeLlm, text: str, expecting: Expecting, question: str = "आप�
     ],
 )
 def test_the_llm_is_not_called_when_the_rules_settle_the_turn(text, expecting):
+    """Including every reply at the first-name question: who is believed is never an LLM's guess."""
     llm = FakeLlm("decline")
     read(llm, text, expecting)
     assert llm.calls == []
@@ -69,7 +72,11 @@ def test_the_llm_sees_the_question_and_the_reply_and_nothing_else():
         # the LLM never ends a call: its stop labels become a question to the customer
         ("decline", Expecting.open, Intent.maybe_decline),
         ("wants_human", Expecting.told, Intent.maybe_human),
-        ("decline", Expecting.identity, Intent.maybe_decline),
+        ("decline", Expecting.identity, Intent.said),  # never asked at the first-name question
+        ("yes", Expecting.identity, Intent.said),
+        ("asks_who", Expecting.go_ahead, Intent.asks_who),
+        ("asks_who", Expecting.open, Intent.asks_who),
+        ("off_topic", Expecting.either_or, Intent.off_topic),
         ("no", Expecting.go_ahead, Intent.maybe_decline),
         ("yes", Expecting.stop_check, Intent.yes),
         ("wrong_person", Expecting.identity, Intent.said),
@@ -117,12 +124,11 @@ def test_the_fallback_names_its_own_model_and_leaves_room_for_the_reply():
         (RateLimited(status=429, code=None, message="slow down"), "slow down"),
     ],
 )  # fmt: skip
-def test_a_failed_llm_call_is_read_as_unclear_and_the_reason_is_logged(error, reason, caplog):
+def test_a_failed_llm_call_keeps_the_word_lists_reading_marked_degraded(error, reason, caplog):
     llm = FakeLlm(error=error)
     with caplog.at_level("WARNING", logger="samajh.dialogue.llm_fallback"):
         heard = read(llm, "वो तो बावन हज़ार ले गए", Expecting.open)
-    assert heard.intent is Intent.unclear and heard.amount_inr == 52000  # the rules' figure is kept
-    assert Intent.unclear in UNCLEAR  # so every position asks once more
+    assert heard.intent is Intent.said and heard.degraded and heard.amount_inr == 52000
     assert len(llm.calls) == 1
     (logged,) = caplog.records
     assert type(error).__name__ in logged.getMessage() and reason in logged.getMessage()
@@ -130,55 +136,62 @@ def test_a_failed_llm_call_is_read_as_unclear_and_the_reason_is_logged(error, re
     assert "बावन" not in logged.getMessage()  # the log names the failure, not what the customer said
 
 
-def test_a_failed_llm_call_gets_the_question_asked_once_more_and_never_ends_the_call():
+class SlowLlm(FakeLlm):
+    def complete(self, schema, messages, **kwargs):
+        time.sleep(1.0)
+        return super().complete(schema, messages, **kwargs)
+
+
+def test_a_late_llm_call_is_cut_off_at_the_timeout():
+    llm = SlowLlm("decline")
+    began = time.monotonic()
+    heard = LlmFallbackInterpreter(llm, timeout_s=0.1).interpret(
+        "आज बहुत गर्मी है", language=HI, expecting=Expecting.open, question="वो क्या है?"
+    )
+    assert time.monotonic() - began < 0.5
+    assert heard.intent is Intent.said and heard.degraded
+
+
+def test_a_failed_llm_call_never_makes_the_bot_ask_again_and_the_turn_is_listed():
     customer = CUSTOMERS[HI]
     down = LlmFallbackInterpreter(FakeLlm(error=TransportError("down")))
-    replies = [*customer.happy()[:3], "आज बहुत गर्मी है", "आज बहुत गर्मी है"]
+    replies = [*customer.happy()[:3], "आज बहुत गर्मी है"]
     call = play(record(), HI, replies, interpreter=down)
-    assert call.end is None
-    assert call.keys[-5:] == (
-        "open_recall.ask",
-        "open_recall.reask",
-        "bridge.moving_on",
-        "teach_back.intro",
-        "kind.ask",
-    )
-    assert [u.step.value for u in call.state.unresolved] == ["open_recall"]
+    assert call.end is None and call.keys[-2:] == ("teach_back.intro", "kind.ask")
+    assert call.state.degraded_turns == (call.state.turns[-3].id,)
 
 
 def test_an_off_topic_label_gets_the_question_asked_once_more():
     customer = CUSTOMERS[HI]
     replies = [*customer.happy()[:3], "आज बहुत गर्मी है", "आज बहुत गर्मी है"]
     call = play(record(), HI, replies, interpreter=LlmFallbackInterpreter(FakeLlm("off_topic")))
-    assert call.keys[-5:] == (
-        "open_recall.ask",
-        "open_recall.reask",
-        "bridge.moving_on",
-        "teach_back.intro",
-        "kind.ask",
-    )
+    assert call.keys[-3:] == ("open_recall.ask", "open_recall.reask", "open_recall.nothing")
     assert [u.step.value for u in call.state.unresolved] == ["open_recall"]
 
 
 @pytest.mark.parametrize(
-    "label, check, outcome",
+    "label, check, outcome, ends, goes_on",
     [
-        ("decline", "stop_check.decline", Outcome.declined),
-        ("wants_human", "stop_check.human", Outcome.human_requested),
+        ("decline", "stop_check.decline", Outcome.declined, "नहीं", "हाँ, पूछिए"),
+        ("wants_human", "stop_check.human", Outcome.human_requested, "हाँ", "नहीं नहीं"),
     ],
 )
-def test_a_stop_label_from_the_llm_is_checked_with_the_customer_before_the_call_ends(label, check, outcome):
+def test_a_stop_label_from_the_llm_is_checked_with_the_customer_before_the_call_ends(
+    label, check, outcome, ends, goes_on
+):
     customer = CUSTOMERS[HI]
     said = "देखिए अभी मैं दुकान पर हूँ, ग्राहक खड़े हैं"
     opening = customer.happy()[:3]
-
-    stops = play(
-        record(), HI, [*opening, said, customer.confirm], interpreter=LlmFallbackInterpreter(FakeLlm(label))
-    )
+    stops = play(record(), HI, [*opening, said, ends], interpreter=LlmFallbackInterpreter(FakeLlm(label)))
     assert stops.keys[-2] == check and stops.end.outcome is outcome
-
-    goes_on = play(
-        record(), HI, [*opening, said, "नहीं नहीं"], interpreter=LlmFallbackInterpreter(FakeLlm(label))
+    resumed = play(
+        record(), HI, [*opening, said, goes_on], interpreter=LlmFallbackInterpreter(FakeLlm(label))
     )
-    assert goes_on.end is None
-    assert goes_on.keys[-2:] == (check, "open_recall.reask")
+    assert resumed.end is None
+    assert resumed.keys[-2:] == (check, "open_recall.reask")
+
+
+def test_an_answer_label_clears_a_weak_stop_signal_from_the_word_lists():
+    text = "मैंने कहा था मुझे इंटरेस्ट नहीं है"  # a first-person account: the word lists only suspect a stop
+    assert read(FakeLlm("answer"), text, Expecting.open).intent is Intent.said
+    assert read(FakeLlm("decline"), text, Expecting.open).intent is Intent.maybe_decline

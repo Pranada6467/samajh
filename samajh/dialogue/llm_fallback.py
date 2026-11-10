@@ -4,13 +4,16 @@ Kept apart from `interpret` so the call core imports no network client.
 
 The model is named here, not taken from the client's default: that default is chosen for extraction
 after the call and can change, and this call sits inside a live turn where every second is silence
-on the line. A failed call is never passed over in silence: the turn is read as `Intent.unclear`,
-so the bot asks once more, and the reason is logged.
+on the line. The call is cut off after `timeout_s` of wall-clock time. A failed or late call is never
+passed over in silence: the turn keeps the word lists' reading, is marked `degraded` (the machine
+lists it in `CallState.degraded_turns`), and the reason is logged.
 """
 
 from __future__ import annotations
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
@@ -27,6 +30,11 @@ FALLBACK_MODEL = "mistralai/mistral-small-3.2-24b-instruct"
 # The reply is one short JSON object. The room above that is for models that spend output tokens
 # on reasoning first: with 30, openai/gpt-6-luna came back cut off and empty.
 MAX_TOKENS = 512
+# Wall-clock limit on one LLM call inside a live turn (W9 report §6: the client's own default is 60 s
+# with retries). Past it the turn is read by the word lists alone.
+TIMEOUT_S = 2.5
+# Calls that outlive their turn finish here in the background; their answer is dropped.
+_POOL = ThreadPoolExecutor(max_workers=4, thread_name_prefix="samajh-llm-fallback")
 
 
 class _Label(StrEnum):
@@ -37,6 +45,7 @@ class _Label(StrEnum):
     wants_human = "wants_human"
     dont_know = "dont_know"
     asks_repeat = "asks_repeat"
+    asks_who = "asks_who"
     off_topic = "off_topic"
     answer = "answer"
 
@@ -64,6 +73,7 @@ the assistant. Having spoken to a manager or agent in the past is NOT this.
 - yes / no: a plain yes or no to a yes-or-no question.
 - dont_know: the customer says they do not know or do not remember.
 - asks_repeat: the customer did not hear or understand the question and wants it said again.
+- asks_who: the customer asks who is calling, from where, or whether this call is genuine or a fraud.
 - off_topic: the reply is plainly about something else altogether (the weather, chores, shopping, \
 words spoken to someone else in the room) and says nothing about the loan or the thing bought.
 
@@ -73,19 +83,20 @@ When unsure, choose answer."""
 # No entry ends a call on the LLM's word alone. Its "decline" and "wants_human" (and its "no" to
 # "may we go on?") become a question to the customer, and it cannot say "wrong person" at all:
 # on the held-out replies it took "I spoke to the branch manager about it" for a request for a
-# human and "what is this about?" for a wrong number.
+# human and "what is this about?" for a wrong number. It is never asked at the first-name question.
 _OPEN = {
     _Label.dont_know: Intent.dont_know,
     _Label.asks_repeat: Intent.asks_repeat,
+    _Label.asks_who: Intent.asks_who,
     _Label.off_topic: Intent.off_topic,
 }
 _STOP = {_Label.decline: Intent.maybe_decline, _Label.wants_human: Intent.maybe_human}
 _READS_AS: dict[Expecting, dict[_Label, Intent]] = {
-    Expecting.identity: {_Label.yes: Intent.yes, _Label.asks_repeat: Intent.asks_repeat} | _STOP,
     Expecting.go_ahead: {
         _Label.yes: Intent.yes,
         _Label.no: Intent.maybe_decline,
         _Label.asks_repeat: Intent.asks_repeat,
+        _Label.asks_who: Intent.asks_who,
     }
     | _STOP,
     Expecting.stop_check: {_Label.yes: Intent.yes, _Label.no: Intent.no} | _STOP,
@@ -99,20 +110,21 @@ _READS_AS: dict[Expecting, dict[_Label, Intent]] = {
     Expecting.birth_year: {_Label.asks_repeat: Intent.asks_repeat} | _STOP,
     Expecting.open: _OPEN | _STOP,
     Expecting.told: _OPEN | _STOP,
+    Expecting.either_or: _OPEN | _STOP,
     Expecting.amount: _OPEN | _STOP,
 }
+# A weak stop signal from the word lists (a short "leave it", a refusal inside a first-person account)
+# is put to the LLM too: "answer" clears it, a stop label keeps the one question to the customer.
+_WEAK = frozenset({Intent.maybe_decline, Intent.maybe_human})
 
 
 class LlmFallbackInterpreter:
-    """The rules first; an LLM only for a turn the rules left as plain `said`.
+    """The rules first; an LLM only for a turn the rules left as plain `said` or as a weak stop signal.
 
     The LLM picks a label and nothing else: amounts and years always come from the rules, and no
-    label ends a call by itself (see `_READS_AS`). If the LLM call fails, the turn is read as
-    `Intent.unclear` (the question is asked once more, as after any unclear reply) and the reason
-    is logged as a warning. The log line names the error and the model, never the customer's words.
-
-    How long a failing call can hold a turn is set by the client passed in (its timeout and retry
-    policy), not here.
+    label ends a call by itself (see `_READS_AS`). If the LLM call fails or takes longer than
+    `timeout_s`, the turn keeps the rules' reading, marked `degraded`, and the reason is logged as a
+    warning. The log line names the error and the model, never the customer's words.
     """
 
     def __init__(
@@ -122,33 +134,50 @@ class LlmFallbackInterpreter:
         *,
         model: str = FALLBACK_MODEL,
         max_tokens: int = MAX_TOKENS,
+        timeout_s: float | None = TIMEOUT_S,
     ) -> None:
         self._llm = llm
         self._rules = rules if rules is not None else RuleInterpreter()
         self._model = model
         self._max_tokens = max_tokens
+        self._timeout_s = timeout_s
 
     def interpret(
         self, text: str, *, language: Language, expecting: Expecting, question: str
     ) -> Interpretation:
         first = self._rules.interpret(text, language=language, expecting=expecting, question=question)
+        table = _READS_AS.get(expecting)
         settled = first.amount_inr is not None and expecting in (Expecting.amount, Expecting.confirmation)
-        if first.intent is not Intent.said or settled or first.year is not None:
+        if table is None or settled or first.year is not None:
+            return first
+        if first.intent is not Intent.said and first.intent not in _WEAK:
             return first
         messages = [
             Message(role="system", content=_SYSTEM),
             Message(role="user", content=f"Question: {question}\nReply: {text}"),
         ]
         try:
-            reply = self._llm.complete(_Verdict, messages, model=self._model, max_tokens=self._max_tokens)
-        except ClientError as error:
+            label = self._label(messages)
+        except (ClientError, FutureTimeout) as error:
             log.warning(
-                "LLM fallback failed, turn read as unclear: %s from %s: %s",
+                "LLM fallback failed, turn read by the word lists: %s from %s: %s",
                 type(error).__name__,
                 self._model,
                 error,
             )
-            return first.model_copy(update={"intent": Intent.unclear})
-        label = reply.value.label
-        intent = _READS_AS[expecting].get(label)
+            return first.model_copy(update={"degraded": True})
+        if first.intent in _WEAK:
+            if label is _Label.answer:
+                return first.model_copy(update={"intent": Intent.said})
+            return first
+        intent = table.get(label)
         return first if intent is None else first.model_copy(update={"intent": intent})
+
+    def _label(self, messages: list[Message]) -> _Label:
+        def ask() -> _Label:
+            reply = self._llm.complete(_Verdict, messages, model=self._model, max_tokens=self._max_tokens)
+            return reply.value.label
+
+        if self._timeout_s is None:
+            return ask()
+        return _POOL.submit(ask).result(timeout=self._timeout_s)

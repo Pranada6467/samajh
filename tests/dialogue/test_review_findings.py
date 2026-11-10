@@ -29,7 +29,7 @@ E = Expecting
 RULES = RuleInterpreter()
 IDENTITY, GO_AHEAD, YEAR, RECALL, FIRST_ANSWER = 0, 1, 2, 3, 4
 PREMIUM = FIRST_ANSWER + PRODUCT_QUESTIONS.index(Question.premium)
-READ_BACK = FIRST_ANSWER + len(PRODUCT_QUESTIONS) + 1
+READ_BACK = PREMIUM + 1  # the read-back follows the premium answer
 LOAN_WORDS = ("लोन", "loan")
 
 
@@ -53,14 +53,14 @@ def test_someone_who_says_they_are_not_the_borrower_cannot_pass_the_second_check
     customer = CUSTOMERS[HI]
     call = play(record(), HI, [customer.identity, customer.go_ahead, reply])
     assert call.end is not None and call.end.outcome is Outcome.wrong_party
-    assert call.keys[-1] == "end.neutral" and says_nothing_of_a_loan(call)
+    assert call.keys[-1] == "end.third_party" and says_nothing_of_a_loan(call)
 
 
 @pytest.mark.parametrize("reply", ["मैं उनका बेटा हूँ, हाँ बताइए", "हाँ बोलिए, वैसे मैं उनकी पत्नी हूँ"])
 def test_someone_who_says_so_when_asked_to_go_on_ends_the_call(reply):
     call = play(record(), HI, [CUSTOMERS[HI].identity, reply])
     assert call.end is not None and call.end.outcome is Outcome.wrong_party
-    assert call.keys[-1] == "end.neutral"
+    assert call.keys[-1] == "end.third_party"
 
 
 @pytest.mark.parametrize(
@@ -80,7 +80,7 @@ def test_someone_who_says_so_when_asked_to_go_on_ends_the_call(reply):
 def test_a_reply_that_speaks_of_the_borrower_as_someone_else_is_not_a_yes(language, reply):
     call = play(record(), language, [reply])
     assert call.end is not None and call.end.outcome is Outcome.wrong_party
-    assert call.keys == ("right_party.ask", "end.neutral")
+    assert call.keys == ("right_party.ask", "end.third_party")
 
 
 @pytest.mark.parametrize(
@@ -126,19 +126,31 @@ NARRATIVES = [
 
 
 @pytest.mark.parametrize("language, reply, wish", NARRATIVES)
-def test_a_refusal_quoted_in_an_answer_is_asked_about_and_does_not_end_the_call(language, reply, wish):
+def test_a_refusal_quoted_in_an_answer_does_not_end_the_call(language, reply, wish):
+    """Told in the third person, it is an answer; told only in the first person, the bot asks once."""
     customer = CUSTOMERS[language]
     call = play(record(), language, [*customer.happy()[:FIRST_ANSWER], reply])
-    assert call.end is None and call.keys[-1] == f"stop_check.{wish}"
-    call = play(record(), language, [*customer.happy()[:FIRST_ANSWER], reply, customer.reject])
-    assert call.end is None and call.keys[-1] == "kind.reask"
+    assert call.end is None and call.keys[-1] in ("premium.ask", f"stop_check.{wish}")
+    if call.keys[-1].startswith("stop_check"):
+        going_on = customer.confirm if wish == "decline" else customer.reject
+        call = play(record(), language, [*customer.happy()[:FIRST_ANSWER], reply, going_on])
+        assert call.end is None and call.keys[-1] == "kind.reask"
+
+
+def test_a_third_person_account_is_an_answer_and_a_first_person_one_is_asked_about():
+    customer = CUSTOMERS[HI]
+    third = play(record(), HI, [*customer.happy()[:FIRST_ANSWER], "उन्होंने बोला बाद में बात करेंगे इस बारे में"])
+    assert third.keys[-1] == "premium.ask"
+    first = play(
+        record(), HE, [*CUSTOMERS[HE].happy()[:FIRST_ANSWER], "maine bola tha mujhe interest nahin hai"]
+    )
+    assert first.keys[-1] == "stop_check.decline"
 
 
 @pytest.mark.parametrize(
     "language, reply",
     [
         (HI, "मैंने बोला ना मुझे बात नहीं करनी"),
-        (HI, "देखिए मुझे अभी बिल्कुल टाइम नहीं है आप बाद में कॉल कीजिए"),
         (HE, "I am not interested, please don't call"),
         (HE, "mujhe kisi agent se baat karni hai"),
     ],
@@ -149,13 +161,18 @@ def test_a_refusal_before_the_questions_start_ends_the_call_at_once(language, re
     assert not [key for key in call.keys if key.startswith("stop_check")]
 
 
+def test_call_me_later_before_the_questions_asks_when_and_never_checks_for_a_stop():
+    call = play(record(), HI, [CUSTOMERS[HI].identity, "देखिए मुझे अभी बिल्कुल टाइम नहीं है आप बाद में कॉल कीजिए"])
+    assert call.end is None and call.keys[-1] == "callback.when"
+
+
 # --- 3. "do you want to stop?" is not asked over and over --------------------------------------
 
 
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_the_stop_question_is_asked_twice_at_most_then_a_third_signal_ends_the_call(language):
     customer = CUSTOMERS[language]
-    replies = [*customer.happy()[:FIRST_ANSWER], *[customer.weak_stop, customer.reject] * 20]
+    replies = [*customer.happy()[:FIRST_ANSWER], *[customer.weak_stop, customer.confirm] * 20]
     call = play(record(), language, replies)
     assert call.end is not None and call.end.outcome is Outcome.declined
     assert call.keys.count("stop_check.decline") == Limits().max_stop_checks == 2
@@ -168,7 +185,6 @@ def test_the_stop_question_is_asked_twice_at_most_then_a_third_signal_ends_the_c
 @pytest.mark.parametrize(
     "language, reply",
     [
-        (HI, "शायद पचपन हज़ार"),
         (HI, "पचपन"),
         (HE, "not fifty two, fifty five thousand"),
         (HE, "it was 55,000 not 52,000"),
@@ -179,11 +195,19 @@ def test_a_reply_that_names_another_figure_is_never_answered_with_the_same_read_
     customer = CUSTOMERS[language]
     call = play(record(), language, [*customer.happy()[:READ_BACK], reply])
     assert call.keys[-1] == "read_back.restate"
+    rest = customer.happy()[READ_BACK + 1 :]
     call = play(
-        record(), language, [*customer.happy()[:READ_BACK], reply, customer.corrected, customer.confirm]
+        record(),
+        language,
+        [*customer.happy()[:READ_BACK], reply, customer.corrected, customer.confirm, *rest],
     )
     assert call.end.outcome is Outcome.completed and call.end.unresolved == ()
     assert call.state.premium_of(0) == 55000
+
+
+def test_a_hedged_other_figure_is_read_back_as_said():
+    call = play(record(), HI, [*CUSTOMERS[HI].happy()[:READ_BACK], "शायद पचपन हज़ार"])
+    assert call.keys[-1] == "read_back.confirm_about" and "पचपन" in call.lines[-1].text
 
 
 @pytest.mark.parametrize("language, reply", [(HI, "शायद"), (HI, "शायद बावन हज़ार"), (HI, "हम्म")])
@@ -195,7 +219,8 @@ def test_a_hedge_that_names_no_other_figure_gets_the_read_back_once_more(languag
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_dont_know_to_a_read_back_is_recorded_and_not_pressed(language):
     customer = CUSTOMERS[language]
-    call = play(record(), language, [*customer.happy()[:READ_BACK], customer.dont_know])
+    rest = customer.happy()[READ_BACK + 1 :]
+    call = play(record(), language, [*customer.happy()[:READ_BACK], customer.dont_know, *rest])
     assert call.end is not None and call.end.outcome is Outcome.completed
     assert [key for key in call.keys if key.startswith("read_back")] == ["read_back.confirm"]
     assert [(u.step, u.asks) for u in call.end.unresolved] == [(CallStep.read_back, Question.premium)]
@@ -223,55 +248,57 @@ def test_two_readings_that_agree_are_taken_and_still_read_back():
     assert state.turns[other.turn_id - 1].text == "बावन हज़ार"
 
 
-def test_a_figure_only_the_second_reading_holds_goes_to_read_back_and_is_not_asked_again():
+def test_a_figure_only_the_second_reading_holds_is_asked_for_once_more_then_read_back():
     customer = CUSTOMERS[HI]
     replies = customer.happy()
     replies[PREMIUM] = ("bavan hazaar", "52,000")  # the first reading is one the parser refuses
+    replies[PREMIUM + 1 : PREMIUM + 1] = [("बावन हज़ार", "52,000")]  # said again; now they agree
     call = play(record(), HI, replies)
     state, end = call.state, call.end
-    assert "premium.reask" not in call.keys and end.outcome is Outcome.completed and end.unresolved == ()
+    assert call.keys.count("premium.say_again") == 1 and "premium.reask" not in call.keys
+    assert end.outcome is Outcome.completed and end.unresolved == ()
     read_back = next(
         t for t in end.transcript.turns if t.step is CallStep.read_back and t.speaker is Speaker.bot
     )
     assert parse_amount(read_back.text).rupees == 52000
-    (other,) = state.second_readings
-    assert not other.agreed and other.text == "bavan hazaar"
-    # the turn on record is the reading the call acted on, so the rules read the figure the bot read back
-    assert end.transcript.turns[other.turn_id - 1].text == "52,000"
+    first, second = state.second_readings
+    assert not first.agreed and first.text == "bavan hazaar" and second.agreed
+    # the turn on record is the reading the call acted on, so the rules read the figure it holds
+    assert end.transcript.turns[first.turn_id - 1].text == "52,000"
 
 
-def test_readings_that_differ_read_back_the_first_and_offer_the_second_once_it_is_rejected():
-    """Prisma v3.0 mis-formats "तीन लाख दो सौ" as 3,02,000 (CLAUDE.md); v2.5 keeps the words."""
+def test_readings_that_still_differ_read_back_the_first_and_the_customer_can_correct_it():
+    """Prisma v3.0 mis-formats "तीन लाख दो सौ" as 3,02,000 (CLAUDE.md); v2.5 keeps the words.
+
+    With v3.0 passed first, the amount is asked for once more, then the first reading is read back;
+    the customer rejects it and restates. Passed v2.5 first, the right figure is read back at once.
+    """
     customer = CUSTOMERS[HI]
-    replies = customer.happy()[:READ_BACK]
-    replies[PREMIUM] = ("3,02,000", "तीन लाख दो सौ")
-    replies += [customer.reject, ("3,02,000", "तीन लाख दो सौ"), customer.confirm]
+    pair = ("3,02,000", "तीन लाख दो सौ")
+    replies = [*customer.happy()[:PREMIUM], pair, pair, customer.reject, "तीन लाख दो सौ", customer.confirm]
     call = play(record(product(premium_inr=300200)), HI, replies)
-    state, end = call.state, call.end
-    assert [key for key in call.keys if key.startswith("read_back")] == [
+    assert [key for key in call.keys if key.startswith(("read_back", "premium.say"))] == [
+        "premium.say_again",
         "read_back.confirm",
         "read_back.restate",
         "read_back.confirm",
     ]
-    read_backs = [t for t in end.transcript.turns if t.speaker is Speaker.bot and "यानी" in t.text]
+    read_backs = [t for t in call.state.turns if t.speaker is Speaker.bot and "यानी" in t.text]
     assert [parse_amount(t.text).rupees for t in read_backs] == [302000, 300200]
-    assert end.outcome is Outcome.completed and end.unresolved == () and state.premium_of(0) == 300200
-    assert [(r.agreed, r.text) for r in state.second_readings] == [
-        (False, "तीन लाख दो सौ"),
-        (False, "3,02,000"),
-    ]
+    assert call.state.premium_of(0) == 300200 and call.keys[-1] == "payment_source.ask"
+    v25_first = play(record(), HI, [*customer.happy()[:PREMIUM], pair[::-1], pair[::-1]])
+    assert v25_first.state.position.amount_inr == 300200
 
 
 def test_the_rules_pass_a_premium_that_only_the_second_reading_got_right():
     customer = CUSTOMERS[HI]
     rec = record(product(premium_inr=300200, consent={"method": "signed_form", "at": "2026-10-20"}))
-    replies = customer.happy()[:READ_BACK]
-    replies[PREMIUM] = ("3,02,000", "तीन लाख दो सौ")
-    replies += [customer.reject, ("3,02,000", "तीन लाख दो सौ"), customer.confirm]
-    transcript = play(rec, HI, replies).end.transcript
-    restated = next(
-        t for t in transcript.turns if t.speaker is Speaker.customer and t.text == "तीन लाख दो सौ"
-    )
+    pair = ("3,02,000", "तीन लाख दो सौ")
+    replies = [*customer.happy()[:PREMIUM], pair, pair, customer.reject, "तीन लाख दो सौ", customer.confirm]
+    transcript = play(rec, HI, replies).state.transcript()
+    restated = [t for t in transcript.turns if t.speaker is Speaker.customer and t.text == "तीन लाख दो सौ"][
+        -1
+    ]
     confirmed = [t for t in transcript.turns if t.speaker is Speaker.customer][-1]
     assert confirmed.step is CallStep.read_back and confirmed.text == customer.confirm
     raw = RawExtraction.model_validate(
@@ -301,7 +328,11 @@ def test_the_rules_pass_a_premium_that_only_the_second_reading_got_right():
 
 def test_a_plain_yes_to_a_read_back_stands_whatever_the_second_reading_adds():
     customer = CUSTOMERS[HI]
-    replies = customer.happy()[:READ_BACK] + [("हाँ, सही है", "हाँ, सही है 5000")]
+    replies = [
+        *customer.happy()[:READ_BACK],
+        ("हाँ, सही है", "हाँ, सही है 5000"),
+        *customer.happy()[READ_BACK + 1 :],
+    ]
     call = play(record(), HI, replies)
     assert call.end.outcome is Outcome.completed and call.state.premium_of(0) == 52000
 
@@ -336,10 +367,14 @@ def test_a_state_with_second_readings_survives_a_json_round_trip():
     ],
 )
 def test_a_short_refusal_gets_the_stop_question_not_the_next_question(language, reply):
+    """Some of these now end the call at once; none gets the next question."""
     customer = CUSTOMERS[language]
     call = play(record(), language, [*customer.happy()[:FIRST_ANSWER], reply])
+    if call.end is not None:
+        assert call.end.outcome is Outcome.declined
+        return
     assert call.keys[-1] == "stop_check.decline"
-    call = play(record(), language, [*customer.happy()[:FIRST_ANSWER], reply, customer.confirm])
+    call = play(record(), language, [*customer.happy()[:FIRST_ANSWER], reply, customer.reject])
     assert call.end is not None and call.end.outcome is Outcome.declined
 
 

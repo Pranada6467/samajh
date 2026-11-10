@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from samajh.dialogue import (
+    PRODUCT_QUESTIONS,
     BotUtterance,
     CallState,
     EndOfCall,
@@ -14,7 +15,7 @@ from samajh.dialogue import (
     start,
     step,
 )
-from samajh.types import Language, LoanRecord
+from samajh.types import Language, LoanRecord, Question
 
 LENDER = "Udaharan Bank"
 LANGUAGES = tuple(Language)
@@ -77,17 +78,15 @@ class Customer:
     dont_know: str
     weak_stop: str  # might mean "stop the call": the bot asks before it ends
 
+    def product_replies(self) -> list[str]:
+        """One product's answers, with the read-back confirmed straight after the premium."""
+        k = PRODUCT_QUESTIONS.index(Question.premium) + 1
+        return [*self.answers[:k], self.confirm, *self.answers[k:]]
+
     def happy(self, products: int = 1) -> list[str]:
         """Replies for a whole call: every question answered once, every read-back confirmed."""
-        return [
-            self.identity,
-            self.go_ahead,
-            self.year,
-            self.recall,
-            *(self.answers * products),
-            self.consent,
-            *([self.confirm] * products),
-        ]
+        return [self.identity, self.go_ahead, self.year, self.recall, *(self.product_replies() * products),
+                self.consent]  # fmt: skip
 
 
 CUSTOMERS: dict[Language, Customer] = {
@@ -100,6 +99,7 @@ CUSTOMERS: dict[Language, Customer] = {
             "एफडी है",
             "बावन हज़ार",
             "लोन में से कट गया",
+            "एक बार दिया था बस",
             "हाँ, बोला था ज़रूरी है",
             "कुछ नहीं बताया",
             "पैसा सुरक्षित रहेगा",
@@ -130,6 +130,7 @@ CUSTOMERS: dict[Language, Customer] = {
             "FD है",
             "fifty two thousand",
             "loan amount से cut हो गया",
+            "one time payment थी",
             "हाँ, बोला था compulsory है",
             "कुछ नहीं बताया",
             "पैसा safe रहेगा",
@@ -160,6 +161,7 @@ CUSTOMERS: dict[Language, Customer] = {
             "அது எஃப்டி",
             "ஐம்பத்திரண்டாயிரம்",
             "கடன் தொகையிலிருந்து பிடித்தார்கள்",
+            "ஒரு முறை தான் கொடுத்தேன்",
             "ஆமா, கட்டாயம் என்று சொன்னார்கள்",
             "எதுவும் சொல்லவில்லை",
             "பணம் பாதுகாப்பாக இருக்கும்",
@@ -190,6 +192,7 @@ CUSTOMERS: dict[Language, Customer] = {
             "ಅದು ಎಫ್‌ಡಿ",
             "ಐವತ್ತೆರಡು ಸಾವಿರ",
             "ಸಾಲದ ಮೊತ್ತದಿಂದ ಕಡಿತ ಮಾಡಿದರು",
+            "ಒಂದೇ ಸಲ ಕೊಟ್ಟೆ",
             "ಹೌದು, ಕಡ್ಡಾಯ ಅಂತ ಹೇಳಿದರು",
             "ಏನೂ ಹೇಳಲಿಲ್ಲ",
             "ಹಣ ಸುರಕ್ಷಿತವಾಗಿರುತ್ತದೆ",

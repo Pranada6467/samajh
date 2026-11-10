@@ -20,6 +20,7 @@ from pathlib import Path
 from samajh.dialogue.interpret import RuleInterpreter, TurnInterpreter
 from samajh.dialogue.machine import (
     AtBirthYear,
+    AtCallbackTime,
     AtConsent,
     AtGoAhead,
     AtIdentity,
@@ -121,17 +122,23 @@ def effect_of(language: Language, question_key: str, text: str, interpreter: Tur
             Outcome.declined: "decline",
             Outcome.human_requested: "human",
             Outcome.wrong_party: "wrong_party",
+            # call v2: a request for a later call ends the call too; the set's labels predate it
+            Outcome.call_back_later: "decline",
         }
         return ends.get(
             said.outcome, "confirmed" if said.outcome is Outcome.completed else said.outcome.value
         )
     now = after.position
+    if isinstance(now, AtCallbackTime):  # "call me later" with no time: the bot asks when, then ends
+        return "decline"
     if isinstance(now, AtStopCheck):
         return f"check_{now.wish}"
     if isinstance(now, AtRestate):
         return "rejected"
     if isinstance(before, AtReadBack) and isinstance(now, AtReadBack):
         return "reask" if now.amount_inr == before.amount_inr else "corrected"
+    if isinstance(before, AtReadBack):  # the read-back now leads on to the next question, not the close
+        return "answered" if getattr(now, "reasked", False) else "confirmed"
     if type(now) is type(before) and getattr(now, "reasked", False):
         return "reask"
     return {AtIdentity: "confirmed", AtGoAhead: "go"}.get(type(before), "answered")

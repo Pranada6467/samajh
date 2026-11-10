@@ -61,3 +61,34 @@ call_seconds(transcript, *, words_per_second=2.5) -> float   # samajh.dialogue: 
 ## 4. Open
 
 - `parse_approx_amount` (P3a contract §4) is not in `samajh.amounts` yet. Until it is, an approximate amount is re-asked as today; the range read-back is built against the contract and switched on when the function exists.
+
+## 5. As built (P2 builder, end of package; this section wins over §1 to §4 where they differ)
+
+- **Line keys.** Added: `open_recall.nothing`, `payment_frequency.ask`, `payment_frequency.reask`,
+  `premium.say_again`, `read_back.confirm_about`, `read_back.cover_confirm`, `verify.before_loan`,
+  `verify.after_loan`, `callback.when`, `end.call_back`, `end.language`, `end.third_party`,
+  `end.no_response`, `close.verify`. Removed: `disclosure.verify`, `read_back.intro_nth`.
+  **Not added** (promised in §3.7): `close.notice`: the written-notice pointer stays in
+  `disclosure.recording`, before the go-ahead. Kept but moved: `disclosure.never_ask` (said with the
+  birth-year question, `step=second_check`), `disclosure.rights` (said with `context.loan`,
+  `step=context`). Every surviving key's wording changed in Hindi and Hinglish; re-voice all of them.
+- **Slots.** `read_back.confirm_about` takes `amount_words` only (a range is spoken as
+  "<low> <range_word> <high>", `range_word` from the prompt file). Every other slot rule is unchanged.
+- **`stop_check.decline` now asks "shall we carry on?"**: yes goes back to the question, no ends the
+  call as `declined`. `stop_check.human` is unchanged (yes ends the call as `human_requested`).
+- **Two readings.** `Turn.text` is the reading the call acted on: when only the second reading holds
+  a figure, the two are swapped and `SecondReading.text` keeps the other. On the premium answer a
+  disagreement (or one reading without a figure) gets `premium.say_again` once per product; if the
+  readings still differ on that second try, the **first** reading's figure is read back and the
+  customer confirms or corrects it. So the order still matters on the second try: pass **v2.5 first**
+  on amount turns (verifier H4: 2 wrong figures held in 240 against 16 with v3.0 first).
+  `premium.say_again` is tagged `asks=premium` like the first asking, so the extractor sees both.
+- **Cover read-back** (coordinator decision): a cover figure the customer states is read back with
+  `read_back.cover_confirm` (`step=read_back`, `asks=` `samajh.dialogue.machine.cover_read_back_question()`,
+  today `Question.cover` until P3a names a value) and goes through the same confirm/correct loop;
+  `read_back.reconfirm` and `read_back.restate` carry the asked item in `asks`. A range is not read
+  back for cover.
+- **Expecting** gained `either_or` (required-for-loan and payment-frequency questions) and
+  `callback_time`. `AtRecallFollowUp`, `AtSayAgain`, `AtCallbackTime` are new positions.
+- **`LlmFallbackInterpreter`** is also consulted on a weak stop signal from the word lists ("answer"
+  clears it). It is never consulted at the first-name question.

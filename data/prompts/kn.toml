@@ -4,21 +4,20 @@
 # {amount_digits}, which carry the figure the customer said, never a figure from the record.
 # `design` names the DESIGN.md paragraph the line implements.
 
+# Call v2 (iteration 2, P2): new lines are plain best-effort wording, not human-reviewed.
+
 language = "kn"
 review = "not human-reviewed"
 ordinals = ["ಮೊದಲ", "ಎರಡನೇ", "ಮೂರನೇ", "ನಾಲ್ಕನೇ", "ಐದನೇ"]
+range_word = "ರಿಂದ"
 
 [lines."right_party.ask"]
 design = "§5 step 1: confirm the first name; nothing else is said yet"
 text = "ನಮಸ್ಕಾರ. ನಾನು {first_name} ಅವರ ಜೊತೆ ಮಾತನಾಡುತ್ತಿದ್ದೇನೆಯೇ?"
 
 [lines."right_party.reask"]
-design = "§5 step 1 and the one-re-ask rule (§5, A20): no lender, no loan"
-text = "ಇದು ಒಂದು ಸ್ವಯಂಚಾಲಿತ ಕರೆ. {first_name} ಅವರು ಲೈನಿನಲ್ಲಿ ಇದ್ದಾರೆಯೇ?"
-
-[lines."end.neutral"]
-design = "§5 step 1: wrong person or no confirmation, the bot ends and says nothing about a loan"
-text = "ಪರವಾಗಿಲ್ಲ. ತೊಂದರೆ ಕೊಟ್ಟಿದ್ದಕ್ಕೆ ಕ್ಷಮಿಸಿ. ನಮಸ್ಕಾರ."
+design = "§5 step 1 and the one-re-ask rule: asks whether the speaker is the borrower, not whether he is there; no lender, no loan"
+text = "ಇದು {first_name} ಅವರಿಗಾಗಿ ಒಂದು ಸ್ವಯಂಚಾಲಿತ ಗ್ರಾಹಕ ಸೇವಾ ಕರೆ. ನೀವೇ {first_name} ಅವರಾ?"
 
 [lines."disclosure.who"]
 design = "§5 step 2: the bank's name, customer-care team, automated AI assistant (recommended: FREE-AI report para 4.4.54)"
@@ -32,18 +31,6 @@ text = "ಇದು ಮಾರಾಟದ ಕರೆ ಅಲ್ಲ. ಈ ಕರೆಯಲ
 design = "§5 step 2: feedback purpose, recorded to keep an accurate record (our choice), written notice (DPDP Act sections 5 and 6)"
 text = "ಇದು ನಿಮ್ಮ ಅಭಿಪ್ರಾಯ ಕೇಳಲು ಮಾತ್ರ ಮಾಡಿರುವ ಕರೆ. ನಿಮ್ಮ ಅಭಿಪ್ರಾಯ ಸರಿಯಾಗಿ ದಾಖಲಾಗಲಿ ಎಂದು ಈ ಕರೆಯನ್ನು ರೆಕಾರ್ಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ. ನಿಮ್ಮ ಮಾಹಿತಿಯನ್ನು ಹೇಗೆ ಬಳಸಲಾಗುತ್ತದೆ ಎಂಬುದು {lender} ಲಿಖಿತ ಸೂಚನೆಯಲ್ಲಿ ಇದೆ."
 
-[lines."disclosure.rights"]
-design = "§5 step 2: the customer can decline, stop at any time, or ask for a human"
-text = "ನೀವು ಬಯಸಿದರೆ ನಿರಾಕರಿಸಬಹುದು, ಯಾವಾಗ ಬೇಕಾದರೂ ಕರೆ ನಿಲ್ಲಿಸಬಹುದು, ಅಥವಾ ಒಬ್ಬ ಮನುಷ್ಯರ ಜೊತೆ ಮಾತನಾಡಬೇಕು ಎಂದು ಕೇಳಬಹುದು."
-
-[lines."disclosure.verify"]
-design = "§5 step 2: hang up and call the customer-care number on the papers to check the call is genuine (the loan is not named before step 4)"
-text = "ಈ ಕರೆ ನಿಜವೇ ಎಂದು ಪರಿಶೀಲಿಸಲು, ನೀವು ಫೋನ್ ಇಟ್ಟು, {lender} ದಾಖಲೆಗಳಲ್ಲಿ ಮುದ್ರಿಸಿರುವ ಗ್ರಾಹಕ ಸೇವಾ ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಬಹುದು."
-
-[lines."disclosure.never_ask"]
-design = "§5 step 2: the bot will never ask for an OTP, PIN, password or account number"
-text = "ಈ ಕರೆಯಲ್ಲಿ ನಿಮ್ಮಿಂದ ಒ-ಟಿ-ಪಿ, ಪಿನ್, ಪಾಸ್ವರ್ಡ್ ಅಥವಾ ಖಾತೆ ಸಂಖ್ಯೆಯನ್ನು ಎಂದಿಗೂ ಕೇಳುವುದಿಲ್ಲ."
-
 [lines."disclosure.go_ahead"]
 design = "§5 step 2: the customer can decline, so the bot asks before going on"
 text = "ಮುಂದುವರಿಯಬಹುದೇ?"
@@ -52,17 +39,29 @@ text = "ಮುಂದುವರಿಯಬಹುದೇ?"
 design = "§5 step 2 and the one-re-ask rule (§5, A20)"
 text = "ಇದು {lender} ಗ್ರಾಹಕ ಸೇವಾ ತಂಡದ ಸ್ವಯಂಚಾಲಿತ ಅಭಿಪ್ರಾಯ ಕರೆ, ಮಾರಾಟದ ಕರೆ ಅಲ್ಲ. ಮುಂದುವರಿಯಬಹುದೇ? ಹೌದು ಅಥವಾ ಇಲ್ಲ ಎಂದು ಹೇಳಿ."
 
+[lines."disclosure.never_ask"]
+design = "§5 step 2: the bot will never ask for an OTP, PIN, password or account number"
+text = "ಈ ಕರೆಯಲ್ಲಿ ನಿಮ್ಮಿಂದ ಒ-ಟಿ-ಪಿ, ಪಿನ್, ಪಾಸ್ವರ್ಡ್ ಅಥವಾ ಖಾತೆ ಸಂಖ್ಯೆಯನ್ನು ಎಂದಿಗೂ ಕೇಳುವುದಿಲ್ಲ."
+
+[lines."disclosure.rights"]
+design = "§5 step 2: the customer can decline, stop at any time, or ask for a human"
+text = "ನೀವು ಬಯಸಿದರೆ ನಿರಾಕರಿಸಬಹುದು, ಯಾವಾಗ ಬೇಕಾದರೂ ಕರೆ ನಿಲ್ಲಿಸಬಹುದು, ಅಥವಾ ಒಬ್ಬ ಮನುಷ್ಯರ ಜೊತೆ ಮಾತನಾಡಬೇಕು ಎಂದು ಕೇಳಬಹುದು."
+
+[lines."verify.before_loan"]
+design = "§5 step 2: how to check the call is genuine, on request before the loan is named; never names the loan"
+text = "ಈ ಕರೆ {lender} ಗ್ರಾಹಕ ಸೇವೆಯಿಂದ ಬಂದಿದೆ. ಅನುಮಾನವಿದ್ದರೆ, ಫೋನ್ ಇಟ್ಟು {lender} ಗ್ರಾಹಕ ಸೇವಾ ಸಂಖ್ಯೆಗೆ ನೀವೇ ಕರೆ ಮಾಡಿ ಕೇಳಿ. ನಾವು ಎಂದಿಗೂ ಒಟಿಪಿ ಅಥವಾ ಪಿನ್ ಕೇಳುವುದಿಲ್ಲ."
+
+[lines."verify.after_loan"]
+design = "§5 step 2: how to check the call is genuine, on request after the loan is named"
+text = "ಈ ಕರೆ {lender} ಗ್ರಾಹಕ ಸೇವೆಯಿಂದ ಬಂದಿದೆ. ಅನುಮಾನವಿದ್ದರೆ, ಫೋನ್ ಇಟ್ಟು ನಿಮ್ಮ ಸಾಲದ ದಾಖಲೆಗಳಲ್ಲಿ ಮುದ್ರಿಸಿರುವ ಗ್ರಾಹಕ ಸೇವಾ ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಿ. ನಾವು ಎಂದಿಗೂ ಒಟಿಪಿ ಅಥವಾ ಪಿನ್ ಕೇಳುವುದಿಲ್ಲ."
+
 [lines."second_check.ask"]
 design = "§5 step 3: one low-sensitivity fact, the year of birth; never account digits"
 text = "ಧನ್ಯವಾದ. ಖಚಿತಪಡಿಸಲು, ನೀವು ಹುಟ್ಟಿದ ವರ್ಷವನ್ನು ಮಾತ್ರ ಹೇಳಿ. ಪೂರ್ತಿ ದಿನಾಂಕ ಬೇಡ."
 
 [lines."second_check.reask"]
-design = "§5 step 3 and the one-re-ask rule; the same line whether the year was unclear or did not match"
-text = "ಕ್ಷಮಿಸಿ, ಸರಿಯಾಗಿ ಕೇಳಿಸಲಿಲ್ಲ. ನೀವು ಹುಟ್ಟಿದ ವರ್ಷವನ್ನು ಇನ್ನೊಮ್ಮೆ ಹೇಳಿ."
-
-[lines."end.check_failed"]
-design = "§5 step 3: the check did not pass, so the loan is never mentioned"
-text = "ಕ್ಷಮಿಸಿ, ಈಗ ಖಚಿತಪಡಿಸಲು ಆಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ಈ ಕರೆ ಇಲ್ಲಿಗೆ ಮುಗಿಯುತ್ತದೆ. ಬೇಕಿದ್ದರೆ ನೀವು {lender} ಗ್ರಾಹಕ ಸೇವೆಯನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು. ಧನ್ಯವಾದ."
+design = "§5 step 3 and the one-re-ask rule; the same line whether the year was unclear or did not match, and it claims neither"
+text = "ನೀವು ಹುಟ್ಟಿದ ವರ್ಷವನ್ನು ಮಾತ್ರ ಇನ್ನೊಮ್ಮೆ ಹೇಳಿ."
 
 [lines."context.loan"]
 design = "§5 step 4: only now does the bot mention the loan"
@@ -75,6 +74,10 @@ text = "ಸಾಲದ ಜೊತೆಗೆ ನೀವು ಬೇರೆ ಏನೇನ�
 [lines."open_recall.reask"]
 design = "§5 step 5 and the one-re-ask rule: simpler words, still no product named"
 text = "ಅಂದರೆ, ಸಾಲ ಪಡೆಯುವಾಗ ಅದರ ಜೊತೆ ಬೇರೆ ಏನಾದರೂ ನಿಮಗೆ ಕೊಟ್ಟಿದ್ದರೇ? ನೆನಪಿರುವುದನ್ನು ಹೇಳಿ."
+
+[lines."open_recall.nothing"]
+design = "§5 step 5: the customer said they took nothing; one neutral follow-up, then consent and close"
+text = "ಸರಿ. ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ, ಸಾಲ ಬಿಟ್ಟು ಬೇರೆ ಏನಾದರೂ ಬಗ್ಗೆ ಯಾರಾದರೂ ನಿಮ್ಮ ಜೊತೆ ಮಾತಾಡಿದ್ದರಾ?"
 
 [lines."teach_back.intro"]
 design = "§5 step 6: the product is referred to without naming what it is"
@@ -100,6 +103,10 @@ text = "ಅದಕ್ಕೆ ನೀವು ಎಷ್ಟು ಹಣ ಕೊಟ್ಟ�
 design = "§5 step 6 and the one-re-ask rule"
 text = "ಅಂದರೆ, ಆ ವಸ್ತುವಿನ ಮೊತ್ತ ಎಷ್ಟು? ನೆನಪಿರುವಷ್ಟು ಹೇಳಿ."
 
+[lines."premium.say_again"]
+design = "§6 two readings: they disagreed, so the customer is asked for the amount once more before any read-back"
+text = "ಮೊತ್ತವನ್ನು ಇನ್ನೊಮ್ಮೆ ಹೇಳಿ, ಸರಿಯಾಗಿ ಬರೆದುಕೊಳ್ಳಲು. ಎಷ್ಟು ಕೊಟ್ಟಿರಿ?"
+
 [lines."payment_source.ask"]
 design = "§5 step 6 'How was it paid?', asked open so neither source is suggested"
 text = "ಆ ಹಣವನ್ನು ಎಲ್ಲಿಂದ, ಹೇಗೆ ಕಟ್ಟಲಾಯಿತು?"
@@ -107,6 +114,14 @@ text = "ಆ ಹಣವನ್ನು ಎಲ್ಲಿಂದ, ಹೇಗೆ ಕಟ್�
 [lines."payment_source.reask"]
 design = "§5 step 6 and the one-re-ask rule"
 text = "ಅಂದರೆ, ಆ ವಸ್ತುವಿನ ಹಣವನ್ನು ನೀವು ಹೇಗೆ ಕಟ್ಟಿದಿರಿ?"
+
+[lines."payment_frequency.ask"]
+design = "P3a contract §3: one payment or more to come; both named, neither suggested"
+text = "ಈ ಹಣವನ್ನು ಒಂದೇ ಸಲ ಕೊಡಬೇಕಿತ್ತಾ, ಅಥವಾ ಮುಂದೆಯೂ ಕೊಡಬೇಕಾ?"
+
+[lines."payment_frequency.reask"]
+design = "P3a contract §3 and the one-re-ask rule"
+text = "ಅಂದರೆ, ಒಂದು ಸಲ ಕೊಟ್ಟಿರಾ, ಅಥವಾ ಮತ್ತೆ ಮತ್ತೆ ಕೊಡಬೇಕಾ?"
 
 [lines."required_for_loan.ask"]
 design = "§5 step 6 'Was it required for the loan?': both possibilities named, then what the customer was told"
@@ -164,12 +179,16 @@ text = "ಸಾಲ ಪಡೆಯುವಾಗ ನೀವು ಏನೇನು ತೆ�
 design = "§5 step 7 and the one-re-ask rule"
 text = "ಅಂದರೆ, ಯಾವುದಕ್ಕೆಲ್ಲ ನೀವು ಸರಿ ಎಂದಿರಿ, ಮತ್ತು ಆ ಸರಿಯನ್ನು ಯಾವ ರೀತಿಯಲ್ಲಿ ಹೇಳಿದಿರಿ?"
 
-[lines."read_back.intro_nth"]
-design = "§5 step 8, for a record with several products"
-text = "ಈಗ {ordinal} ವಸ್ತುವಿನ ಮೊತ್ತ."
-
 [lines."read_back.confirm"]
 design = "§5 step 8: the amount the customer said is read back in words and digits"
+text = "ನೀವು ಹೇಳಿದ ಮೊತ್ತ: {amount_words}, ಅಂದರೆ {amount_digits}. ಇದು ಸರಿಯೇ?"
+
+[lines."read_back.confirm_about"]
+design = "§5 step 8 for an amount said as 'about X' or 'X to Y': read back as said (P3a contract §4)"
+text = "ನೀವು ಹೇಳಿದ ಮೊತ್ತ ಸುಮಾರು {amount_words}. ಇದು ಸರಿಯೇ?"
+
+[lines."read_back.cover_confirm"]
+design = "coordinator decision (iteration 2): a cover figure the customer stated is read back and confirmed, like the premium; never the record's"
 text = "ನೀವು ಹೇಳಿದ ಮೊತ್ತ: {amount_words}, ಅಂದರೆ {amount_digits}. ಇದು ಸರಿಯೇ?"
 
 [lines."read_back.reconfirm"]
@@ -185,12 +204,28 @@ design = "§5: an answer still unclear after one re-ask is recorded and the call
 text = "ಪರವಾಗಿಲ್ಲ, ಮುಂದೆ ಹೋಗೋಣ."
 
 [lines."stop_check.decline"]
-design = "§5 step 2: the customer can stop at any time; a weak signal is checked with one question, never argued with"
-text = "ಈ ಕರೆಯನ್ನು ಇಲ್ಲಿಗೇ ನಿಲ್ಲಿಸಲು ಬಯಸುತ್ತೀರಾ?"
+design = "§5 step 2: a weak sign the customer wants to stop is checked with one question, never argued with"
+text = "ಮಾತು ಮುಂದುವರಿಸೋಣವೇ?"
 
 [lines."stop_check.human"]
 design = "§5 step 2: the customer can ask for a human; a weak signal is checked with one question"
 text = "ನಮ್ಮ ತಂಡದ ಒಬ್ಬರು ನಿಮ್ಮ ಜೊತೆ ಮಾತನಾಡಬೇಕು ಎಂದು ಬಯಸುತ್ತೀರಾ?"
+
+[lines."callback.when"]
+design = "§5 step 2: the customer can stop; one who asks for a later call is asked when, once"
+text = "ಸರಿ. ನಿಮಗೆ ಯಾವಾಗ ಕರೆ ಮಾಡಲಿ?"
+
+[lines."end.third_party"]
+design = "§5 step 1: someone who is not the borrower, or never says they are, hears only who the call was for"
+text = "ಇದು {first_name} ಅವರಿಗಾಗಿ ಗ್ರಾಹಕ ಸೇವಾ ಕರೆ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ. ಧನ್ಯವಾದ, ನಮಸ್ಕಾರ."
+
+[lines."end.neutral"]
+design = "§5 step 1: wrong person or no confirmation, the bot ends and says nothing about a loan"
+text = "ಪರವಾಗಿಲ್ಲ. ತೊಂದರೆ ಕೊಟ್ಟಿದ್ದಕ್ಕೆ ಕ್ಷಮಿಸಿ. ನಮಸ್ಕಾರ."
+
+[lines."end.check_failed"]
+design = "§5 step 3: the check did not pass, so the loan is never mentioned"
+text = "ಕ್ಷಮಿಸಿ, ಈಗ ಖಚಿತಪಡಿಸಲು ಆಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ಈ ಕರೆ ಇಲ್ಲಿಗೆ ಮುಗಿಯುತ್ತದೆ. ಬೇಕಿದ್ದರೆ ನೀವು {lender} ಗ್ರಾಹಕ ಸೇವೆಯನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು. ಧನ್ಯವಾದ."
 
 [lines."end.declined"]
 design = "§5 step 2: the customer can decline or stop at any time; no persuasion"
@@ -200,6 +235,18 @@ text = "ಸರಿ, ಪರವಾಗಿಲ್ಲ. ನಿಮ್ಮ ಸಮಯಕ್�
 design = "§5 step 2: the customer can ask for a human"
 text = "ಸರಿ. ಇದನ್ನು ಗುರುತು ಮಾಡಿಕೊಳ್ಳಲಾಗಿದೆ. ನಮ್ಮ ತಂಡದ ಒಬ್ಬರು ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತಾರೆ. ಧನ್ಯವಾದ, ನಮಸ್ಕಾರ."
 
+[lines."end.call_back"]
+design = "§5 step 2: the customer asked for another time; no time is promised"
+text = "ಸರಿ, ನಂತರ ಕರೆ ಮಾಡಲು ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ. ಧನ್ಯವಾದ, ನಮಸ್ಕಾರ."
+
+[lines."end.language"]
+design = "§5: the customer asked for another language; the call does not switch live"
+text = "ಸರಿ, ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಮತ್ತೆ ಕರೆ ಮಾಡಲು ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ. ಧನ್ಯವಾದ, ನಮಸ್ಕಾರ."
+
+[lines."end.no_response"]
+design = "§5: nothing heard twice in a row; the call ends and says nothing about a loan"
+text = "ಧ್ವನಿ ಕೇಳಿಸುತ್ತಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ. ನಮಸ್ಕಾರ."
+
 [lines."close.thanks"]
 design = "§5 step 9: thank you; no other product is mentioned"
 text = "ನಿಮ್ಮ ಸಮಯ ಮತ್ತು ಉತ್ತರಗಳಿಗೆ ಧನ್ಯವಾದ."
@@ -207,6 +254,10 @@ text = "ನಿಮ್ಮ ಸಮಯ ಮತ್ತು ಉತ್ತರಗಳಿಗೆ
 [lines."close.may_call_back"]
 design = "§5 step 9: the team may call back; no finding and no promise of money is stated"
 text = "ಅಗತ್ಯ ಬಿದ್ದರೆ ನಮ್ಮ ತಂಡ ನಿಮಗೆ ಮತ್ತೆ ಕರೆ ಮಾಡಬಹುದು."
+
+[lines."close.verify"]
+design = "§5 step 2, repeated at the close: how to check the call was genuine"
+text = "ಈ ಕರೆಯ ಬಗ್ಗೆ ಅನುಮಾನವಿದ್ದರೆ, ನಿಮ್ಮ ಸಾಲದ ದಾಖಲೆಗಳಲ್ಲಿರುವ {lender} ಗ್ರಾಹಕ ಸೇವಾ ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಬಹುದು."
 
 [lines."close.bye"]
 design = "§5 step 9"

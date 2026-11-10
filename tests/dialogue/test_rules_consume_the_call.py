@@ -105,7 +105,9 @@ def test_every_rule_finds_its_question_asked_and_its_answer_grounded():
 def test_a_premium_corrected_at_read_back_is_the_one_the_rules_compare():
     customer = CUSTOMERS[HI]
     rec = record(product(premium_inr=55000, consent=CONSENT))
-    replies = customer.happy()[:-1] + [customer.correction, customer.confirm]
+    k = customer.happy().index(customer.confirm)  # the read-back follows the premium answer
+    replies = customer.happy()
+    replies[k : k + 1] = [customer.correction, customer.confirm]
     transcript = play(rec, HI, replies).end.transcript
     raw = extraction(transcript, premium_words="पचपन हज़ार", premium_from_read_back=True)
     result = evaluate(rec, to_beliefs(raw, rec, transcript))

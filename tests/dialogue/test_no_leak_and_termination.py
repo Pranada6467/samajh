@@ -14,7 +14,7 @@ import unicodedata
 import pytest
 from dialogue_kit import CUSTOMERS, LANGUAGES, LENDER, play, product, record
 
-from samajh.amounts import Parsed, format_inr, parse_amount, spoken_amount
+from samajh.amounts import Approximate, Parsed, format_inr, parse_amount, parse_approx_amount, spoken_amount
 from samajh.dialogue import PRODUCT_QUESTIONS, Limits, Outcome
 from samajh.dialogue._lexicon import tokens
 from samajh.dialogue.lint import banned_in
@@ -50,8 +50,8 @@ RECORD_B = LoanRecord.model_validate(
     }
 )
 LOAN_WORDS = ("loan", "लोन", "ऋण", "कर्ज", "उधार", "கடன்", "ಸಾಲ", "emi", "किस्त", "gold", "गोल्ड", "सोना")
-# The one line that names secrets, to say they are never asked for. It is the same on every call.
-SECRETS_DENIED = "disclosure.never_ask"
+# The lines that name secrets, to say they are never asked for. Each is the same on every call.
+SECRETS_DENIED = {"disclosure.never_ask", "verify.before_loan", "verify.after_loan"}
 SEEDS = 200  # random customers per language; each is played against both records
 SALES_DENIED = {"disclosure.not_sales", "disclosure.reask"}
 
@@ -109,18 +109,24 @@ def assert_nothing_leaks(call, rec: LoanRecord) -> None:
             heard = parse_amount(turn.text)
             if isinstance(heard, Parsed):
                 said_by_customer.add(heard.rupees)
+            about = parse_approx_amount(turn.text)
+            if isinstance(about, Approximate):
+                said_by_customer |= {about.low, about.high}
             continue
         line = next(lines)
         assert line.text == turn.text
         words = tokens(line.text)
         if line.slots.keys() & {"amount_words", "amount_digits"}:
-            echoed = parse_amount(line.text)
-            assert isinstance(echoed, Parsed) and echoed.rupees in said_by_customer, line.text
+            echoed = parse_approx_amount(line.text)
+            if isinstance(echoed, Approximate):
+                assert {echoed.low, echoed.high} <= said_by_customer, line.text
+            else:
+                assert isinstance(echoed, Parsed) and echoed.rupees in said_by_customer, line.text
             continue
         assert not any(unicodedata.category(ch) == "Nd" for ch in line.text), line.text
         assert not [value for value in values if holds(words, value)], line.text
         named = {ban.name for ban, _ in banned_in(line.text)}
-        if line.key == SECRETS_DENIED:
+        if line.key in SECRETS_DENIED:
             assert all("secret" in name for name in named), line.text
         elif line.key in SALES_DENIED:
             assert named == {"sales talk"}, line.text
@@ -142,8 +148,8 @@ def assert_loan_is_private(call) -> None:
 def natural_bound(products: int, limits: Limits) -> int:
     """Most bot utterances a call can take without the turn budget: every question asked twice, every
     question interrupted by a stop-check each time, every read-back rejected, then the goodbye."""
-    opening, recall, consent = 6, 2, 2
-    questions = opening + recall + products * 2 * len(PRODUCT_QUESTIONS) + consent
+    opening, recall, consent, side = 6, 3, 2, 3  # side: two "who is this?" answers and a "when?"
+    questions = opening + recall + side + products * (2 * len(PRODUCT_QUESTIONS) + 1) + consent
     read_backs = products * 2 * limits.max_read_backs
     return 2 * (questions + read_backs) + 1
 

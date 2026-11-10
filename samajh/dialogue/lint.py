@@ -80,7 +80,7 @@ BANS: tuple[Ban, ...] = (
         "four digits", "डिजिट", "अंक", "maiden name", "मां का नाम", "பின்", "கடவுச்சொல்",
         "கணக்கு எண்", "பிறந்த தேதி", "பிறந்த நாள்", "ಪಿನ್", "ಪಾಸ್ವರ್ಡ್", "ಖಾತೆ ಸಂಖ್ಯೆ*", "ಹುಟ್ಟಿದ ದಿನಾಂಕ*",
         "ಜನ್ಮ ದಿನಾಂಕ*",
-        denied_in=("disclosure.never_ask",),
+        denied_in=("disclosure.never_ask", "verify.before_loan", "verify.after_loan"),
     ),
     _ban(
         "sales talk",
