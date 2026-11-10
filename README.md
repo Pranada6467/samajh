@@ -6,7 +6,7 @@ It is built for Gnani AI's Great Indian AI Internship Challenge on Prisma STT an
 
 ## Status (iteration 1, 2026-11-10)
 
-Done:
+Iteration 1 is built and under independent review. Done:
 - The Gnani client (STT, TTS, Batch) and the OpenRouter LLM client in `samajh/clients/`, proven against the live APIs. They share a cross-process lock, a cache, a ledger and a credit cap.
 - Claims verified: regulatory and case claims were checked against saved primary sources (`references/claims/`), and Gnani API behaviour was measured live (`references/pilots/api-probe-iter1.md`).
 - The core: types, the amount normaliser and the rule engine (`samajh/types.py`, `samajh/amounts/`, `samajh/rules/`). W1b took it over after a usage-limit stall. 1,223 core tests pass (after the amounts parser fix) and ruff is clean. One independent review was done; the fixes made after it have not had a second one. Known gaps are in `references/pilots/W1-core-report.md` §7.
@@ -15,12 +15,13 @@ Done:
 - W4, scenarios (`samajh/scenarios/`, `data/scenarios/`, `tests/scenarios/`): 144 synthetic scenarios (36 hand-written base cases in Hindi, Hinglish, Tamil and Kannada) with hand-written gold, each with a scripted teach-back call and a scripted yes/no call. Frozen at version 3 (`gold.jsonl` sha256 beginning `14e49b58`); 50 tests. The rule engine agrees with gold on 144 of 144 scenarios, on perfect beliefs and on the scripted-extraction path. **That agreement was reached partly by a coordinator decision** that resolved the one disagreement (a customer who says they do not know the premium; 8 scenarios) in the engine's favour, made before any audio or LLM extraction was run on the set. It is not independent confirmation of the engine on those 8. One independent model review agreed with 35 of 36 base cases at version 1; no reviewer has seen versions 2 or 3, no human has reviewed any of it, and Tamil and Kannada have no fluent reviewer. Speech is templated. **The frozen set is for final measurement only: never use it to tune prompts, parsers or rules.** Report: `data/scenarios/W4-report.md`; datasheet: `data/scenarios/README.md`.
 - W5 and W5b, the LLM extractor and the text-path evaluation (`samajh/extract/`, `samajh/pipeline.py`, `eval/text_path/`, `tests/extract/`): done. The first W5 worker built most of it and stopped on the usage limit; W5b reviewed the code as an independent reviewer, fixed its 7 findings, ran the frozen scenario set once and wrote the report. 176 extractor tests pass and ruff is clean. The extraction model is `openai/gpt-6-luna` through OpenRouter: $0.00171 per transcript and a median 1.88 s per LLM request when first made (frozen-set run, n = 144 transcripts), with 20 to 24 requests per transcript, so extraction runs after the call, not per turn. Headline, frozen set version 3 (`gold.jsonl` sha256 beginning `14e49b58`), one run, 144 scripted calls: **false clears 1 of 108** calls whose gold is not clear (a Tamil customer who believes the premium is paid only once; caught in Hindi, Hinglish and Kannada), **false alarms 0 of 36** gold-clear calls (9 base cases), **call verdicts right 143 of 144**, **fields right 2,163 of 2,180**. E1, teach-back against the scripted yes/no call, by stratum and never pooled (calls caught, meaning the call did not end as a pass, teach-back against yes/no): coached 12 of 12 against 0 of 12, acquiescent 4 of 4 against 0 of 4, never asked 19 of 20 against 0 of 20, asked 40 of 40 against 40 of 40. **These are results on text transcripts, the upper bound for the voice path: nothing here is speech or STT output.** The customers are scripted and synthetic, written by our team; Tamil and Kannada are not human-reviewed (13 of the 17 wrong fields are in those two languages); 70 of the 1,604 frozen replies also appear word for word in the development set the prompt was tuned on; the reviewer's fixes have had no second independent review. Report: `references/pilots/W5-extractor-report.md`.
 
-In progress (nothing in this list is finished). The original W9 worker stopped on the usage limit; a replacement is running:
-- W9b, dialogue: the call state machine and the prompt scripts in four languages (`samajh/dialogue/`, `data/prompts/`) (replaces W9).
+- W9 and W9b, the dialogue: the call state machine and the bot's lines in Hindi, Hinglish, Tamil and Kannada (`samajh/dialogue/`, `data/prompts/`, `tests/dialogue/`). The original W9 worker stopped on the usage limit before its review; W9b, who wrote none of the original code, reviewed it, fixed 11 proven defects and finished it. 671 tests pass and ruff is clean. The call keeps no value under test, so no line can reveal one (checked on 200 random customers per language against two records that differ in every tested value), and every call ends inside its limits. **It runs on text only.** The 408 customer replies used to measure how well it reads a turn were written by an LLM, not spoken (on 199 held-out replies the word lists alone gave the labelled effect on 78% and with the optional LLM fallback 94%). No fluent human has read any language's lines, Tamil and Kannada are not human-reviewed, nothing has been voiced, and the review's fixes have had no second independent review. Nine proven gaps are not fixed, among them: the guard that keeps a quoted refusal from ending the call covers Hindi and English only, and 20 of the reviewer's 39 probe refusals go unrecognised without the LLM fallback. Report: `references/pilots/W9-dialogue-report.md`.
+
+All the iteration-1 work packages are built. They are under independent review (two verifiers and a judge; reports under `references/reviews/iter1/`), and nothing here has been through that review yet. **The phone still runs the stub dialogue** (three fixed Hindi questions): `samajh/dialogue` is not connected to it until the adapter is written in iteration 2.
 
 Not built yet: the half-yearly view. The core builds evidence packs as data (`EvidencePack`), but no view of them exists yet.
 
-No end-to-end evaluation of Samajh itself exists yet: the stub call is a transport test with fixed questions, not the Samajh dialogue. The amounts evaluation and the text-path evaluation above are the only evaluations run so far. The text path was run once on the frozen scenario set with scripted text and one model (E1 and E2 on text); no speech-to-text ran, and no call-flow evaluation on voice (E1 to E3 on audio, E5) has been run. No human voice recordings exist, so there are no results on human speech.
+No end-to-end evaluation of Samajh itself exists yet: the stub call is a transport test with fixed questions, and the real dialogue has only been played as text. The amounts evaluation, the text-path evaluation and the dialogue's turn-reading measurement above are the only evaluations run so far. The text path was run once on the frozen scenario set with scripted text and one model (E1 and E2 on text); no speech-to-text ran, and no call-flow evaluation on voice (E1 to E3 on audio, E5) has been run. No human voice recordings exist, so there are no results on human speech.
 
 ## Set up
 
@@ -41,7 +42,7 @@ Needs the setup above, `ffmpeg` on the path, and `GNANI_API_KEY` in `.env`.
 uv run python -m samajh.server --port 8085
 ```
 
-Then open `http://127.0.0.1:8085/` in Chrome. The call is the stub dialogue (three fixed Hindi questions). The server binds 127.0.0.1 only; `--allow-host NAME` admits another host name, for a phone on the LAN. To run a whole call without a microphone, with the server running:
+Then open `http://127.0.0.1:8085/` in Chrome. The call is the stub dialogue (three fixed Hindi questions), not the Samajh dialogue: that is not connected to the phone yet (see "Play a call in the terminal"). The server binds 127.0.0.1 only; `--allow-host NAME` admits another host name, for a phone on the LAN. To run a whole call without a microphone, with the server running:
 
 ```
 uv run python -m samajh.server.replay tests/fixtures/server/stub-call --url http://127.0.0.1:8085
@@ -49,11 +50,22 @@ uv run python -m samajh.server.replay tests/fixtures/server/stub-call --url http
 
 Gnani allows one active request per key. Do not run an evaluation while a call is live: a live turn waits 5 s for the key, then fails with `gnani_busy` (3 of 12 phone turns did, TTS clips only, while the amounts evaluation ran). The session log is written under `.samajh/sessions/`.
 
+## Play a call in the terminal
+
+The Samajh dialogue runs as text, with no audio and no Gnani call. Needs only the setup above. You type the customer's replies:
+
+```
+uv run python -m samajh.dialogue play --record tests/dialogue/fixtures/record_gold_loan.json --lang hi
+```
+
+`--lang` is `hi`, `hi-en`, `ta` or `kn`. `--help` lists the options: `--lender` sets the lender name spoken in the disclosure, `--out FILE` writes the finished transcript as JSON, and `--llm` adds the optional LLM fallback for turns the word lists cannot place (needs `OPENROUTER_API_KEY`; it sends the question and your reply to OpenRouter, so type only synthetic text). Type `first || second` to give one turn two transcripts, as two speech models would; it counts on turns that ask for an amount. To replay a call from a file, pipe it in (`< hi_call.txt`, one reply per line). The record is synthetic. The Hindi and Hinglish lines are labelled as having no fluent human reviewer, and the Tamil and Kannada lines as not human-reviewed. The other command, `uv run python -m samajh.dialogue eval-turns --set tests/dialogue/fixtures/turns_heldout.jsonl`, scores the turn reader on the labelled set of LLM-written replies (`--help` lists its options).
+
 ## Run the tests
 
 ```
 uv run pytest            # offline tests only
 uv run pytest -m live    # real Gnani and OpenRouter calls; costs credits
+uv run pytest tests/dialogue -q   # the dialogue: 671 tests, about a minute, offline
 uv run ruff check samajh tests
 ```
 
@@ -70,6 +82,7 @@ The live tests spend Gnani credits; the client refuses to go past `GNANI_CREDIT_
 | `IDEAS-HILLCLIMB.md` | The 5-round evaluation that chose this idea |
 | `references/claims/` | Claims ledger, design corrections and the quote checker (saved sources are local-only) |
 | `references/pilots/` | Measured pilots: amounts, the Gnani API probe, the client report, the W7 voice loop (`voice-loop-iter1.md`), the W5 extractor and text-path report (`W5-extractor-report.md`) |
+| `samajh/dialogue/`, `data/prompts/` | The call state machine and the bot's lines in four languages (51 lines each); `references/pilots/W9-dialogue-report.md` is the report. Text only, not connected to the phone |
 | `eval/text_path/` | The text-path evaluation of the extractor: the rerunnable scripts and the reports in `runs/`, including the frozen-set run `frozen__openai-gpt-6-luna.md`. Scripted text only, no speech |
 | `data/scenarios/` | The frozen scenario set (`gold.jsonl`, `calls.jsonl`, `FROZEN.json`), its datasheet (`README.md`), `CHANGELOG.md` and the W4 report (`W4-report.md`). Synthetic; for final measurement only |
 | `eval/amounts/REPORT.md` | The spoken-amounts and phone-line evaluation: 240 TTS sentences, Prisma v2.5 and v3.0 (TTS audio only) |
