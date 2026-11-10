@@ -90,3 +90,54 @@ W7 and W8 have live Gnani access, through the shared client lock (`samajh/client
 Estimated Gnani credits used so far: about 115 of the 1,000 cap (W2 11.58, W7 about 10, W8 93.74). The ledger itself read 113.80 estimated credits when the W8 report was written and 114 when the W7 report was written, other workers included. The figures are client estimates, not dashboard readings.
 
 Then: when the independent verifier and judge review finishes, iteration 2 (the voice path: the adapter between the browser phone and `samajh/dialogue`, voicing the lines, human audio) is planned.
+
+---
+
+## Coordinator handoff (written 2026-11-10 ~16:00 IST; update this section whenever state changes)
+
+A new coordinator session starts here. Read this section, then `references/reviews/iter1/judge.md` (the iteration-2 plan) and the two verifier reports beside it.
+
+### How the user wants the work run
+- The coordinator (Fable) orchestrates only: plans, writes instructions, decides, reports. It keeps its own context small.
+- **Use Orca's orchestration for work packages**: `orca orchestration worker-start --spec-file <spec> --task-title "<title>" --worktree current --agent claude --model claude-fable-5-2 --effort high`. Each Orca worker is a Fable sub-orchestrator for one package. It does not write product code: it splits the package and briefs `Agent` subagents, **Opus medium to build, a separate Opus high to verify**, Sonnet for research and documentation. Guide: `orca skills get orchestration`. End the turn after starting workers; Orca wakes the coordinator. Never poll.
+- Loop per package and per iteration: plan, verify claims, build, review. After each iteration an independent verifier and a judge review work and direction before the next iteration starts.
+- Parallelise freely where lanes (owned paths) do not overlap. Only one request at a time can use the Gnani key; the client's lock enforces it, but never run an evaluation during a live demo call.
+- Documentation is updated as soon as a result makes it stale, by Sonnet subagents. Reports are at most two pages.
+- Local checkpoint commits after each finished package (the coordinator commits; workers never run state-changing git). Check staged diffs for the two keys before committing.
+- Budgets: Gnani credits capped at 1,000 in total (about 115 estimated used before iteration 2, plus P6 and P1 spend: read `uv run python -m samajh.clients.gnani ledger`); OpenRouter cheap models by default.
+
+### Lessons from this session
+- Workers stop without warning when the account's 5-hour usage limit is reached, and a stopped worker does not wake on `send`. Stop it (`worker-stop`, then `worker-release`), commit a WIP checkpoint, and start a fresh worker with a "resume from what is on disk" spec. Fewer workers at once last longer.
+- Use a quoted heredoc (`<<'EOF'`) for spec files: unquoted backticks get executed by the shell.
+- Publish a short contract file early (`references/pilots/<package>-contract.md`) when other packages code against a package's types.
+
+### Decisions in force (coordinator, 2026-11-10; details in DESIGN.md section 15 and the judge's report)
+- Product languages are Hindi and Hinglish. Tamil and Kannada stay in the code as experimental, appear only in an appendix, and get no new effort.
+- One product family (loan with credit-life cover). No second family.
+- Outcome is a four-tier triage (`refer`, `incomplete`, `understanding_gap`, `clear`), not "any flag means review".
+- Each amount turn gets two Prisma readings (v2.5 and v3.0); disagreement leads to a re-ask, and every amount is read back.
+- Extraction model `openai/gpt-6-luna`, after the call; the dialogue's live fallback uses `mistralai/mistral-small-3.2-24b-instruct`.
+- The scripted teach-back versus yes/no comparison (E1) is not a headline: it is true by construction. It is to be replaced by evaluation v2 (package P5).
+- The lead Gnani finding is Prisma v3.0's number formatting of skipped-group amounts and two-model agreement as a confidence signal.
+
+### Iteration 2 state
+Plan: `references/reviews/iter1/judge.md` "Iteration 2 plan, ranked". Specs: the coordinator's scratchpad is not durable, so each package's scope is restated in its report once written.
+
+| Package | Scope | Lane | State |
+|---|---|---|---|
+| P3a | Decision chain v2: tiers, case summary, verifier fixes, approximate and hedged answers | `samajh/types.py`, `samajh/rules`, `samajh/amounts`, `samajh/extract`, `samajh/pipeline.py`, `eval/text_path`, `tests/core`, `tests/extract` | Building (Opus medium, direct subagent of the coordinator); contract at `references/pilots/P3a-contract.md`; needs an Opus high verification when it reports |
+| P2 | Call v2: third parties learn nothing, refusals, short opening, "took nothing" branch, payment-frequency question, line export for the user | `samajh/dialogue`, `data/prompts`, `tests/dialogue` | Building; contract at `references/pilots/P2-contract.md`; needs verification |
+| P1 | One real Hindi/Hinglish call on the browser phone to a case file (adapter, two readings, Timbre prompts, Batch offsets, replay) | `samajh/server` (not `review_routes.py`), `web/` (not `web/review`), `tests/server` | Building; needs verification; depends on P2 and P3a landing |
+| P6 | Gnani amounts finding: held-out TTS set, real voices from IndicVoices and Kathbath (local only), bug report for Gnani | `eval/amounts_v2`, `data/amounts_v2`, `samajh/evalkit` | Building; needs verification |
+| P3b | Loan-book sampler, reach funnel, reviewer queue, half-yearly 85Y report page | `samajh/ops`, `web/review`, `samajh/server/review_routes.py`, `tests/ops`, `data/loanbook` | Partly built, paused; restart when P3a's types are in place |
+| P4 | 20 improvised human calls in Hindi and Hinglish from brief cards | needs the user and consenting friends | Not started; needs P1 and P2 |
+| P5 | Evaluation v2: persona-driven customers the builders did not script, matched closed arm, voiced end to end | new | Not started; needs P1, P2, P3a |
+| P7 | 60-second demo, two-page brief, written submission, last claims recheck | new | Last |
+
+When P1, P2, P3a, P3b and P6 are built and verified: full suite green, docs synced, checkpoint commit, then the iteration-2 verifier and judge, then iteration 3 (P4, P5, P7 and whatever the judge ranks).
+
+### Waiting on the user
+- A Hindi and Hinglish wording review of `references/pilots/P2-lines-for-review.md` once P2 writes it.
+- The human calls (P4).
+- One reading of the STT and TTS totals on the Gnani dashboard (app.gnani.ai) to turn credit estimates into measurements.
+- Rotating the Gnani and OpenRouter keys when the build is finished (both were pasted into a chat transcript).
