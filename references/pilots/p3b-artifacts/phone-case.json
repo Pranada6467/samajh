@@ -1,0 +1,361 @@
+{
+    "case_id": "20261110T103108-9f2e34f8dfdf",
+    "tier": "refer",
+    "tier_label": "Referred for review",
+    "severity": "high",
+    "in_report": false,
+    "not_counted_because": "the loan is not on the lender's book for this batch",
+    "loan": {
+        "loan_id": "LN-DEMO-0001",
+        "borrower": "Ramesh Namoona",
+        "lender_type": "bank",
+        "loan_kind": "gold",
+        "sanctioned_inr": 500000,
+        "disbursed_inr": 448000,
+        "sold_on": null,
+        "branch": null,
+        "channel": null,
+        "products": [
+            {
+                "id": "P1",
+                "kind": "credit_life",
+                "provider": "Namoona Life (synthetic)",
+                "premium_inr": 52000,
+                "cover_inr": 500000,
+                "term_months": 24,
+                "paid_from_loan": true,
+                "required_for_loan": false,
+                "risk_mitigant": true,
+                "provider_choice_offered": false,
+                "cancel_window_days": 30,
+                "features": [],
+                "consent": null
+            }
+        ]
+    },
+    "call": {
+        "call_id": "20261110T103108-9f2e34f8dfdf",
+        "source": {
+            "kind": "phone_session",
+            "session_id": "20261110T103108-9f2e34f8dfdf",
+            "recording_sha256": "f8d7f03f2b83b9ec0c2e7954b5af0f73fdb774ef2ae9651d100603a4bc98c10d"
+        },
+        "simulated": false,
+        "language": "hi",
+        "at": "2026-11-10T10:31:24.404000Z",
+        "attempt_number": null,
+        "day_since_sale": null,
+        "analysis": "openai/gpt-6-luna",
+        "transcript_note": "Customer turns only: this case file was written before case files kept the whole transcript, so the bot's lines and the call steps are not shown.",
+        "recording_url": "/api/sessions/20261110T103108-9f2e34f8dfdf/recording.wav"
+    },
+    "refer_lines": [
+        {
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "product_id": "P1",
+            "title": "Customer described the product as a deposit (FD); the record shows insurance.",
+            "record_value": "credit-life insurance from Namoona Life (synthetic)",
+            "quote": {
+                "quote": "FD \u0939\u0948\u0964",
+                "turn_id": 18,
+                "start_s": 87.3,
+                "end_s": 88.26
+            },
+            "rule_ids": [
+                "kind",
+                "bundling",
+                "belief_mismatch"
+            ],
+            "rule_labels": [
+                "What the product is",
+                "Required for the loan",
+                "Beliefs about the product's features"
+            ],
+            "may_engage": [
+                "may engage para 85Y",
+                "may engage para 85V",
+                "may engage para 4(20A)(ii)"
+            ]
+        },
+        {
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "product_id": "P1",
+            "title": "The record has no consent for this product; the premium was deducted from the loan without a recorded consent.",
+            "record_value": "no consent on record; premium \u20b952,000, deducted from the loan",
+            "quote": {
+                "quote": "\u0932\u094b\u0928 \u092e\u0947\u0902 \u0938\u0947 \u0915\u091f \u0917\u092f\u093e",
+                "turn_id": 22,
+                "start_s": 95.54,
+                "end_s": 96.9
+            },
+            "rule_ids": [
+                "consent",
+                "loan_funded"
+            ],
+            "rule_labels": [
+                "Consent",
+                "Premium deducted from the loan"
+            ],
+            "may_engage": [
+                "may engage para 85G",
+                "may engage para 85W"
+            ]
+        },
+        {
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "product_id": "P1",
+            "title": "Customer says it was required for the loan; the record shows no choice of provider was offered; customer says they were not told they could buy it from another provider.",
+            "record_value": "required for the loan: no; risk mitigant: yes; choice of provider offered: no",
+            "quote": {
+                "quote": "\u0915\u0941\u091b \u0928\u0939\u0940\u0902 \u092c\u0924\u093e\u092f\u093e",
+                "turn_id": 26,
+                "start_s": 112.5,
+                "end_s": 113.62
+            },
+            "rule_ids": [
+                "bundling"
+            ],
+            "rule_labels": [
+                "Required for the loan"
+            ],
+            "may_engage": [
+                "may engage para 85V"
+            ]
+        },
+        {
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "product_id": "P1",
+            "title": "Customer believes the money can be withdrawn after a period and it gives a guaranteed return; the record does not list this feature.",
+            "record_value": "features on record: none",
+            "quote": {
+                "quote": "\u090f\u0915 \u0938\u093e\u0932 \u092c\u093e\u0926 \u092c\u094d\u092f\u093e\u091c \u0915\u0947 \u0938\u093e\u0925 \u0928\u093f\u0915\u093e\u0932 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902\u0964",
+                "turn_id": 34,
+                "start_s": 137.06,
+                "end_s": 139.7
+            },
+            "rule_ids": [
+                "belief_mismatch"
+            ],
+            "rule_labels": [
+                "Beliefs about the product's features"
+            ],
+            "may_engage": [
+                "may engage para 4(20A)(ii)"
+            ]
+        }
+    ],
+    "other_lines": [
+        {
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "product_id": "P1",
+            "title": "Customer was not told it can be cancelled.",
+            "record_value": "cancellation window 30 days",
+            "quote": {
+                "quote": "\u0928\u0939\u0940\u0902 \u092c\u0924\u093e\u092f\u093e",
+                "turn_id": 32,
+                "start_s": 130.54,
+                "end_s": 131.42
+            },
+            "rule_ids": [
+                "cancel_window"
+            ],
+            "rule_labels": [
+                "Cancellation window"
+            ],
+            "may_engage": [
+                "may engage para 85Y"
+            ]
+        },
+        {
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "product_id": "P1",
+            "title": "The call left the cover undecided.",
+            "record_value": "cover \u20b95,00,000",
+            "quote": {
+                "quote": "\u092a\u0948\u0938\u093e \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0930\u0939\u0947\u0917\u093e",
+                "turn_id": 28,
+                "start_s": 118.38,
+                "end_s": 119.98
+            },
+            "rule_ids": [
+                "cover"
+            ],
+            "rule_labels": [
+                "Cover amount"
+            ],
+            "may_engage": [
+                "may engage para 85Y"
+            ]
+        }
+    ],
+    "undecided": [
+        {
+            "key": "cover",
+            "label": "Cover amount: no usable answer"
+        }
+    ],
+    "transcript": [
+        {
+            "turn_id": 2,
+            "speaker": "customer",
+            "text": "\u0939\u093e\u0901 \u091c\u0940, \u092c\u094b\u0932 \u0930\u0939\u093e \u0939\u0942\u0901\u0964",
+            "start_s": 3.38,
+            "end_s": 4.74,
+            "cited": false
+        },
+        {
+            "turn_id": 10,
+            "speaker": "customer",
+            "text": "\u0939\u093e\u0901, \u0920\u0940\u0915 \u0939\u0948\u0964",
+            "start_s": 51.04,
+            "end_s": 52.4,
+            "cited": false
+        },
+        {
+            "turn_id": 12,
+            "speaker": "customer",
+            "text": "1984",
+            "start_s": 62.04,
+            "end_s": 64.04,
+            "cited": false
+        },
+        {
+            "turn_id": 15,
+            "speaker": "customer",
+            "text": "\u092c\u0938 \u090f\u0915 FD \u0915\u0930\u0935\u093e\u0908 \u0925\u0940 loan \u0915\u0940 security \u0915\u0947 \u0932\u093f\u090f 52,000 \u0915\u0940\u0964",
+            "start_s": 75.19,
+            "end_s": 79.75,
+            "cited": false
+        },
+        {
+            "turn_id": 18,
+            "speaker": "customer",
+            "text": "FD \u0939\u0948\u0964",
+            "start_s": 87.3,
+            "end_s": 88.26,
+            "cited": true
+        },
+        {
+            "turn_id": 20,
+            "speaker": "customer",
+            "text": "52,000",
+            "start_s": 91.02,
+            "end_s": 92.38,
+            "cited": false
+        },
+        {
+            "turn_id": 22,
+            "speaker": "customer",
+            "text": "\u0932\u094b\u0928 \u092e\u0947\u0902 \u0938\u0947 \u0915\u091f \u0917\u092f\u093e",
+            "start_s": 95.54,
+            "end_s": 96.9,
+            "cited": true
+        },
+        {
+            "turn_id": 24,
+            "speaker": "customer",
+            "text": "\u0939\u093e\u0901, \u092c\u094b\u0932\u093e \u0925\u093e \u091c\u0930\u0942\u0930\u0940 \u0939\u0948, \u0909\u0938\u0915\u0947 \u092c\u093f\u0928\u093e loan \u0928\u0939\u0940\u0902 \u092e\u093f\u0932\u0947\u0917\u093e\u0964",
+            "start_s": 103.9,
+            "end_s": 107.66,
+            "cited": false
+        },
+        {
+            "turn_id": 26,
+            "speaker": "customer",
+            "text": "\u0915\u0941\u091b \u0928\u0939\u0940\u0902 \u092c\u0924\u093e\u092f\u093e",
+            "start_s": 112.5,
+            "end_s": 113.62,
+            "cited": true
+        },
+        {
+            "turn_id": 28,
+            "speaker": "customer",
+            "text": "\u092a\u0948\u0938\u093e \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924 \u0930\u0939\u0947\u0917\u093e",
+            "start_s": 118.38,
+            "end_s": 119.98,
+            "cited": true
+        },
+        {
+            "turn_id": 30,
+            "speaker": "customer",
+            "text": "\u0926\u094b \u0938\u093e\u0932",
+            "start_s": 122.74,
+            "end_s": 123.62,
+            "cited": false
+        },
+        {
+            "turn_id": 32,
+            "speaker": "customer",
+            "text": "\u0928\u0939\u0940\u0902 \u092c\u0924\u093e\u092f\u093e",
+            "start_s": 130.54,
+            "end_s": 131.42,
+            "cited": true
+        },
+        {
+            "turn_id": 34,
+            "speaker": "customer",
+            "text": "\u090f\u0915 \u0938\u093e\u0932 \u092c\u093e\u0926 \u092c\u094d\u092f\u093e\u091c \u0915\u0947 \u0938\u093e\u0925 \u0928\u093f\u0915\u093e\u0932 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902\u0964",
+            "start_s": 137.06,
+            "end_s": 139.7,
+            "cited": true
+        },
+        {
+            "turn_id": 36,
+            "speaker": "customer",
+            "text": "form \u092a\u0930 sign \u0915\u093f\u092f\u093e \u0925\u093e \u092c\u0938\u0964",
+            "start_s": 145.02,
+            "end_s": 146.7,
+            "cited": false
+        },
+        {
+            "turn_id": 38,
+            "speaker": "customer",
+            "text": "\u0939\u093e\u0901, \u0938\u0939\u0940 \u0939\u0948\u0964",
+            "start_s": 152.18,
+            "end_s": 153.46,
+            "cited": false
+        }
+    ],
+    "decisions": [
+        {
+            "key": "concern_supported",
+            "label": "Concern supported by the file (reviewer's view)"
+        },
+        {
+            "key": "concern_not_supported",
+            "label": "Concern not supported by the file (reviewer's view)"
+        },
+        {
+            "key": "call_customer",
+            "label": "Call the customer"
+        },
+        {
+            "key": "needs_information",
+            "label": "Needs more information"
+        }
+    ],
+    "disposition": {
+        "decision": "call_customer",
+        "decision_label": "Call the customer",
+        "final": false,
+        "note": "Phone call outside the sample (demo record); listen to the recording at the quote first. Simulated review.",
+        "reviewer": "Asha Reviewer (synthetic)",
+        "recorded_at": "2026-11-10T11:05:48.990327Z"
+    },
+    "history": [
+        {
+            "decision": "call_customer",
+            "decision_label": "Call the customer",
+            "final": false,
+            "note": "Phone call outside the sample (demo record); listen to the recording at the quote first. Simulated review.",
+            "reviewer": "Asha Reviewer (synthetic)",
+            "recorded_at": "2026-11-10T11:05:48.990327Z"
+        }
+    ]
+}

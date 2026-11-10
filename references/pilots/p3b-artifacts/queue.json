@@ -1,146 +1,66 @@
 {
     "items": [
         {
-            "case_id": "TEST-CALL-SYN-GL-270115-0032-tb",
-            "loan_id": "SYN-GL-270115-0032",
-            "borrower": "Namoona Sharma 032 (synthetic)",
-            "language": "hi-en",
+            "case_id": "TEST-CALL-SYN-PL-270120-0058-tb",
+            "loan_id": "SYN-PL-270120-0058",
+            "borrower": "Udaharan Lal 058 (synthetic)",
+            "language": "hi",
             "branch": "SYN-BR-04",
             "channel": "app",
-            "sold_on": "2027-01-15",
-            "day_since_sale": 25,
-            "days_left_in_window": 5,
+            "sold_on": "2027-01-20",
+            "at": "2027-01-25T11:00:00+05:30",
+            "day_since_sale": 5,
             "severity": "high",
-            "headline": "Customer says they were told what to answer.",
+            "headline": "Customer said they took nothing with the loan; the record shows this product.",
             "refer_lines": 1,
-            "may_engage": [],
+            "may_engage": [
+                "may engage para 85Y"
+            ],
             "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
             "disposition": null
         },
         {
-            "case_id": "TEST-CALL-SYN-GL-270124-0070-tb",
-            "loan_id": "SYN-GL-270124-0070",
-            "borrower": "Udaharan Lal 070 (synthetic)",
+            "case_id": "TEST-CALL-SYN-PL-270122-0064-tb",
+            "loan_id": "SYN-PL-270122-0064",
+            "borrower": "Namoona Sharma 064 (synthetic)",
+            "language": "hi-en",
+            "branch": "SYN-BR-01",
+            "channel": "branch",
+            "sold_on": "2027-01-22",
+            "at": "2027-01-25T11:00:00+05:30",
+            "day_since_sale": 3,
+            "severity": "high",
+            "headline": "Customer said they took nothing with the loan; the record shows this product.",
+            "refer_lines": 1,
+            "may_engage": [
+                "may engage para 85Y"
+            ],
+            "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
+            "disposition": null
+        },
+        {
+            "case_id": "TEST-CALL-SYN-GL-270203-0099-tb",
+            "loan_id": "SYN-GL-270203-0099",
+            "borrower": "Udaharan Lal 099 (synthetic)",
             "language": "hi",
             "branch": "SYN-BR-05",
-            "channel": "app",
-            "sold_on": "2027-01-24",
-            "day_since_sale": 22,
-            "days_left_in_window": 8,
+            "channel": "agent",
+            "sold_on": "2027-02-03",
+            "at": "2027-02-08T11:00:00+05:30",
+            "day_since_sale": 5,
             "severity": "high",
-            "headline": "The record has no consent for this product; the premium was deducted from the loan without a recorded consent.",
+            "headline": "Customer said they took nothing with the loan; the record shows this product.",
             "refer_lines": 1,
             "may_engage": [
-                "may engage para 85G",
-                "may engage para 85W"
+                "may engage para 85Y"
             ],
             "simulated": true,
-            "disposition": {
-                "decision": "call_customer",
-                "decision_label": "Call the customer",
-                "final": false,
-                "note": "Consent form missing from the file; call the customer to ask how they agreed. Simulated review.",
-                "reviewer": "Asha Reviewer (synthetic)",
-                "recorded_at": "2026-11-10T10:38:27.182009Z"
-            }
-        },
-        {
-            "case_id": "TEST-CALL-SYN-GL-270119-0054-tb",
-            "loan_id": "SYN-GL-270119-0054",
-            "borrower": "Namoona Sharma 054 (synthetic)",
-            "language": "hi-en",
-            "branch": "SYN-BR-02",
-            "channel": "branch",
-            "sold_on": "2027-01-19",
-            "day_since_sale": 20,
-            "days_left_in_window": 10,
-            "severity": "high",
-            "headline": "Customer described the product as an investment; the record shows insurance.",
-            "refer_lines": 2,
-            "may_engage": [
-                "may engage para 85Y",
-                "may engage para 4(20A)(ii)"
-            ],
-            "simulated": true,
-            "disposition": null
-        },
-        {
-            "case_id": "TEST-CALL-SYN-GL-270209-0122-tb",
-            "loan_id": "SYN-GL-270209-0122",
-            "borrower": "Udaharan Lal 122 (synthetic)",
-            "language": "hi",
-            "branch": "SYN-BR-04",
-            "channel": "branch",
-            "sold_on": "2027-02-09",
-            "day_since_sale": 20,
-            "days_left_in_window": 10,
-            "severity": "high",
-            "headline": "Customer said the premium was paid separately; the record shows it deducted from the loan.",
-            "refer_lines": 1,
-            "may_engage": [
-                "may engage para 85W"
-            ],
-            "simulated": true,
-            "disposition": null
-        },
-        {
-            "case_id": "TEST-CALL-SYN-GL-270205-0109-tb",
-            "loan_id": "SYN-GL-270205-0109",
-            "borrower": "Namoona Sharma 109 (synthetic)",
-            "language": "hi-en",
-            "branch": "SYN-BR-02",
-            "channel": "agent",
-            "sold_on": "2027-02-05",
-            "day_since_sale": 17,
-            "days_left_in_window": 13,
-            "severity": "high",
-            "headline": "Customer described the product as a deposit (FD); the record shows insurance.",
-            "refer_lines": 2,
-            "may_engage": [
-                "may engage para 85Y",
-                "may engage para 4(20A)(ii)"
-            ],
-            "simulated": true,
-            "disposition": null
-        },
-        {
-            "case_id": "TEST-CALL-SYN-PL-270127-0080-tb",
-            "loan_id": "SYN-PL-270127-0080",
-            "borrower": "Udaharan Lal 080 (synthetic)",
-            "language": "hi",
-            "branch": "SYN-BR-02",
-            "channel": "agent",
-            "sold_on": "2027-01-27",
-            "day_since_sale": 13,
-            "days_left_in_window": 17,
-            "severity": "high",
-            "headline": "Customer described the product as a deposit (FD); the record shows insurance.",
-            "refer_lines": 2,
-            "may_engage": [
-                "may engage para 85Y",
-                "may engage para 4(20A)(ii)"
-            ],
-            "simulated": true,
-            "disposition": null
-        },
-        {
-            "case_id": "TEST-CALL-SYN-GL-270207-0114-tb",
-            "loan_id": "SYN-GL-270207-0114",
-            "borrower": "Namoona Sharma 114 (synthetic)",
-            "language": "hi-en",
-            "branch": "SYN-BR-03",
-            "channel": "agent",
-            "sold_on": "2027-02-07",
-            "day_since_sale": 8,
-            "days_left_in_window": 22,
-            "severity": "high",
-            "headline": "Customer described the product as a deposit (FD); the record shows insurance.",
-            "refer_lines": 2,
-            "may_engage": [
-                "may engage para 85Y",
-                "may engage para 4(20A)(ii)"
-            ],
-            "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
             "disposition": null
         },
         {
@@ -151,32 +71,36 @@
             "branch": "SYN-BR-06",
             "channel": "branch",
             "sold_on": "2027-02-03",
+            "at": "2027-02-08T11:00:00+05:30",
             "day_since_sale": 5,
-            "days_left_in_window": 25,
             "severity": "high",
             "headline": "Customer says they were told what to answer.",
             "refer_lines": 1,
             "may_engage": [],
             "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
             "disposition": null
         },
         {
-            "case_id": "TEST-CALL-SYN-PL-270225-0180-tb",
-            "loan_id": "SYN-PL-270225-0180",
-            "borrower": "Udaharan Lal 180 (synthetic)",
+            "case_id": "TEST-CALL-SYN-GL-270209-0123-tb",
+            "loan_id": "SYN-GL-270209-0123",
+            "borrower": "Udaharan Lal 123 (synthetic)",
             "language": "hi",
-            "branch": "SYN-BR-05",
-            "channel": "agent",
-            "sold_on": "2027-02-25",
-            "day_since_sale": 4,
-            "days_left_in_window": 26,
+            "branch": "SYN-BR-06",
+            "channel": "branch",
+            "sold_on": "2027-02-09",
+            "at": "2027-02-15T11:00:00+05:30",
+            "day_since_sale": 6,
             "severity": "high",
-            "headline": "Customer believes it gives a guaranteed return; the record does not list this feature.",
+            "headline": "Customer said they took nothing with the loan; the record shows this product.",
             "refer_lines": 1,
             "may_engage": [
-                "may engage para 4(20A)(ii)"
+                "may engage para 85Y"
             ],
             "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
             "disposition": null
         },
         {
@@ -187,8 +111,8 @@
             "branch": "SYN-BR-06",
             "channel": "branch",
             "sold_on": "2027-02-12",
+            "at": "2027-02-15T11:00:00+05:30",
             "day_since_sale": 3,
-            "days_left_in_window": 27,
             "severity": "high",
             "headline": "Customer's account of what they agreed to buy does not include this product.",
             "refer_lines": 1,
@@ -196,7 +120,16 @@
                 "may engage para 85G"
             ],
             "simulated": true,
-            "disposition": null
+            "in_report": true,
+            "not_counted_because": null,
+            "disposition": {
+                "decision": "call_customer",
+                "decision_label": "Call the customer",
+                "final": false,
+                "note": "Consent form is in the file; call the customer to ask what they remember agreeing to. Simulated review.",
+                "reviewer": "Asha Reviewer (synthetic)",
+                "recorded_at": "2026-11-10T11:05:48.826438Z"
+            }
         },
         {
             "case_id": "TEST-CALL-SYN-GL-270220-0164-tb",
@@ -206,8 +139,8 @@
             "branch": "SYN-BR-03",
             "channel": "branch",
             "sold_on": "2027-02-20",
+            "at": "2027-02-22T11:00:00+05:30",
             "day_since_sale": 2,
-            "days_left_in_window": 28,
             "severity": "high",
             "headline": "Customer did not know what the product is; the record shows insurance.",
             "refer_lines": 3,
@@ -217,27 +150,29 @@
                 "may engage para 85W"
             ],
             "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
             "disposition": null
         },
         {
-            "case_id": "TEST-CALL-SYN-GL-270222-0174-tb",
-            "loan_id": "SYN-GL-270222-0174",
-            "borrower": "Namoona Sharma 174 (synthetic)",
-            "language": "hi-en",
-            "branch": "SYN-BR-06",
-            "channel": "app",
-            "sold_on": "2027-02-22",
-            "day_since_sale": 0,
-            "days_left_in_window": 30,
+            "case_id": "TEST-CALL-SYN-PL-270304-0198-tb",
+            "loan_id": "SYN-PL-270304-0198",
+            "borrower": "Udaharan Lal 198 (synthetic)",
+            "language": "hi",
+            "branch": "SYN-BR-02",
+            "channel": "agent",
+            "sold_on": "2027-03-04",
+            "at": "2027-03-08T11:00:00+05:30",
+            "day_since_sale": 4,
             "severity": "high",
-            "headline": "Customer did not know what the product is; the record shows insurance.",
-            "refer_lines": 3,
+            "headline": "Customer did not know the premium was deducted from the loan.",
+            "refer_lines": 1,
             "may_engage": [
-                "may engage para 85Y",
-                "may engage para 85G",
                 "may engage para 85W"
             ],
             "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
             "disposition": null
         },
         {
@@ -248,8 +183,8 @@
             "branch": "SYN-BR-02",
             "channel": "agent",
             "sold_on": "2027-01-16",
-            "day_since_sale": 23,
-            "days_left_in_window": 7,
+            "at": "2027-01-18T11:00:00+05:30",
+            "day_since_sale": 2,
             "severity": "high",
             "headline": "Customer said the premium was paid separately; the record shows it deducted from the loan.",
             "refer_lines": 1,
@@ -257,67 +192,150 @@
                 "may engage para 85W"
             ],
             "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
             "disposition": {
-                "decision": "not_established",
-                "decision_label": "Not established",
+                "decision": "concern_not_supported",
+                "decision_label": "Concern not supported by the file (reviewer's view)",
                 "final": true,
-                "note": "Branch receipt shows the customer asked for the deduction in writing; customer forgot. Simulated review.",
+                "note": "Branch receipt shows the customer asked in writing for the deduction; customer forgot. Simulated review.",
                 "reviewer": "Asha Reviewer (synthetic)",
-                "recorded_at": "2026-11-10T10:38:27.140815Z"
+                "recorded_at": "2026-11-10T11:05:48.781936Z"
             }
         },
         {
-            "case_id": "TEST-CALL-SYN-GL-270205-0110-tb",
-            "loan_id": "SYN-GL-270205-0110",
-            "borrower": "Namoona Sharma 110 (synthetic)",
+            "case_id": "TEST-CALL-SYN-GL-270113-0022-tb",
+            "loan_id": "SYN-GL-270113-0022",
+            "borrower": "Namoona Sharma 022 (synthetic)",
             "language": "hi-en",
-            "branch": "SYN-BR-06",
-            "channel": "app",
-            "sold_on": "2027-02-05",
-            "day_since_sale": 18,
-            "days_left_in_window": 12,
+            "branch": "SYN-BR-01",
+            "channel": "agent",
+            "sold_on": "2027-01-13",
+            "at": "2027-01-19T11:00:00+05:30",
+            "day_since_sale": 6,
             "severity": "high",
-            "headline": "Customer described the product as a deposit (FD); the record shows insurance.",
-            "refer_lines": 2,
-            "may_engage": [
-                "may engage para 85Y",
-                "may engage para 4(20A)(ii)"
-            ],
-            "simulated": true,
-            "disposition": {
-                "decision": "established",
-                "decision_label": "Established by reviewer",
-                "final": true,
-                "note": "Customer twice called it an FD; the sale file shows no product explanation was signed. Simulated review.",
-                "reviewer": "Asha Reviewer (synthetic)",
-                "recorded_at": "2026-11-10T10:38:27.073162Z"
-            }
-        },
-        {
-            "case_id": "TEST-CALL-SYN-PL-270130-0085-tb",
-            "loan_id": "SYN-PL-270130-0085",
-            "borrower": "Udaharan Lal 085 (synthetic)",
-            "language": "hi",
-            "branch": "SYN-BR-05",
-            "channel": "branch",
-            "sold_on": "2027-01-30",
-            "day_since_sale": 16,
-            "days_left_in_window": 14,
-            "severity": "high",
-            "headline": "The record marks it as required for the loan; customer says they were not told they could buy it from another provider.",
+            "headline": "The record marks it as required for the loan; the record shows no choice of provider was offered; customer says they were not told they could buy it from another provider.",
             "refer_lines": 1,
             "may_engage": [
                 "may engage para 85V"
             ],
             "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
             "disposition": {
-                "decision": "established",
-                "decision_label": "Established by reviewer",
+                "decision": "concern_supported",
+                "decision_label": "Concern supported by the file (reviewer's view)",
                 "final": true,
                 "note": "Sanction letter makes the cover a condition and names one insurer only. Simulated review.",
                 "reviewer": "Asha Reviewer (synthetic)",
-                "recorded_at": "2026-11-10T10:38:27.304517Z"
+                "recorded_at": "2026-11-10T11:05:48.948094Z"
             }
+        },
+        {
+            "case_id": "TEST-CALL-SYN-PL-270225-0180-tb",
+            "loan_id": "SYN-PL-270225-0180",
+            "borrower": "Udaharan Lal 180 (synthetic)",
+            "language": "hi",
+            "branch": "SYN-BR-05",
+            "channel": "agent",
+            "sold_on": "2027-02-25",
+            "at": "2027-03-01T11:00:00+05:30",
+            "day_since_sale": 4,
+            "severity": "high",
+            "headline": "Customer believes it gives a guaranteed return; the record does not list this feature.",
+            "refer_lines": 1,
+            "may_engage": [
+                "may engage para 4(20A)(ii)"
+            ],
+            "simulated": true,
+            "in_report": true,
+            "not_counted_because": null,
+            "disposition": {
+                "decision": "concern_supported",
+                "decision_label": "Concern supported by the file (reviewer's view)",
+                "final": true,
+                "note": "Customer expects a guaranteed return; the product file shows no such feature and no signed explainer. Simulated review.",
+                "reviewer": "Asha Reviewer (synthetic)",
+                "recorded_at": "2026-11-10T11:05:48.735588Z"
+            }
+        },
+        {
+            "case_id": "20261110T103108-9f2e34f8dfdf",
+            "loan_id": "LN-DEMO-0001",
+            "borrower": "Ramesh Namoona",
+            "language": "hi",
+            "branch": null,
+            "channel": null,
+            "sold_on": null,
+            "at": "2026-11-10T10:31:24.404000Z",
+            "day_since_sale": null,
+            "severity": "high",
+            "headline": "Customer described the product as a deposit (FD); the record shows insurance.",
+            "refer_lines": 4,
+            "may_engage": [
+                "may engage para 85Y",
+                "may engage para 85V",
+                "may engage para 4(20A)(ii)",
+                "may engage para 85G",
+                "may engage para 85W"
+            ],
+            "simulated": false,
+            "in_report": false,
+            "not_counted_because": "the loan is not on the lender's book for this batch",
+            "disposition": {
+                "decision": "call_customer",
+                "decision_label": "Call the customer",
+                "final": false,
+                "note": "Phone call outside the sample (demo record); listen to the recording at the quote first. Simulated review.",
+                "reviewer": "Asha Reviewer (synthetic)",
+                "recorded_at": "2026-11-10T11:05:48.990327Z"
+            }
+        },
+        {
+            "case_id": "20261110T103439-10efda4cc6ab",
+            "loan_id": "LN-DEMO-0001",
+            "borrower": "Ramesh Namoona",
+            "language": "hi",
+            "branch": null,
+            "channel": null,
+            "sold_on": null,
+            "at": "2026-11-10T10:36:43.493000Z",
+            "day_since_sale": null,
+            "severity": "high",
+            "headline": "Customer described the product as a deposit (FD); the record shows insurance.",
+            "refer_lines": 4,
+            "may_engage": [
+                "may engage para 85Y",
+                "may engage para 85V",
+                "may engage para 4(20A)(ii)",
+                "may engage para 85G",
+                "may engage para 85W"
+            ],
+            "simulated": false,
+            "in_report": false,
+            "not_counted_because": "the loan is not on the lender's book for this batch",
+            "disposition": null
+        },
+        {
+            "case_id": "20261110T103149-31a023316d9e",
+            "loan_id": "LN-DEMO-0002",
+            "borrower": "Ramesh Namoona",
+            "language": "hi-en",
+            "branch": null,
+            "channel": null,
+            "sold_on": null,
+            "at": "2026-11-10T10:32:09.853000Z",
+            "day_since_sale": null,
+            "severity": "medium",
+            "headline": "Customer said they agreed by word of mouth only.",
+            "refer_lines": 1,
+            "may_engage": [
+                "may engage para 85G"
+            ],
+            "simulated": false,
+            "in_report": false,
+            "not_counted_because": "the loan is not on the lender's book for this batch",
+            "disposition": null
         }
     ]
 }

@@ -136,6 +136,9 @@ class CaseFile(_Model):
     recording: Recording | None = None
     models: dict[str, Any] = Field(default_factory=dict)  # every model and parameter used
     turns: list[TurnEvidence] = Field(default_factory=list)
+    # samajh.types.Transcript of the whole call, bot turns included, each turn placed in call.wav.
+    # None in case files written before this field (samajh.ops then rebuilds customer turns only).
+    transcript: dict[str, Any] | None = None
     batch_segments: int | None = None
     batch_speakers: list[int] = Field(default_factory=list)
     # Meaningful only when status is "ready". A failed case keeps what was found, for the record.
@@ -275,6 +278,7 @@ def build_case(
         customers = [e for e in log.events if isinstance(e, CustomerEvent) and not e.superseded]
         # Customer turns of the transcript in order; `call_transcript` checks they match the events.
         found["transcript"] = transcript = call_transcript(log)
+        case.transcript = transcript.model_dump(mode="json")
         spoken = [t for t in transcript.turns if t.speaker is Speaker.customer]
         case.turns = [
             TurnEvidence(

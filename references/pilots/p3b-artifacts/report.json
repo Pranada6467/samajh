@@ -15,79 +15,172 @@
             "period_start": "2027-01-01",
             "period_end": "2027-06-30",
             "simulated": true,
-            "created_at": "2026-11-10T10:36:49.249748Z"
+            "created_at": "2026-11-10T11:04:31.257898Z",
+            "unit": "Customer Feedback Unit (synthetic), not associated with sales"
         },
-        "simulated_notice": "Simulated batch: the loan book, the customers and every call are synthetic. No real customer was called.",
+        "simulated": false,
+        "simulated_notice": "Synthetic batch: the loan book and the customers are synthetic. Calls marked Simulated were scripted; calls marked Phone call were made on the browser phone with synthetic records.",
+        "access_notice": "Demo limitation: these pages have no sign-in. Anyone who can reach this server can record a decision, and the reviewer's name is free text that nobody checks.",
         "sampled": 80,
         "completed": 64,
-        "referred": 15,
-        "awaiting_review": 12
+        "referred": 11,
+        "open_cases": 8,
+        "other_referrals": 3
     },
-    "generated_at": "2026-11-10T10:40:50.393224Z",
+    "as_of": "2027-03-09",
+    "as_of_note": "Synthetic date: the report is dated by the simulated book's clock, the day of the last call attempt.",
     "paragraph": "85Y",
     "period_label": "1 January 2027 to 30 June 2027",
-    "coverage": "This batch covers 4 draw(s) made between 8 February 2027 and 1 March 2027: 80 of the 200 loans on the book (sold 4 January 2027 to 4 March 2027) were sampled. It does not cover the rest of the period.",
+    "unit": "Customer Feedback Unit (synthetic), not associated with sales",
+    "reading": [
+        {
+            "key": "Simulated (scripted transcript), read by openai/gpt-6-luna",
+            "label": "64 calls"
+        }
+    ],
+    "coverage": "This batch covers 9 draw(s) made between 11 January 2027 and 8 March 2027: 80 of the 200 loans on the book (sold 4 January 2027 to 4 March 2027) were sampled.",
     "limits": [
         "The loan book, the customers and the calls are synthetic and simulated. No real lender, customer or call is behind any number here.",
         "Customer replies come from scripted phrase banks. They are text only: no speech was recorded or transcribed.",
         "The share of each finding follows from the mix of customers the simulation assumes. It says nothing about any real lender.",
-        "Each interval is a 95% Wilson interval for sampling alone. It does not cover errors in reading the call or customers who were not reached.",
+        "Each interval is a 95% Wilson interval for sampling among eligible sales only (sales a draw covered). It does not cover sales no draw covered, errors in reading the call, or customers who were not reached.",
         "Findings describe customers who completed the call. Customers who did not answer, declined or ended the call early may differ.",
-        "A referral is a request for a person to look at one call, and nothing more."
+        "A referral is a request for a person to look at one call, and nothing more.",
+        "Reviewer decisions are counted, not estimated: they are one reviewer's view of the file, and no interval is given for them.",
+        "Calls marked Phone call were made on the browser phone against synthetic records, with recorded synthetic voices. They are not real customers either."
     ],
+    "previous_period": null,
     "draws": [
+        {
+            "draw_id": "D-2027-01-11",
+            "as_of": "2027-01-11",
+            "after": null,
+            "min_day": 0,
+            "max_day": 30,
+            "rate": 0.4,
+            "seed": 85,
+            "eligible": 17,
+            "drawn": 7,
+            "inclusion": 0.4117647058823529,
+            "verified": true
+        },
+        {
+            "draw_id": "D-2027-01-18",
+            "as_of": "2027-01-18",
+            "after": "2027-01-11",
+            "min_day": 0,
+            "max_day": 30,
+            "rate": 0.4,
+            "seed": 85,
+            "eligible": 34,
+            "drawn": 14,
+            "inclusion": 0.4117647058823529,
+            "verified": true
+        },
+        {
+            "draw_id": "D-2027-01-25",
+            "as_of": "2027-01-25",
+            "after": "2027-01-18",
+            "min_day": 0,
+            "max_day": 30,
+            "rate": 0.4,
+            "seed": 85,
+            "eligible": 22,
+            "drawn": 9,
+            "inclusion": 0.4090909090909091,
+            "verified": true
+        },
+        {
+            "draw_id": "D-2027-02-01",
+            "as_of": "2027-02-01",
+            "after": "2027-01-25",
+            "min_day": 0,
+            "max_day": 30,
+            "rate": 0.4,
+            "seed": 85,
+            "eligible": 21,
+            "drawn": 8,
+            "inclusion": 0.38095238095238093,
+            "verified": true
+        },
         {
             "draw_id": "D-2027-02-08",
             "as_of": "2027-02-08",
+            "after": "2027-02-01",
             "min_day": 0,
             "max_day": 30,
-            "size": 20,
+            "rate": 0.4,
             "seed": 85,
-            "eligible": 110,
-            "already_drawn": 0,
-            "drawn": 20,
+            "eligible": 27,
+            "drawn": 11,
+            "inclusion": 0.4074074074074074,
             "verified": true
         },
         {
             "draw_id": "D-2027-02-15",
             "as_of": "2027-02-15",
+            "after": "2027-02-08",
             "min_day": 0,
             "max_day": 30,
-            "size": 20,
+            "rate": 0.4,
             "seed": 85,
-            "eligible": 94,
-            "already_drawn": 15,
-            "drawn": 20,
+            "eligible": 24,
+            "drawn": 10,
+            "inclusion": 0.4166666666666667,
             "verified": true
         },
         {
             "draw_id": "D-2027-02-22",
             "as_of": "2027-02-22",
+            "after": "2027-02-15",
             "min_day": 0,
             "max_day": 30,
-            "size": 20,
+            "rate": 0.4,
             "seed": 85,
-            "eligible": 88,
-            "already_drawn": 23,
-            "drawn": 20,
+            "eligible": 31,
+            "drawn": 12,
+            "inclusion": 0.3870967741935484,
             "verified": true
         },
         {
             "draw_id": "D-2027-03-01",
             "as_of": "2027-03-01",
+            "after": "2027-02-22",
             "min_day": 0,
             "max_day": 30,
-            "size": 20,
+            "rate": 0.4,
             "seed": 85,
-            "eligible": 71,
-            "already_drawn": 37,
-            "drawn": 20,
+            "eligible": 16,
+            "drawn": 6,
+            "inclusion": 0.375,
+            "verified": true
+        },
+        {
+            "draw_id": "D-2027-03-08",
+            "as_of": "2027-03-08",
+            "after": "2027-03-01",
+            "min_day": 0,
+            "max_day": 30,
+            "rate": 0.4,
+            "seed": 85,
+            "eligible": 8,
+            "drawn": 3,
+            "inclusion": 0.375,
             "verified": true
         }
     ],
+    "sampling": {
+        "sales_in_period": 200,
+        "eligible": 200,
+        "sampled": 80,
+        "never_eligible": [],
+        "inclusion_low": 0.375,
+        "inclusion_high": 0.4166666666666667,
+        "statement": "Each draw took 40% of the sales made since the previous draw that were still within 30 days of the sale, so draw windows never overlap and every eligible sale had about the same chance of being sampled (between 37.5% and 41.7%, by rounding). Shares and intervals describe the 200 eligible sales only; the 0 sale(s) no draw covered are not represented. Shares are unweighted because the chances are equal up to rounding."
+    },
     "funnel": {
         "sampled": 80,
-        "attempts": 102,
+        "attempts": 113,
         "stages": [
             {
                 "key": "attempted",
@@ -104,11 +197,11 @@
                 "key": "reached",
                 "label": "Answered the phone",
                 "value": {
-                    "count": 79,
+                    "count": 78,
                     "n": 80,
-                    "share": 0.9875,
-                    "low": 0.9325372985264325,
-                    "high": 0.9977900245039738
+                    "share": 0.975,
+                    "low": 0.9133556694270627,
+                    "high": 0.9931171068589743
                 }
             },
             {
@@ -124,7 +217,7 @@
             },
             {
                 "key": "completed",
-                "label": "Completed the call",
+                "label": "Completed the call within 30 days of the sale",
                 "value": {
                     "count": 64,
                     "n": 80,
@@ -150,39 +243,6 @@
                 "key": "unreachable",
                 "label": "Not reached",
                 "value": {
-                    "count": 1,
-                    "n": 80,
-                    "share": 0.0125,
-                    "low": 0.002209975496026112,
-                    "high": 0.06746270147356748
-                }
-            },
-            {
-                "key": "wrong_party",
-                "label": "Someone else answered",
-                "value": {
-                    "count": 6,
-                    "n": 80,
-                    "share": 0.075,
-                    "low": 0.03482524908934525,
-                    "high": 0.1541201616020953
-                }
-            },
-            {
-                "key": "not_confirmed",
-                "label": "Identity not confirmed",
-                "value": {
-                    "count": 4,
-                    "n": 80,
-                    "share": 0.05,
-                    "low": 0.019613554399292722,
-                    "high": 0.12162276280340906
-                }
-            },
-            {
-                "key": "declined",
-                "label": "Declined the call",
-                "value": {
                     "count": 2,
                     "n": 80,
                     "share": 0.025,
@@ -191,8 +251,63 @@
                 }
             },
             {
+                "key": "wrong_party",
+                "label": "Someone else answered",
+                "value": {
+                    "count": 5,
+                    "n": 80,
+                    "share": 0.0625,
+                    "low": 0.026989375500007226,
+                    "high": 0.13810148844706394
+                }
+            },
+            {
+                "key": "not_confirmed",
+                "label": "Identity not confirmed",
+                "value": {
+                    "count": 1,
+                    "n": 80,
+                    "share": 0.0125,
+                    "low": 0.002209975496026112,
+                    "high": 0.06746270147356748
+                }
+            },
+            {
+                "key": "declined",
+                "label": "Declined the call",
+                "value": {
+                    "count": 5,
+                    "n": 80,
+                    "share": 0.0625,
+                    "low": 0.026989375500007226,
+                    "high": 0.13810148844706394
+                }
+            },
+            {
                 "key": "call_back_later",
                 "label": "Asked to be called later, not yet called",
+                "value": {
+                    "count": 0,
+                    "n": 80,
+                    "share": 0.0,
+                    "low": 0.0,
+                    "high": 0.04581813022522419
+                }
+            },
+            {
+                "key": "language_switch",
+                "label": "Asked for another language, not yet called in it",
+                "value": {
+                    "count": 0,
+                    "n": 80,
+                    "share": 0.0,
+                    "low": 0.0,
+                    "high": 0.04581813022522419
+                }
+            },
+            {
+                "key": "not_reached_in_time",
+                "label": "Not reached within 30 days of the sale",
                 "value": {
                     "count": 0,
                     "n": 80,
@@ -211,173 +326,134 @@
                     "low": 0.012834568820056527,
                     "high": 0.10454720163827584
                 }
+            },
+            {
+                "key": "completed_not_analysed",
+                "label": "Completed, but the call could not be analysed (no finding)",
+                "value": {
+                    "count": 0,
+                    "n": 80,
+                    "share": 0.0,
+                    "low": 0.0,
+                    "high": 0.04581813022522419
+                }
+            },
+            {
+                "key": "completed_late",
+                "label": "Completed after day 30 from the sale (not in the findings)",
+                "value": {
+                    "count": 0,
+                    "n": 80,
+                    "share": 0.0,
+                    "low": 0.0,
+                    "high": 0.04581813022522419
+                }
             }
         ]
     },
     "timing": {
         "first_attempt_days": [
             0,
-            14,
-            28
+            3,
+            7
         ],
-        "completed_within_window": {
-            "count": 64,
-            "n": 64,
-            "share": 1.0,
-            "low": 0.9433759393644894,
-            "high": 1.0
+        "attempted": 80,
+        "attempts_after_window": {
+            "count": 0,
+            "n": 113
         },
-        "attempts_after_window": 0
+        "completed_late": 0
     },
     "tiers": [
         {
             "tier": "refer",
             "label": "Referred for review",
             "value": {
-                "count": 15,
+                "count": 11,
                 "n": 64,
-                "share": 0.234375,
-                "low": 0.14749895538818128,
-                "high": 0.35133257682443364
+                "share": 0.171875,
+                "low": 0.09877742257874725,
+                "high": 0.28213211721330644
             }
         },
         {
             "tier": "incomplete",
             "label": "Incomplete",
             "value": {
-                "count": 4,
+                "count": 3,
                 "n": 64,
-                "share": 0.0625,
-                "low": 0.02457120122589082,
-                "high": 0.1499748518301809
+                "share": 0.046875,
+                "low": 0.016069016661225302,
+                "high": 0.1289965382897061
             }
         },
         {
             "tier": "understanding_gap",
             "label": "Understanding gap (report only)",
             "value": {
-                "count": 25,
+                "count": 29,
                 "n": 64,
-                "share": 0.390625,
-                "low": 0.2805556911069803,
-                "high": 0.5130808221570375
+                "share": 0.453125,
+                "low": 0.3372944769635036,
+                "high": 0.5742640287210753
             }
         },
         {
             "tier": "clear",
-            "label": "No finding",
+            "label": "Nothing to refer",
             "value": {
-                "count": 20,
+                "count": 21,
                 "n": 64,
-                "share": 0.3125,
-                "low": 0.2123106647207225,
-                "high": 0.43392335801759396
+                "share": 0.328125,
+                "low": 0.22570557834870092,
+                "high": 0.4500089424947557
             }
         }
     ],
+    "groups": [
+        {
+            "key": "features",
+            "label": "Product features: what it is, what it costs and covers, how long it runs, how to cancel"
+        },
+        {
+            "key": "risks",
+            "label": "Risks: what the customer believes happens to the money"
+        },
+        {
+            "key": "sale",
+            "label": "How the product was sold: consent, payment from the loan, bundling, conduct"
+        }
+    ],
+    "risk_note": "Risk coverage is thin. One question in the call bears directly on risk: whether the customer can get the money back (any time, after a period, or with a return), which shows what they believe happens to the money. Describing the product as a deposit also bears on it. The call asks nothing about exclusions, claim conditions or what happens to the cover if the loan is closed early.",
+    "seriousness_note": "Seriousness is the builders' ranking, not a regulatory scale: a belief about what the product is, whether it returns money, or how it was agreed to ranks above forgetting a figure.",
     "findings": [
-        {
-            "rule_id": "cancel_window",
-            "rule_label": "Cancellation window",
-            "may_engage": "may engage para 85Y",
-            "statement": "could not state the cancellation window on the record",
-            "understanding": true,
-            "flagged": {
-                "count": 23,
-                "n": 64,
-                "share": 0.359375,
-                "low": 0.25288402217722405,
-                "high": 0.4817914948765132
-            },
-            "undecided": 1,
-            "referred": 0
-        },
-        {
-            "rule_id": "cover",
-            "rule_label": "Cover amount",
-            "may_engage": "may engage para 85Y",
-            "statement": "did not state the cover amount on the record",
-            "understanding": true,
-            "flagged": {
-                "count": 19,
-                "n": 64,
-                "share": 0.296875,
-                "low": 0.19905151260405385,
-                "high": 0.41770201202912227
-            },
-            "undecided": 5,
-            "referred": 0
-        },
-        {
-            "rule_id": "term",
-            "rule_label": "How long it runs",
-            "may_engage": "may engage para 85Y",
-            "statement": "did not state the term on the record",
-            "understanding": true,
-            "flagged": {
-                "count": 16,
-                "n": 64,
-                "share": 0.25,
-                "low": 0.16014926473210675,
-                "high": 0.3681627655856484
-            },
-            "undecided": 1,
-            "referred": 0
-        },
-        {
-            "rule_id": "recall",
-            "rule_label": "Naming the product unprompted",
-            "may_engage": "may engage para 85Y",
-            "statement": "did not name the product before it was mentioned",
-            "understanding": true,
-            "flagged": {
-                "count": 8,
-                "n": 64,
-                "share": 0.125,
-                "low": 0.06472242630161115,
-                "high": 0.2277456191750217
-            },
-            "undecided": 0,
-            "referred": 0
-        },
         {
             "rule_id": "kind",
             "rule_label": "What the product is",
             "may_engage": "may engage para 85Y",
             "statement": "did not describe the product as what the record shows",
-            "understanding": true,
+            "group": "features",
+            "seriousness": 1,
+            "seriousness_label": "Serious",
             "flagged": {
-                "count": 7,
+                "count": 1,
                 "n": 64,
-                "share": 0.109375,
-                "low": 0.05400113314972993,
-                "high": 0.20898641422176267
+                "share": 0.015625,
+                "low": 0.0027635418927853816,
+                "high": 0.08334101684786545
             },
-            "undecided": 1,
-            "referred": 7
-        },
-        {
-            "rule_id": "premium",
-            "rule_label": "What it cost",
-            "may_engage": "may engage para 85Y",
-            "statement": "did not state the premium on the record",
-            "understanding": true,
-            "flagged": {
-                "count": 4,
-                "n": 64,
-                "share": 0.0625,
-                "low": 0.02457120122589082,
-                "high": 0.1499748518301809
-            },
-            "undecided": 1,
-            "referred": 0
+            "undecided": 0,
+            "referred": 1,
+            "previous": null
         },
         {
             "rule_id": "recall_unmatched",
             "rule_label": "A product named that is not on the record",
             "may_engage": "may engage para 85Y",
             "statement": "named a product that is not on the record",
-            "understanding": true,
+            "group": "features",
+            "seriousness": 1,
+            "seriousness_label": "Serious",
             "flagged": {
                 "count": 0,
                 "n": 64,
@@ -385,31 +461,37 @@
                 "low": 0.0,
                 "high": 0.05662406063551054
             },
-            "undecided": 1,
-            "referred": 0
+            "undecided": 0,
+            "referred": 0,
+            "previous": null
         },
         {
-            "rule_id": "belief_mismatch",
-            "rule_label": "Beliefs about the product's features",
-            "may_engage": "may engage para 4(20A)(ii)",
-            "statement": "held a belief about the product that its features on the record do not support",
-            "understanding": false,
+            "rule_id": "cancel_window",
+            "rule_label": "Cancellation window",
+            "may_engage": "may engage para 85Y",
+            "statement": "could not state the cancellation window on the record",
+            "group": "features",
+            "seriousness": 2,
+            "seriousness_label": "Moderate",
             "flagged": {
-                "count": 8,
+                "count": 18,
                 "n": 64,
-                "share": 0.125,
-                "low": 0.06472242630161115,
-                "high": 0.2277456191750217
+                "share": 0.28125,
+                "low": 0.18593372270957867,
+                "high": 0.40133930381845717
             },
-            "undecided": 1,
-            "referred": 6
+            "undecided": 0,
+            "referred": 0,
+            "previous": null
         },
         {
-            "rule_id": "loan_funded",
-            "rule_label": "Premium deducted from the loan",
-            "may_engage": "may engage para 85W",
-            "statement": "did not know the premium was deducted from the loan, or the record shows a deduction with no consent",
-            "understanding": false,
+            "rule_id": "premium",
+            "rule_label": "What it cost",
+            "may_engage": "may engage para 85Y",
+            "statement": "did not state the premium on the record",
+            "group": "features",
+            "seriousness": 2,
+            "seriousness_label": "Moderate",
             "flagged": {
                 "count": 5,
                 "n": 64,
@@ -417,31 +499,75 @@
                 "low": 0.033831176694428755,
                 "high": 0.17019537446678323
             },
-            "undecided": 1,
-            "referred": 5
+            "undecided": 0,
+            "referred": 0,
+            "previous": null
         },
         {
-            "rule_id": "consent",
-            "rule_label": "Consent",
-            "may_engage": "may engage para 85G",
-            "statement": "gave an account of agreeing that does not match the record, or the record holds no consent",
-            "understanding": false,
+            "rule_id": "cover",
+            "rule_label": "Cover amount",
+            "may_engage": "may engage para 85Y",
+            "statement": "did not state the cover amount on the record",
+            "group": "features",
+            "seriousness": 3,
+            "seriousness_label": "Lower",
             "flagged": {
-                "count": 4,
+                "count": 21,
                 "n": 64,
-                "share": 0.0625,
-                "low": 0.02457120122589082,
-                "high": 0.1499748518301809
+                "share": 0.328125,
+                "low": 0.22570557834870092,
+                "high": 0.4500089424947557
             },
-            "undecided": 4,
-            "referred": 4
+            "undecided": 0,
+            "referred": 0,
+            "previous": null
         },
         {
-            "rule_id": "sale_conduct",
-            "rule_label": "How the sale was handled",
-            "may_engage": null,
-            "statement": "voiced a concern about how the product was sold",
-            "understanding": false,
+            "rule_id": "term",
+            "rule_label": "How long it runs",
+            "may_engage": "may engage para 85Y",
+            "statement": "did not state the term on the record",
+            "group": "features",
+            "seriousness": 3,
+            "seriousness_label": "Lower",
+            "flagged": {
+                "count": 15,
+                "n": 64,
+                "share": 0.234375,
+                "low": 0.14749895538818128,
+                "high": 0.35133257682443364
+            },
+            "undecided": 0,
+            "referred": 0,
+            "previous": null
+        },
+        {
+            "rule_id": "recall",
+            "rule_label": "Naming the product unprompted",
+            "may_engage": "may engage para 85Y",
+            "statement": "did not name the product before it was mentioned",
+            "group": "features",
+            "seriousness": 3,
+            "seriousness_label": "Lower",
+            "flagged": {
+                "count": 5,
+                "n": 64,
+                "share": 0.078125,
+                "low": 0.033831176694428755,
+                "high": 0.17019537446678323
+            },
+            "undecided": 0,
+            "referred": 4,
+            "previous": null
+        },
+        {
+            "rule_id": "belief_mismatch",
+            "rule_label": "Beliefs about the product's features",
+            "may_engage": "may engage para 4(20A)(ii)",
+            "statement": "held a belief about the product that its features on the record do not support",
+            "group": "risks",
+            "seriousness": 1,
+            "seriousness_label": "Serious",
             "flagged": {
                 "count": 2,
                 "n": 64,
@@ -450,14 +576,55 @@
                 "high": 0.10697291857715885
             },
             "undecided": 0,
-            "referred": 2
+            "referred": 1,
+            "previous": null
+        },
+        {
+            "rule_id": "loan_funded",
+            "rule_label": "Premium deducted from the loan",
+            "may_engage": "may engage para 85W",
+            "statement": "did not know the premium was deducted from the loan, or the record shows a deduction with no consent",
+            "group": "sale",
+            "seriousness": 1,
+            "seriousness_label": "Serious",
+            "flagged": {
+                "count": 3,
+                "n": 64,
+                "share": 0.046875,
+                "low": 0.016069016661225302,
+                "high": 0.1289965382897061
+            },
+            "undecided": 0,
+            "referred": 3,
+            "previous": null
+        },
+        {
+            "rule_id": "consent",
+            "rule_label": "Consent",
+            "may_engage": "may engage para 85G",
+            "statement": "gave an account of agreeing that does not match the record, or the record holds no consent",
+            "group": "sale",
+            "seriousness": 1,
+            "seriousness_label": "Serious",
+            "flagged": {
+                "count": 2,
+                "n": 64,
+                "share": 0.03125,
+                "low": 0.008612138268632274,
+                "high": 0.10697291857715885
+            },
+            "undecided": 3,
+            "referred": 2,
+            "previous": null
         },
         {
             "rule_id": "bundling",
             "rule_label": "Required for the loan",
             "may_engage": "may engage para 85V",
             "statement": "had a product required for the loan with a question over the choice of provider or what the product is",
-            "understanding": false,
+            "group": "sale",
+            "seriousness": 1,
+            "seriousness_label": "Serious",
             "flagged": {
                 "count": 1,
                 "n": 64,
@@ -465,31 +632,45 @@
                 "low": 0.0027635418927853816,
                 "high": 0.08334101684786545
             },
-            "undecided": 3,
-            "referred": 1
+            "undecided": 1,
+            "referred": 1,
+            "previous": null
+        },
+        {
+            "rule_id": "sale_conduct",
+            "rule_label": "How the sale was handled",
+            "may_engage": null,
+            "statement": "voiced a concern about how the product was sold",
+            "group": "sale",
+            "seriousness": 1,
+            "seriousness_label": "Serious",
+            "flagged": {
+                "count": 1,
+                "n": 64,
+                "share": 0.015625,
+                "low": 0.0027635418927853816,
+                "high": 0.08334101684786545
+            },
+            "undecided": 0,
+            "referred": 1,
+            "previous": null
         }
     ],
     "referrals": [
         {
-            "key": "established",
-            "label": "Established by reviewer",
+            "key": "concern_supported",
+            "label": "Concern supported by the file (reviewer's view)",
             "value": {
                 "count": 2,
-                "n": 15,
-                "share": 0.13333333333333333,
-                "low": 0.03736125876428492,
-                "high": 0.37881983053980567
+                "n": 11
             }
         },
         {
-            "key": "not_established",
-            "label": "Not established",
+            "key": "concern_not_supported",
+            "label": "Concern not supported by the file (reviewer's view)",
             "value": {
                 "count": 1,
-                "n": 15,
-                "share": 0.06666666666666667,
-                "low": 0.01186689536153232,
-                "high": 0.2981653010887565
+                "n": 11
             }
         },
         {
@@ -497,10 +678,7 @@
             "label": "Call the customer",
             "value": {
                 "count": 1,
-                "n": 15,
-                "share": 0.06666666666666667,
-                "low": 0.01186689536153232,
-                "high": 0.2981653010887565
+                "n": 11
             }
         },
         {
@@ -508,31 +686,28 @@
             "label": "Needs more information",
             "value": {
                 "count": 0,
-                "n": 15,
-                "share": 0.0,
-                "low": 0.0,
-                "high": 0.20388330359648707
+                "n": 11
             }
         },
         {
-            "key": "awaiting",
-            "label": "Awaiting a decision",
+            "key": "none",
+            "label": "No decision recorded yet",
             "value": {
-                "count": 11,
-                "n": 15,
-                "share": 0.7333333333333333,
-                "low": 0.48049565748447975,
-                "high": 0.8910254675038264
+                "count": 7,
+                "n": 11
             }
         }
     ],
-    "established_of_decided": {
-        "count": 2,
-        "n": 3,
-        "share": 0.6666666666666666,
-        "low": 0.2076595988078242,
-        "high": 0.9385080559790691
+    "open_referrals": {
+        "count": 8,
+        "n": 11
     },
+    "supported_of_decided": {
+        "count": 2,
+        "n": 3
+    },
+    "other_referrals": 3,
+    "outside_calls": 5,
     "breakdowns": [
         {
             "by": "loan_kind",
@@ -541,41 +716,69 @@
                 {
                     "key": "gold",
                     "label": "Gold loan",
-                    "sampled": 39,
-                    "completed": 31,
+                    "sampled": 35,
+                    "completed": 29,
                     "referred": {
-                        "count": 10,
-                        "n": 31,
-                        "share": 0.3225806451612903,
-                        "low": 0.18569426482301724,
-                        "high": 0.49858990830886185
+                        "count": 5,
+                        "n": 29,
+                        "share": 0.1724137931034483,
+                        "low": 0.07597857204821831,
+                        "high": 0.34548440045021234
+                    },
+                    "rest_referred": {
+                        "count": 6,
+                        "n": 35,
+                        "share": 0.17142857142857143,
+                        "low": 0.08102640006436056,
+                        "high": 0.3268228243870004
                     },
                     "understanding_gap": {
-                        "count": 10,
-                        "n": 31,
-                        "share": 0.3225806451612903,
-                        "low": 0.18569426482301724,
-                        "high": 0.49858990830886185
+                        "count": 12,
+                        "n": 29,
+                        "share": 0.41379310344827586,
+                        "low": 0.25513177237414897,
+                        "high": 0.5926216414412274
+                    },
+                    "rest_understanding_gap": {
+                        "count": 17,
+                        "n": 35,
+                        "share": 0.4857142857142857,
+                        "low": 0.32994235892786083,
+                        "high": 0.64431195517872
                     }
                 },
                 {
                     "key": "personal",
                     "label": "Personal loan",
-                    "sampled": 41,
-                    "completed": 33,
+                    "sampled": 45,
+                    "completed": 35,
                     "referred": {
+                        "count": 6,
+                        "n": 35,
+                        "share": 0.17142857142857143,
+                        "low": 0.08102640006436056,
+                        "high": 0.3268228243870004
+                    },
+                    "rest_referred": {
                         "count": 5,
-                        "n": 33,
-                        "share": 0.15151515151515152,
-                        "low": 0.06650457239529714,
-                        "high": 0.30919876025212834
+                        "n": 29,
+                        "share": 0.1724137931034483,
+                        "low": 0.07597857204821831,
+                        "high": 0.34548440045021234
                     },
                     "understanding_gap": {
-                        "count": 15,
-                        "n": 33,
-                        "share": 0.45454545454545453,
-                        "low": 0.29842938406823816,
-                        "high": 0.6201406158422955
+                        "count": 17,
+                        "n": 35,
+                        "share": 0.4857142857142857,
+                        "low": 0.32994235892786083,
+                        "high": 0.64431195517872
+                    },
+                    "rest_understanding_gap": {
+                        "count": 12,
+                        "n": 29,
+                        "share": 0.41379310344827586,
+                        "low": 0.25513177237414897,
+                        "high": 0.5926216414412274
                     }
                 }
             ]
@@ -587,121 +790,205 @@
                 {
                     "key": "SYN-BR-01",
                     "label": "SYN-BR-01",
-                    "sampled": 10,
-                    "completed": 6,
+                    "sampled": 13,
+                    "completed": 12,
                     "referred": {
-                        "count": 0,
-                        "n": 6,
-                        "share": 0.0,
-                        "low": 0.0,
-                        "high": 0.39033429165637346
+                        "count": 2,
+                        "n": 12,
+                        "share": 0.16666666666666666,
+                        "low": 0.04696514175692082,
+                        "high": 0.4480308646118111
+                    },
+                    "rest_referred": {
+                        "count": 9,
+                        "n": 52,
+                        "share": 0.17307692307692307,
+                        "low": 0.09382474345965262,
+                        "high": 0.2973086423590291
                     },
                     "understanding_gap": {
-                        "count": 2,
-                        "n": 6,
-                        "share": 0.3333333333333333,
-                        "low": 0.09677141021353453,
-                        "high": 0.7000066870052566
+                        "count": 5,
+                        "n": 12,
+                        "share": 0.4166666666666667,
+                        "low": 0.1932603124346072,
+                        "high": 0.6804886891575758
+                    },
+                    "rest_understanding_gap": {
+                        "count": 24,
+                        "n": 52,
+                        "share": 0.46153846153846156,
+                        "low": 0.33340474589543556,
+                        "high": 0.5949638877302917
                     }
                 },
                 {
                     "key": "SYN-BR-02",
                     "label": "SYN-BR-02",
-                    "sampled": 16,
-                    "completed": 12,
+                    "sampled": 14,
+                    "completed": 10,
                     "referred": {
-                        "count": 4,
-                        "n": 12,
-                        "share": 0.3333333333333333,
-                        "low": 0.13812009012485987,
-                        "high": 0.6093779130595061
+                        "count": 2,
+                        "n": 10,
+                        "share": 0.2,
+                        "low": 0.05668215093776685,
+                        "high": 0.5098375308778678
+                    },
+                    "rest_referred": {
+                        "count": 9,
+                        "n": 54,
+                        "share": 0.16666666666666666,
+                        "low": 0.09024391599360121,
+                        "high": 0.28736514338575686
                     },
                     "understanding_gap": {
                         "count": 4,
-                        "n": 12,
-                        "share": 0.3333333333333333,
-                        "low": 0.13812009012485987,
-                        "high": 0.6093779130595061
+                        "n": 10,
+                        "share": 0.4,
+                        "low": 0.1681803285264069,
+                        "high": 0.6873262320788047
+                    },
+                    "rest_understanding_gap": {
+                        "count": 25,
+                        "n": 54,
+                        "share": 0.46296296296296297,
+                        "low": 0.33689901026924174,
+                        "high": 0.5939464407729093
                     }
                 },
                 {
                     "key": "SYN-BR-03",
                     "label": "SYN-BR-03",
-                    "sampled": 14,
-                    "completed": 13,
+                    "sampled": 15,
+                    "completed": 11,
                     "referred": {
-                        "count": 2,
-                        "n": 13,
-                        "share": 0.15384615384615385,
-                        "low": 0.04325817796522907,
-                        "high": 0.4223463125106327
+                        "count": 1,
+                        "n": 11,
+                        "share": 0.09090909090909091,
+                        "low": 0.016232172705325593,
+                        "high": 0.3773584391082959
+                    },
+                    "rest_referred": {
+                        "count": 10,
+                        "n": 53,
+                        "share": 0.18867924528301888,
+                        "low": 0.10585325059108783,
+                        "high": 0.3135845919717667
                     },
                     "understanding_gap": {
                         "count": 5,
-                        "n": 13,
-                        "share": 0.38461538461538464,
-                        "low": 0.17709707685632237,
-                        "high": 0.6447710866356315
+                        "n": 11,
+                        "share": 0.45454545454545453,
+                        "low": 0.21271271487637833,
+                        "high": 0.7199084642140241
+                    },
+                    "rest_understanding_gap": {
+                        "count": 24,
+                        "n": 53,
+                        "share": 0.4528301886792453,
+                        "low": 0.32657579062351566,
+                        "high": 0.585460246128432
                     }
                 },
                 {
                     "key": "SYN-BR-04",
                     "label": "SYN-BR-04",
-                    "sampled": 10,
-                    "completed": 7,
+                    "sampled": 14,
+                    "completed": 12,
                     "referred": {
-                        "count": 2,
-                        "n": 7,
-                        "share": 0.2857142857142857,
-                        "low": 0.08221892324928332,
-                        "high": 0.6410655504689458
+                        "count": 1,
+                        "n": 12,
+                        "share": 0.08333333333333333,
+                        "low": 0.014865094239669363,
+                        "high": 0.35387991372124555
+                    },
+                    "rest_referred": {
+                        "count": 10,
+                        "n": 52,
+                        "share": 0.19230769230769232,
+                        "low": 0.10796045975206996,
+                        "high": 0.31898860925374817
                     },
                     "understanding_gap": {
-                        "count": 5,
-                        "n": 7,
-                        "share": 0.7142857142857143,
-                        "low": 0.3589344495310541,
-                        "high": 0.9177810767507166
+                        "count": 8,
+                        "n": 12,
+                        "share": 0.6666666666666666,
+                        "low": 0.3906220869404939,
+                        "high": 0.86187990987514
+                    },
+                    "rest_understanding_gap": {
+                        "count": 21,
+                        "n": 52,
+                        "share": 0.40384615384615385,
+                        "low": 0.281597337866733,
+                        "high": 0.5393242461975851
                     }
                 },
                 {
                     "key": "SYN-BR-05",
                     "label": "SYN-BR-05",
-                    "sampled": 22,
-                    "completed": 19,
+                    "sampled": 15,
+                    "completed": 12,
                     "referred": {
-                        "count": 3,
-                        "n": 19,
-                        "share": 0.15789473684210525,
-                        "low": 0.055204715953508426,
-                        "high": 0.3756547546451403
+                        "count": 2,
+                        "n": 12,
+                        "share": 0.16666666666666666,
+                        "low": 0.04696514175692082,
+                        "high": 0.4480308646118111
+                    },
+                    "rest_referred": {
+                        "count": 9,
+                        "n": 52,
+                        "share": 0.17307692307692307,
+                        "low": 0.09382474345965262,
+                        "high": 0.2973086423590291
                     },
                     "understanding_gap": {
-                        "count": 8,
-                        "n": 19,
-                        "share": 0.42105263157894735,
-                        "low": 0.23141891166171535,
-                        "high": 0.637240966168742
+                        "count": 4,
+                        "n": 12,
+                        "share": 0.3333333333333333,
+                        "low": 0.13812009012485987,
+                        "high": 0.6093779130595061
+                    },
+                    "rest_understanding_gap": {
+                        "count": 25,
+                        "n": 52,
+                        "share": 0.4807692307692308,
+                        "low": 0.3510411435112893,
+                        "high": 0.6131431733015742
                     }
                 },
                 {
                     "key": "SYN-BR-06",
                     "label": "SYN-BR-06",
-                    "sampled": 8,
+                    "sampled": 9,
                     "completed": 7,
                     "referred": {
-                        "count": 4,
+                        "count": 3,
                         "n": 7,
-                        "share": 0.5714285714285714,
-                        "low": 0.25045836275303557,
-                        "high": 0.8417801460075546
+                        "share": 0.42857142857142855,
+                        "low": 0.15821985399244537,
+                        "high": 0.7495416372469643
+                    },
+                    "rest_referred": {
+                        "count": 8,
+                        "n": 57,
+                        "share": 0.14035087719298245,
+                        "low": 0.07287276105928868,
+                        "high": 0.25324464713776723
                     },
                     "understanding_gap": {
-                        "count": 1,
+                        "count": 3,
                         "n": 7,
-                        "share": 0.14285714285714285,
-                        "low": 0.025679624057823897,
-                        "high": 0.5131278321392249
+                        "share": 0.42857142857142855,
+                        "low": 0.15821985399244537,
+                        "high": 0.7495416372469643
+                    },
+                    "rest_understanding_gap": {
+                        "count": 26,
+                        "n": 57,
+                        "share": 0.45614035087719296,
+                        "low": 0.3337260549463177,
+                        "high": 0.5840931411752744
                     }
                 }
             ]
@@ -713,61 +1000,103 @@
                 {
                     "key": "agent",
                     "label": "Direct selling agent",
-                    "sampled": 22,
-                    "completed": 17,
+                    "sampled": 20,
+                    "completed": 16,
                     "referred": {
                         "count": 5,
-                        "n": 17,
-                        "share": 0.29411764705882354,
-                        "low": 0.1327998952626943,
-                        "high": 0.5313311024822815
+                        "n": 16,
+                        "share": 0.3125,
+                        "low": 0.14164643765150897,
+                        "high": 0.5559564434725178
+                    },
+                    "rest_referred": {
+                        "count": 6,
+                        "n": 48,
+                        "share": 0.125,
+                        "low": 0.0585705140436488,
+                        "high": 0.2470045840177115
                     },
                     "understanding_gap": {
                         "count": 8,
-                        "n": 17,
-                        "share": 0.47058823529411764,
-                        "low": 0.2616510631137911,
-                        "high": 0.6903676508497769
+                        "n": 16,
+                        "share": 0.5,
+                        "low": 0.27999563470387406,
+                        "high": 0.7200043652961259
+                    },
+                    "rest_understanding_gap": {
+                        "count": 21,
+                        "n": 48,
+                        "share": 0.4375,
+                        "low": 0.3070126894862085,
+                        "high": 0.5772498268573516
                     }
                 },
                 {
                     "key": "app",
                     "label": "Lender's app",
-                    "sampled": 13,
-                    "completed": 11,
+                    "sampled": 10,
+                    "completed": 9,
                     "referred": {
-                        "count": 4,
-                        "n": 11,
-                        "share": 0.36363636363636365,
-                        "low": 0.15166470989133157,
-                        "high": 0.6461988273798758
+                        "count": 1,
+                        "n": 9,
+                        "share": 0.1111111111111111,
+                        "low": 0.01989088741690992,
+                        "high": 0.4349997083707909
+                    },
+                    "rest_referred": {
+                        "count": 10,
+                        "n": 55,
+                        "share": 0.18181818181818182,
+                        "low": 0.10187670387666053,
+                        "high": 0.30330459744682714
                     },
                     "understanding_gap": {
-                        "count": 1,
-                        "n": 11,
-                        "share": 0.09090909090909091,
-                        "low": 0.016232172705325593,
-                        "high": 0.3773584391082959
+                        "count": 2,
+                        "n": 9,
+                        "share": 0.2222222222222222,
+                        "low": 0.06322510654056959,
+                        "high": 0.5474110333077882
+                    },
+                    "rest_understanding_gap": {
+                        "count": 27,
+                        "n": 55,
+                        "share": 0.4909090909090909,
+                        "low": 0.3637677775569864,
+                        "high": 0.6192374024808276
                     }
                 },
                 {
                     "key": "branch",
                     "label": "Branch",
-                    "sampled": 45,
-                    "completed": 36,
+                    "sampled": 50,
+                    "completed": 39,
                     "referred": {
+                        "count": 5,
+                        "n": 39,
+                        "share": 0.1282051282051282,
+                        "low": 0.05602817501519075,
+                        "high": 0.2670574351095147
+                    },
+                    "rest_referred": {
                         "count": 6,
-                        "n": 36,
-                        "share": 0.16666666666666666,
-                        "low": 0.07870447549101488,
-                        "high": 0.31890794448823795
+                        "n": 25,
+                        "share": 0.24,
+                        "low": 0.11496313626452448,
+                        "high": 0.4342968351708788
                     },
                     "understanding_gap": {
-                        "count": 16,
-                        "n": 36,
-                        "share": 0.4444444444444444,
-                        "low": 0.2954126863754566,
-                        "high": 0.6041893836210855
+                        "count": 19,
+                        "n": 39,
+                        "share": 0.48717948717948717,
+                        "low": 0.3386517522402942,
+                        "high": 0.6380063722467645
+                    },
+                    "rest_understanding_gap": {
+                        "count": 10,
+                        "n": 25,
+                        "share": 0.4,
+                        "low": 0.2340330227270205,
+                        "high": 0.5926054278250577
                     }
                 }
             ]
@@ -775,76 +1104,158 @@
     ],
     "policy_review": [
         {
-            "rule_id": "cancel_window",
-            "sentence": "23 of 64 customers who completed the call could not state the cancellation window on the record",
+            "rule_id": "loan_funded",
+            "group": "sale",
+            "seriousness_label": "Serious",
+            "sentence": "3 of 64 customers who completed the call did not know the premium was deducted from the loan, or the record shows a deduction with no consent",
             "value": {
-                "count": 23,
+                "count": 3,
                 "n": 64,
-                "share": 0.359375,
-                "low": 0.25288402217722405,
-                "high": 0.4817914948765132
+                "share": 0.046875,
+                "low": 0.016069016661225302,
+                "high": 0.1289965382897061
             },
-            "highest": "highest at branch SYN-BR-04: 4 of 7 completed calls"
+            "highest": "highest at branch SYN-BR-02: 2 of 10 counted calls (95% interval 6% to 51%), against 1 of 54 at the other branches (95% interval 0% to 10%)"
         },
         {
-            "rule_id": "cover",
-            "sentence": "19 of 64 customers who completed the call did not state the cover amount on the record",
+            "rule_id": "belief_mismatch",
+            "group": "risks",
+            "seriousness_label": "Serious",
+            "sentence": "2 of 64 customers who completed the call held a belief about the product that its features on the record do not support",
             "value": {
-                "count": 19,
+                "count": 2,
                 "n": 64,
-                "share": 0.296875,
-                "low": 0.19905151260405385,
-                "high": 0.41770201202912227
+                "share": 0.03125,
+                "low": 0.008612138268632274,
+                "high": 0.10697291857715885
             },
-            "highest": "highest at branch SYN-BR-02: 6 of 12 completed calls"
+            "highest": "highest at branch SYN-BR-03: 1 of 11 counted calls (95% interval 2% to 38%), against 1 of 53 at the other branches (95% interval 0% to 10%)"
         },
         {
-            "rule_id": "term",
-            "sentence": "16 of 64 customers who completed the call did not state the term on the record",
+            "rule_id": "consent",
+            "group": "sale",
+            "seriousness_label": "Serious",
+            "sentence": "2 of 64 customers who completed the call gave an account of agreeing that does not match the record, or the record holds no consent",
             "value": {
-                "count": 16,
+                "count": 2,
                 "n": 64,
-                "share": 0.25,
-                "low": 0.16014926473210675,
-                "high": 0.3681627655856484
+                "share": 0.03125,
+                "low": 0.008612138268632274,
+                "high": 0.10697291857715885
             },
-            "highest": "highest at branch SYN-BR-04: 3 of 7 completed calls"
-        },
-        {
-            "rule_id": "recall",
-            "sentence": "8 of 64 customers who completed the call did not name the product before it was mentioned",
-            "value": {
-                "count": 8,
-                "n": 64,
-                "share": 0.125,
-                "low": 0.06472242630161115,
-                "high": 0.2277456191750217
-            },
-            "highest": "highest at branch SYN-BR-03: 3 of 13 completed calls"
+            "highest": "highest at branch SYN-BR-06: 1 of 7 counted calls (95% interval 3% to 51%), against 1 of 57 at the other branches (95% interval 0% to 9%)"
         },
         {
             "rule_id": "kind",
-            "sentence": "7 of 64 customers who completed the call did not describe the product as what the record shows",
+            "group": "features",
+            "seriousness_label": "Serious",
+            "sentence": "1 of 64 customers who completed the call did not describe the product as what the record shows",
             "value": {
-                "count": 7,
+                "count": 1,
                 "n": 64,
-                "share": 0.109375,
-                "low": 0.05400113314972993,
-                "high": 0.20898641422176267
+                "share": 0.015625,
+                "low": 0.0027635418927853816,
+                "high": 0.08334101684786545
             },
-            "highest": "highest at branch SYN-BR-06: 2 of 7 completed calls"
+            "highest": "highest at branch SYN-BR-03: 1 of 11 counted calls (95% interval 2% to 38%), against 0 of 53 at the other branches (95% interval 0% to 7%)"
+        },
+        {
+            "rule_id": "bundling",
+            "group": "sale",
+            "seriousness_label": "Serious",
+            "sentence": "1 of 64 customers who completed the call had a product required for the loan with a question over the choice of provider or what the product is",
+            "value": {
+                "count": 1,
+                "n": 64,
+                "share": 0.015625,
+                "low": 0.0027635418927853816,
+                "high": 0.08334101684786545
+            },
+            "highest": "highest at branch SYN-BR-01: 1 of 12 counted calls (95% interval 1% to 35%), against 0 of 52 at the other branches (95% interval 0% to 7%)"
+        },
+        {
+            "rule_id": "sale_conduct",
+            "group": "sale",
+            "seriousness_label": "Serious",
+            "sentence": "1 of 64 customers who completed the call voiced a concern about how the product was sold",
+            "value": {
+                "count": 1,
+                "n": 64,
+                "share": 0.015625,
+                "low": 0.0027635418927853816,
+                "high": 0.08334101684786545
+            },
+            "highest": "highest at branch SYN-BR-06: 1 of 7 counted calls (95% interval 3% to 51%), against 0 of 57 at the other branches (95% interval 0% to 6%)"
+        },
+        {
+            "rule_id": "cancel_window",
+            "group": "features",
+            "seriousness_label": "Moderate",
+            "sentence": "18 of 64 customers who completed the call could not state the cancellation window on the record",
+            "value": {
+                "count": 18,
+                "n": 64,
+                "share": 0.28125,
+                "low": 0.18593372270957867,
+                "high": 0.40133930381845717
+            },
+            "highest": "highest at branch SYN-BR-06: 3 of 7 counted calls (95% interval 16% to 75%), against 15 of 57 at the other branches (95% interval 17% to 39%)"
         },
         {
             "rule_id": "premium",
-            "sentence": "4 of 64 customers who completed the call did not state the premium on the record",
+            "group": "features",
+            "seriousness_label": "Moderate",
+            "sentence": "5 of 64 customers who completed the call did not state the premium on the record",
             "value": {
-                "count": 4,
+                "count": 5,
                 "n": 64,
-                "share": 0.0625,
-                "low": 0.02457120122589082,
-                "high": 0.1499748518301809
+                "share": 0.078125,
+                "low": 0.033831176694428755,
+                "high": 0.17019537446678323
             },
-            "highest": "highest at branch SYN-BR-01: 1 of 6 completed calls"
+            "highest": "highest at branch SYN-BR-01: 2 of 12 counted calls (95% interval 5% to 45%), against 3 of 52 at the other branches (95% interval 2% to 16%)"
+        },
+        {
+            "rule_id": "cover",
+            "group": "features",
+            "seriousness_label": "Lower",
+            "sentence": "21 of 64 customers who completed the call did not state the cover amount on the record",
+            "value": {
+                "count": 21,
+                "n": 64,
+                "share": 0.328125,
+                "low": 0.22570557834870092,
+                "high": 0.4500089424947557
+            },
+            "highest": "highest at branch SYN-BR-03: 6 of 11 counted calls (95% interval 28% to 79%), against 15 of 53 at the other branches (95% interval 18% to 42%)"
+        },
+        {
+            "rule_id": "term",
+            "group": "features",
+            "seriousness_label": "Lower",
+            "sentence": "15 of 64 customers who completed the call did not state the term on the record",
+            "value": {
+                "count": 15,
+                "n": 64,
+                "share": 0.234375,
+                "low": 0.14749895538818128,
+                "high": 0.35133257682443364
+            },
+            "highest": "highest at branch SYN-BR-03: 5 of 11 counted calls (95% interval 21% to 72%), against 10 of 53 at the other branches (95% interval 11% to 31%)"
+        },
+        {
+            "rule_id": "recall",
+            "group": "features",
+            "seriousness_label": "Lower",
+            "sentence": "5 of 64 customers who completed the call did not name the product before it was mentioned",
+            "value": {
+                "count": 5,
+                "n": 64,
+                "share": 0.078125,
+                "low": 0.033831176694428755,
+                "high": 0.17019537446678323
+            },
+            "highest": "highest at branch SYN-BR-06: 1 of 7 counted calls (95% interval 3% to 51%), against 4 of 57 at the other branches (95% interval 3% to 17%)"
         }
     ]
 }

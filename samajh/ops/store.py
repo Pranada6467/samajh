@@ -6,6 +6,7 @@
     attempts.jsonl      one Attempt per line
     calls/<call_id>.json    one CallRecord per analysed call
     dispositions.jsonl  one Disposition per line; append-only, the latest per case stands
+    outside.jsonl       one OutsideCall per line: phone calls whose loan was not drawn
 
 Every write is safe to repeat. An append takes a file lock, so threads and processes can share
 the store; a whole file is written to a temporary file and moved into place.
@@ -22,7 +23,17 @@ from filelock import FileLock
 from pydantic import BaseModel
 
 from samajh.ops import book as books
-from samajh.ops.model import Attempt, BatchMeta, BookLoan, BookMeta, CallRecord, Disposition, Draw
+from samajh.ops.model import (
+    DEFAULT_UNIT,
+    Attempt,
+    BatchMeta,
+    BookLoan,
+    BookMeta,
+    CallRecord,
+    Disposition,
+    Draw,
+    OutsideCall,
+)
 
 M = TypeVar("M", bound=BaseModel)
 CALL_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$")
@@ -39,7 +50,13 @@ class OpsStore:
     # --- the batch and its book ---
 
     def init(
-        self, book: BookMeta, loans: Sequence[BookLoan], period_start: date, period_end: date, now: datetime
+        self,
+        book: BookMeta,
+        loans: Sequence[BookLoan],
+        period_start: date,
+        period_end: date,
+        now: datetime,
+        unit: str = DEFAULT_UNIT,
     ) -> BatchMeta:
         """Start the batch. Again with the same book and period: no change. With another: an error."""
         if books.book_sha256(loans) != book.sha256:
@@ -65,6 +82,7 @@ class OpsStore:
                 period_end=period_end,
                 simulated=True,
                 created_at=now,
+                unit=unit,
             )
             self._replace(self.root / "book.jsonl", books.jsonl(loans))
             self._replace(self.root / "batch.json", meta.model_dump_json(indent=2) + "\n")
@@ -86,9 +104,13 @@ class OpsStore:
         return self._read("draws.jsonl", Draw)
 
     def add_draw(self, draw: Draw) -> None:
-        """Log a draw. The same draw again: no change. Another draw with its id: an error."""
+        """Log a draw. The same draw again: no change. Another draw with its id: an error. A new draw
+        must start where the last one ended, so that no two windows overlap."""
         if draw.book_sha256 != self.meta().book.sha256:
             raise ValueError(f"draw {draw.draw_id} was made from another book")
+        earlier = self.draws()
+        if draw not in earlier and draw.after != (earlier[-1].as_of if earlier else None):
+            raise ValueError(f"draw {draw.draw_id} does not start where the previous draw ended")
         self._append("draws.jsonl", draw, Draw, lambda d: d.draw_id)
 
     def attempts(self) -> tuple[Attempt, ...]:
@@ -105,6 +127,13 @@ class OpsStore:
     def add_disposition(self, disposition: Disposition) -> None:
         """Append a decision. Nothing is ever changed or removed; an identical entry is stored once."""
         self._append("dispositions.jsonl", disposition, Disposition, lambda d: d)
+
+    def outside(self) -> tuple[OutsideCall, ...]:
+        return self._read("outside.jsonl", OutsideCall)
+
+    def add_outside(self, call: OutsideCall) -> None:
+        """Log a phone call outside the sample. The same call again: no change."""
+        self._append("outside.jsonl", call, OutsideCall, lambda c: c.session_id)
 
     # --- analysed calls ---
 

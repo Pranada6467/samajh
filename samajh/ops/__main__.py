@@ -2,14 +2,14 @@
 
 import argparse
 import sys
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 from samajh.clients._runtime import state_dir
 from samajh.ops import book as books
 from samajh.ops import sampler
 from samajh.ops.batch import load_batch
-from samajh.ops.model import BookLoan, BookMeta, Draw, SimCustomer
+from samajh.ops.model import DEFAULT_UNIT, BookLoan, BookMeta, Draw, SimCustomer
 from samajh.ops.report import build_report
 from samajh.ops.simulate import Analyse, llm_analysis, run_draw, scripted_analysis
 from samajh.ops.store import OpsStore
@@ -17,18 +17,18 @@ from samajh.types import LenderType
 
 DEMO_SEED = 85
 DEMO_PERIOD = (date(2027, 1, 1), date(2027, 6, 30))
-DEMO_DRAWS = (date(2027, 2, 8), date(2027, 2, 15), date(2027, 2, 22), date(2027, 3, 1))
-DEMO_DRAW_SIZE = 20
+# Weekly draws that cover every sale on the demo book (sold 4 January to 4 March 2027).
+DEMO_DRAWS = tuple(date(2027, 1, 11) + timedelta(weeks=k) for k in range(9))
 
 
-def _draw(store: OpsStore, book: tuple[BookLoan, ...], meta: BookMeta, as_of: date, size: int) -> Draw:
-    """Draw and log. A day that already has a draw gets that draw back unchanged."""
+def _draw(store: OpsStore, book: tuple[BookLoan, ...], meta: BookMeta, as_of: date, rate: float) -> Draw:
+    """Draw and log; the window starts where the last draw ended. A day that already has a draw
+    gets that draw back unchanged."""
     earlier = store.draws()
     existing = next((d for d in earlier if d.as_of == as_of), None)
     if existing is not None:
         return existing
-    taken = {loan.loan_id for d in earlier for loan in d.drawn}
-    drawn = sampler.draw(book, meta, as_of, size, meta.seed, taken)
+    drawn = sampler.draw(book, meta, as_of, rate, meta.seed, after=earlier[-1].as_of if earlier else None)
     store.add_draw(drawn)
     return drawn
 
@@ -65,16 +65,19 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_argument("--loans", type=int, default=200)
     sub.add_argument("--lender-type", type=LenderType, choices=tuple(LenderType), default=LenderType.bank)
     sub.add_argument("--out", type=Path, default=books.DATA_DIR)
-    command("init", "start a batch over the book (half-year 1 January to 30 June 2027)", book=True)
-    sub = command("draw", "draw a random sample of loans sold in the last 30 days")
+    sub = command("init", "start a batch over the book (half-year 1 January to 30 June 2027)", book=True)
+    sub.add_argument("--unit", default=DEFAULT_UNIT, help="who runs the mechanism (not a sales unit)")
+    sub = command("draw", "draw a share of the loans sold since the last draw, within 30 days of sale")
     sub.add_argument("--as-of", type=date.fromisoformat, required=True)
-    sub.add_argument("--size", type=int, default=DEMO_DRAW_SIZE)
+    sub.add_argument("--rate", type=float, default=sampler.DEFAULT_RATE, help="share of eligible sales")
     sub = command("run", "make the simulated calls of every draw and analyse them", book=True)
     sub.add_argument("--analysis", choices=("scripted", "llm"), default="scripted")
     sub.add_argument("--workers", type=int, default=1)
+    sub = command("ingest", "bring finished phone sessions (their case files) into the batch")
+    sub.add_argument("--sessions", type=Path, default=None, help="default: <state>/sessions")
     command("verify", "recompute every draw from the book")
     command("report", "print the half-yearly report as JSON")
-    command("demo", "the whole scripted loop into --state: book, batch, four weekly draws, calls")
+    command("demo", "the whole scripted loop into --state: book, batch, nine weekly draws, calls")
     args = parser.parse_args(argv)
 
     if args.command == "book":
@@ -86,11 +89,16 @@ def main(argv: list[str] | None = None) -> int:
     store = OpsStore(args.state / "ops")
     if args.command == "init":
         meta, loans = books.load_book(args.book)
-        batch = store.init(meta, loans, *DEMO_PERIOD, datetime.now(UTC))
+        batch = store.init(meta, loans, *DEMO_PERIOD, datetime.now(UTC), unit=args.unit)
         print(f"batch {batch.batch_id} in {store.root}")
     elif args.command == "draw":
-        drawn = _draw(store, store.book(), store.meta().book, args.as_of, args.size)
+        drawn = _draw(store, store.book(), store.meta().book, args.as_of, args.rate)
         print(f"{drawn.draw_id}: drew {len(drawn.drawn)} of {len(drawn.eligible)} eligible")
+    elif args.command == "ingest":
+        from samajh.ops.sessions import ingest, packaged_records
+
+        found = ingest(store, args.sessions or args.state / "sessions", packaged_records())
+        print(found.describe())
     elif args.command == "run":
         if args.analysis == "llm":
             from samajh.pipeline import default_llm  # needs the OpenRouter key
@@ -111,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
         meta, loans, customers = books.generate_book(DEMO_SEED)
         store.init(meta, loans, *DEMO_PERIOD, datetime.now(UTC))
         for as_of in DEMO_DRAWS:
-            _draw(store, loans, meta, as_of, DEMO_DRAW_SIZE)
+            _draw(store, loans, meta, as_of, sampler.DEFAULT_RATE)
         _run(store, {c.loan_id: c for c in customers}, scripted_analysis, workers=1)
         print(f"simulated batch in {store.root} (scripted customers, scripted extraction, no model)")
         print(_summary(store))

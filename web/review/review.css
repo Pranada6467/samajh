@@ -392,3 +392,19 @@ input[type="text"] { max-width: 360px; min-height: 44px; }
   details.transcript > .turns { display: block; }
 }
 .line-rules { margin: -4px 0 10px; }
+.tag.phone { border-color: var(--go); color: var(--go); }
+.notice.warn { border-left-color: var(--amber); background: var(--amber-bg); }
+.sim-band p.access { padding-top: 0; color: var(--muted); }
+.fill { color: var(--muted); font-style: italic; }
+tr.uncounted { opacity: 0.85; }
+.policy .facts { margin-top: 6px; font-size: 0.875rem; }
+/* On a phone the wide tables scroll sideways: hide the bars so the interval fits, and say so. */
+@media screen and (max-width: 600px) {
+  .bar-cell { display: none; }
+  .table-wrap:not(.stack) { background-image: linear-gradient(to left, var(--line), transparent 14px); background-attachment: local, scroll; }
+  .table-wrap:not(.stack) caption::after { content: " Scroll sideways for every column \2192"; display: block; font-weight: 600; color: var(--muted); }
+}
+@media print {
+  .table-wrap caption::after { content: none !important; }
+  .fill { color: #000; }
+}

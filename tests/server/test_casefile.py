@@ -117,6 +117,11 @@ def test_a_whole_call_reaches_a_case_file_with_every_turn_placed(fake: FakeSpeec
     turns = case["turns"]
     assert turns and all(t["start_s"] is not None and t["end_s"] > t["start_s"] for t in turns)
     assert all(t["segments"] and t["speaker"] in (0, 1) for t in turns)
+    # The whole transcript is kept, bot turns included, so the call can enter the review batch.
+    whole = case["transcript"]["turns"]
+    assert {t["speaker"] for t in whole} == {"bot", "customer"}
+    spoken = {t["id"]: (t["start_s"], t["end_s"]) for t in whole if t["speaker"] == "customer"}
+    assert spoken == {t["turn_id"]: (t["start_s"], t["end_s"]) for t in turns}
     twice = [t for t in turns if len(t["readings"]) == 2]
     assert {r["model"] for t in twice for r in t["readings"]} == {"prisma-v3.0", "prisma-v2.5"}
     # The premium answer holds a figure both readings agree on; the yes at the read-back holds none.

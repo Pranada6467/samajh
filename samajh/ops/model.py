@@ -30,6 +30,7 @@ from samajh.types import (
     Transcript,
 )
 
+DEFAULT_UNIT = "Customer Feedback Unit (synthetic), not associated with sales"
 WINDOW_DAYS = 30  # feedback is sought within 30 days of the sale (para 85Y / 101Y)
 SESSION_ID_PATTERN = r"^\d{8}T\d{6}-[0-9a-f]{12}$"  # samajh.server.sessionlog.SESSION_ID
 
@@ -74,11 +75,15 @@ class AttemptOutcome(StrEnum):
     not_confirmed = "not_confirmed"  # identity not confirmed; nothing about the loan was said
     declined = "declined"
     call_back_later = "call_back_later"
-    incomplete = "incomplete"  # the right party started the call and it ended early
+    language_switch = "language_switch"  # asked for another language; a call in it is a retry
+    incomplete = "incomplete"  # the call started and ended early (asked for a person, turn limit, hung up)
+    completed_not_analysed = "completed_not_analysed"  # the call ended normally; its case file failed
     completed = "completed"
 
 
-# samajh.dialogue.machine.Outcome value -> AttemptOutcome. A new dialogue outcome is one line here.
+# samajh.dialogue.machine.Outcome value (and the case file's "in_progress" for a call hung up before
+# it ended) -> AttemptOutcome. A new dialogue outcome is one line here; ingestion refuses one that is
+# missing. A completed call whose case file failed becomes `completed_not_analysed` (samajh.ops.sessions).
 FROM_DIALOGUE: dict[str, AttemptOutcome] = {
     "completed": AttemptOutcome.completed,
     "wrong_party": AttemptOutcome.wrong_party,
@@ -88,9 +93,15 @@ FROM_DIALOGUE: dict[str, AttemptOutcome] = {
     "declined": AttemptOutcome.declined,
     "human_requested": AttemptOutcome.incomplete,
     "turn_limit": AttemptOutcome.incomplete,
+    "call_back_later": AttemptOutcome.call_back_later,
+    "language_switch": AttemptOutcome.language_switch,
+    "no_response": AttemptOutcome.no_answer,
+    "in_progress": AttemptOutcome.incomplete,
 }
 
-RETRY_AFTER = frozenset({AttemptOutcome.no_answer, AttemptOutcome.call_back_later})
+RETRY_AFTER = frozenset(
+    {AttemptOutcome.no_answer, AttemptOutcome.call_back_later, AttemptOutcome.language_switch}
+)
 
 
 class SimStep(Frozen):
@@ -127,21 +138,29 @@ class DrawnLoan(Frozen):
 class Draw(Frozen):
     """One random selection, with everything needed to audit and repeat it.
 
-    Eligible: sold between `min_day` and `max_day` days before `as_of` (inclusive) and not drawn
-    by an earlier draw of this batch. `drawn` is `random.Random(f"{seed}|{as_of}").sample` over
-    the sorted eligible ids. `sampler.verify_draw` recomputes it from the book.
+    Windows do not overlap: eligible are the loans sold after `after` (the previous draw's
+    `as_of`; None for the first draw) and between `min_day` and `max_day` days before `as_of`
+    (inclusive). So every sale is eligible in at most one draw, and each draw takes the same
+    share `rate` of its eligible sales: `round(rate * eligible)` loans, at least one when any is
+    eligible. `drawn` is `random.Random(f"{seed}|{as_of}").sample` over the sorted eligible ids.
+    `sampler.verify_draw` recomputes it from the book.
     """
 
     draw_id: str  # "D-2027-02-08"
     as_of: date
+    after: date | None  # sales on or before this day belong to an earlier draw
     min_day: int = Field(ge=0)
     max_day: int = Field(le=WINDOW_DAYS)
-    size: int = Field(ge=1)  # the size asked for; fewer are drawn when fewer are eligible
+    rate: float = Field(gt=0, le=1)
     seed: int
     book_sha256: str
     eligible: tuple[str, ...]  # loan ids, sorted
-    already_drawn: tuple[str, ...]  # inside the window, left out because an earlier draw took them
     drawn: tuple[DrawnLoan, ...]  # in draw order
+
+    @property
+    def inclusion(self) -> float | None:
+        """The chance an eligible sale was drawn: drawn over eligible."""
+        return len(self.drawn) / len(self.eligible) if self.eligible else None
 
 
 # --- the attempt log ---------------------------------------------------------
@@ -185,7 +204,7 @@ class Attempt(Frozen):
     def _coherent(self) -> "Attempt":
         confirmed_by_outcome = {
             AttemptOutcome.completed: True,
-            AttemptOutcome.incomplete: True,
+            AttemptOutcome.completed_not_analysed: True,
             AttemptOutcome.no_answer: False,
             AttemptOutcome.wrong_party: False,
             AttemptOutcome.not_confirmed: False,
@@ -208,6 +227,7 @@ class CallRecord(Frozen):
     transcript: Transcript
     result: CaseResult
     analysis: str  # how the result was produced, e.g. "openai/gpt-6-luna" or "scripted extraction"
+    transcript_note: str | None = None  # set when the transcript is partial, e.g. customer turns only
 
 
 class FinalStatus(StrEnum):
@@ -219,7 +239,11 @@ class FinalStatus(StrEnum):
     not_confirmed = "not_confirmed"
     declined = "declined"
     call_back_later = "call_back_later"  # asked for a later call that has not happened
+    language_switch = "language_switch"  # asked for another language; no call in it has happened
+    not_reached_in_time = "not_reached_in_time"  # still to retry when day 30 from the sale passed
     incomplete = "incomplete"
+    completed_not_analysed = "completed_not_analysed"  # completed, but the case file failed: no finding
+    completed_late = "completed_late"  # completed after day 30 from the sale: shown apart, not in findings
     completed = "completed"
 
 
@@ -247,13 +271,13 @@ class Triage(Frozen):
 class Decision(StrEnum):
     """What the reviewer decided. Only a person records one."""
 
-    established = "established"
-    not_established = "not_established"
+    concern_supported = "concern_supported"  # the reviewer's view: the file supports the concern
+    concern_not_supported = "concern_not_supported"
     call_customer = "call_customer"
     needs_information = "needs_information"
 
 
-FINAL_DECISIONS = frozenset({Decision.established, Decision.not_established})
+FINAL_DECISIONS = frozenset({Decision.concern_supported, Decision.concern_not_supported})
 
 Note = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)]
 Reviewer = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)]
@@ -281,3 +305,23 @@ class BatchMeta(Frozen):
     period_end: date
     simulated: bool
     created_at: datetime
+    unit: str = DEFAULT_UNIT  # who runs the mechanism: a unit not associated with sales
+
+
+# --- calls that are not in the sample ------------------------------------------
+
+
+class OutsideCall(Frozen):
+    """A phone session whose loan is not a drawn loan of this batch. Listed, never counted."""
+
+    session_id: Annotated[str, StringConstraints(pattern=SESSION_ID_PATTERN)]
+    record_id: str
+    loan_id: str
+    reason: str  # why it is outside the sample, in words
+    at: datetime
+    language: Language
+    source: CallSource
+    outcome: AttemptOutcome
+    dialogue_outcome: str
+    record: LoanRecord  # the phone's record, for the case page
+    call_id: str | None = None  # the analysed call, when the call completed and its case file is ready

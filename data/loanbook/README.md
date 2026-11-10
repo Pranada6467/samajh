@@ -65,3 +65,15 @@ unanswered, or where the customer asks for a later call, is followed by another,
 - Premiums, covers, terms, cancellation windows and years of birth are limited to the values the
   phrase banks can say. They are not a realistic distribution of loan sizes or prices.
 - Every loan has exactly one product, and every product is credit-life cover.
+- No attempt is made after day 30 from the sale, so a customer still to be retried then is
+  "not reached within 30 days of the sale" and counts in the funnel, not in the findings.
+
+## The review pages built on this book
+
+- **No authentication (demo limitation).** The review pages and their API have no sign-in: anyone
+  who can reach the server can record a decision, and the reviewer's name is free text that
+  nobody checks. A real deployment needs sign-in and a named, authorised reviewer per decision.
+- Draws do not overlap: each takes a share of the sales made since the previous draw that are
+  still within 30 days of the sale (`uv run python -m samajh.ops draw --as-of DATE --rate 0.4`).
+- Finished phone sessions enter with `uv run python -m samajh.ops ingest`. A session whose loan is
+  not a drawn loan of the batch is listed as a call outside the sample and never counted.

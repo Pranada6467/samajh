@@ -122,7 +122,7 @@ def open_batch(root: Path, loans: list[BookLoan], as_of: date) -> tuple[OpsStore
     )
     store = OpsStore(root)
     store.init(meta, loans, date(2027, 1, 1), date(2027, 6, 30), NOW)
-    drawn = sampler.draw(loans, meta, as_of, size=len(loans), seed=1, already_drawn=())
+    drawn = sampler.draw(loans, meta, as_of, rate=1.0, seed=1, after=None)
     store.add_draw(drawn)
     return store, drawn
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Iterator
 
 import pytest
@@ -74,14 +75,16 @@ def test_every_code_has_its_words_and_the_fixed_labels_are_as_agreed() -> None:
         Tier.refer: "Referred for review",
         Tier.understanding_gap: "Understanding gap (report only)",
         Tier.incomplete: "Incomplete",
-        Tier.clear: "No finding",
+        Tier.clear: "Nothing to refer",
     }
     assert wording.DECISION_LABEL == {
-        Decision.established: "Established by reviewer",
-        Decision.not_established: "Not established",
+        Decision.concern_supported: "Concern supported by the file (reviewer's view)",
+        Decision.concern_not_supported: "Concern not supported by the file (reviewer's view)",
         Decision.call_customer: "Call the customer",
         Decision.needs_information: "Needs more information",
     }
+    assert set(wording.GROUP) == set(wording.SERIOUSNESS) == set(RuleId)
+    assert wording.SERIOUSNESS[RuleId.kind] < wording.SERIOUSNESS[RuleId.term]
     assert wording.may_engage("85G") == "may engage para 85G"
     assert wording.may_engage("internal") is None
 
@@ -91,10 +94,12 @@ def test_every_label_in_the_generated_views_is_allowed(store: OpsStore) -> None:
     queue = queue_view(batch)
     views = [build_report(store, batch.meta.created_at), queue]
     views += [case_view(batch, item.case_id) for item in queue.items]
-    assert len(views) > 10
+    assert len(views) > 5
     skip = frozenset(CUSTOMER_WORDS)
     shown = [s for view in views for s in _strings(view.model_dump(mode="json"), skip)]
     assert [s for s in shown if wording.banned_in(s)] == []
+    # A bare "established" reads as a finding about the sale; the decisions say whose view they are.
+    assert [s for s in shown if re.search(r"\bestablished\b", s, re.IGNORECASE)] == []
 
 
 def test_the_report_says_what_is_simulated_and_what_the_numbers_cannot_show(store: OpsStore) -> None:

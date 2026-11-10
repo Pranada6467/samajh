@@ -8,11 +8,11 @@ from starlette.testclient import TestClient
 
 from samajh.ops import wording
 from samajh.ops.batch import load_batch
-from samajh.ops.model import Attempt, AttemptOutcome, CallRecord, Draw, PhoneSession
-from samajh.ops.simulate import scripted_analysis
+from samajh.ops.model import Draw
 from samajh.ops.store import OpsStore
 from samajh.ops.views import AttemptLogView, BatchView, CaseView, QueueView, ReportView
 from samajh.server import create_app
+from samajh.server.review_routes import BAD_DISPOSITION
 
 SESSION_ID = "20261110T142233-9f2c4e1ab07d"
 
@@ -39,9 +39,10 @@ def test_every_page_gets_the_contract_it_reads(client: TestClient) -> None:
     draws = [Draw.model_validate(d) for d in client.get("/api/review/draws").json()]
     report = ReportView.model_validate(client.get("/api/review/report").json())
 
-    assert batch.meta.simulated and batch.simulated_notice == wording.SIMULATED_NOTICE
+    assert batch.simulated and batch.simulated_notice == wording.SIMULATED_NOTICE
+    assert batch.access_notice == wording.ACCESS_NOTICE and "no sign-in" in batch.access_notice
     assert batch.meta.book.synthetic and report.batch == batch
-    assert len(queue.items) == batch.referred == batch.awaiting_review > 0
+    assert len(queue.items) == batch.referred == batch.open_cases == report.open_referrals.count > 0
     assert len(log.loans) == batch.sampled == sum(len(d.drawn) for d in draws)
     assert [d.draw_id for d in log.draws] == [d.draw_id for d in draws]
     assert all(d.verified for d in log.draws)
@@ -58,8 +59,8 @@ def test_every_page_gets_the_contract_it_reads(client: TestClient) -> None:
     assert case.call.simulated and case.call.recording_url is None
     assert case.call.analysis == "scripted extraction, no model"
     assert [d.label for d in case.decisions] == [
-        "Established by reviewer",
-        "Not established",
+        "Concern supported by the file (reviewer's view)",
+        "Concern not supported by the file (reviewer's view)",
         "Call the customer",
         "Needs more information",
     ]
@@ -74,13 +75,13 @@ def test_a_server_with_no_batch_says_so(tmp_path: Path) -> None:
         reply = client.get(f"/api/review/{path}")
         assert reply.status_code == 409, path
         assert "no review batch yet" in reply.json()["error"]["message"]
-    body = {"decision": "established", "note": "n", "reviewer": "r"}
+    body = {"decision": "concern_supported", "note": "n", "reviewer": "r"}
     assert client.post("/api/review/cases/TEST-CALL-x/disposition", json=body).status_code == 409
 
 
 def test_only_a_referred_call_is_a_case(client: TestClient, store: OpsStore) -> None:
     not_referred = next(s.call.call_id for s in load_batch(store).completed if not s.referred)
-    body = {"decision": "established", "note": "n", "reviewer": "r"}
+    body = {"decision": "concern_supported", "note": "n", "reviewer": "r"}
     for case_id in (not_referred, "TEST-CALL-SYN-GL-000000-9999-tb", "..%2Fbatch"):
         assert client.get(f"/api/review/cases/{case_id}").status_code == 404
         assert client.post(f"/api/review/cases/{case_id}/disposition", json=body).status_code == 404
@@ -99,9 +100,12 @@ def test_a_decision_persists_and_a_later_one_replaces_it_while_the_history_keeps
     assert first.disposition.decision == "call_customer" and not first.disposition.final
     assert first.disposition.note == "ask about the form" and len(first.history) == 1
 
-    second = _decide(client, case_id, decision="established", note="customer confirmed", reviewer="R. Two")
-    assert second.disposition.decision_label == "Established by reviewer" and second.disposition.final
-    assert [d.decision for d in second.history] == ["call_customer", "established"]
+    second = _decide(
+        client, case_id, decision="concern_supported", note="customer confirmed", reviewer="R. Two"
+    )
+    assert second.disposition.decision_label == "Concern supported by the file (reviewer's view)"
+    assert second.disposition.final
+    assert [d.decision for d in second.history] == ["call_customer", "concern_supported"]
 
     restarted = _client(state)  # a new server over the same state directory
     assert CaseView.model_validate(restarted.get(f"/api/review/cases/{case_id}").json()) == second
@@ -113,89 +117,37 @@ def test_a_decision_persists_and_a_later_one_replaces_it_while_the_history_keeps
     rows = {row.key: row.value.count for row in after.referrals}
     referred = before.batch.referred
     assert rows == {
-        "established": 1,
-        "not_established": 0,
+        "concern_supported": 1,
+        "concern_not_supported": 0,
         "call_customer": 0,
         "needs_information": 0,
-        "awaiting": referred - 1,
+        "none": referred - 1,
     }
-    assert (after.established_of_decided.count, after.established_of_decided.n) == (1, 1)
-    assert after.batch.awaiting_review == referred - 1 == before.batch.awaiting_review - 1
+    assert (after.supported_of_decided.count, after.supported_of_decided.n) == (1, 1)
+    assert after.batch.open_cases == after.open_referrals.count == referred - 1 == before.batch.open_cases - 1
 
 
 @pytest.mark.parametrize(
     "body",
     [
-        {"decision": "guilty", "note": "n", "reviewer": "r"},
-        {"decision": "established", "note": "   ", "reviewer": "r"},
-        {"decision": "established", "note": "n", "reviewer": ""},
-        {"decision": "established", "note": "n"},
-        {"decision": "established", "note": "n", "reviewer": "r", "case_id": "other"},
+        {"decision": "guilty", "note": "a note", "reviewer": "someone"},
+        {"decision": "concern_supported", "note": "   ", "reviewer": "r"},
+        {"decision": "concern_supported", "note": "n", "reviewer": ""},
+        {"decision": "concern_supported", "note": "n"},
+        {"decision": "concern_supported", "note": "n", "reviewer": "r", "case_id": "other"},
     ],
 )
-def test_an_invalid_decision_is_refused_and_nothing_is_recorded(
+def test_an_invalid_decision_is_refused_without_repeating_it_and_nothing_is_recorded(
     client: TestClient, store: OpsStore, body
 ) -> None:
     case_id = QueueView.model_validate(client.get("/api/review/queue").json()).items[0].case_id
-    assert client.post(f"/api/review/cases/{case_id}/disposition", json=body).status_code == 422
+    reply = client.post(f"/api/review/cases/{case_id}/disposition", json=body)
+    assert reply.status_code == 422
+    assert reply.json()["error"]["message"] == BAD_DISPOSITION  # names the fields, repeats nothing sent
     assert store.dispositions() == ()
 
 
-def test_a_call_from_a_phone_session_shows_its_audio_offsets_and_recording(
-    client: TestClient, store: OpsStore
-) -> None:
-    """The schema takes a real phone session unchanged: only `source` and the turn times differ."""
-    batch = load_batch(store)
-    referred = batch.referrals[0]
-    untried = next(s for s in batch.sampled if s.status == "unreachable")
-    turns = tuple(
-        turn.model_copy(update={"start_s": 2.0 * i, "end_s": 2.0 * i + 1.5})
-        for i, turn in enumerate(referred.call.transcript.turns)
-    )
-    # The same words, as if spoken on the phone by the customer of a loan not yet reached.
-    transcript = referred.call.transcript.model_copy(
-        update={"call_id": SESSION_ID, "loan_id": untried.loan.record.loan_id, "turns": turns}
-    )
-    source = PhoneSession(session_id=SESSION_ID, recording_sha256="0" * 64)
-    attempt = Attempt(
-        attempt_id=f"{untried.draw.draw_id}/{untried.drawn.loan_id}/{len(untried.attempts) + 1}",
-        draw_id=untried.draw.draw_id,
-        loan_id=untried.drawn.loan_id,
-        number=len(untried.attempts) + 1,
-        at=untried.attempts[-1].at,
-        day_since_sale=untried.attempts[-1].day_since_sale + 1,
-        language=transcript.language,
-        source=source,
-        outcome=AttemptOutcome.completed,
-        right_party_confirmed=True,
-        dialogue_outcome="completed",
-        call_id=SESSION_ID,
-    )
-    result = referred.call.result.model_copy(update={"loan_id": transcript.loan_id, "call_id": SESSION_ID})
-    store.save_call(
-        CallRecord(
-            call_id=SESSION_ID,
-            attempt_id=attempt.attempt_id,
-            loan_id=attempt.loan_id,
-            source=source,
-            transcript=transcript,
-            result=result,
-            analysis=scripted_analysis.__name__,
-        )
-    )
-    store.add_attempt(attempt)
-
-    case = CaseView.model_validate(client.get(f"/api/review/cases/{SESSION_ID}").json())
-    assert not case.call.simulated and case.call.source == source
-    assert case.call.recording_url == f"/api/sessions/{SESSION_ID}/recording.wav"
-    assert [(t.start_s, t.end_s) for t in case.transcript] == [(t.start_s, t.end_s) for t in turns]
-    quote = case.refer_lines[0].quote
-    spoken = next(t for t in turns if t.id == quote.turn_id)
-    assert (quote.start_s, quote.end_s) == (spoken.start_s, spoken.end_s) != (None, None)
-
-    queue = QueueView.model_validate(client.get("/api/review/queue").json())
-    assert not next(i for i in queue.items if i.case_id == SESSION_ID).simulated
-    log = AttemptLogView.model_validate(client.get("/api/review/attempts").json())
-    logged = next(loan for loan in log.loans if loan.loan_id == attempt.loan_id)
-    assert logged.status == "completed" and logged.case_id == SESSION_ID
-    assert (logged.attempts[-1].session_id, logged.attempts[-1].simulated) == (SESSION_ID, False)
+def test_an_unknown_case_id_is_not_repeated_in_the_error(client: TestClient) -> None:
+    probe = "TEST-CALL-<script>alert(1)</script>"
+    reply = client.get(f"/api/review/cases/{probe}")
+    assert reply.status_code == 404 and "script" not in reply.text and probe not in reply.text

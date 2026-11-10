@@ -11,6 +11,7 @@ from datetime import datetime, time, timedelta, timezone
 
 from samajh.ops.model import (
     RETRY_AFTER,
+    WINDOW_DAYS,
     Attempt,
     AttemptOutcome,
     BookLoan,
@@ -90,7 +91,8 @@ def run_draw(
     """Make the calls of one draw.
 
     Attempt k of a loan is on day `as_of + (k - 1)` at 11:00 IST. Attempts stop at the first
-    outcome outside `RETRY_AFTER` or at `max_attempts`. Safe to run again: an attempt already in
+    outcome outside `RETRY_AFTER`, at `max_attempts`, or when the next day would be past day 30 from
+    the sale (`WINDOW_DAYS`): no attempt is ever made after the window. Safe to run again: an attempt already in
     the log is not logged again, and a call already saved is not analysed again.
     """
     loans = {loan.record.loan_id: loan for loan in store.book()}
@@ -100,6 +102,8 @@ def run_draw(
         loan, customer = loans[drawn.loan_id], customers[drawn.loan_id]
         for number, step in enumerate(customer.attempts[:max_attempts], start=1):
             day = draw.as_of + timedelta(days=number - 1)
+            if (day - loan.sold_on).days > WINDOW_DAYS:
+                break  # no attempt after day 30 from the sale
             completed = step.outcome is AttemptOutcome.completed
             script = script_call(loan, customer) if completed else None
             attempt = Attempt(

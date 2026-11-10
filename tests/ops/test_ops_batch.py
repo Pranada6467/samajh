@@ -26,7 +26,7 @@ from samajh.ops.model import Decision, FinalStatus
 from samajh.ops.report import build_report
 from samajh.ops.simulate import run_draw, scripted_analysis
 from samajh.ops.store import NoBatch, OpsStore
-from samajh.ops.views import DispositionIn, Proportion, queue_view, record_disposition
+from samajh.ops.views import Count, DispositionIn, queue_view, record_disposition
 from samajh.scenarios.model import DONT_KNOW
 from samajh.types import RuleId, Tier
 
@@ -138,42 +138,76 @@ def test_a_hand_built_batch_gives_the_counts_and_intervals_worked_out_by_hand(tm
     assert flagged.pop(RuleId.cover) == (1, 3, 0, 0)
     assert flagged.pop(RuleId.sale_conduct) == (1, 3, 0, 1)
     assert set(flagged.values()) == {(0, 3, 0, 0)}
-    assert findings[RuleId.cover].understanding and findings[RuleId.cover].may_engage == "may engage para 85Y"
-    assert (
-        not findings[RuleId.sale_conduct].understanding and findings[RuleId.sale_conduct].may_engage is None
+    cover, conduct = findings[RuleId.cover], findings[RuleId.sale_conduct]
+    assert (cover.group, cover.seriousness_label, cover.may_engage) == (
+        "features",
+        "Lower",
+        "may engage para 85Y",
     )
-    assert report.findings[0].rule_id is RuleId.cover  # understanding rules first, most common first
+    assert (conduct.group, conduct.seriousness_label, conduct.may_engage) == ("sale", "Serious", None)
+    assert findings[RuleId.belief_mismatch].group == "risks"
+    assert [f.group for f in report.findings] == sorted(
+        (f.group for f in report.findings), key=("features", "risks", "sale").index
+    )
+    assert all(f.previous is None for f in report.findings) and report.previous_period is None
 
-    (item,) = report.policy_review
+    # Most serious first, then most common: the coached customer outranks the forgotten cover.
+    assert [i.rule_id for i in report.policy_review] == [RuleId.sale_conduct, RuleId.cover]
     assert (
-        item.sentence
+        report.policy_review[1].sentence
         == "1 of 3 customers who completed the call did not state the cover amount on the record"
     )
-    assert item.highest is None  # no branch or channel has 5 completed calls
+    assert all(i.highest is None for i in report.policy_review)  # no branch or channel has 5 calls
 
-    assert report.timing.first_attempt_days == (10, 10, 10)
-    assert (report.timing.completed_within_window.count, report.timing.attempts_after_window) == (3, 0)
-    assert {row.key: row.value.count for row in report.referrals} == {
-        "established": 0,
-        "not_established": 0,
-        "call_customer": 0,
-        "needs_information": 0,
-        "awaiting": 1,
+    assert report.timing.first_attempt_days == (10, 10, 10) and report.timing.attempted == 5
+    assert report.timing.attempts_after_window == Count(count=0, n=8)
+    assert {row.key: (row.value.count, row.value.n) for row in report.referrals} == {
+        "concern_supported": (0, 1),
+        "concern_not_supported": (0, 1),
+        "call_customer": (0, 1),
+        "needs_information": (0, 1),
+        "none": (1, 1),
     }
-    assert report.established_of_decided == Proportion(count=0, n=0, share=None, low=None, high=None)
-    assert (report.batch.referred, report.batch.awaiting_review) == (1, 1)
+    assert report.supported_of_decided == Count(count=0, n=0)
+    assert report.open_referrals == Count(count=1, n=1)
+    assert (report.batch.referred, report.batch.open_cases) == (1, 1)
+    assert report.as_of == SOLD + timedelta(days=12)  # the book clock: the last attempt (third, day 12)
+    assert report.sampling.sales_in_period == report.sampling.eligible == 5
 
 
-def test_attempts_after_day_30_are_counted_as_outside_the_window(tmp_path: Path) -> None:
+def test_no_attempt_is_made_after_day_30_and_a_customer_not_reached_by_then_is_not_reached_in_time(
+    tmp_path: Path,
+) -> None:
+    late, early = loan(1), loan(2, SOLD + timedelta(days=5))
+    customers = [customer(late, NO_ANSWER, COMPLETED), customer(early, NO_ANSWER, COMPLETED)]
+    store = run_batch(tmp_path / "ops", [late, early], customers, SOLD + timedelta(days=30))
+    attempts = {a.loan_id: a for a in store.attempts()}
+    assert [a.day_since_sale for a in store.attempts() if a.loan_id == late.record.loan_id] == [30]
+    report = build_report(store, NOW)
+    assert report.timing.attempts_after_window == Count(count=0, n=3)
+    exits = {row.key: row.value.count for row in report.funnel.exits}
+    assert exits["not_reached_in_time"] == 1 and exits["completed_late"] == 0
+    assert {row.tier: row.value.n for row in report.tiers}[Tier.refer] == 1  # only the reached customer
+    assert attempts[early.record.loan_id].outcome == "completed"
+
+
+def test_a_call_completed_after_day_30_is_shown_apart_and_not_counted(tmp_path: Path) -> None:
     a = loan(1)
-    store = run_batch(tmp_path / "ops", [a], [customer(a, NO_ANSWER, COMPLETED)], SOLD + timedelta(days=30))
-    timing = build_report(store, NOW).timing
-    assert timing.first_attempt_days == (30, 30, 30)
-    assert timing.attempts_after_window == 1
-    assert (timing.completed_within_window.count, timing.completed_within_window.n) == (0, 1)
+    store = run_batch(tmp_path / "ops", [a], [coached(a, COMPLETED)], SOLD + timedelta(days=10))
+    (attempt,) = store.attempts()
+    late = attempt.model_copy(
+        update={"attempt_id": f"{attempt.draw_id}/{a.record.loan_id}/9", "number": 2, "day_since_sale": 31}
+    )
+    store.add_attempt(late)  # as a phone call on day 31 would arrive
+    batch = load_batch(store)
+    assert [s.status for s in batch.sampled] == [FinalStatus.completed_late]
+    report = build_report(store, NOW)
+    assert report.timing.completed_late == 1 and {r.tier: r.value.n for r in report.tiers}[Tier.refer] == 0
+    (item,) = queue_view(batch).items
+    assert not item.in_report and item.not_counted_because == "completed after day 30 from the sale"
 
 
-def test_the_queue_holds_only_referrals_open_first_then_severity_then_days_left(tmp_path: Path) -> None:
+def test_the_queue_holds_only_referrals_open_first_then_severity_then_oldest_call(tmp_path: Path) -> None:
     week = timedelta(days=7)
     old_high, new_high, old_medium, gap, decided, none = (
         loan(1, SOLD),
@@ -202,13 +236,15 @@ def test_the_queue_holds_only_referrals_open_first_then_severity_then_days_left(
             store, case_of(of), DispositionIn(decision=decision, note="seen", reviewer="R1"), NOW
         )
 
-    decide(decided, Decision.not_established)
+    decide(decided, Decision.concern_not_supported)
     decide(new_high, Decision.call_customer)  # not a final decision: the case stays open
 
     items = queue_view(load_batch(store)).items
-    assert [i.loan_id for i in items] == [b.record.loan_id for b in (old_high, new_high, old_medium, decided)]
+    assert {i.loan_id for i in items[:2]} == {b.record.loan_id for b in (old_high, new_high)}
+    assert [i.loan_id for i in items[2:]] == [b.record.loan_id for b in (old_medium, decided)]
     assert [i.severity for i in items] == ["high", "high", "medium", "high"]
-    assert [i.days_left_in_window for i in items] == [16, 23, 9, 9]
+    assert items[0].at <= items[1].at and all(i.in_report for i in items)
+    assert load_batch(store).open(tuple(i.case_id for i in items)) == 3
     assert [i.disposition.final if i.disposition else None for i in items] == [None, False, None, True]
     assert items[0].headline == "Customer says they were told what to answer."
     assert items[0].may_engage == () and items[2].may_engage == ("may engage para 85G",)
