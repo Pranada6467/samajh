@@ -12,7 +12,14 @@ speaks can depend on a value the call is testing (kind, premium, payment source,
 cancel window, consent). The only figures the bot ever says are ones the customer said first.
 
 A plain refusal or request for a human ends the call at once. A weak signal of either (a short
-"leave it", or an LLM's guess) is checked with one question and never argued with.
+"leave it", a refusal the customer may be quoting from the sale, or an LLM's guess) is checked with
+one question and never argued with. That question is asked `Limits.max_stop_checks` times a call
+at most; a further signal ends the call.
+
+An amount turn may come with a second transcript of the same audio (DESIGN.md section 15, item 16).
+`samajh.amounts.cross_check` says whether the two agree. Either way the figure is read back before
+the call closes; where they differ the call acts on the reading that brings a figure the customer
+has not just heard or rejected, and keeps the other in `CallState.second_readings`.
 
 Every position allows one re-ask at most, read-backs per product are capped, and the whole call
 is capped at `Limits.max_bot_turns`, so a call always ends.
@@ -25,7 +32,7 @@ from typing import Annotated, Literal
 
 from pydantic import Field
 
-from samajh.amounts import format_inr, spoken_amount
+from samajh.amounts import Agreed, cross_check, format_inr, parse_amount, spoken_amount
 from samajh.dialogue.interpret import (
     UNCLEAR,
     Expecting,
@@ -65,6 +72,7 @@ class Outcome(StrEnum):
 class Limits(Frozen):
     max_bot_turns: int = Field(default=60, ge=1)  # utterances, including the closing one
     max_read_backs: int = Field(default=3, ge=1)  # read-backs of one product's premium
+    max_stop_checks: int = Field(default=2, ge=0)  # times a call asks "do you want to stop?"
 
 
 class CallPlan(Frozen):
@@ -148,6 +156,7 @@ class AtRestate(Frozen):
     at: Literal["restate"] = "restate"
     product: int
     read_backs: int
+    rejected_inr: int | None = None  # the figure the customer said was wrong
 
 
 class Ended(Frozen):
@@ -187,6 +196,14 @@ class Unresolved(Frozen):
     product_id: ProductId | None = None
 
 
+class SecondReading(Frozen):
+    """The other transcript of a customer turn that was read twice. `Turn.text` is the one the call acted on."""
+
+    turn_id: TurnId
+    text: str
+    agreed: bool  # `samajh.amounts.cross_check`: both transcripts gave the same single amount
+
+
 class CallState(Frozen):
     """Everything needed to continue a call. Serialise with `model_dump_json`, restore with `model_validate_json`."""
 
@@ -200,6 +217,8 @@ class CallState(Frozen):
     bot_turns: int = 0
     premiums: tuple[StatedPremium, ...] = ()
     unresolved: tuple[Unresolved, ...] = ()
+    stop_checks: int = 0  # times the bot has asked "do you want to stop?"
+    second_readings: tuple[SecondReading, ...] = ()
 
     def transcript(self) -> Transcript:
         """The call so far, in the shape the extractor and the rules consume."""
@@ -224,6 +243,7 @@ class EndOfCall(Frozen):
 _RULES = RuleInterpreter()
 
 _TOLD = frozenset({Question.required_for_loan, Question.provider_choice, Question.cancel_window})
+_FIGURE = frozenset({Expecting.amount, Expecting.confirmation})  # replies that may carry a rupee figure
 _END_LINES: dict[Outcome, tuple[str, ...]] = {
     Outcome.wrong_party: ("end.neutral",),
     Outcome.not_confirmed: ("end.neutral",),
@@ -483,19 +503,38 @@ def start(
 
 
 def step(
-    state: CallState, customer_text: str, *, interpreter: TurnInterpreter = _RULES
+    state: CallState,
+    customer_text: str,
+    *,
+    second_reading: str | None = None,
+    interpreter: TurnInterpreter = _RULES,
 ) -> tuple[CallState, BotUtterance | EndOfCall]:
-    """Take the customer's reply to the bot's last utterance and say what comes next."""
+    """Take the customer's reply to the bot's last utterance and say what comes next.
+
+    `second_reading` is another transcript of the same turn, from a second speech model. It counts
+    only where the bot waits for a figure (the premium question, a read-back, a restated amount)
+    and is ignored elsewhere.
+    """
     position = state.position
     if position.at == "ended":
         raise ValueError("the call has ended")
     asked = state.turns[-1]
-    heard = interpreter.interpret(
-        customer_text, language=state.language, expecting=expecting(position), question=asked.text
-    )
-    reply = Turn(
-        id=TurnId(len(state.turns) + 1), speaker=Speaker.customer, step=asked.step, text=customer_text
-    )
+    expects = expecting(position)
+    turn_id = TurnId(len(state.turns) + 1)
+
+    def read(text: str) -> Interpretation:
+        return interpreter.interpret(text, language=state.language, expecting=expects, question=asked.text)
+
+    heard = read(customer_text)
+    if second_reading is not None and expects in _FIGURE:
+        agreed = isinstance(cross_check(parse_amount(customer_text), parse_amount(second_reading)), Agreed)
+        if not agreed and _brings_no_figure(position, heard):
+            other = read(second_reading)
+            if not _brings_no_figure(position, other):
+                heard, customer_text, second_reading = other, second_reading, customer_text
+        spare = SecondReading(turn_id=turn_id, text=second_reading, agreed=agreed)
+        state = state.model_copy(update={"second_readings": (*state.second_readings, spare)})
+    reply = Turn(id=turn_id, speaker=Speaker.customer, step=asked.step, text=customer_text)
     state = state.model_copy(update={"turns": (*state.turns, reply)})
 
     if heard.intent is Intent.wants_human:
@@ -504,11 +543,30 @@ def step(
         return _end(state, Outcome.declined)
     if isinstance(position, AtStopCheck):
         return _on_stop_check(state, position, heard)
-    if heard.intent is Intent.maybe_decline:
-        return _say(state, AtStopCheck(wish="decline", resume=position))
-    if heard.intent is Intent.maybe_human:
-        return _say(state, AtStopCheck(wish="human", resume=position))
+    if heard.intent in (Intent.maybe_decline, Intent.maybe_human):
+        wish = "decline" if heard.intent is Intent.maybe_decline else "human"
+        if state.stop_checks >= state.limits.max_stop_checks:  # asked often enough: take it as meant
+            return _end(state, Outcome.declined if wish == "decline" else Outcome.human_requested)
+        state = state.model_copy(update={"stop_checks": state.stop_checks + 1})
+        return _say(state, AtStopCheck(wish=wish, resume=position))
     return _on_reply(state, position, heard)
+
+
+def _brings_no_figure(position: Position, heard: Interpretation) -> bool:
+    """Does this reading leave the bot with nothing new to read back?
+
+    A plain yes to a read-back stands. Otherwise a reading counts only if it holds a figure, and not
+    the one the customer has just been read (`AtReadBack`) or has just rejected (`AtRestate`).
+    """
+    match position:
+        case AtReadBack(amount_inr=stale):
+            if heard.intent is Intent.yes:
+                return False
+        case AtRestate(rejected_inr=stale):
+            pass
+        case _:
+            stale = None
+    return heard.amount_inr is None or heard.amount_inr == stale
 
 
 def _on_reply(state: CallState, position: _Waiting, heard: Interpretation):
@@ -561,11 +619,14 @@ def _on_go_ahead(state: CallState, position: AtGoAhead, heard: Interpretation):
 
 
 def _on_birth_year(state: CallState, position: AtBirthYear, heard: Interpretation):
-    known = state.plan.birth_year
-    if heard.year is not None and heard.year in (known, known % 100):
-        return _say(state, AtRecall())
-    if heard.intent is Intent.wrong_person:
+    if heard.intent is Intent.wrong_person:  # "I am his wife, he was born in 1984" names the year too
         return _end(state, Outcome.wrong_party)
+    known = state.plan.birth_year
+    # Two digits ("84") pass from 10 up only: "एक" and "दो" turn up in replies that give no year at
+    # all ("एक बार फिर बोलिए"), and nobody gives 2002 as "दो".
+    short = known % 100
+    if heard.year is not None and (heard.year == known or (short >= 10 and heard.year == short)):
+        return _say(state, AtRecall())
     if position.reasked:
         return _end(state, Outcome.second_check_failed)
     return _say(state, AtBirthYear(reasked=True))
@@ -591,7 +652,10 @@ def _on_question(state: CallState, position: _Question, heard: Interpretation):
 def _on_read_back(state: CallState, position: AtReadBack, heard: Interpretation):
     more = position.read_backs < state.limits.max_read_backs
     after = position.product + 1
-    if heard.amount_inr is not None and heard.amount_inr != position.amount_inr:
+    read = position.amount_inr
+    # "शायद पचपन हज़ार", "not fifty two, fifty five thousand": no one figure, but not the one read back.
+    names_another = heard.amount_inr is None and any(figure != read for figure in heard.figures)
+    if heard.amount_inr is not None and heard.amount_inr != read:
         state = _with_premium(state, position.product, heard.amount_inr)
         if more:
             return _say(
@@ -600,12 +664,13 @@ def _on_read_back(state: CallState, position: AtReadBack, heard: Interpretation)
                     update={"amount_inr": heard.amount_inr, "read_backs": position.read_backs + 1}
                 ),
             )
-    elif heard.intent is Intent.no:
+    elif heard.intent is Intent.no or (names_another and heard.intent is not Intent.yes):
         if more:
-            return _say(state, AtRestate(product=position.product, read_backs=position.read_backs))
-    elif heard.intent is Intent.yes or heard.amount_inr == position.amount_inr:
+            restate = AtRestate(product=position.product, read_backs=position.read_backs, rejected_inr=read)
+            return _say(state, restate)
+    elif heard.intent is Intent.yes or heard.amount_inr == read:
         return _go(state, _read_back_from(state, after))
-    elif more:
+    elif more and heard.intent is not Intent.dont_know:  # "I don't know" is recorded, not pressed
         return _say(state, position.model_copy(update={"read_backs": position.read_backs + 1}), again=True)
     state = _mark_unresolved(state, position)
     return _go(state, _read_back_from(state, after), bridge=True)

@@ -170,6 +170,37 @@ def test_random_customers_never_get_a_record_value_and_the_call_always_ends(lang
     assert {Outcome.completed, Outcome.declined, Outcome.human_requested, Outcome.wrong_party} <= outcomes
 
 
+def heard_twice(rng: random.Random, replies: list[str], pool: list[str]) -> list[str | tuple[str, str]]:
+    """Give some turns a second transcript: the same words, another customer line, or a record value."""
+    return [(reply, rng.choice([reply, *pool])) if rng.random() < 0.5 else reply for reply in replies]
+
+
+@pytest.mark.parametrize("language", LANGUAGES)
+def test_a_second_transcript_of_a_turn_cannot_make_the_bot_say_a_record_value_or_go_on_for_ever(language):
+    limits = Limits(max_bot_turns=10_000)
+    bound = natural_bound(2, limits)
+    used = 0
+    for seed in range(SEEDS):
+        rng = random.Random(f"twice-{language.value}-{seed}")
+        replies = random_replies(rng, RECORD_A, language, bound + 5)
+        replies = heard_twice(rng, replies, adversarial(RECORD_A, language) + adversarial(RECORD_B, language))
+        call_a = play(RECORD_A, language, replies, limits=limits)
+        call_b = play(RECORD_B, language, replies, limits=limits)
+
+        assert call_a.end is not None and len(call_a.utterances) <= bound, f"seed {seed}"
+        assert [u.text for u in call_a.utterances] == [u.text for u in call_b.utterances], f"seed {seed}"
+        assert_nothing_leaks(call_a, RECORD_A)
+        assert_nothing_leaks(call_b, RECORD_B)
+        assert_loan_is_private(call_a)
+        firsts = {reply[0] for reply in replies if isinstance(reply, tuple)}
+        used += any(
+            turn.text not in firsts and other.text in firsts
+            for other in call_a.state.second_readings
+            for turn in [call_a.state.turns[other.turn_id - 1]]
+        )
+    assert used > SEEDS // 20  # the second transcript did decide what the bot read back in some calls
+
+
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_the_default_budget_always_ends_a_call(language):
     limits = Limits()

@@ -9,7 +9,7 @@ from dialogue_kit import CUSTOMERS, play, record
 
 from samajh.clients.errors import CapExceeded, LlmOutputInvalid, RateLimited, TransportError
 from samajh.dialogue import Expecting, Intent, Outcome
-from samajh.dialogue.llm_fallback import LlmFallbackInterpreter
+from samajh.dialogue.llm_fallback import FALLBACK_MODEL, LlmFallbackInterpreter
 from samajh.types import Language
 
 HI = Language.hi
@@ -19,16 +19,17 @@ class FakeLlm:
     """Stands in for `LlmClient`: answers every call with one label, or raises."""
 
     def __init__(self, label: str | None = None, error: Exception | None = None) -> None:
-        self.label, self.error, self.calls = label, error, []
+        self.label, self.error, self.calls, self.options = label, error, [], []
 
     def complete(self, schema, messages, **kwargs):
         self.calls.append(messages)
+        self.options.append(kwargs)
         if self.error:
             raise self.error
         return SimpleNamespace(value=schema(label=self.label))
 
 
-def read(llm: FakeLlm, text: str, expecting: Expecting, question: str = "आपकी समझ से वह चीज़ क्या है?"):
+def read(llm: FakeLlm, text: str, expecting: Expecting, question: str = "आपके हिसाब से वो चीज़ क्या है?"):
     return LlmFallbackInterpreter(llm).interpret(text, language=HI, expecting=expecting, question=question)
 
 
@@ -58,7 +59,7 @@ def test_the_llm_sees_the_question_and_the_reply_and_nothing_else():
     read(llm, "आज बहुत गर्मी है", Expecting.open)
     (messages,) = llm.calls
     assert [m.role for m in messages] == ["system", "user"]
-    assert messages[1].content == "Question: आपकी समझ से वह चीज़ क्या है?\nReply: आज बहुत गर्मी है"
+    assert messages[1].content == "Question: आपके हिसाब से वो चीज़ क्या है?\nReply: आज बहुत गर्मी है"
 
 
 @pytest.mark.parametrize(
@@ -97,19 +98,51 @@ def test_numbers_always_come_from_the_rules():
     assert heard.amount_inr == 52000
 
 
+def test_the_fallback_names_its_own_model_and_leaves_room_for_the_reply():
+    """The client's default model is chosen for extraction and can change; this call sits in a live turn."""
+    llm = FakeLlm("answer")
+    read(llm, "आज बहुत गर्मी है", Expecting.open)
+    (options,) = llm.options
+    assert options["model"] == FALLBACK_MODEL and "/" in FALLBACK_MODEL
+    assert options["max_tokens"] >= 200  # 30 came back cut off and empty from a reasoning model
+
+
 @pytest.mark.parametrize(
-    "error",
+    "error, reason",
     [
-        CapExceeded(unit="USD", cap=1.0, spent=1.0, estimate=0.01),
-        TransportError("down"),
-        LlmOutputInvalid(model="m", attempts=3, last_error="bad json"),
-        RateLimited(status=429, code=None, message="slow down"),
+        (CapExceeded(unit="USD", cap=1.0, spent=1.0, estimate=0.01), "would cross cap"),
+        (TransportError("down"), "down"),
+        (LlmOutputInvalid(model="m", attempts=1, last_error="finish_reason=length, empty content"),
+         "finish_reason=length, empty content"),
+        (RateLimited(status=429, code=None, message="slow down"), "slow down"),
     ],
-)
-def test_a_failed_llm_call_leaves_the_rule_reading(error):
+)  # fmt: skip
+def test_a_failed_llm_call_is_read_as_unclear_and_the_reason_is_logged(error, reason, caplog):
     llm = FakeLlm(error=error)
-    assert read(llm, "आज बहुत गर्मी है", Expecting.open).intent is Intent.said
+    with caplog.at_level("WARNING", logger="samajh.dialogue.llm_fallback"):
+        heard = read(llm, "वो तो बावन हज़ार ले गए", Expecting.open)
+    assert heard.intent is Intent.unclear and heard.amount_inr == 52000  # the rules' figure is kept
     assert len(llm.calls) == 1
+    (logged,) = caplog.records
+    assert type(error).__name__ in logged.getMessage() and reason in logged.getMessage()
+    assert FALLBACK_MODEL in logged.getMessage()
+    assert "बावन" not in logged.getMessage()  # the log names the failure, not what the customer said
+
+
+def test_a_failed_llm_call_gets_the_question_asked_once_more_and_never_ends_the_call():
+    customer = CUSTOMERS[HI]
+    down = LlmFallbackInterpreter(FakeLlm(error=TransportError("down")))
+    replies = [*customer.happy()[:3], "आज बहुत गर्मी है", "आज बहुत गर्मी है"]
+    call = play(record(), HI, replies, interpreter=down)
+    assert call.end is None
+    assert call.keys[-5:] == (
+        "open_recall.ask",
+        "open_recall.reask",
+        "bridge.moving_on",
+        "teach_back.intro",
+        "kind.ask",
+    )
+    assert [u.step.value for u in call.state.unresolved] == ["open_recall"]
 
 
 def test_an_off_topic_label_gets_the_question_asked_once_more():

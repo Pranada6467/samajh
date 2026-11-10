@@ -238,17 +238,21 @@ class Call:
 def play(
     rec: LoanRecord,
     language: Language,
-    replies: list[str],
+    replies: list[str | tuple[str, str]],
     *,
     interpreter: TurnInterpreter = RULES,
     limits: Limits | None = None,
     lender_name: str = LENDER,
 ) -> Call:
-    """Feed `replies` to a call until they run out or the call ends."""
+    """Feed `replies` to a call until they run out or the call ends.
+
+    A reply given as a pair is one turn heard twice: (the first transcript, the second transcript).
+    """
     state, said = start(rec, language, lender_name=lender_name, limits=limits)
     states, utterances, end = [state], [said], None
     for reply in replies:
-        state, said = step(state, reply, interpreter=interpreter)
+        first, second = reply if isinstance(reply, tuple) else (reply, None)
+        state, said = step(state, first, second_reading=second, interpreter=interpreter)
         states.append(state)
         if isinstance(said, EndOfCall):
             utterances.append(said.utterance)

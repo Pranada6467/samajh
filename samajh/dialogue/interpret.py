@@ -14,7 +14,7 @@ from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from samajh.amounts import Ambiguous, Parsed, parse_amount
+from samajh.amounts import Ambiguous, AmountResult, Parsed, parse_amount
 from samajh.dialogue._lexicon import LEXICONS, Lexicon, Phrase, phrase_at, tokens
 from samajh.types import Language
 
@@ -46,6 +46,7 @@ class Intent(StrEnum):
     asks_repeat = "asks_repeat"
     filler = "filler"
     off_topic = "off_topic"
+    unclear = "unclear"  # the interpreter could not read the turn (its LLM call failed, for example)
 
 
 # The amounts a read-back can carry: `spoken_amount` speaks 1 to 999,999,999, and a read-back line is
@@ -53,7 +54,9 @@ class Intent(StrEnum):
 # range is treated as no figure, so the premium question is asked once more.
 READ_BACK_MIN, READ_BACK_LIMIT = 100, 1_000_000_000
 
-UNCLEAR: frozenset[Intent] = frozenset({Intent.silence, Intent.asks_repeat, Intent.filler, Intent.off_topic})
+UNCLEAR: frozenset[Intent] = frozenset(
+    {Intent.silence, Intent.asks_repeat, Intent.filler, Intent.off_topic, Intent.unclear}
+)
 
 
 class Interpretation(BaseModel):
@@ -64,6 +67,9 @@ class Interpretation(BaseModel):
     intent: Intent
     # The one unhedged amount in the turn, read by samajh.amounts, and only if the bot can read it back.
     amount_inr: int | None = Field(default=None, ge=READ_BACK_MIN, lt=READ_BACK_LIMIT)
+    # Numbers heard that did not settle into one amount ("शायद पचपन हज़ार", "बावन नहीं पचपन", "पचपन").
+    # The bot never says them; at a read-back they show that the customer named some other figure.
+    figures: tuple[int, ...] = ()
     year: int | None = None  # set only when a birth year was expected; two digits when said that way
 
 
@@ -79,6 +85,10 @@ class TurnInterpreter(Protocol):
 # not a request to repeat or an order to stop.
 _REPEAT_TURN = 10
 _STOP_TURN = 6
+# Before the bot has asked about the sale there is nothing to recount, so a refusal there is a refusal.
+# From open recall on, a customer may be quoting one ("मैंने कहा था मुझे इंटरेस्ट नहीं है"): see `_intent`.
+_OPENING = frozenset({Expecting.identity, Expecting.go_ahead, Expecting.birth_year})
+_NO_ACCOUNT_OF_THE_SALE = _OPENING | {Expecting.stop_check}
 _DIGITS = str.maketrans("०१२३४५६७८९௦௧௨௩௪௫௬௭௮௯೦೧೨೩೪೫೬೭೮೯", "0123456789" * 3)
 _FOUR_DIGITS = re.compile(r"(?<!\d)(19|20)\d\d(?!\d)")
 
@@ -99,11 +109,14 @@ def _only(words: Phrase, phrases: frozenset[Phrase]) -> bool:
     return bool(words)
 
 
-def _amount(text: str) -> int | None:
-    parsed = parse_amount(text)
+def _amount(parsed: AmountResult) -> int | None:
     if isinstance(parsed, Parsed) and READ_BACK_MIN <= parsed.rupees < READ_BACK_LIMIT:
         return parsed.rupees
     return None
+
+
+def _figures(parsed: AmountResult) -> tuple[int, ...]:
+    return tuple(c.rupees for c in parsed.candidates) if isinstance(parsed, Ambiguous) else ()
 
 
 def _small_number(text: str) -> int | None:
@@ -142,16 +155,20 @@ class RuleInterpreter:
         lexicon = LEXICONS[language]
         intent = self._intent(words, lexicon, expecting)
         year = birth_year(text) if expecting is Expecting.birth_year else None
-        return Interpretation(intent=intent, amount_inr=_amount(text), year=year)
+        parsed = parse_amount(text)
+        return Interpretation(intent=intent, amount_inr=_amount(parsed), figures=_figures(parsed), year=year)
 
     def _intent(self, words: Phrase, lexicon: Lexicon, expecting: Expecting) -> Intent:
         if not words:
             return Intent.silence
         short = len(words) <= _REPEAT_TURN
+        # A refusal ends the call at once unless the customer may be recounting one from the sale
+        # ("उन्होंने बोला बाद में बात करेंगे"): then the bot asks whether they want to stop.
+        quoted = expecting not in _NO_ACCOUNT_OF_THE_SALE and _has(words, lexicon.recounts)
         if _has(words, lexicon.wants_human):
-            return Intent.wants_human
+            return Intent.maybe_human if quoted else Intent.wants_human
         if _has(words, lexicon.decline):
-            return Intent.decline
+            return Intent.maybe_decline if quoted else Intent.decline
         affirms = _has(words, lexicon.yes_despite_no)
         denies = not affirms and (_has(words, lexicon.no) or _has(words, lexicon.no_at_start, at_start=True))
         if len(words) <= _STOP_TURN and _has(words, lexicon.decline_short):
@@ -159,10 +176,11 @@ class RuleInterpreter:
             return Intent.no if denies and expecting is Expecting.go_ahead else Intent.maybe_decline
         affirms = affirms or (not denies and _has(words, lexicon.yes))
         repeats = _only(words, lexicon.asks_repeat_whole) or (short and _has(words, lexicon.asks_repeat))
+        # Someone who says they are not the borrower is believed at every step before the loan is named.
+        if expecting in _OPENING and _has(words, lexicon.wrong_person):
+            return Intent.wrong_person
         if expecting is Expecting.identity:
             is_self = _has(words, lexicon.is_self) and not denies
-            if _has(words, lexicon.wrong_person):
-                return Intent.wrong_person
             if (repeats or _has(words, lexicon.who)) and not is_self:
                 return Intent.asks_repeat
             if denies:
@@ -171,6 +189,8 @@ class RuleInterpreter:
                 return Intent.yes
         if repeats:
             return Intent.asks_repeat
+        if expecting is Expecting.confirmation and _has(words, lexicon.dont_know):
+            return Intent.dont_know  # "पता नहीं" holds a no-word and is not a no to the read-back
         if expecting in (Expecting.go_ahead, Expecting.confirmation, Expecting.stop_check):
             if denies:
                 return Intent.no

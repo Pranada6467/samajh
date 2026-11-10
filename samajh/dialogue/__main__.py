@@ -3,7 +3,8 @@
     uv run python -m samajh.dialogue play --record tests/dialogue/fixtures/record_gold_loan.json --lang hi
     uv run python -m samajh.dialogue eval-turns --set tests/dialogue/fixtures/turns_heldout.jsonl [--llm]
 
-`play` runs one call in the terminal: you type the customer's turns. `eval-turns` scores the turn
+`play` runs one call in the terminal: you type the customer's turns. Type `first || second` to give
+one turn two transcripts, as two speech models would (it counts on amount turns). `eval-turns` scores the turn
 interpreter on a labelled set: it plays each reply into the real machine and compares the effect
 on the call (answered, reask, decline, ...) with the label.
 """
@@ -38,19 +39,19 @@ from samajh.dialogue.prompts import PRODUCT_QUESTIONS, load_prompts
 from samajh.types import Language, LoanRecord, Question
 
 
-def _interpreter(use_llm: bool) -> TurnInterpreter:
+def _interpreter(use_llm: bool, model: str | None = None) -> TurnInterpreter:
     if not use_llm:
         return RuleInterpreter()
     from samajh.clients.llm import LlmClient
-    from samajh.dialogue.llm_fallback import LlmFallbackInterpreter
+    from samajh.dialogue.llm_fallback import FALLBACK_MODEL, LlmFallbackInterpreter
 
-    return LlmFallbackInterpreter(LlmClient.from_env())
+    return LlmFallbackInterpreter(LlmClient.from_env(), model=model or FALLBACK_MODEL)
 
 
 def _play(args: argparse.Namespace) -> int:
     record = LoanRecord.model_validate_json(Path(args.record).read_text(encoding="utf-8"))
     language = Language(args.lang)
-    interpreter = _interpreter(args.llm)
+    interpreter = _interpreter(args.llm, args.llm_model)
     state, said = start(record, language, lender_name=args.lender)
     print(f"[{language.value} prompts: {load_prompts(language).review}]")
     while True:
@@ -61,7 +62,10 @@ def _play(args: argparse.Namespace) -> int:
         except EOFError:
             print("\n[input ended before the call did]")
             return 1
-        state, said = step(state, reply, interpreter=interpreter)
+        if not sys.stdin.isatty():
+            print(reply)  # piped input is not echoed by the terminal
+        first, _, second = (part.strip() for part in reply.partition("||"))
+        state, said = step(state, first, second_reading=second or None, interpreter=interpreter)
         if isinstance(said, EndOfCall):
             break
     for line in said.utterance.lines:
@@ -139,7 +143,7 @@ def _eval_turns(args: argparse.Namespace) -> int:
     ]
     if args.fold is not None:
         rows = [row for row in rows if row.get("fold") == args.fold]
-    interpreter = _interpreter(args.llm)
+    interpreter = _interpreter(args.llm, args.llm_model)
     right: Counter[tuple[str, str]] = Counter()
     total: Counter[tuple[str, str]] = Counter()
     checked: Counter[tuple[str, str]] = Counter()  # honoured after the bot asked "do you want to stop?"
@@ -185,6 +189,8 @@ def main(argv: list[str] | None = None) -> int:
     turns.add_argument("--llm", action="store_true", help="add the LLM fallback (needs OPENROUTER_API_KEY)")
     turns.add_argument("--out", help="write every row with what the interpreter read to this JSONL file")
     turns.set_defaults(run=_eval_turns)
+    for command in (play, turns):
+        command.add_argument("--llm-model", help="OpenRouter model id for --llm (default: the pinned one)")
     args = parser.parse_args(argv)
     return args.run(args)
 

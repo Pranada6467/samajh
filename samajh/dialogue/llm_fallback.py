@@ -1,10 +1,16 @@
 """An LLM second opinion for customer turns the word lists cannot place.
 
 Kept apart from `interpret` so the call core imports no network client.
+
+The model is named here, not taken from the client's default: that default is chosen for extraction
+after the call and can change, and this call sits inside a live turn where every second is silence
+on the line. A failed call is never passed over in silence: the turn is read as `Intent.unclear`,
+so the bot asks once more, and the reason is logged.
 """
 
 from __future__ import annotations
 
+import logging
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
@@ -13,6 +19,14 @@ from samajh.clients.errors import ClientError
 from samajh.clients.llm import LlmClient, Message
 from samajh.dialogue.interpret import Expecting, Intent, Interpretation, RuleInterpreter, TurnInterpreter
 from samajh.types import Language
+
+log = logging.getLogger(__name__)
+
+# Chosen by measurement on the labelled turn set: references/pilots/W9-dialogue-report.md section 4.
+FALLBACK_MODEL = "mistralai/mistral-small-3.2-24b-instruct"
+# The reply is one short JSON object. The room above that is for models that spend output tokens
+# on reasoning first: with 30, openai/gpt-6-luna came back cut off and empty.
+MAX_TOKENS = 512
 
 
 class _Label(StrEnum):
@@ -93,13 +107,26 @@ class LlmFallbackInterpreter:
     """The rules first; an LLM only for a turn the rules left as plain `said`.
 
     The LLM picks a label and nothing else: amounts and years always come from the rules, and no
-    label ends a call by itself (see `_READS_AS`). If the LLM call fails for any reason the rule
-    reading stands, so a call never waits or stops on the fallback.
+    label ends a call by itself (see `_READS_AS`). If the LLM call fails, the turn is read as
+    `Intent.unclear` (the question is asked once more, as after any unclear reply) and the reason
+    is logged as a warning. The log line names the error and the model, never the customer's words.
+
+    How long a failing call can hold a turn is set by the client passed in (its timeout and retry
+    policy), not here.
     """
 
-    def __init__(self, llm: LlmClient, rules: TurnInterpreter | None = None) -> None:
+    def __init__(
+        self,
+        llm: LlmClient,
+        rules: TurnInterpreter | None = None,
+        *,
+        model: str = FALLBACK_MODEL,
+        max_tokens: int = MAX_TOKENS,
+    ) -> None:
         self._llm = llm
         self._rules = rules if rules is not None else RuleInterpreter()
+        self._model = model
+        self._max_tokens = max_tokens
 
     def interpret(
         self, text: str, *, language: Language, expecting: Expecting, question: str
@@ -113,8 +140,15 @@ class LlmFallbackInterpreter:
             Message(role="user", content=f"Question: {question}\nReply: {text}"),
         ]
         try:
-            label = self._llm.complete(_Verdict, messages, max_tokens=30).value.label
-        except ClientError:
-            return first
+            reply = self._llm.complete(_Verdict, messages, model=self._model, max_tokens=self._max_tokens)
+        except ClientError as error:
+            log.warning(
+                "LLM fallback failed, turn read as unclear: %s from %s: %s",
+                type(error).__name__,
+                self._model,
+                error,
+            )
+            return first.model_copy(update={"intent": Intent.unclear})
+        label = reply.value.label
         intent = _READS_AS[expecting].get(label)
         return first if intent is None else first.model_copy(update={"intent": intent})

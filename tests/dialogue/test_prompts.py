@@ -141,7 +141,7 @@ def test_a_prompt_file_with_banned_wording_or_a_wrong_slot_does_not_load(tmp_pat
         load_prompts.cache_clear()
 
     for change, error in [
-        (("आपकी समझ से वह चीज़ क्या है?", "क्या वह चीज़ बीमा है?"), "banned wording"),
+        (("आपके हिसाब से वो चीज़ क्या है?", "क्या वो चीज़ बीमा है?"), "banned wording"),
         (("उसके लिए आपने कितने पैसे दिए?", "{first_name}, उसके लिए आपने कितने पैसे दिए?"), "uses slots"),
         (("उसके लिए आपने कितने पैसे दिए?", "क्या आपने {amount_digits} दिए?"), "uses slots"),
         (('[lines."close.bye"]', '[lines."close.extra"]'), "missing lines"),

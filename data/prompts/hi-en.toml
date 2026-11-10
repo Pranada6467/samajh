@@ -5,7 +5,7 @@
 # `design` names the DESIGN.md paragraph the line implements.
 
 language = "hi-en"
-review = "written by the build agent; no fluent second reviewer yet"
+review = "written by the build agent, register pass by the review agent; no fluent human reviewer yet"
 ordinals = ["पहली", "दूसरी", "तीसरी", "चौथी", "पाँचवीं"]
 
 [lines."right_party.ask"]
@@ -18,7 +18,7 @@ text = "यह एक automated call है। क्या {first_name} जी 
 
 [lines."end.neutral"]
 design = "§5 step 1: wrong person or no confirmation, the bot ends and says nothing about a loan"
-text = "कोई बात नहीं। आपको disturb किया, sorry। नमस्ते।"
+text = "कोई बात नहीं। Disturb करने के लिए sorry। नमस्ते।"
 
 [lines."disclosure.who"]
 design = "§5 step 2: the bank's name, customer-care team, automated AI assistant (recommended: FREE-AI report para 4.4.54)"
@@ -62,7 +62,7 @@ text = "Sorry, ठीक से सुनाई नहीं दिया। अ
 
 [lines."end.check_failed"]
 design = "§5 step 3: the check did not pass, so the loan is never mentioned"
-text = "Sorry, अभी confirm नहीं हो पाया, इसलिए यह call यहीं ख़त्म होती है। ज़रूरत हो तो आप {lender} के customer care से बात कर सकते हैं। Thank you।"
+text = "Sorry, अभी confirm नहीं हो पाया, इसलिए call यहीं end कर रहे हैं। ज़रूरत हो तो आप {lender} के customer care से बात कर सकते हैं। Thank you।"
 
 [lines."context.loan"]
 design = "§5 step 4: only now does the bot mention the loan"
@@ -78,15 +78,15 @@ text = "मतलब, loan लेते time उसके साथ आपको
 
 [lines."teach_back.intro"]
 design = "§5 step 6: the product is referred to without naming what it is"
-text = "Thank you। अब loan के साथ ली गई चीज़ के बारे में कुछ छोटे questions हैं।"
+text = "Thank you। अब loan के साथ जो चीज़ ली गई, उसके बारे में कुछ छोटे questions हैं।"
 
 [lines."teach_back.intro_nth"]
 design = "§5 step 6, for a record with several products: an ordinal, not a name"
-text = "अब loan के साथ record में दर्ज {ordinal} चीज़ के बारे में कुछ छोटे questions हैं।"
+text = "अब loan के साथ हमारे record में जो {ordinal} चीज़ है, उसके बारे में कुछ छोटे questions हैं।"
 
 [lines."kind.ask"]
 design = "§5 step 6 'Is this insurance, FD or something else?', asked open so no kind is suggested"
-text = "आपकी समझ से वह चीज़ क्या है?"
+text = "आपके हिसाब से वो चीज़ क्या है?"
 
 [lines."kind.reask"]
 design = "§5 step 6 and the one-re-ask rule"
@@ -102,7 +102,7 @@ text = "मतलब, उस चीज़ का amount कितना था? 
 
 [lines."payment_source.ask"]
 design = "§5 step 6 'How was it paid?', asked open so neither source is suggested"
-text = "वह payment कहाँ से और कैसे हुआ?"
+text = "वो payment कहाँ से और कैसे हुई?"
 
 [lines."payment_source.reask"]
 design = "§5 step 6 and the one-re-ask rule"
@@ -110,19 +110,19 @@ text = "मतलब, उस चीज़ का पैसा आपने क�
 
 [lines."required_for_loan.ask"]
 design = "§5 step 6 'Was it required for the loan?': both possibilities named, then what the customer was told"
-text = "Loan मिलने के लिए वह चीज़ लेना ज़रूरी था या आपकी choice थी? आपको क्या बताया गया था?"
+text = "Loan मिलने के लिए वो चीज़ लेना ज़रूरी था या आपकी choice थी? आपको क्या बताया गया था?"
 
 [lines."required_for_loan.reask"]
 design = "§5 step 6 and the one-re-ask rule"
-text = "मतलब, अगर आप वह चीज़ नहीं लेते, तो loan के बारे में आपको क्या बोला गया था?"
+text = "मतलब, अगर आप वो चीज़ नहीं लेते, तो क्या loan मिलता? इस बारे में आपको क्या बोला गया था?"
 
 [lines."provider_choice.ask"]
 design = "§5 step 6 'Were you told you could buy this from another company?', asked open"
-text = "वह चीज़ कहाँ से लेनी है, इस बारे में आपको क्या बताया गया था?"
+text = "वो चीज़ कहाँ से लेनी है, इस बारे में आपको क्या बताया गया था?"
 
 [lines."provider_choice.reask"]
 design = "§5 step 6 and the one-re-ask rule: both possibilities named"
-text = "मतलब, क्या किसी ने बताया था कि वह चीज़ आप कहीं और से भी ले सकते हैं या नहीं?"
+text = "मतलब, क्या किसी ने बताया था कि वो चीज़ आप कहीं और से भी ले सकते हैं या नहीं?"
 
 [lines."cover.ask"]
 design = "§5 step 6 'What does it cover?', without the word that would name the product"
@@ -130,19 +130,19 @@ text = "उस चीज़ से आपको क्या मिलता ह
 
 [lines."cover.reask"]
 design = "§5 step 6 and the one-re-ask rule"
-text = "मतलब, वह चीज़ आपके किस काम आती है? जो समझ में आया हो, बताइए।"
+text = "मतलब, वो चीज़ आपके किस काम आती है? जो समझ में आया हो, बताइए।"
 
 [lines."term.ask"]
 design = "§5 step 6 '... and for how long?'"
-text = "वह कितने time के लिए है?"
+text = "वो कितने time के लिए है?"
 
 [lines."term.reask"]
 design = "§5 step 6 and the one-re-ask rule"
-text = "मतलब, वह चीज़ कब तक चलेगी? Months या years में बताइए।"
+text = "मतलब, वो चीज़ कब तक चलेगी? Months या years में बताइए।"
 
 [lines."cancel_window.ask"]
 design = "§5 step 6 'Were you told whether you can cancel, and by when?'; the bot never states a right (correction 11)"
-text = "क्या आपको बताया गया था कि वह चीज़ आप cancel कर सकते हैं या नहीं, और अगर हाँ, तो कब तक?"
+text = "क्या आपको बताया गया था कि वो चीज़ आप cancel कर सकते हैं या नहीं, और अगर हाँ, तो कब तक?"
 
 [lines."cancel_window.reask"]
 design = "§5 step 6 and the one-re-ask rule; still states no right"
@@ -150,7 +150,7 @@ text = "मतलब, उसे बंद या वापस करने क�
 
 [lines."features.ask"]
 design = "the money-back probe the rule engine needs (W1 report §7 decision 1; award BNG-L-041-1617-0797)"
-text = "अगर आप यह पैसा वापस लेना चाहें, तो क्या होगा? अपनी समझ से बताइए।"
+text = "अगर आप यह पैसा वापस लेना चाहें, तो क्या होगा? अपने हिसाब से बताइए।"
 
 [lines."features.reask"]
 design = "the money-back probe and the one-re-ask rule"
@@ -158,11 +158,11 @@ text = "मतलब, उस चीज़ में लगे पैसे क�
 
 [lines."consent.ask"]
 design = "§5 step 7: what the customer agreed to buy and how (correction 12); the call never captures consent"
-text = "Loan लेते time आपने क्या-क्या लेने के लिए हाँ बोला था, और हाँ किस तरह बोला था?"
+text = "Loan लेते time आपने किन-किन चीज़ों के लिए हाँ बोला था, और हाँ कैसे बोला था?"
 
 [lines."consent.reask"]
 design = "§5 step 7 and the one-re-ask rule"
-text = "मतलब, आपने किन चीज़ों के लिए agree किया था, और किस तरीक़े से agree किया था?"
+text = "मतलब, आपने किस-किस चीज़ के लिए agree किया था, और agree कैसे किया था?"
 
 [lines."read_back.intro_nth"]
 design = "§5 step 8, for a record with several products"
@@ -190,7 +190,7 @@ text = "क्या आप यह call यहीं stop करना चाह
 
 [lines."stop_check.human"]
 design = "§5 step 2: the customer can ask for a human; a weak signal is checked with one question"
-text = "क्या आप चाहते हैं कि हमारी team से कोई person आपसे बात करे?"
+text = "क्या आप चाहते हैं कि हमारी team से कोई आपसे बात करे?"
 
 [lines."end.declined"]
 design = "§5 step 2: the customer can decline or stop at any time; no persuasion"

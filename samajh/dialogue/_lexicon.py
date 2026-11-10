@@ -57,7 +57,9 @@ _FOLD: dict[str, str] = {
     "jaanta": "जानता", "janta": "जानता", "jaanti": "जानती", "janti": "जानती", "mujhe": "मुझे",
     "dunga": "दूंगा", "dungi": "दूंगी", "dilchaspi": "दिलचस्पी", "kon": "कौन", "baar": "बार", "bar": "बार",
     "cut": "कट", "wohi": "वही", "wahi": "वही", "yehi": "यही", "yahi": "यही", "sakta": "सकता", "sakti": "सकती",
-    "sakte": "सकते", "jod": "जोड़", "connect": "कनेक्ट",
+    "sakte": "सकते", "jod": "जोड़", "connect": "कनेक्ट", "tha": "था", "thi": "थी", "unhone": "उन्होंने",
+    "unhonne": "उन्होंने", "usne": "उसने", "maine": "मैंने", "bataya": "बताया", "boli": "बोली", "bole": "बोले",
+    "bye": "बाय", "office": "ऑफिस",
 }  # fmt: skip
 
 _NUKTA = "़"
@@ -141,6 +143,10 @@ class Lexicon:
     asks_repeat: frozenset[Phrase]
     asks_repeat_whole: frozenset[Phrase]  # counts only when it is the whole turn ("क्या?")
     filler: frozenset[Phrase]  # a turn made only of these says nothing
+    # Past tense and reported speech: with one of these a refusal may be quoted from the sale ("मैंने कहा
+    # था मुझे इंटरेस्ट नहीं है"), so it does not end the call unasked. Hindi and English only: the Tamil
+    # and Kannada tables have none, and a quoted refusal still ends a call in those languages.
+    recounts: frozenset[Phrase]
 
     def __or__(self, other: Lexicon) -> Lexicon:
         return Lexicon(*(getattr(self, name) | getattr(other, name) for name in self.__dataclass_fields__))
@@ -154,7 +160,8 @@ _EN = Lexicon(
     no_at_start=frozenset(),
     wrong_person=_phrases("wrong number", "not here", "not available", "not home", "not at home", "no such person",
                           "his wife", "her husband", "his son", "his daughter", "her son", "her daughter",
-                          "he is not", "she is not", "my husband", "my wife", "my father", "my mother"),
+                          "he is not", "she is not", "my husband", "my wife", "my father", "my mother",
+                          "his", "he is", "hes", "she is", "shes", "he was", "she was", "at work"),
     is_self=_phrases("speaking", "thats me", "this is he", "this is she", "it is me", "its me"),
     who=_phrases("who", "whos", "where from"),
     wants_human=_phrases(
@@ -173,7 +180,8 @@ _EN = Lexicon(
         "not available to talk", "cant talk", "cannot talk", "not free right now",
         "not interested in talking", "leave me alone", "cut the call",
     ),
-    decline_short=_phrases("stop", "not now", "leave it", "enough"),
+    decline_short=_phrases("stop", "not now", "leave it", "enough", "not interested", "dont want to answer",
+                           "do not want to answer", "bye"),
     dont_know=_phrases("dont know", "do not know", "no idea", "not sure", "cant remember", "dont remember",
                        "do not remember", "cannot remember", "cant recall"),
     asks_repeat=_phrases("repeat", "pardon", "come again", "say again", "say that again", "cant hear",
@@ -182,6 +190,7 @@ _EN = Lexicon(
     asks_repeat_whole=_phrases("what", "sorry", "hello", "hello hello", "huh", "excuse me"),
     filler=_phrases("ok", "hmm", "hm", "uh", "um", "er", "ah", "oh", "well", "so", "yes", "yeah", "wait",
                     "one minute", "one second"),
+    recounts=_phrases("said", "told", "they", "was", "were"),
 )  # fmt: skip
 
 _HUMAN_HI = ("इंसान", "आदमी", "व्यक्ति", "एजेंट", "मैनेजर", "अधिकारी", "ऑफिसर", "एग्जीक्यूटिव", "स्टाफ",
@@ -198,7 +207,9 @@ _HI = Lexicon(
     no_at_start=_phrases("ना", "न"),
     wrong_person=_phrases("रॉन्ग नंबर", "गलत नंबर", "गलत लग*", "उनका", "उनकी", "उनके", "बाहर गए", "बाहर गई", "घर पर नहीं",
                           "यहां नहीं", "कोई नहीं", "नहीं रहते", "नहीं रहता", "नहीं रहती", "मेरे पति", "मेरी पत्नी",
-                          "मेरे पापा", "मेरी मम्मी", "पापा का", "मम्मी का"),
+                          "मेरे पापा", "मेरी मम्मी", "पापा का", "मम्मी का", "उसका", "उसकी", "उसके", "इनका", "इनकी",
+                          "इनके", "बाहर हैं", "बाहर है", "ऑफिस गए", "ऑफिस गई", "काम पर गए", "काम पर गई",
+                          "नहा रहे", "नहा रही", "सो रहे", "सो रही"),
     is_self=_phrases("बोल रहा हूं", "बोल रही हूं", "मैं ही"),
     who=_phrases("कौन", "किसका", "कहां से", "कहां"),
     wants_human=_phrases(
@@ -217,7 +228,9 @@ _HI = Lexicon(
         "कॉल नहीं चाहिए", "not interested हूं",
     ),
     decline_short=_phrases("बंद करो", "बंद कीजिए", "बंद करिए", "बंद कर दो", "बंद कर दीजिए", "बस करो", "बस कीजिए",
-                           "रहने दो", "रहने दीजिए", "रहने दें", "फिर कभी"),
+                           "रहने दो", "रहने दीजिए", "रहने दें", "फिर कभी", "नहीं बताना", "नहीं बताऊंगा",
+                           "नहीं बताऊंगी", "टाइम नहीं है", "समय नहीं है", "बात नहीं कर सकता", "बात नहीं कर सकती",
+                           "बाय", "रखता हूं", "रखती हूं"),
     dont_know=_phrases("पता नहीं", "नहीं पता", "पता ही नहीं", "मालूम नहीं", "नहीं मालूम", "याद नहीं", "याद ही नहीं",
                        "नहीं याद", "ध्यान नहीं",
                        "जानकारी नहीं", "आइडिया नहीं", "नहीं जानता", "नहीं जानती", "क्या पता"),
@@ -227,6 +240,7 @@ _HI = Lexicon(
     asks_repeat_whole=_phrases("क्या", "मतलब", "हेलो", "हेलो हेलो", "जी क्या", "हां क्या"),
     filler=_phrases("हम्म", "हूं", "हां", "जी", "हांजी", "अच्छा", "ओके", "ठीक", "है", "तो", "वो", "एक", "मिनट",
                     "रुको", "रुकिए"),
+    recounts=_phrases("था", "थी", "थे", "उन्होंने", "उसने", "मैंने", "बोला", "बोली", "बोले", "कहा", "बताया"),
 )  # fmt: skip
 
 _HUMAN_TA = ("மனிதரிடம்", "மனுஷன் கிட்ட", "ஆள் கிட்ட", "யாராவது கிட்ட", "யாரிடமாவது", "அதிகாரியிடம்",
@@ -267,6 +281,7 @@ _TA = Lexicon(
                          "இன்னொரு முறை", "கேக்கல", "கேட்கல", "கேட்கவில்லை", "என்ன சொன்னீங்க", "எந்த பொருள்"),
     asks_repeat_whole=_phrases("என்ன", "என்னது", "ஹலோ", "எது"),
     filler=_phrases("ம்ம்", "ம்", "சரி", "ஆமா", "ஓகே", "ஹ்ம்", "அப்படியா", "ஆ"),
+    recounts=frozenset(),
 )  # fmt: skip
 
 _HUMAN_KN = ("ಮನುಷ್ಯ*", "ವ್ಯಕ್ತಿ*", "ಅಧಿಕಾರಿ*", "ಮ್ಯಾನೇಜರ್*", "ಏಜೆಂಟ್*", "ಸಿಬ್ಬಂದಿ*", "ಕಸ್ಟಮರ್ ಕೇರ್", "ಯಾರಾದರೂ",
@@ -301,6 +316,7 @@ _KN = Lexicon(
                          "ಕೇಳಿಸ್ತಿಲ್ಲ", "ಕೇಳಿಸಲಿಲ್ಲ", "ಏನು ಹೇಳಿದ್ರಿ", "ಯಾವ ವಸ್ತು"),
     asks_repeat_whole=_phrases("ಏನು", "ಏನ್", "ಹಲೋ", "ಯಾವುದು"),
     filler=_phrases("ಹೂಂ", "ಹೂ", "ಹಾ", "ಸರಿ", "ಓಕೆ", "ಹ್ಮ್", "ಹೌದಾ", "ಆ"),
+    recounts=frozenset(),
 )  # fmt: skip
 
 LEXICONS: dict[Language, Lexicon] = {
