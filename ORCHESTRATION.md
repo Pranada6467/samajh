@@ -54,6 +54,13 @@ Python 3.11, `uv` for the environment, `pydantic` v2 for types, `pytest`, `ruff`
 5. Credits and OpenRouter spend, if any.
 6. What the next iteration should do in your area.
 
+## Verified facts that override older documents
+
+- Gnani API: `references/pilots/api-probe-iter1.md` is the measured truth and overrides the API facts in `CLAUDE.md`. In short: `codemix` is a `format` value on v3.0; v2.5 `format=transcribe` gives digits beyond Hindi and English; a second simultaneous REST request gets an instant 429; a WebSocket streaming session does not occupy the one active-request slot; no API surface reports credit cost.
+- Regulation and cases: `references/claims/claims-ledger.md` and `references/claims/design-corrections.md`. `DESIGN.md` is v2 and already applies them.
+- Client signatures and caveats: `references/pilots/W2-clients-report.md`. Never run `tests/clients/probes/gnani_probe.py` (it bypasses the lock).
+- Workers hit account usage limits. Keep subagent use lean: one planner pass, builders, one reviewer pass.
+
 ---
 
 ## Iteration log

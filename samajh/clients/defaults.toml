@@ -1,0 +1,21 @@
+# Measured client defaults (credit rates, default model ids). Every value here comes from a
+# measurement or a verified source; note which next to it.
+
+[gnani]
+# Estimate, not a published price: no API surface reports cost. Derived from one dashboard reading
+# after a pilot (2.96 credits for 78 STT calls of about 2.5 s and 20 TTS calls of about 34
+# characters, split roughly 1.7 STT / 1.2 TTS): about 0.0087 credits per audio second and 0.0018
+# per character, rounded up here so the guard errs towards refusing.
+stt_credits_per_second = 0.010
+tts_credits_per_char = 0.002
+# Project rule, not a measurement: total credits this project may spend.
+credit_cap = 1000
+
+[llm]
+# Picked by tests/clients/probes/llm_model_probe.py on 2026-11-10: n=16 synthetic utterances,
+# self-written gold, Tamil and Kannada rows not human-reviewed. 16/16 schema-valid on the first
+# attempt, 62/64 fields right (tied with google/gemini-2.5-flash-lite), cheapest of the tie.
+# n=16 cannot separate the two; rerun the probe on the frozen gold set before relying on this.
+model = "mistralai/mistral-small-3.2-24b-instruct"
+# Project rule, not a measurement: per-run (per client instance) spend cap in USD.
+usd_cap = 1.0

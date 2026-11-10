@@ -6,8 +6,17 @@ This folder traces every regulatory and factual claim in `DESIGN.md` to a primar
 
 - `claims-ledger.md`: one row per claim, with status, corrected wording, source and quote.
 - `design-corrections.md`: the edits `DESIGN.md` needs and the product implications, most important first.
-- `findings-A.md` to `findings-E.md`: the detailed research notes behind the ledger, one file per claim group.
+- `findings-A.md` to `findings-E.md`: the detailed research notes behind the ledger, one file per claim group. They are the source of truth for the ledger's per-claim tables.
 - `sources/<group>/`: saved primary sources, with an `INDEX.md` per group.
+- `W3-report.md`: the work package report, including the independent reviewer's refutation attempt.
+- `check_quotes.py`: checks that every quote in the findings files appears in a saved source.
+- `build_ledger.py`: rebuilds the per-claim tables in `claims-ledger.md` from the findings files.
+
+## Before the repository goes public
+
+- `sources/` is about 180 MB in 457 files. Three PDFs are larger than 10 MB.
+- The Ombudsman compendiums, the excerpt files and the Baramulla order under `sources/B/` name real complainants. They are public documents kept here so the check can be repeated. Decide whether to publish them, or to publish only `sources/B/INDEX.md` with the URLs and hashes.
+- Some saved pages are third-party web pages (vendor sites, news, journal articles). Check their terms before republishing them.
 
 ## Claim groups
 

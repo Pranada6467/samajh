@@ -14,3 +14,6 @@ references/pilots/ledger.jsonl
 *.mp3
 !tests/fixtures/**/*.wav
 .DS_Store
+
+# Saved primary sources: 180 MB and contain real complainant names. Local only.
+references/claims/sources/
