@@ -68,6 +68,8 @@ Samajh is a post-sale understanding callback for Indian lenders: a teach-back-st
 
 It is built for Gnani AI's Great Indian AI Internship Challenge on Prisma STT and Timbre TTS, and targets the post-sale feedback duty in RBI para 85Y (commercial banks) and 101Y (NBFCs), in force from 1 January 2027. All data is synthetic. The product languages are Hindi and Hinglish; Tamil and Kannada stay in the code as experimental.
 
+**Team:** Pranav Pandian and Sambhav Jain.
+
 ## Status (2026-11-10, end of iteration 2's build wave)
 
 Iteration 1 built the parts and was reviewed by two verifiers and a judge (`references/reviews/iter1/`): continue with changes, 69 of 100 against the idea's 84, because the parts had never been joined into one call. Iteration 2 joins them. The state of each package is in `ORCHESTRATION.md`, "Coordinator handoff". In short:

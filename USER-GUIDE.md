@@ -16,7 +16,7 @@ Package names used below: **P1** = the real call on the browser phone, **P2** = 
 | 4 | Listen to the bot's lines and pick its voice | Nobody has checked by ear how Timbre says the lines, or compared the voices | **Coming**: after P1 pre-generates the bot's audio, the coordinator gives you a local page | Not estimated | A voice chosen per language; lines that sound wrong noted |
 | 5 | Make the human calls (P4) | Answers both objections at once: "synthetic voices" and "you scripted the customers" | **Coming**: on the coordinator's go signal (P1 and P2 verified) | About 2 hours with the friends (judge's estimate) | 20 calls made, each with a row in the log, failures included |
 | 6 | Record and post the demo video; submit the written explanation (P7) | It is the submission | **Coming**: last | Not estimated | Video posted with the tags; written explanation sent |
-| 7 | Make the decisions in §2.5 | Only you can: name, award category, voices, team, publishing the repo | Now; needed before P7 | 30 min of thought | Each answer told to the coordinator |
+| 7 | Make the decisions in §2.5 | Only you can: award category, voices, team, publishing the repo (the name is decided: Samajh) | Now; needed before P7 | 30 min of thought | Each answer told to the coordinator |
 | 8 | Rotate the Gnani and OpenRouter keys | Both keys were pasted into a chat transcript | At the end of the build | 10 min | Old keys revoked, new ones in `.env` |
 | 9 | Keep the agents running | Workers stop when the account's usage limit is hit and do not restart themselves | Throughout | A glance now and then | Coordinator session open; stalled work resumed |
 | 10 | Be able to explain the project yourself | Internships are decided in individual interviews | Any time | A few hours of reading | You can explain the rule, the call and the main finding without notes |
@@ -198,10 +198,10 @@ Tell the coordinator each answer. None blocks the build today; all are needed be
 
 | Decision | Options | Recommendation on file |
 |---|---|---|
-| Final name | Keep "Samajh" (the working name) or pick another | Judge: defer, it is not a constraint. It must be fixed before the video and the written title |
+| ~~Final name~~ | **Decided 2026-11-10: Samajh** | Closed |
 | Award category (a team can win only one) | Real Deal; Demo Day Drop; Jugaad Genius; others in `RESEARCH.md` §1 | Design and judge: **Real Deal**, with the video cut so it can also stand for Demo Day Drop. Judge's best alternative: Jugaad Genius (two Prisma versions checked against each other as the confidence score Prisma does not return). Frame the user as the borrower who was sold an "FD" |
 | Whose voice is in the public video | (a) only yours; (b) also a teammate's or friend's | Coordinator: **(a), only your own voice.** The challenge wording covers recordings of yourself or your teammates. Friends' recordings are for the evaluation numbers only |
-| Team and contributions | Solo, or a team of two (this also decides Solo Ninja versus Two-Person Army eligibility). Whether to list a friend who records as a team member | None on file; your decision. The written explanation must state each member's contribution. Coding agents wrote most of the code, so decide how you describe your own part accurately; you will be interviewed on it |
+| Team and contributions | **Team decided 2026-11-10: Pranav Pandian and Sambhav Jain** (a team of two, which decides Two-Person Army rather than Solo Ninja eligibility). Still open: each member's contribution, and whether to list a friend who records as a team member | None on file for the contributions; your decision. The written explanation must state each member's contribution. Coding agents wrote most of the code, so decide how you describe your own part accurately; you will be interviewed on it |
 | Publish the repo | Public, or keep it private | Coordinator: **yes, publish**, since build quality is the point. Only after both keys are rotated (§2.6), and with friends' audio and the real-voice dataset material kept out (both are already gitignored) |
 | Tamil and Kannada | Stay cut (experimental appendix), or revive | Coordinator and judge: cut, because no fluent reader exists. Only reopen if you or a friend reads one fluently and will review it |
 
@@ -250,7 +250,7 @@ Two more things the coordinator is waiting on from you (`ORCHESTRATION.md`, "Wai
 3. **Ask one to three friends.** Explain the ask in two lines: a short role-play call with a bot, in Hindi or Hinglish, about two hours in total at your laptop, recorded, with a made-up identity. Send them the consent points from §2.3 and collect each written yes. Find out who is more natural in Hindi and who in Hinglish; the aim is roughly half the calls in each.
 4. **Check Chrome, a microphone and headphones.** Make sure Chrome is installed and that the laptop's microphone setting allows Chrome. Have a pair of headphones ready: half the calls use them. Do not place phone calls for this yet: they spend credits and can collide with running agents.
 5. **Draft your one-line description of the project.** A starting point from the README: "a callback in which a borrower explains in their own words what they bought with their loan, and plain code compares that with the bank's record". Do not claim nobody else does this: adjacent vendors exist.
-6. **Think about the decisions in §2.5**: name, category, whose voice, team and contributions, publishing the repo.
+6. **Think about the decisions in §2.5**: category, whose voice, team and contributions, publishing the repo.
 7. **Do the wording review** (§2.2). It is open. Optional: play the text call once (§2.2, last paragraph) to hear the lines in order; it places no call and uses no credits.
 8. **Start the interview reading** (§2.6, last paragraph).
 
@@ -265,4 +265,4 @@ Two more things the coordinator is waiting on from you (`ORCHESTRATION.md`, "Wai
 4. The local listening page, once P1 has pre-generated the bot's audio.
 5. The brief cards, before the go signal. Each card should cover every topic the bot asks about, as a fact the character knows or a stated "does not know".
 
-**For you to decide** (§2.5): the final name, the award category, team and contributions, and whether to publish the repo.
+**For you to decide** (§2.5): the award category, team and contributions, and whether to publish the repo.

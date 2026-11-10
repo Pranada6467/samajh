@@ -1,4 +1,4 @@
-# Samajh — design v3 (working name)
+# Samajh — design v3
 
 > A post-sale understanding callback for Indian lenders: a teach-back-style comprehension check. The customer explains in their own words, in their own language, what they bought with their loan. Plain code compares that against the bank's records, and every mismatch becomes evidence a human can review.
 
@@ -349,7 +349,7 @@ Numbers are kept stable for the references in other documents. Closed or adopted
 
 1. **Reviewers per language.** Adopted as a gate (judge): Hindi and Hinglish aim for "supported" (a fluent reviewer and ≥10 real-voice calls); Tamil and Kannada leave the call. Today there are no human recordings.
 2. ~~LLM for extraction.~~ Closed: OpenRouter, `openai/gpt-6-luna` (item 21).
-3. **Final name.** Deferred; it must be fixed before the video and the written title.
+3. **Final name.** Decided by the user, 2026-11-10: **Samajh** ("understanding", the word 85Y's purpose turns on). Used as is in the video and the written title.
 4. **Second product family.** Dropped for now. One slide: 85Y covers any financial product, and the lender's own terms are the natural next family.
 5. **Key Facts Statement check.** Dropped (uncertain reach for bullet gold loans, no demo value).
 6. **Call timing.** Adopted: one field in the sampler; the day since sale is logged and no attempt follows day 30.
