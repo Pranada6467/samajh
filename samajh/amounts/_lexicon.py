@@ -388,6 +388,13 @@ _add(KN, "ವರೆ", Morph((n("0.5"),), head=True, suffix_only=True))  # ಒಂ
 _add(KN, "ಸೊನ್ನೆ", Morph((n(0),)))
 _add(KN, "ಪಾಯಿಂಟ್", Morph((PT,)))
 
+# Verbs and verb-like clause endings: a "one" before one of these is not a determiner ("एक दिए").
+_VERBS = """
+दिए दिया दी दिये लगे लगा लगी काटे काटा कटा कटे कटी भरे भरा भरी था थे थी है हैं
+diye diya di lage laga kata kate kaata bhare bhara tha the thi hai hain paid deducted given cut
+"""
+VERB_AFTER = frozenset(norm_key(w) for w in _VERBS.split())
+
 # --- near misses of fraction and unit words ------------------------------------------
 # A word the lexicon does not know, standing directly before a number or a unit word, that is a
 # small edit away from a fraction or multiplier word may be that word misheard or misspelt:

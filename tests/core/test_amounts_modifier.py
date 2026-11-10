@@ -61,7 +61,6 @@ def test_u01_ta_only_once_after_the_premium_is_not_a_second_amount():
         ("पचास हज़ार एक बीमा", 50_000),
         ("एक लाख एक पॉलिसी के लिए", 100_000),
         ("पचास हज़ार एक साल का", 50_000),
-        ("पचास हज़ार एक दिए", 50_000),  # known cost: a verb reads the same as a noun
         ("ஐம்பதாயிரம் ஒரு பாலிசி", 50_000),
         ("ஐம்பதாயிரம் ஒரே பாலிசி", 50_000),
         ("ಐವತ್ತು ಸಾವಿರ ಒಂದು ಪಾಲಿಸಿ", 50_000),
@@ -136,3 +135,37 @@ def test_real_amounts_with_a_one_are_unchanged(text, rupees):
 def test_a_small_number_that_may_still_be_an_amount_keeps_the_turn_refused(text):
     result = parse_amount(text)
     assert isinstance(result, Ambiguous), f"{text!r} -> {result}"
+
+
+# --- "one" after hundreds, or before a verb, is part of the number (dialogue verifier) -----
+
+
+@pytest.mark.parametrize(
+    ("text", "rupees"),
+    [
+        ("तीन सौ एक दिए", 301),
+        ("एक सौ एक दिए", 101),
+        ("तीन सौ एक लगे", 301),
+        ("तीन सौ एक था", 301),
+        ("three hundred one paid", 301),
+        ("three hundred one deducted", 301),
+        ("तीन सौ एक रुपये", 301),
+    ],
+)
+def test_one_after_a_hundreds_word_is_part_of_the_number(text, rupees):
+    result = parse_amount(text)
+    assert isinstance(result, Parsed) and result.rupees == rupees, result
+
+
+@pytest.mark.parametrize("text", ["पचास हज़ार एक दिए", "पचास हज़ार एक कटे थे", "50 thousand one paid", "दो लाख एक लगे"])
+def test_one_after_a_thousand_word_and_before_a_verb_is_ambiguous_never_the_smaller_figure(text):
+    assert isinstance(parse_amount(text), Ambiguous), parse_amount(text)
+
+
+@pytest.mark.parametrize(
+    ("text", "rupees"),
+    [("पचास हज़ार एक FD", 50_000), ("पचास हज़ार एक बार", 50_000), ("fifty thousand one policy", 50_000)],
+)
+def test_one_before_a_noun_after_a_thousand_word_is_still_a_determiner(text, rupees):
+    result = parse_amount(text)
+    assert isinstance(result, Parsed) and result.rupees == rupees, result

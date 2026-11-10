@@ -16,6 +16,7 @@ from samajh.amounts._lexicon import (
     PLURAL_UNITS,
     TA_ONE_BEFORE_NOUN,
     THOUSAND,
+    VERB_AFTER,
     Atom,
     near_fraction,
     near_unit,
@@ -132,6 +133,10 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
             step = kind(k + 2, k + 1)
         return step == "times"
 
+    def verb_after(k: int) -> bool:
+        """The word after token k is a verb or a verb-like clause ending: "एक दिए", "one paid"."""
+        return k + 1 < len(toks) and kind(k + 1, k) == "other" and norm_key(word_at(k + 1)) in VERB_AFTER
+
     def determiner(k: int) -> bool:
         """Token k is a lone word "one" before an ordinary word that no currency word follows
         (so that word is not a misspelt unit): "एक पॉलिसी", "one policy", "ಒಂದು ವರ್ಷ"."""
@@ -208,7 +213,7 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
             j -= 1  # "ஐம்பதாயிரம் ஒரு பாலிசி": the ஒரு belongs to the next word
             del atoms[-2:]
         last = toks[j].atoms
-        if (
+        one_after_unit = (
             j > i
             and toks[j - 1].kind == "num"
             and toks[j - 1].atoms[-1].kind == "m"
@@ -216,14 +221,23 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
             and last[0].kind == "n"
             and 0 < last[0].value < 100
             and last[0].value == last[0].value.to_integral_value()
-            and (counts_times(j) or determiner(j))
+        )
+        # A "one" before a verb ("पचास हज़ार एक दिए") may be 50,001 or "one" of something: both
+        # readings stay possible, so the run is refused, never read as the smaller figure.
+        unsure_one = False
+        if one_after_unit and (
+            counts_times(j)
+            or (determiner(j) and not verb_after(j) and toks[j - 1].atoms[-1].value >= THOUSAND)
         ):
             # "पचास हज़ार एक बार", "पचास हज़ार दो बार", "पचास हज़ार एक FD": 50,000, not 50,001.
-            # After a unit word, a "one" before another word is that word's determiner.
+            # After a thousand-or-larger unit word, a "one" before a noun is that noun's
+            # determiner. After a hundreds word ("तीन सौ एक दिए") it is part of the number.
             j -= 1
             del atoms[-1:]
+        elif one_after_unit and determiner(j) and verb_after(j) and toks[j - 1].atoms[-1].value >= THOUSAND:
+            unsure_one = True
         after = kind(j + 1, j)
-        value = evaluate(atoms)
+        value = Value(None) if unsure_one else evaluate(atoms)
         if after == "bad":  # a number with an ending we cannot read: இருபதாயிரத்தை
             value, j = Value(None), j + 1
         first = atoms[0]
