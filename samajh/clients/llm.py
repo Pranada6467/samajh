@@ -57,6 +57,26 @@ class LlmResult(BaseModel, Generic[T]):
     generation_id: str | None
 
 
+class _Sampling(BaseModel):
+    """`defaults.toml [llm.sampling]`: which sampling parameters each model is sent."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    default: frozenset[Literal["temperature"]] = frozenset({"temperature"})
+    by_model_prefix: dict[str, frozenset[Literal["temperature"]]] = {}
+
+    def sent_to(self, model: str) -> frozenset[str]:
+        matching = [prefix for prefix in self.by_model_prefix if model.startswith(prefix)]
+        return self.by_model_prefix[max(matching, key=len)] if matching else self.default
+
+
+def _load_sampling() -> _Sampling:
+    try:
+        return _Sampling.model_validate(_runtime.load_defaults().get("llm", {}).get("sampling", {}))
+    except ValidationError as exc:
+        raise ConfigError(f"defaults.toml [llm.sampling]: {_describe(exc)}") from None
+
+
 # ---------------------------------------------------------------- response boundary
 
 
@@ -210,6 +230,7 @@ class LlmClient:
         self._timeout = timeout
         self._sleep = sleep
         self._rng = rng if rng is not None else random.Random()
+        self._sampling = _load_sampling()
         self._cache = Cache(state / "cache" / "openrouter")
         self._ledger = Ledger(state / "ledger.jsonl")
         self._lock = threading.Lock()
@@ -253,7 +274,10 @@ class LlmClient:
         max_output_retries: int = 2,
     ) -> LlmResult[T]:
         """Return `schema` filled by the model, from the cache when this exact request was answered
-        before. Raises `CapExceeded`, `LlmOutputInvalid`, `BadResponse` or an `ApiError`."""
+        before. Raises `CapExceeded`, `LlmOutputInvalid`, `BadResponse` or an `ApiError`.
+
+        `temperature` is sent only to a model that `defaults.toml [llm.sampling]` lists it for; for
+        any other model it is left out of the request and of the cache key."""
         model = model or self._model
         original = [m.model_dump() for m in messages]
         body: dict[str, Any] = {
@@ -271,7 +295,7 @@ class LlmClient:
             # Without this a provider that ignores response_format may be chosen.
             "provider": {"require_parameters": True},
         }
-        if temperature is not None:
+        if temperature is not None and "temperature" in self._sampling.sent_to(model):
             body["temperature"] = float(temperature)  # 0 and 0.0 must give one cache key
         key = _runtime.cache_key(_NAMESPACE, {"base_url": self._base_url, "body": body}, b"")
 

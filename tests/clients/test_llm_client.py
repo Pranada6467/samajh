@@ -601,3 +601,60 @@ def test_missing_cost_is_charged_the_largest_cost_seen(tmp_path: Path, route: re
     with pytest.raises(CapExceeded):  # 0.02 spent + 0.01 estimated > 0.025
         client.complete(Answer, MESSAGES, temperature=0.6)
     assert route.call_count == 2
+
+
+# ---------------------------------------------------------------- per-model sampling parameters
+
+NO_TEMPERATURE = "openai/gpt-6-luna"  # listed in defaults.toml [llm.sampling.by_model_prefix]
+
+
+@pytest.mark.parametrize("model", [NO_TEMPERATURE, NO_TEMPERATURE + "-2026-10-01"])
+def test_temperature_is_left_out_for_a_model_configured_without_it(
+    client: LlmClient, route: respx.Route, model: str
+) -> None:
+    route.mock(return_value=completion(GOOD))
+    client.complete(Answer, MESSAGES, model=model)
+    client.complete(Answer, MESSAGES + MESSAGES[1:], model=model, temperature=0.7)
+    assert route.call_count == 2
+    assert "temperature" not in sent(route, 0) and "temperature" not in sent(route, 1)
+
+
+def test_temperature_is_sent_to_a_model_the_config_does_not_name(client: LlmClient, route: respx.Route) -> None:
+    route.mock(return_value=completion(GOOD))
+    client.complete(Answer, MESSAGES, model="vendor/unknown-model", temperature=0.7)
+    assert sent(route)["temperature"] == 0.7
+
+
+def test_cache_key_follows_the_parameters_actually_sent(
+    client: LlmClient, route: respx.Route, tmp_path: Path
+) -> None:
+    route.mock(return_value=completion(GOOD))
+    # Temperature never reaches this model, so two values are one request and one cache entry.
+    client.complete(Answer, MESSAGES, model=NO_TEMPERATURE, temperature=0.0)
+    assert client.complete(Answer, MESSAGES, model=NO_TEMPERATURE, temperature=0.7).cache_hit is True
+    # It reaches this one, so sent, sent with another value and left out are three requests.
+    for temperature in (0.0, 0.7, None):
+        assert client.complete(Answer, MESSAGES, temperature=temperature).cache_hit is False
+    assert route.call_count == 4
+    assert len({row.cache_key for row in ledger_rows(tmp_path)}) == 4
+
+
+def test_the_longest_matching_prefix_decides(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, route: respx.Route
+) -> None:
+    table = {"default": [], "by_model_prefix": {"vendor/": [], "vendor/warm": ["temperature"]}}
+    monkeypatch.setattr(_runtime, "load_defaults", lambda: {"llm": {"sampling": table}})
+    client = LlmClient(api_key=FAKE_KEY, model="vendor/warm-1", usd_cap=1.0, state=tmp_path)
+    route.mock(return_value=completion(GOOD))
+    client.complete(Answer, MESSAGES)
+    client.complete(Answer, MESSAGES, model="vendor/cold-1")
+    client.complete(Answer, MESSAGES, model="other/model")
+    assert ["temperature" in sent(route, i) for i in range(3)] == [True, False, False]
+
+
+def test_an_unknown_parameter_name_in_the_config_is_refused(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(_runtime, "load_defaults", lambda: {"llm": {"sampling": {"default": ["top_q"]}}})
+    with pytest.raises(ConfigError, match="llm.sampling"):
+        LlmClient(api_key=FAKE_KEY, model=MODEL, usd_cap=1.0, state=tmp_path)

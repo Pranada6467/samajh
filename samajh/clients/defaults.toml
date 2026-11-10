@@ -12,10 +12,23 @@ tts_credits_per_char = 0.002
 credit_cap = 1000
 
 [llm]
-# Picked by tests/clients/probes/llm_model_probe.py on 2026-11-10: n=16 synthetic utterances,
-# self-written gold, Tamil and Kannada rows not human-reviewed. 16/16 schema-valid on the first
-# attempt, 62/64 fields right (tied with google/gemini-2.5-flash-lite), cheapest of the tie.
-# n=16 cannot separate the two; rerun the probe on the frozen gold set before relying on this.
-model = "mistralai/mistral-small-3.2-24b-instruct"
+# Recommended for extraction by references/pilots/W5-extractor-report.md section 2.4 (2026-11-10):
+# development set (n=20 calls, in-sample for the prompt) 20/20 call verdicts and 0/7 false alarms,
+# against 17/20 and 3/7 for the previous default mistralai/mistral-small-3.2-24b-instruct; negation
+# probe 24/24 against 20/24. About 1.9 times the cost per transcript ($0.00153 against $0.00081) and
+# slower (median 1.87 s per call against 0.82 s). It is a reasoning model: a small max_tokens can
+# come back cut off and empty (same report, "Two caveats").
+model = "openai/gpt-6-luna"
 # Project rule, not a measurement: per-run (per client instance) spend cap in USD.
 usd_cap = 1.0
+
+# Which sampling parameters a request carries, by model id. A parameter not listed for a model is
+# left out of the request (and so out of the cache key) whatever the caller passes. The longest
+# matching prefix wins; a model that matches none gets `default`.
+[llm.sampling]
+default = ["temperature"]
+
+[llm.sampling.by_model_prefix]
+# Verified live (W5-extractor-report.md section 3): OpenRouter answers 404 "No endpoints found that
+# can handle the requested parameters" when `temperature` is sent, and 200 without it.
+"openai/gpt-6-luna" = []
