@@ -8,7 +8,7 @@ import pytest
 from dialogue_kit import CUSTOMERS, play, record
 
 from samajh.clients.errors import CapExceeded, LlmOutputInvalid, RateLimited, TransportError
-from samajh.dialogue import Expecting, Intent, Outcome
+from samajh.dialogue import UNCLEAR, Expecting, Intent, Outcome
 from samajh.dialogue.llm_fallback import FALLBACK_MODEL, LlmFallbackInterpreter
 from samajh.types import Language
 
@@ -122,6 +122,7 @@ def test_a_failed_llm_call_is_read_as_unclear_and_the_reason_is_logged(error, re
     with caplog.at_level("WARNING", logger="samajh.dialogue.llm_fallback"):
         heard = read(llm, "वो तो बावन हज़ार ले गए", Expecting.open)
     assert heard.intent is Intent.unclear and heard.amount_inr == 52000  # the rules' figure is kept
+    assert Intent.unclear in UNCLEAR  # so every position asks once more
     assert len(llm.calls) == 1
     (logged,) = caplog.records
     assert type(error).__name__ in logged.getMessage() and reason in logged.getMessage()

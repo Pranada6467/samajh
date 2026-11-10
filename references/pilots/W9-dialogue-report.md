@@ -78,8 +78,8 @@ $ uv run pytest tests/dialogue -q
 ........................................................................ [ 75%]
 ........................................................................ [ 85%]
 ........................................................................ [ 96%]
-.......................                                                  [100%]
-671 passed in 62.32s (0:01:02)
+.........................                                                [100%]
+673 passed in 65.66s (0:01:05)
 $ echo $?
 0
 
@@ -89,7 +89,7 @@ $ uv run ruff format --check samajh/dialogue tests/dialogue
 20 files already formatted
 ```
 
-580 tests passed before the review. The review added 91: 86 in `test_review_findings.py` (76 of them failed before their fixes; 10 are controls that passed throughout), 4 in `test_no_leak_and_termination.py` (a property test written with the second-reading feature), 1 in `test_cli.py` (failed first). `tests/core` and `tests/server` were run afterwards as a check that nothing outside the lane moved: 1,483 passed.
+580 tests passed before the review. The review added 93: 86 in `test_review_findings.py` (76 of them failed before their fixes; 10 are controls that passed throughout), 4 in `test_no_leak_and_termination.py` (a property test written with the second-reading feature), 1 in `test_cli.py` (failed first), 2 in `test_llm_fallback.py` for the fallback fix (R11; its four failure cases were rewritten and failed first). `tests/core` and `tests/server` were run afterwards as a check that nothing outside the lane moved: 1,483 passed.
 
 What the tests cover, by file:
 
@@ -100,7 +100,7 @@ What the tests cover, by file:
 | `test_review_findings.py` | 86 | Section 5: every defect the review proved, as a test that failed before its fix |
 | `test_prompts.py` | 59 | Every language defines every line with a design paragraph; slots are exactly the declared ones; no banned wording, no digit; every line at most 240 characters; a read-back line parses back to its amount (about 2,500 amounts per language and line); 30 bad lines the lint must reject; a prompt file with banned wording or a wrong slot does not load |
 | `test_interpret.py` | 151 | 118 labelled turns, including answers that hold refusal-like words and must stay answers; amounts; birth years |
-| `test_llm_fallback.py` | 37 | The LLM is not called when the rules settle a turn; it sees only the question and the reply; no label ends a call; a failed call leaves the rule reading |
+| `test_llm_fallback.py` | 39 | The LLM is not called when the rules settle a turn; it sees only the question and the reply; no label ends a call; the call names its own model and allows at least 200 output tokens; a failed call is read as unclear, logs its reason without the customer's words, gets the question asked once more and never ends the call |
 | `test_rules_consume_the_call.py` | 7 | A finished Hindi call plus a faithful extraction goes through `to_beliefs` and `evaluate` with no `not_asked`, `quote_not_grounded` or `readback_mismatch` gap, and flags `kind`, `bundling` and `belief_mismatch`; a premium corrected at read-back is the one compared |
 | `test_heldout_turns.py` | 4 | Pins the measurement in section 4 |
 | `test_cli.py` | 7 | `play` in each language, with the transcript written and re-validated; a turn typed as `first \|\| second` is heard twice |
@@ -239,17 +239,17 @@ Numbers after the review changes (rerun 2026-11-10):
 
 | Fold 1 (held out), n = 199 | Rules only | Rules + LLM fallback |
 |---|---|---|
-| All replies with the labelled effect | 155 (78%) | 187 (94%) |
-| Hindi / Hinglish / Tamil / Kannada | 41/49, 45/52, 36/53, 33/45 | 48/49, 50/52, 47/53, 42/45 |
-| Asked for a human (n = 13) | 5 | 12 (7 of them after the stop-check) |
-| Unclear or off-topic (n = 36) | 18 | 34 |
-| Declined (n = 22) | 17 | 21 (4 after the stop-check) |
+| All replies with the labelled effect | 155 (78%) | 188 (94%) |
+| Hindi / Hinglish / Tamil / Kannada | 41/49, 45/52, 36/53, 33/45 | 49/49, 50/52, 46/53, 43/45 |
+| Asked for a human (n = 13) | 5 | 11 (6 of them after the stop-check) |
+| Unclear or off-topic (n = 36) | 18 | 35 |
+| Declined (n = 22) | 17 | 22 (5 after the stop-check) |
 | Answers (n = 72) | 66 | 70 |
 | Calls ended on a reply that was not a refusal | 0 | 0 |
 
-Fold 0 for comparison (in-sample after tuning): rules 191/209, with the fallback 202/209.
+Fold 0 for comparison (in-sample after tuning): rules 191/209, with the fallback 203/209. The fallback column is the pinned configuration: `mistralai/mistral-small-3.2-24b-instruct`, `max_tokens=512`.
 
-The rules-only numbers are the same as before the review, row for row. The review's word-list additions came from the reviewer's own probes and none of them matched a missed row of this set, so they are not shown to help on it. With the fallback the total was 188 before the review and is 187 now: the Hindi question wording changed, the LLM sees the question, and it now reads "यह बहुत सुंदर है, लेकिन मुझे देर हो रही है।" as an answer. One reply is not a trend.
+The rules-only numbers are the same as before the review, row for row. The review's word-list additions came from the reviewer's own probes and none of them matched a missed row of this set, so they are not shown to help on it. With the fallback, fold 1 has read 188, 187 and 188 across three runs of the same model (before the review; after the Hindi question wording changed; after `max_tokens` changed, which made every call fresh). A difference of one reply between runs is noise, not a result.
 
 What limits these numbers: the replies are synthetic text, not speech and not STT output; one writer model; labels by construction; Tamil and Kannada unreviewed; n per cell is 3 to 9 in a fold. They show where the rules fail, not how the interpreter will do on real calls.
 
@@ -257,9 +257,33 @@ What limits these numbers: the replies are synthetic text, not speech and not ST
 - Before the fix, the rules ended 2 of the 72 fold-1 answers as declines. Both were a misled customer's sentence: "बाद में पता चला मुझे इसका" and its Tamil equivalent ("I found out about this later"). The cause was "later" as a short-turn decline word. Those two fold-1 rows were read, so the 0 in the table is not strictly held out. Bare "later" words are gone and short stop phrases no longer end a call: they lead to the stop-check.
 - On fold 0 the LLM took "நான் கிளை மேலாளர்ட்ட பேசிட்டேங்க" ("I spoke to the branch manager about it") for a request for a human, and "क्या काम है?" for a wrong number. So no LLM label ends a call: `decline` and `wants_human` lead to the stop-check, a "no" to "may we go on?" leads to the stop-check, and `wrong_person` is ignored.
 - The fallback is justified for three things the rules miss on held-out replies: requests for a human (5 of 13), off-topic replies (the rules cannot detect these at all) and soft declines. It is off by default. `play --llm` and `eval-turns --llm` turn it on; the adapter chooses for live calls.
-- Cost of the fallback: one call for each turn the rules leave as plain `said` (115 of the 408 replies). Median 0.74 s and p95 1.87 s over the first worker's 506 calls of `mistralai/mistral-small-3.2-24b-instruct`; median 0.77 s and p95 1.22 s over the 42 uncached calls of the review rerun (from the shared ledger). That is added silence on the line and the adapter must decide whether it is worth it.
+- Cost of the fallback: one call for each turn the rules leave as plain `said` (115 of the 408 replies). The latency of each candidate model is in the comparison below.
 
-**Failures left on fold 1 with the fallback (all 12):** three identity replies that mix a no or a yes with "who is this?" are re-asked instead of ended or confirmed; one Tamil "nobody of that name here" is re-asked; "That's not the figure I gave" is re-asked instead of read as a rejection; "எனக்கு ஒன்னும் புரியல" ("I understand none of this", meant as an answer) is re-asked; one Tamil request for "someone else to help" is taken as an answer; a colloquial Tamil amount ("இருபத்தி ஐயாயிரம்") is not parsed by `samajh.amounts`; two Kannada go-ahead replies are re-asked; one Kannada off-topic reply ("I have to leave right now") gets the stop-check, which is arguably right; the Hindi off-topic reply above is taken as an answer.
+**Failures left on fold 1 with the fallback (all 11):** three identity replies that mix a no or a yes with "who is this?" are re-asked instead of ended or confirmed; one Tamil "nobody of that name here" is re-asked; "That's not the figure I gave" is re-asked instead of read as a rejection; "எனக்கு ஒன்னும் புரியல" ("I understand none of this", meant as an answer) is re-asked; two Tamil requests for a person ("நான் ஒரு ஆபீசர்ட்ட பேசணும்" and one for "someone else to help") are taken as answers; a colloquial Tamil amount ("இருபத்தி ஐயாயிரம்") is not parsed by `samajh.amounts`; one Kannada go-ahead reply is re-asked; one Kannada off-topic reply ("I have to leave right now") gets the stop-check, which is arguably right.
+
+### The fallback's model: measured, then pinned
+
+The fallback used to take whatever model the LLM client defaulted to. That default is now `openai/gpt-6-luna`, chosen for extraction after the call. The fallback runs inside a live turn, so it now names its own model, and the choice was made by measurement (`tests/dialogue/probes/fallback_models.py`, 2026-11-10).
+
+**What was measured.** The same 408 replies, played into the real machine with the fallback on, once per candidate model. The LLM is consulted on the 115 replies the rules leave as plain `said`; "seconds" is the wall time of each of those calls through the shared client, uncached, one after another, from one machine in one run. Candidates: cheap models on OpenRouter that list structured output.
+
+| Model | Fold 0, n = 209 | Fold 1, n = 199 | Calls ended on a non-refusal | Failed calls | Median s | p95 s | Max s | USD for the 115 calls |
+|---|---|---|---|---|---|---|---|---|
+| Rules only (no LLM) | 191 | 155 | 0 | | | | | 0 |
+| `mistralai/mistral-small-3.2-24b-instruct` | 203 | 188 | 0 | 0 | 0.71 | 1.37 | 3.97 | 0.0024 |
+| `meta-llama/llama-4-scout` | 204 | 184 | 0 | 0 | 0.68 | 1.58 | 3.56 | 0.0056 |
+| `google/gemini-2.5-flash-lite` | 204 | 187 | 0 | 0 | 0.96 | 1.22 | 2.83 | 0.0051 |
+| `openai/gpt-4.1-nano` | 202 | 183 | 0 | 0 | 1.27 | 2.45 | 21.71 | 0.0056 |
+| `openai/gpt-6-luna` (the client default) | 205 | 187 | 0 | 0 | 2.49 | 3.71 | 5.06 | 0.0063 |
+| `anthropic/claude-haiku-5.5` | not measured | not measured | | 115 of 115 | | | | 0 |
+
+Notes on the table. The latency columns are over 115 calls, except `openai/gpt-6-luna`: its first pass was cut off by a 10-minute limit on the run, and the figures are from the 79 uncached calls of the rerun. `anthropic/claude-haiku-5.5` answered every call with HTTP 404 "No endpoints found that can handle the requested parameters", most likely because the client sends `temperature` to it (the same error `openai/gpt-6-luna` gave before `defaults.toml` listed it); that table belongs to the client, so the model was left unmeasured. With every LLM call failing, that run scored 176/209 and 145/199, below the rules alone: a failed call is now read as unclear, so replies the rules alone would have let through were asked again (ten fewer fold-1 replies had their labelled effect). It also showed the failure path working: 115 warnings were logged, each naming the error and the model.
+
+**The choice: `mistralai/mistral-small-3.2-24b-instruct`.** On accuracy the five working models are within 3 replies of each other on fold 0 and 5 on fold 1, which at these sizes does not separate them. On latency they do separate: `mistral-small` and `llama-4-scout` answer in about 0.7 s at the median, `openai/gpt-6-luna` in 2.5 s, three and a half times slower, with no more replies right. Between the two fast ones `mistral-small` had 4 more replies right on fold 1, a lower p95 and under half the cost. No model ended a call on a reply that was not a refusal.
+
+**What limits this.** The fallback prompt was tuned with `mistral-small` on fold 0, so fold 0 favours it; fold 1 was not used for tuning, and it is the fold the choice leans on. `google/gemini-2.5-flash-lite` wrote the reply set, so it is labelling its own text. The replies are synthetic text, not STT output. Latency is one run at one time of day through OpenRouter's routing and will vary; the 21.7 s maximum for `gpt-4.1-nano` is a single call. The comparison does not show how any of these models reads real callers.
+
+**Tokens.** `max_tokens` went from 30 to 512. The reply is one short JSON object; the room is for a model that reasons before it answers. `openai/gpt-6-luna` used a median of about 50 completion tokens per call here, and with 30 it returned nothing.
 
 ## 5. Independent review
 
@@ -355,7 +379,7 @@ No second independent reviewer has seen the fixes in this section. Nothing was v
 
 ## 7. Spend
 
-Gnani credits: 0. OpenRouter: about USD 0.02 by the first worker (0.0032 for writing the reply set, about 0.016 for 506 label calls) and USD 0.0007 by the review (115 label calls, 73 from cache; `mistralai/mistral-small-3.2-24b-instruct`). Both read from the shared ledger, so approximate. Subagents: none ran to completion; the review used none.
+Gnani credits: 0. OpenRouter: about USD 0.02 by the first worker (0.0032 for writing the reply set, about 0.016 for 506 label calls) and USD 0.0007 by the review (115 label calls, 73 from cache; `mistralai/mistral-small-3.2-24b-instruct`), and about USD 0.03 for the model comparison (six candidates; the sum of the probe's own per-call costs, plus a first `gpt-6-luna` pass that was cut off). The first two figures are read from the shared ledger, so approximate. Total about USD 0.05 of the 0.5 allowed. Subagents: none ran to completion; the review used none.
 
 ## 8. Documents this work makes stale
 
@@ -368,10 +392,10 @@ Line numbers as of 2026-11-10, after other workers' edits to the same files.
 - `DESIGN.md` line 87 (step 9): "If anything was flagged: someone will call you within N days". The close says "may call again" and only on live signals; flags are not known during the call.
 - `DESIGN.md` line 89: add the stop-check, its limit of two a call, and that a refusal quoted in an account of the sale leads to it; "marked `unclear → human`" is `EndOfCall.unresolved` in code.
 - `DESIGN.md` line 105 (diagram): "SCRIPT BUILDER" is `samajh/dialogue` plus `data/prompts/`; prompts are templates, and read-backs cannot be pre-generated because they carry the customer's figure.
-- `DESIGN.md` line 213 (models table): "LLM ... Extraction only". There is now an optional LLM fallback for live turn reading (a label only, never a number, never ends a call).
+- `DESIGN.md` line 213 (models table): "LLM ... Extraction only". There is now an optional LLM fallback for live turn reading (a label only, never a number, never ends a call). It names its own model, `mistralai/mistral-small-3.2-24b-instruct`, not the client default `openai/gpt-6-luna`.
 - `DESIGN.md` line 325 (milestones, week 2): "call state machine for the §5 flow" exists.
 - `DESIGN.md` line 357 (open decision 16): add how the dialogue applies it: `step(..., second_reading=...)`; the call acts on the first reading unless only the second brings a figure the customer has not just heard or rejected; `Turn.text` is the reading acted on and the other is kept in `CallState.second_readings`.
-- `ORCHESTRATION.md` line 82: W9 status ("Replacement W9b in progress") is now done: 671 tests, ruff clean, reviewed by W9b; the review's fixes have no second review. Report: `references/pilots/W9-dialogue-report.md`.
+- `ORCHESTRATION.md` line 82: W9 status ("Replacement W9b in progress") is now done: 673 tests, ruff clean, reviewed by W9b; the review's fixes have no second review. Report: `references/pilots/W9-dialogue-report.md`.
 - `CLAUDE.md` line 57 (files list): "the extractor and dialogue are in progress (replacement workers W5b and W9b...)": dialogue is done. Add `samajh/dialogue/` (call core, `python -m samajh.dialogue play`) and `data/prompts/`.
 - `CLAUDE.md` line 58: W7's `Dialogue` protocol still runs a `StubDialogue`; the adapter to `samajh.dialogue` is not written, and it is the place that must fetch the second Prisma reading on amount turns (`expecting(state.position)` says when).
 - `references/pilots/W1-core-report.md` section 3, script-builder contract item 2: the suggested read-back template works; a carrier word directly before a Tamil or Kannada amount does not (see section 3 above). Line 64 can now say where `cross_check` is called: `samajh/dialogue/machine.py`, `step`.
@@ -383,6 +407,6 @@ Line numbers as of 2026-11-10, after other workers' edits to the same files.
 3. Voice the 51 lines per language with Timbre (`Line.key` and `Line.slots` identify each clip; only the read-back lines and the three slots vary) and listen to them.
 4. A fluent human reader for Hindi and Hinglish, and reviewers for Tamil and Kannada, for the lines and the lexicons, including a reported-speech list so that R4 covers Tamil and Kannada.
 5. Rerun `eval-turns` on real STT output of improvised replies once recordings exist. The LLM-written set is a stopgap, and section 5's probes are one reviewer's sentences.
-6. Decide whether live calls use the LLM fallback, given about 0.75 s median added silence.
+6. Decide whether live calls use the LLM fallback, given about 0.7 s median and 1.4 s p95 added silence. If they do, the adapter must build its `LlmClient` with a short timeout and no retries (the default is 60 s with retries): a call that fails fast is read as unclear and logged, a call that hangs is silence on the line. `anthropic/claude-haiku-5.5` could be measured once `defaults.toml [llm.sampling]` says which parameters it takes.
 7. A second independent review of section 5's fixes.
 8. Add a lender name to `LoanRecord`, or keep it as call configuration.

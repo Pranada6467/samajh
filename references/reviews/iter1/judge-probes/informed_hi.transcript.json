@@ -1,0 +1,117 @@
+{
+  "call_id": "call-LN-DEMO-0001",
+  "loan_id": "LN-DEMO-0001",
+  "language": "hi",
+  "turns": [
+    {
+      "id": 1,
+      "speaker": "bot",
+      "step": "right_party_check",
+      "text": "नमस्ते। क्या मेरी बात Ramesh जी से हो रही है?",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 2,
+      "speaker": "customer",
+      "step": "right_party_check",
+      "text": "हाँ मैं रमेश बोल रहा हूँ",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 3,
+      "speaker": "bot",
+      "step": "disclosure",
+      "text": "धन्यवाद। यह कॉल Namoona Bank की कस्टमर केयर टीम की तरफ़ से है। मैं एक ऑटोमेटेड ए-आई असिस्टेंट हूँ, कोई इंसान नहीं।",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 4,
+      "speaker": "bot",
+      "step": "disclosure",
+      "text": "यह सेल्स कॉल नहीं है। इस कॉल में आपको कुछ भी बेचा नहीं जाएगा।",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 5,
+      "speaker": "bot",
+      "step": "disclosure",
+      "text": "यह कॉल सिर्फ़ आपका फ़ीडबैक लेने के लिए है। फ़ीडबैक सही-सही दर्ज रहे, इसलिए कॉल रिकॉर्ड हो रही है। आपकी जानकारी का इस्तेमाल कैसे होता है, यह Namoona Bank के लिखित नोटिस में दिया है।",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 6,
+      "speaker": "bot",
+      "step": "disclosure",
+      "text": "आप चाहें तो मना कर सकते हैं, बीच में कभी भी कॉल रोक सकते हैं, या किसी इंसान से बात करने को कह सकते हैं।",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 7,
+      "speaker": "bot",
+      "step": "disclosure",
+      "text": "कॉल असली है या नहीं, यह जाँचने के लिए आप फ़ोन रखकर Namoona Bank के काग़ज़ों पर छपे कस्टमर केयर नंबर पर कॉल कर सकते हैं।",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 8,
+      "speaker": "bot",
+      "step": "disclosure",
+      "text": "इस कॉल में आपसे ओ-टी-पी, पिन, पासवर्ड या खाता नंबर कभी नहीं पूछा जाएगा।",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 9,
+      "speaker": "bot",
+      "step": "disclosure",
+      "text": "क्या हम आगे बढ़ें?",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 10,
+      "speaker": "customer",
+      "step": "disclosure",
+      "text": "ठीक है, जल्दी बोलिए थोड़ा बिज़ी हूँ",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    },
+    {
+      "id": 11,
+      "speaker": "bot",
+      "step": "close",
+      "text": "ठीक है, कोई बात नहीं। आपके समय के लिए धन्यवाद। नमस्ते।",
+      "asks": null,
+      "product_id": null,
+      "start_s": null,
+      "end_s": null
+    }
+  ]
+}

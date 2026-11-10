@@ -1,0 +1,26 @@
+{
+  "loan_id": "LN-DEMO-0002",
+  "lender_type": "bank",
+  "borrower": {"name": "Ramesh Namoona", "dob": "1984-06-15", "language": "hi"},
+  "loan_kind": "gold",
+  "sanctioned_inr": 500000,
+  "disbursed_inr": 448000,
+  "disbursed_on": "2026-10-20",
+  "products": [
+    {
+      "id": "P1",
+      "kind": "credit_life",
+      "provider": "Namoona Life (synthetic)",
+      "premium_inr": 52000,
+      "cover_inr": 500000,
+      "term_months": 24,
+      "paid_from_loan": true,
+      "required_for_loan": false,
+      "risk_mitigant": true,
+      "provider_choice_offered": true,
+      "cancel_window_days": 30,
+      "features": [],
+      "consent": {"method": "signed_form", "at": "2026-10-20"}
+    }
+  ]
+}
