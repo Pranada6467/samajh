@@ -1,6 +1,8 @@
 # Samajh: what you personally need to do
 
-Written 2026-11-10 by the guide agent, from the repo as it stood that evening. Other agents are still building, so anything marked **coming** is not ready: do not do it yet. Where the project has not decided something, this guide says "undecided" and lists the question in section 5. Suggestions that are mine, not the project's, are marked "(guide's suggestion)".
+**Status (2026-11-10, kept current by the coordinator):** human calls are NOT open yet. Ready now: the dashboard reading, recruiting friends, the decisions in §2.5. Waiting on packages P1 and P2 for the wording review, the listening pass and the calls.
+
+Written 2026-11-10 by the guide agent, from the repo as it stood that evening, and updated the same day with the coordinator's answers. Other agents are still building, so anything marked **coming** is not ready: do not do it yet. What is still open is in section 5. Suggestions that are mine, not the project's, are marked "(guide's suggestion)".
 
 Package names used below: **P1** = the real call on the browser phone, **P2** = the reworded, shorter call, **P4** = the human calls, **P7** = demo video and submission. State of each: `ORCHESTRATION.md`, "Iteration 2 state".
 
@@ -8,16 +10,17 @@ Package names used below: **P1** = the real call on the browser phone, **P2** = 
 
 | # | Task | Why it matters | Possible when | Time | Done looks like |
 |---|---|---|---|---|---|
-| 1 | Read the STT and TTS totals off the Gnani dashboard | Every credit figure in the project is an estimate. One reading turns them into measurements | Now | 5 to 10 min | Dashboard numbers, the time, and the ledger output sent to the coordinator |
-| 2 | Line up one to three friends and get their consent | The human calls cannot happen without people. The judge calls them the single most valuable evidence | Now | 30 min of messages | Each person has said yes in writing to the points in §2.3 |
-| 3 | Review the Hindi and Hinglish wording of the bot's lines | No fluent human has read any line. The judge found the wording stiff where it matters | **Coming**: after P2 writes `references/pilots/P2-lines-for-review.md` (not there yet) | About 1 to 2 hours (guide's estimate) | Every line marked keep, change or unsure |
-| 4 | Listen to the bot's voice reading the lines | Nobody has checked by ear how Timbre says the Hinglish lines, "ए-आई" or "ओ-टी-पी" | **Coming**: after P1 voices the lines. How you will listen is undecided | Undecided | Undecided |
-| 5 | Make the human calls (P4) | Answers both objections at once: "synthetic voices" and "you scripted the customers" | **Coming**: after P1 and P2 are built and verified | About 2 hours with the friends (judge's estimate) | 20 calls made, each logged, failures included |
-| 6 | Perform and post the demo video; submit the written explanation (P7) | It is the submission | **Coming**: last | Undecided | Video posted with the tags; written explanation sent |
-| 7 | Make the decisions in §2.5 | Only you can: name, award category, friends in the video, team and contributions | Now; needed before P7 | 30 min of thought | Each answer told to the coordinator |
+| 1 | Read the STT and TTS totals off the Gnani dashboard, twice | Every credit figure in the project is an estimate. A reading turns them into measurements | First reading now; second after the human calls | 5 to 10 min each | Dashboard numbers, the time, and the ledger output sent to the coordinator |
+| 2 | Line up one to three friends and get their consent | The human calls cannot happen without people. The judge calls them the single most valuable evidence | Now | 30 min of messages | Each person has sent a written yes to the points in §2.3 |
+| 3 | Review the Hindi and Hinglish wording of the bot's lines | No fluent human has read any line. The judge found the wording stiff where it matters | **Coming**: `references/pilots/P2-lines-for-review.md` appears when P2 is verified (not there yet) | About 1 to 2 hours (guide's estimate) | Every line marked keep, change or unsure |
+| 4 | Listen to the bot's lines and pick its voice | Nobody has checked by ear how Timbre says the lines, or compared the voices | **Coming**: after P1 pre-generates the bot's audio, the coordinator gives you a local page | Not estimated | A voice chosen per language; lines that sound wrong noted |
+| 5 | Make the human calls (P4) | Answers both objections at once: "synthetic voices" and "you scripted the customers" | **Coming**: on the coordinator's go signal (P1 and P2 verified) | About 2 hours with the friends (judge's estimate) | 20 calls made, each with a row in the log, failures included |
+| 6 | Record and post the demo video; submit the written explanation (P7) | It is the submission | **Coming**: last | Not estimated | Video posted with the tags; written explanation sent |
+| 7 | Make the decisions in §2.5 | Only you can: name, award category, voices, team, publishing the repo | Now; needed before P7 | 30 min of thought | Each answer told to the coordinator |
 | 8 | Rotate the Gnani and OpenRouter keys | Both keys were pasted into a chat transcript | At the end of the build | 10 min | Old keys revoked, new ones in `.env` |
 | 9 | Keep the agents running | Workers stop when the account's usage limit is hit and do not restart themselves | Throughout | A glance now and then | Coordinator session open; stalled work resumed |
 | 10 | Be able to explain the project yourself | Internships are decided in individual interviews | Any time | A few hours of reading | You can explain the rule, the call and the main finding without notes |
+| 11 | Read the closing date and submission steps off the challenge page | Nobody in the project knows them (section 5) | Now | 10 min | Date and steps told to the coordinator |
 
 ## 2. The tasks, step by step
 
@@ -33,11 +36,13 @@ No API reports credit cost. The dashboard at app.gnani.ai is the only source. Th
 
 Do not edit `samajh/clients/defaults.toml` yourself. An agent will work out the rates and update it.
 
+Take one reading now and a second, the same way, after the human calls.
+
 ### 2.2 Hindi and Hinglish wording review (coming, do not start yet)
 
-**What it will be.** P2 will write `references/pilots/P2-lines-for-review.md`: the bot's lines for you to read. It does not exist yet (checked). The lines themselves live in `data/prompts/hi.toml` and `hi-en.toml`. **Do not edit those files.** They are guarded by a lint and tests, and P2 is rewriting them now. Tamil and Kannada are out of scope for you: the project has cut them to an experimental appendix.
+**What it will be.** `references/pilots/P2-lines-for-review.md`: the bot's lines for you to read. It appears when package P2 is verified; it does not exist yet (checked). The lines themselves live in `data/prompts/hi.toml` and `hi-en.toml`. **Do not edit those files.** They are guarded by a lint and tests, and P2 is rewriting them now. Tamil and Kannada are out of scope for you: the project has cut them to an experimental appendix.
 
-**How to mark it up.** If the file has its own marking instructions, follow those. If not, add one line directly under each bot line, starting with `REVIEW:` and one of three words:
+**How to mark it up** (convention confirmed by the coordinator). Add one line directly under each bot line, starting with `REVIEW:` and one of three words:
 
 ```
 REVIEW: keep
@@ -56,7 +61,7 @@ Rules for the markup, so an agent can apply it without asking you anything:
 - Stiff or bookish Hindi that nobody says on a phone call. Hinglish that mixes the two languages in a way no real caller would.
 - Length. The judge found the old opening was a one-minute monologue. Flag any line that is too long to listen to.
 - Anything that sounds like a scam call or a sales call, or that would make you hang up.
-- Words Timbre may say badly: mixed-script lines, "ए-आई", "ओ-टी-पी". Flag them; task 4 is where you hear them.
+- Words Timbre may say badly: mixed-script lines, "ए-आई", "ओ-टी-पी". The listening pass below is where you hear them.
 
 **What your new wording must not do.** These are hard rules (`CLAUDE.md`, `data/prompts/`), and an agent will reject a change that breaks one:
 - No digits. No product words: insurance, policy, premium, cover, FD, deposit (in any language).
@@ -66,25 +71,40 @@ Rules for the markup, so an agent can apply it without asking you anything:
 
 **When you are done:** save the file and tell the coordinator. An agent applies the changes, reruns the tests, and comes back only about your `unsure` lines.
 
+**The listening pass (coming, after P1 pre-generates the bot's audio).** The coordinator will give you a local page that plays each line, with two or three candidate Timbre voices per language.
+1. Pick the voice you prefer by ear for Hindi and for Hinglish, and tell the coordinator.
+2. For any line that sounds wrong (a mispronounced word, an odd pause, wrong stress), add a line under it in the same review file with a `LISTEN:` prefix, for example `LISTEN: "ओ-टी-पी" is read as one word`. Lines that sound fine need no `LISTEN:` line.
+
 **To get a feel for the call today (optional).** You can play the call as text in the terminal. It uses no Gnani credits and no network:
 `uv run python -m samajh.dialogue play --record tests/dialogue/fixtures/record_gold_loan.json --lang hi` (or `--lang hi-en`). You type the customer's replies. P2 is changing this code right now, so it may be mid-edit or briefly broken. Do not start the review from it; wait for the file.
 
 ### 2.3 The human calls (coming, do not make them yet; you can recruit now)
 
-**What the judge asked for.** 20 improvised calls in Hindi and Hinglish, by you and one to three consenting friends, through the real browser phone, each from a brief card, scored against the card. The design's bar for calling a language "supported" is at least 10 real-voice calls in it. The exact split between Hindi and Hinglish and the mix of customer types are **undecided** (section 5). The judge's own test calls used these types, so expect cards like them: a misled customer, a carefully informed customer, an ordinary informed customer who is unsure of the exact figures, one who says "I took nothing", one in a hurry, one who asks "is this a fraud call?", and a family member answering someone else's phone.
+**The plan** (set by the coordinator, from the judge's request). 20 improvised calls by you and one to three consenting friends, through the real browser phone, each from a brief card, scored against the card. Each speaker uses whichever of Hindi or Hinglish is natural to them; aim for roughly half the calls in each. The design's bar for calling a language "supported" is at least 10 real-voice calls in it.
 
-**Who can take part.** You, and adults (18+) who agree. The challenge's own wording is "record yourself or your teammate with consent". The project reads that as covering consenting friends for evaluation. Whether a friend who is not on your team may appear in anything public is your decision (§2.5).
+| Calls | Customer type on the card |
+|---|---|
+| 6 | Misled: told it was an FD; or the premium was taken from the loan without their knowing; or never agreed to anything |
+| 4 | Ordinary informed: knows roughly what they bought, not every figure |
+| 3 | Well informed |
+| 2 | Says they took nothing |
+| 2 | Someone who is not the borrower answers |
+| 1 | Busy, asks to be called later |
+| 1 | Suspects a fraud call |
+| 1 | Coached: was told to say yes to everything |
 
-**What each person must be told and agree to.** The project has no consent form yet; how consent is recorded is **undecided**. Until the coordinator says otherwise (guide's suggestion): send each person the points below as a message, get a written "yes, I agree" back, and keep a screenshot on your laptop, outside the repo.
+**Who can take part.** You, and adults (18+) who agree. The challenge's own wording is "record yourself or your teammate with consent". The coordinator's recommendation follows from it: friends' recordings are used for the evaluation numbers only, stay on your machine, and never enter the repo or the video; the public video uses only your own voice. Whether to list a friend as a team member is your decision (§2.5).
+
+**What each person must be told and agree to.** A written message from each person saying yes to the points below is enough; no form is needed. Send the points, get a written "yes, I agree" back, and keep the messages (screenshots or exports) in a local folder outside the public repo. The coordinator will name a gitignored folder for human-call material (section 5); until then use any folder outside the repo.
 - What it is: a student project for Gnani AI's internship challenge. They play an invented bank customer on a short test call with a bot.
 - The whole call is recorded. Their voice is personal data under India's DPDP Act.
 - Where it goes: the audio is sent to Gnani's speech API to be transcribed. The text of what they say is sent to AI models through OpenRouter. The recording is kept on your laptop.
-- It is not put in the public repo and not shown in the video unless they separately say yes to that.
-- Whether short written quotes of what they said may appear in the project's public report (without their name). Ask yes or no.
-- They can stop at any time, and can ask you later to delete their recordings.
+- It is used only to measure how well the project works. It is never put in the public repo or in the video.
+- Whether short written quotes of what they said may appear in the project's public report, without their name. Ask for a clear yes or no in their message: quotes are used only if they said yes.
+- They can stop at any time. If they withdraw later, their recordings are deleted and their calls are dropped from the numbers (the report states how many calls were dropped).
 - They will play a made-up person. They must not say their real name, bank, loan, phone number, account number, Aadhaar, PAN or any other real detail. The bot never asks for an OTP, PIN, password or account number; if anything on the call seems to, they should not answer, and you note it.
 
-**What a brief card is.** One card per call. It tells the caller who they are playing and what they believe, and they answer in their own words. It is not a script: nothing on it is read aloud. The real cards are **coming** (agents write them in P4). An illustration, built on the phone's existing demo record "Ramesh: a gold loan and one add-on":
+**What a brief card is.** One card per call. It tells the caller who they are playing and what they believe, and they answer in their own words. It is not a script: nothing on it is read aloud. An agent writes the real cards before the go signal; you do not write them. An illustration, built on the phone's existing demo record "Ramesh: a gold loan and one add-on":
 
 ```
 CARD H-01 (example only)                         Language: Hinglish
@@ -102,26 +122,34 @@ Never say anything real about yourself.
 **Equipment and room.**
 - Chrome on the laptop that runs the server. Nothing else is tested: no human has used the phone yet, and Safari, mobile browsers, real microphones, echo and noisy rooms are all untested. Friends sit at your laptop; remote calling is not set up.
 - Allow the microphone when Chrome asks. The page turns on the browser's echo cancellation, noise suppression and auto gain.
-- Headphones or the laptop speaker: **undecided**. Headphones avoid the bot's voice leaking into the microphone, which is the untested echo case. The recording is put together by the server from the bot's audio and your microphone turns, so headphones do not remove the bot from the recording.
-- Quiet room or realistic noise: **undecided**. Whatever is chosen, write the room and noise on the log for each call.
-- The page has four options: line (8 kHz phone line or 16 kHz), loan record, language, and turn mode (hands-free or push to talk). Which to use for the 20 calls is **undecided**. Never pick Tamil or Kannada.
+- Two setups, about half the calls in each: (a) headphones in a quiet room; (b) the laptop speaker in an ordinary room. Setup (b) is the untested echo case, where the bot's voice can leak into the microphone, so it is tested on purpose. Write the setup in the log for each call.
+- The recording is put together by the server from the bot's audio and your microphone turns, so headphones do not remove the bot from the recording.
+- Page options for every call: line **8 kHz · phone line**, turn mode **Hands-free** (not push to talk), the loan record and language the card names. Never pick Tamil or Kannada.
 
 **How to start the phone** (verified against the code and `--help`; needs `GNANI_API_KEY` in `.env` and ffmpeg):
-1. Tell the coordinator the time of your calling session first. Gnani allows one request at a time for the whole key. If an agent runs an evaluation during your call, your turns fail with `gnani_busy`.
-2. In the repo folder: `uv run python -m samajh.server --port 8085`
-3. Open `http://127.0.0.1:8085/` in Chrome. Pick the record and language the card names. Press "Place demo call", then "Answer".
-4. Every call spends Gnani credits. The code on disk now starts the Samajh call by default, but P1 is mid-build and unverified, and `README.md` still describes the older three-question stub. **Wait for the coordinator to say P1 and P2 are verified before making any call that counts.**
+1. Wait for the go signal. The coordinator tells you in chat and updates the Status line at the top of this file.
+2. Tell the coordinator the time of your calling session first. Gnani allows one request at a time for the whole key. If an agent runs an evaluation during your call, your turns fail with `gnani_busy`.
+3. In the repo folder: `uv run python -m samajh.server --port 8085`
+4. Open `http://127.0.0.1:8085/` in Chrome. Pick the record and language the card names. Press "Place demo call", then "Answer".
+5. Every call spends Gnani credits. The code on disk now starts the Samajh call by default, but P1 is mid-build and unverified, and `README.md` still describes the older three-question stub. **Wait for the coordinator to say P1 and P2 are verified before making any call that counts.**
 
-**Keep a log line for every call**, written during or right after it: card number, who spoke (a code such as F1, not a name), language, start time, room and noise, headphones or speaker, page options, and what went wrong if anything. Where this log should live is **undecided**; until told, keep it in a notes file outside the repo.
+**Keep a call log**: one CSV file, kept beside the consent messages, one row per call, written during or right after it. A failed call gets a row too. Columns:
+
+```
+date,time,card_id,speaker_initials,language,setup,session_id,note
+2026-11-14,16:05,H-01,RK,hi-en,headphones quiet room,<the session id the phone shows>,bot cut me off on the amount answer
+```
+
+`setup` is headphones or speaker, plus the room. `note` is free text on anything that went wrong; leave it empty if nothing did. The example row is invented.
 
 **If a call goes wrong.** Failures are evidence. The project reports them; it does not hide them.
 - Do not quietly redo a call to get a cleaner one. The first attempt counts. If you repeat a card, log it as a second attempt.
 - Write down what happened before you press anything. If a turn fails, the page offers "Send again" and "Record the turn again": you may use them, and you log that you did.
 - If the bot mishears, cuts you off, hangs up early or says something odd, carry on as the character would, then log it.
 - If you see `gnani_busy`, stop. An agent is using the key. Tell the coordinator.
-- Never delete, rename or edit a session.
+- Never delete, rename or edit a session. The one exception is a person who withdraws: then tell the coordinator, and their session folders are deleted and their calls dropped from the numbers, with the count stated.
 
-**What happens to the recordings.** Each call is saved under `.samajh/sessions/<session id>/`: `call.wav` (the whole call), `audio/` (one file per turn), `session.json` (the log) and `case.json` (the result). `.samajh/` and all `.wav` files are ignored by git, so they stay on your laptop and out of the repo. Leave them where they are; agents score them there. Nothing from a friend goes public unless that person agreed to it.
+**What happens to the recordings.** Each call is saved under `.samajh/sessions/<session id>/`: `call.wav` (the whole call), `audio/` (one file per turn), `session.json` (the log) and `case.json` (the result). `.samajh/` and all `.wav` files are ignored by git, so they stay on your laptop and out of the repo. Leave them where they are; agents score them there. A friend's audio never goes public. A short anonymous quote from a friend's transcript appears in the report only if that person said yes to quotes in their consent message.
 
 ### 2.4 Demo video and submission (coming, last)
 
@@ -130,7 +158,7 @@ Never say anything real about yourself.
 - One nominated post link per platform.
 - A written explanation: title, problem, target users, the Gnani models and APIs used with exact versions, and each member's contribution.
 - Solo or a team of two; Indian college students, 18+.
-- Only engagement recorded by the closing cutoff counts for internship selection. The closing date is not written down anywhere in the repo (section 5).
+- Only engagement recorded by the closing cutoff counts for internship selection. Nobody in the project knows the closing date or the submission steps: read them off the challenge page (section 5).
 
 **The 60-second structure the judge proposed** (`references/reviews/iter1/judge.md` §4):
 1. 0 to 5 s: one line of the RBI rule (85Y) and the date 1 January 2027.
@@ -139,9 +167,14 @@ Never say anything real about yourself.
 4. 40 to 50 s: the reviewer's card, then the half-yearly report page.
 5. 50 to 60 s: two numbers with their n and source, then "Prisma v2.5 and v3.0, Timbre v3.0, Prisma Batch".
 
-**What you do yourself.** You are the human voice in step 3 (or a consenting person is: §2.5). You post from your own LinkedIn or X account and nominate the link. You read and approve every claim in the written explanation, and you write the contributions part. Who records the screen and who edits the video is **undecided**.
+**What you do yourself.**
+- Screen-record the browser while the pages play. QuickTime is enough.
+- Speak the borrower's part in step 3, in your own voice (the coordinator's recommendation: only your voice in the public video).
+- Edit the video, or hand the raw recordings to an agent, which can cut and caption them with ffmpeg.
+- Post from your own LinkedIn or X account and nominate the link.
+- Read and approve every claim in the written explanation, and write the contributions part.
 
-**What the agents prepare.** The working call, the reviewer card and the report page shown on screen; the numbers with their caveats; a two-page brief; a draft of the written explanation; a last check of every claim against `references/claims/claims-ledger.md`. No real phone number, account number or other real detail may appear on screen or in the audio.
+**What the agents prepare.** The shot list, the script, the on-screen captions and the pages to record (the working call, the reviewer card, the report page); the "usual confirmation call" in step 2, voiced with Timbre; the numbers with their caveats; a two-page brief; a draft of the written explanation; a last check of every claim against `references/claims/claims-ledger.md`. No real phone number, account number or other real detail may appear on screen or in the audio.
 
 ### 2.5 Decisions only you can make
 
@@ -151,8 +184,9 @@ Tell the coordinator each answer. None blocks the build today; all are needed be
 |---|---|---|
 | Final name | Keep "Samajh" (the working name) or pick another | Judge: defer, it is not a constraint. It must be fixed before the video and the written title |
 | Award category (a team can win only one) | Real Deal; Demo Day Drop; Jugaad Genius; others in `RESEARCH.md` §1 | Design and judge: **Real Deal**, with the video cut so it can also stand for Demo Day Drop. Judge's best alternative: Jugaad Genius (two Prisma versions checked against each other as the confidence score Prisma does not return). Frame the user as the borrower who was sold an "FD" |
-| Whose voice is in the public video | (a) only yours; (b) a friend's, with their explicit written yes to public use | None on file. Note: the challenge wording is "record yourself or your teammate with consent", and (a) plainly fits it (guide's observation) |
-| Team and contributions | Solo, or a team of two (this also decides Solo Ninja versus Two-Person Army eligibility) | None on file. The written explanation must state each member's contribution. Coding agents wrote most of the code, so decide how you describe your own part accurately; you will be interviewed on it |
+| Whose voice is in the public video | (a) only yours; (b) also a teammate's or friend's | Coordinator: **(a), only your own voice.** The challenge wording covers recordings of yourself or your teammates. Friends' recordings are for the evaluation numbers only |
+| Team and contributions | Solo, or a team of two (this also decides Solo Ninja versus Two-Person Army eligibility). Whether to list a friend who records as a team member | None on file; your decision. The written explanation must state each member's contribution. Coding agents wrote most of the code, so decide how you describe your own part accurately; you will be interviewed on it |
+| Publish the repo | Public, or keep it private | Coordinator: **yes, publish**, since build quality is the point. Only after both keys are rotated (§2.6), and with friends' audio and the real-voice dataset material kept out (both are already gitignored) |
 | Tamil and Kannada | Stay cut (experimental appendix), or revive | Coordinator and judge: cut, because no fluent reader exists. Only reopen if you or a friend reads one fluently and will review it |
 
 ### 2.6 Housekeeping
@@ -174,6 +208,7 @@ Tell the coordinator each answer. None blocks the build today; all are needed be
 - Write or fix code, tests, prompts files or documents. Do not edit `data/prompts/` or `defaults.toml`.
 - Run tests, evaluations or anything under `eval/`. Never run `tests/clients/probes/gnani_probe.py`.
 - Write the brief cards, score the calls, or build the tables. Agents do that from your recordings and log.
+- Write the video's shot list, script or captions, or voice the confirmation call in it.
 - Run git commands. The coordinator commits.
 - Check regulatory claims or sources. The claims ledger and an agent cover that.
 - Accept dataset terms for the public real-voice data. That evaluation has already run; its data is on your laptop only.
@@ -182,26 +217,25 @@ Tell the coordinator each answer. None blocks the build today; all are needed be
 
 ## 4. Things you can prepare today
 
-1. **Take the dashboard reading** (§2.1). It is the only task fully ready now.
-2. **Ask one to three friends.** Explain the ask in two lines: a short role-play call with a bot, in Hindi or Hinglish, about two hours in total at your laptop, recorded, with a made-up identity. Send them the consent points from §2.3. Find out who is comfortable in Hindi and who in Hinglish.
-3. **Check Chrome and a microphone.** Make sure Chrome is installed and that the laptop's microphone setting allows Chrome. Find a pair of wired headphones in case they are chosen. Do not place phone calls for this yet: they spend credits and can collide with running agents.
-4. **Draft your one-line description of the project.** A starting point from the README: "a callback in which a borrower explains in their own words what they bought with their loan, and plain code compares that with the bank's record". Do not claim nobody else does this: adjacent vendors exist.
-5. **Think about the decisions in §2.5**: name, category, whose voice, team and contributions.
-6. **Optional:** play the text call once (§2.2, last paragraph) to hear what the bot asks.
-7. **Start the interview reading** (§2.6, last paragraph).
+1. **Take the first dashboard reading** (§2.1).
+2. **Read the challenge page** (gnani.ai/internship and the challenge blog) for the closing date, the engagement cutoff, how the written explanation and post links are submitted, and whether you name an award category yourself. Tell the coordinator (section 5).
+3. **Ask one to three friends.** Explain the ask in two lines: a short role-play call with a bot, in Hindi or Hinglish, about two hours in total at your laptop, recorded, with a made-up identity. Send them the consent points from §2.3 and collect each written yes. Find out who is more natural in Hindi and who in Hinglish; the aim is roughly half the calls in each.
+4. **Check Chrome, a microphone and headphones.** Make sure Chrome is installed and that the laptop's microphone setting allows Chrome. Have a pair of headphones ready: half the calls use them. Do not place phone calls for this yet: they spend credits and can collide with running agents.
+5. **Draft your one-line description of the project.** A starting point from the README: "a callback in which a borrower explains in their own words what they bought with their loan, and plain code compares that with the bank's record". Do not claim nobody else does this: adjacent vendors exist.
+6. **Think about the decisions in §2.5**: name, category, whose voice, team and contributions, publishing the repo.
+7. **Optional:** play the text call once (§2.2, last paragraph) to hear what the bot asks.
+8. **Start the interview reading** (§2.6, last paragraph).
 
-## 5. Questions the coordinator must answer before you start
+## 5. Still open
 
-1. **Closing date.** When do submissions and the engagement cutoff close? It is not in the repo.
-2. **Where the submission goes.** Is there a form for the written explanation and the nominated links? Does the entrant name an award category, or do the judges assign it?
-3. **Wording review format.** Will `P2-lines-for-review.md` carry its own marking instructions, or should the `REVIEW:` convention in §2.2 be used? When will the file be ready?
-4. **Listening pass.** Where will the voiced lines be, and how should problems be reported? Should the user also choose the bot's voice by ear (the settings file says nobody has compared the voices)?
-5. **Call plan.** How many friends, how the 20 calls split between Hindi and Hinglish, and which customer types in what numbers. Who writes the cards, and when.
-6. **Phone options for the calls.** 8 kHz or 16 kHz line, hands-free or push to talk, headphones or speaker, quiet room or realistic noise.
-7. **Consent.** Is the written-message approach in §2.3 enough, or will there be a form? Where are the consent records kept?
-8. **The call log.** Where should the user's per-call log live, and in what format, so the scoring agent can read it?
-9. **Use of friends' recordings.** May a friend who is not a team member be recorded at all under the challenge's "yourself or your teammate" wording? May anonymous quotes from their transcripts appear in the public report? How are recordings deleted if someone withdraws?
-10. **Go signal.** How will the user be told that P1 and P2 are verified and human calls may start?
-11. **Video production.** Who screen-records and edits, with what tool, and who voices the "usual confirmation call" in step 2 of the video?
-12. **Publishing the repo.** Will the repo be made public for the submission? If so, the keys must be rotated first and friends' audio must stay out.
-13. **Dashboard reading.** Is one reading enough, or is a second one wanted after the human calls?
+**For you to find out and tell the coordinator.** The coordinator does not know these; they are on the challenge page (gnani.ai/internship, and the challenge blog linked in `RESEARCH.md` §1).
+1. The closing date for submissions, and the cutoff after which engagement on your post no longer counts.
+2. How the submission is made: where the written explanation and the nominated post links go, and whether you name an award category yourself or the judges assign one.
+
+**For the coordinator to supply.**
+3. The name of the gitignored folder for human-call material (consent messages and the call log CSV). Until then, keep them in any folder outside the repo.
+4. The go signal for the human calls: given in chat and in the Status line at the top of this file.
+5. The local listening page, once P1 has pre-generated the bot's audio.
+6. The brief cards, before the go signal.
+
+**For you to decide** (§2.5): the final name, the award category, team and contributions, and whether to publish the repo.
