@@ -225,3 +225,40 @@ call_seconds(transcript, *, words_per_second=2.5) -> float   # samajh.dialogue: 
   re-ask. Not a general fold: "do", "sath", "tera" stay ordinary words everywhere else.
 - **Probe harness:** `p2_round3_measure.py --data MODULE` picks the probe data module (default
   `p2_round3_openings`); `openings` also prints, per scope, the genuine cases that did not pass both checks.
+
+## 8. Round 4 (wins over §7 where they differ)
+
+- **Signs of another speaker, after the opening** (`Interpretation.other_speaker`, Hindi and Hinglish).
+  Strong (`possible_takeover`, as §7 plus "I" beside a relation of someone else, "मैं उनका भाई"). Weak: a
+  relation of someone else without "I" ("unka bhai"); the speaker's own relative owning or doing something
+  ("मेरे पति का", "मेरे बेटे ने"); "talk to me" / "now I am speaking"; a greeting with a question word. Read at
+  every position after the opening, including the stop checks and the call-back question. A sign makes the
+  reading unsettled unless it ends the call.
+- **`Interpretation.classifier_label`:** the label the reading follows; None when no label was used (none,
+  failure, timeout, `unclear`, a settled turn). `asks_repeat`, `who_or_why`, `off_topic` also count as no
+  label for a sign.
+- **Order in `step`:** after the definite ends (language, human, decline, do-not-call, written, wrong person)
+  and before the call-back question, the call-back request, the stop checks and "who is this?": a strong
+  sign, a sign with no label, or (`CallState.speaker_doubt`) an unsettled turn with no label after a sign a
+  label let pass, gets the who-check (`AtStopCheck(wish="who")`, `right_party.reask`). It resumes the
+  pending question (from the call-back question: asks "when?" again; from a stop check: its question).
+- **The who-check reply**, the same in every arm: points elsewhere (`interpret.points_elsewhere`) ->
+  `wrong_party`; affirmation (`interpret.affirms_self`, closed vocabulary plus the first name) or the
+  classifier's `confirms_self` with a first-person word -> resume; a stop request -> its outcome;
+  anything else -> `wrong_party`. The stop-check classifier table adds `confirms_self`, `wrong_person`,
+  `third_party_handoff`, `remove_number`, `written_request`, `call_back`; its stage text mentions the
+  who-check. At the stop checks a yes with words outside the closed vocabulary is unsettled.
+- **`Limits.max_who_checks`** (default 2), separate from `max_stop_checks`; past it the turn ends as
+  `wrong_party`. **`CallState.who_checks`, `CallState.speaker_doubt`** default 0 / False (old states load).
+- **`wrong_party` always ends with `speaker_confirmed` False** (state and `EndOfCall`).
+- **Birth year:** near-spellings (one edit to exactly one number word) are corrected before the year is
+  read; an uncorrectable number-like word after "सौ"/"हज़ार", or one edit from two numbers, is "no year".
+  "वो" before "तो", a year word or a number is not a third person.
+- **Refusals:** `_refuses_to_talk` (structure) joins the `decline` list at every stage. At the opening a
+  refusal with a third-person word is `wrong_person`.
+- **`verify.before_loan`** only before the year passes (`AtGoAhead.year_passed` or `speaker_confirmed`).
+- **Call-back "now":** `means_now` treats a no-word as the answer to "later?" unless it follows the now-word.
+- **Folds added** (`_FOLD`, every stage): chale, chala, chali, nikal, nikle, mujhse, inka/inki/inke,
+  uska/uski/uske, mera/mere, hamara/hamari/hamare, kiska/kiski/kiske, ne, sunna, rakho, rakhiye, rakhna.
+- No line text, line key, outcome or `Expecting` value changed.
+- **Follow-up:** at the opening, an address form inside a structural refusal (no possessive, no third-person word, no "हूं / बोल रहा / am" after it) is not a relation (`_only_address(..., beside_yes=False)`). At the who-check a leading no-word before a first-person claim is dropped before the reply is read.

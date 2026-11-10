@@ -116,7 +116,14 @@ def test_a_classifier_end_label_still_ends_a_takeover():
 @pytest.mark.parametrize("arm", ARMS)
 @pytest.mark.parametrize("reply", CONTROLS)
 def test_an_account_is_not_a_takeover(arm, reply):
-    assert run([*AT_KIND, reply], **ARMS[arm]()).keys[-1] != "right_party.reask"
+    keys = run([*AT_KIND, reply], **ARMS[arm]()).keys
+    if reply.startswith("मेरे भाई का") and arm in ("rules", "raises", "who_or_why"):
+        # Round 4: "my relative's ..." is a weak sign of another speaker; with no classifier label (or one
+        # that says nothing about who is speaking) the who-check is the safe default (one question). An
+        # "answer" label decides it.
+        assert keys[-1] == "right_party.reask"
+    else:
+        assert keys[-1] != "right_party.reask"
 
 
 def test_a_plain_who_question_from_the_borrower_still_gets_the_verify_line():

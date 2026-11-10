@@ -31,6 +31,7 @@ from samajh.ops.views import (
     NeverEligible,
     PolicyItem,
     Proportion,
+    ReferralSplit,
     ReportTiles,
     ReportView,
     RuleRow,
@@ -41,9 +42,10 @@ from samajh.ops.views import (
     draw_views,
     plain_share,
     proportion,
+    referral_split,
 )
 from samajh.rules import CLAUSES
-from samajh.types import RuleId, Tier
+from samajh.types import Basis, RuleId, Tier
 
 MIN_GROUP = 5  # a branch or channel is named as "highest" only with at least this many completed calls
 GROUP_ORDER = ("features", "risks", "sale")
@@ -236,13 +238,15 @@ def timing(batch: Batch) -> Timing:
 
 
 def tiers(batch: Batch, share: Share = proportion) -> tuple[TierRow, ...]:
-    """The tier of each counted call (completed within 30 days of the sale and analysed)."""
+    """The tier of each counted call (completed within 30 days of the sale and analysed). The refer
+    row also splits its count by what each referral rests on."""
     completed = batch.completed
     return tuple(
         TierRow(
             tier=tier,
             label=wording.TIER_LABEL[tier],
             value=share(sum(s.triage.tier is tier for s in completed), len(completed)),
+            referred_split=referral_split(s.triage for s in completed) if tier is Tier.refer else None,
         )
         for tier in Tier
     )
@@ -253,14 +257,23 @@ def rule_rows(batch: Batch, share: Share = proportion) -> tuple[RuleRow, ...]:
 
     flagged: calls with at least one flag under the rule; n is every counted call. undecided:
     calls with a gap under the rule and no flag under it. referred: flagged calls whose summary
-    has a `refer` line naming the rule. The `evidence` rule appears only if it flagged or left a
-    gap. Rows are grouped (features, risks, how it was sold), then by seriousness, then by share.
+    has a `refer` line naming the rule. referred_split: those referred calls by the basis of the
+    rule's own refer lines (record_only when every refer line naming the rule rests on the record
+    alone; see `RuleRow`). The `evidence` rule appears only if it flagged or left a gap. Rows are grouped (features, risks, how it was sold), then by seriousness, then by share.
     """
     completed = batch.completed
     clauses = CLAUSES[batch.meta.book.lender_type]
     rows: list[RuleRow] = []
     for rule in RuleId:
         flagged = [s for s in completed if rule in _flagged(s)]
+        refer_lines = [
+            [line for line in s.triage.lines if rule in line.rule_ids and line.tier is Tier.refer]
+            for s in flagged
+        ]
+        referred = [lines for lines in refer_lines if lines]
+        on_statement = sum(
+            any(line.basis is Basis.customer_statement for line in lines) for lines in referred
+        )
         undecided = sum(
             rule not in _flagged(s) and any(g.rule_id is rule for g in s.call.result.all_gaps())
             for s in completed
@@ -278,9 +291,9 @@ def rule_rows(batch: Batch, share: Share = proportion) -> tuple[RuleRow, ...]:
                 seriousness_label=wording.SERIOUSNESS_LABEL[wording.SERIOUSNESS[rule]],
                 flagged=share(len(flagged), len(completed)),
                 undecided=undecided,
-                referred=sum(
-                    any(rule in line.rule_ids and line.tier is Tier.refer for line in s.triage.lines)
-                    for s in flagged
+                referred=len(referred),
+                referred_split=ReferralSplit(
+                    customer_statement=on_statement, record_only=len(referred) - on_statement
                 ),
                 understanding_gap=sum(
                     s.triage.tier is Tier.understanding_gap
@@ -298,29 +311,47 @@ def rule_rows(batch: Batch, share: Share = proportion) -> tuple[RuleRow, ...]:
     )
 
 
-def referrals(batch: Batch) -> tuple[tuple[DispositionRow, ...], Count, Count]:
+def referrals(
+    batch: Batch,
+) -> tuple[tuple[DispositionRow, ...], Count, Count, ReferralSplit, ReferralSplit]:
     """Counted referrals by the decision that stands (the latest recorded), plus "none" for no
     decision yet; n is every counted referral. Then the open referrals (no final decision: the
     page header's count), and "supported" out of the referrals whose latest decision is final."""
     ids = tuple(s.call.call_id for s in batch.referrals)
     latest = [batch.latest(case_id) for case_id in ids]
     n = len(latest)
+    stands = list(zip(batch.referrals, latest, strict=True))
+
+    def row(key: str, label: str, chosen: list[Sampled]) -> DispositionRow:
+        return DispositionRow(
+            key=key,
+            label=label,
+            value=Count(count=len(chosen), n=n),
+            split=referral_split(s.triage for s in chosen),
+        )
+
     rows = [
-        DispositionRow(
-            key=decision.value,
-            label=wording.DECISION_LABEL[decision],
-            value=Count(count=sum(d is not None and d.decision is decision for d in latest), n=n),
+        row(
+            decision.value,
+            wording.DECISION_LABEL[decision],
+            [s for s, d in stands if d is not None and d.decision is decision],
         )
         for decision in Decision
     ]
-    rows.append(
-        DispositionRow(
-            key="none", label=wording.NO_DECISION_LABEL, value=Count(count=latest.count(None), n=n)
-        )
-    )
+    rows.append(row("none", wording.NO_DECISION_LABEL, [s for s, d in stands if d is None]))
     supported = sum(d is not None and d.decision is Decision.concern_supported for d in latest)
     decided = n - batch.open(ids)
-    return tuple(rows), Count(count=batch.open(ids), n=n), Count(count=supported, n=decided)
+    decided_split = referral_split(s.triage for s in batch.referrals if batch.decided(s.call.call_id))
+    supported_split = referral_split(
+        s.triage for s, d in stands if d is not None and d.decision is Decision.concern_supported
+    )
+    return (
+        tuple(rows),
+        Count(count=batch.open(ids), n=n),
+        Count(count=supported, n=decided),
+        decided_split,
+        supported_split,
+    )
 
 
 Group = tuple[str, Callable[[Sampled], str], Callable[[str], str]]  # (by, key of a loan, label of a key)
@@ -356,6 +387,8 @@ def breakdowns(batch: Batch, share: Share = proportion) -> tuple[Breakdown, ...]
             completed=len(mine),
             referred=tier_share(mine, Tier.refer),
             rest_referred=tier_share(rest, Tier.refer),
+            referred_split=referral_split(s.triage for s in mine),
+            rest_referred_split=referral_split(s.triage for s in rest),
             understanding_gap=tier_share(mine, Tier.understanding_gap),
             rest_understanding_gap=tier_share(rest, Tier.understanding_gap),
         )
@@ -437,6 +470,8 @@ def tiles(
     agree by construction. The most common gap is the rule row with the most understanding-gap
     calls; on a tie, the one higher in the rules table. "none" when no counted call has one."""
     tier = {row.tier: row.value.count for row in outcomes}
+    (refer_row,) = (row for row in outcomes if row.tier is Tier.refer)
+    assert refer_row.referred_split is not None  # the refer row always carries one
     top = max(rules, key=lambda r: r.understanding_gap, default=None)  # max keeps the first of a tie
     if top is None or top.understanding_gap == 0:
         gap, count = Labelled(key="none", label=wording.NO_GAP), 0
@@ -448,6 +483,7 @@ def tiles(
         sampled=chosen.sampled,
         completed=next(row.value.count for row in reach.stages if row.key == "completed"),
         referred=tier[Tier.refer],
+        referred_split=refer_row.referred_split,
         understanding_gap=tier[Tier.understanding_gap],
         most_common_gap=gap,
         most_common_gap_count=count,
@@ -490,7 +526,7 @@ def build_report(store: OpsStore, now: datetime | None = None) -> ReportView:
     chosen = sampling(batch)
     share: Share = proportion if chosen.intervals_shown else plain_share
     rules = rule_rows(batch, share)
-    referral_rows, open_referrals, supported = referrals(batch)
+    referral_rows, open_referrals, supported, decided_split, supported_split = referrals(batch)
     attempts = [a for s in batch.sampled for a in s.attempts]
     phone_attempts = sum(isinstance(a.source, PhoneSession) for a in attempts)
     limits = wording.limits(
@@ -527,7 +563,13 @@ def build_report(store: OpsStore, now: datetime | None = None) -> ReportView:
         referrals=referral_rows,
         open_referrals=open_referrals,
         supported_of_decided=supported,
+        decided_split=decided_split,
+        supported_split=supported_split,
         other_referrals=len(batch.other_referrals),
+        open_referrals_split=header.open_split,
+        other_referrals_split=header.other_referrals_split,
+        basis_note=wording.BASIS_NOTE,
+        rule_split_note=wording.RULE_SPLIT_NOTE,
         outside_calls=len(batch.outside),
         phone_sessions_not_ingested=len(batch.ingest.skipped) if batch.ingest else None,
         phone_sessions_changed=len(batch.ingest.changed) if batch.ingest else None,

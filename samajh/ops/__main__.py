@@ -45,6 +45,9 @@ def _summary(store: OpsStore) -> str:
     lines += [f"  {row.key}: {row.value.count} of {row.value.n}" for row in (*funnel.stages, *funnel.exits)]
     lines.append("tiers of analysed calls:")
     lines += [f"  {row.tier.value}: {row.value.count} of {row.value.n}" for row in report.tiers]
+    split, n = report.tiles.referred_split, next(row.value.n for row in report.tiers)
+    lines.append(f"  referred on what the customer said: {split.customer_statement} of {n}")
+    lines.append(f"  referred on the record alone: {split.record_only} of {n}")
     return "\n".join(lines)
 
 

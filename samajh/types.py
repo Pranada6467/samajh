@@ -356,6 +356,73 @@ if set(FLAG_TIER) != set(FlagReason) - {FlagReason.answers_conflict}:
     raise RuntimeError("FLAG_TIER must give a tier to every FlagReason except answers_conflict")
 
 
+class Basis(StrEnum):
+    """What a flag rests on: the customer's words, or the lender's record and nothing the customer said.
+
+    A tag beside the tier, never a tier. A flag on the record alone needs no call to raise.
+    """
+
+    customer_statement = "customer_statement"
+    record_only = "record_only"
+
+
+# What every flag rests on, by its reason. `Flag.rests_on` overrides it on one path only (bundling
+# raised on the customer's word that the product was required); `Flag.basis` reads both.
+# A new FlagReason must be placed here by hand: the check below fails until it is.
+FLAG_BASIS: dict[FlagReason, Basis] = {
+    **dict.fromkeys(
+        (
+            _R.consent_no_record,
+            _R.funded_no_consent,
+            _R.bundled_not_mitigant,
+            _R.bundled_no_choice_on_record,
+        ),
+        Basis.record_only,
+    ),
+    **dict.fromkeys(
+        (
+            _R.kind_differs,
+            _R.kind_dont_know,
+            _R.premium_differs_confirmed,
+            _R.premium_differs,
+            _R.premium_dont_know,
+            _R.premium_approximate,
+            _R.cover_differs,
+            _R.cover_differs_confirmed,
+            _R.cover_differs_unconfirmed,
+            _R.cover_dont_know,
+            _R.term_differs,
+            _R.term_dont_know,
+            _R.cancel_unaware,
+            _R.cancel_dont_know,
+            _R.cancel_window_differs,
+            _R.cancel_window_dont_know,
+            _R.cancel_not_on_record,
+            _R.recall_not_named,
+            _R.recall_denied,
+            _R.recall_off_record,
+            _R.consent_not_recognised,
+            _R.consent_method_differs,
+            _R.consent_dont_know,
+            _R.funded_says_separately,
+            _R.funded_dont_know,
+            _R.unfunded_says_deducted,
+            _R.bundled_described_as_deposit,
+            _R.bundled_no_choice_told,
+            _R.feature_contradicted,
+            _R.feature_dont_know,
+            _R.frequency_recurring_on_single,
+            _R.frequency_dont_know,
+            _R.sale_concern,
+            _R.answers_conflict,
+        ),
+        Basis.customer_statement,
+    ),
+}
+if set(FLAG_BASIS) != set(FlagReason):
+    raise RuntimeError("FLAG_BASIS must give a basis to every FlagReason")
+
+
 def flag_tier(rule_id: RuleId, reason: FlagReason) -> Tier:
     """The tier of one flag. Conflicting answers follow the rule they were raised under."""
     if reason is FlagReason.answers_conflict:
@@ -716,6 +783,12 @@ class Passed(Frozen):
     product_id: ProductId | None
 
 
+# How `checks.bundling` starts `heard` when the record does not mark the product as required and only
+# the customer said it was. One home for the text: the backfill in `Flag` matches on it.
+TOLD_REQUIRED_HEARD = "customer says the product was required for the loan"
+_TOLD_REQUIRED_REASONS = (FlagReason.bundled_not_mitigant, FlagReason.bundled_no_choice_on_record)
+
+
 class Flag(Frozen):
     """A mismatch for human review. `product_id` is None for a case-level flag.
 
@@ -736,10 +809,56 @@ class Flag(Frozen):
     turn_id: TurnId | None = None
     claim: FeatureClaim | None = None
     also: tuple[Evidence, ...] = ()
+    # Set only where the reason's `FLAG_BASIS` class is `record_only` but this flag rests on the
+    # customer's words (bundling raised because the customer said the product was required).
+    rests_on: Basis | None = None
+
+    added_later: ClassVar[frozenset[str]] = frozenset({"rests_on"})
+
+    @model_validator(mode="before")
+    @classmethod
+    def _backfill_rests_on(cls, data: Any) -> Any:
+        """Backfill for results stored before `rests_on` existed: a bundling flag raised on the
+        customer's word that the product was required (its `heard` starts with
+        `TOLD_REQUIRED_HEARD`) rests on what the customer said. Only a dict with no `rests_on` key."""
+        if (
+            isinstance(data, dict)
+            and "rests_on" not in data
+            and data.get("reason") in _TOLD_REQUIRED_REASONS
+            and isinstance(data.get("heard"), str)
+            and data["heard"].startswith(TOLD_REQUIRED_HEARD)
+        ):
+            return {**data, "rests_on": Basis.customer_statement}
+        return data
+
+    @model_validator(mode="after")
+    def _override_only_to_statement(self) -> "Flag":
+        if self.rests_on is not None and not (
+            self.rests_on is Basis.customer_statement and FLAG_BASIS[self.reason] is Basis.record_only
+        ):
+            raise ValueError("rests_on may only mark a record_only reason as resting on a customer statement")
+        return self
 
     @property
     def tier(self) -> Tier:
         return flag_tier(self.rule_id, self.reason)
+
+    @property
+    def basis(self) -> Basis:
+        """What this flag rests on: the override when set, else the reason's class."""
+        return self.rests_on or FLAG_BASIS[self.reason]
+
+
+def referral_basis(flags: Iterable[Flag]) -> Basis | None:
+    """What a referral rests on, from the refer-tier flags only.
+
+    None when no flag is refer-tier. `customer_statement` when at least one refer-tier flag rests
+    on the customer's words; else `record_only`.
+    """
+    bases = {f.basis for f in flags if f.tier is Tier.refer}
+    if not bases:
+        return None
+    return Basis.customer_statement if Basis.customer_statement in bases else Basis.record_only
 
 
 class Gap(Frozen):
@@ -840,6 +959,11 @@ class ProductResult(Frozen):
             raise ValueError("the evidence pack does not match the product's flags")
         return self
 
+    @property
+    def referral_basis(self) -> Basis | None:
+        """What this product's referral rests on; None exactly when its tier is not `refer`."""
+        return referral_basis(self.flags)
+
 
 class CaseResult(Frozen):
     """Result of one call, for the case UI and the half-yearly report.
@@ -866,6 +990,11 @@ class CaseResult(Frozen):
         if self.tier is not tier_of(self.all_flags(), self.all_gaps()):
             raise ValueError("case tier does not follow from the flags and gaps")
         return self
+
+    @property
+    def referral_basis(self) -> Basis | None:
+        """What this case's referral rests on; None exactly when its tier is not `refer`."""
+        return referral_basis(self.all_flags())
 
     def all_flags(self) -> tuple[Flag, ...]:
         """Every flag in the case: per product, then case-level."""

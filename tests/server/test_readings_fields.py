@@ -29,6 +29,7 @@ from samajh.ops.store import OpsStore
 from samajh.server import create_app
 from samajh.server import samajh_dialogue as adapter
 from samajh.server.audio import normalise_turn
+from samajh.server.casefile import new_case
 from samajh.server.dialogue import BotLine, BotUtterance, Heard, Step
 from samajh.server.loanbook import LoanBook
 from samajh.server.records import PACKAGED_DIR, load_book
@@ -523,6 +524,10 @@ def test_a_turn_read_without_the_classifier_is_marked_everywhere(fake: FakeSpeec
     case = case_of(phone, sid)
     (turn,) = [t for t in case["turns"] if t["degraded"]]
     assert turn["seq"] == marked[0]["seq"] and case["degraded_turns"] == [turn["turn_id"]]
+    # The case file's head carries the list, from the session alone: a case file whose later steps
+    # fail (or one still running) still says the call is void, so samajh.ops never counts it.
+    head = new_case(SessionStore(state / "sessions").load(sid), BOOK.get("hero"))
+    assert head.status == "running" and head.degraded_turns == case["degraded_turns"]
 
 
 def test_a_call_with_no_degraded_turn_says_so(fake: FakeSpeech, state: Path) -> None:

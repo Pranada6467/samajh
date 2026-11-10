@@ -147,6 +147,14 @@ const sourceTag = (simulated) => (simulated ? simTag() : phoneTag());
 const cCount = (c) => `${int(c.count)} of ${int(c.n)}`;
 const caseHref = (id) => `case.html?id=${encodeURIComponent(id)}`;
 
+// What a referral rests on (samajh.types.Basis). The words are the server's (BatchView.basis_labels),
+// set in start(). A referral count is never shown alone: its split by basis travels with it.
+const BASIS = { customer_statement: "On what the customer said", record_only: "On the record alone" };
+const splitText = (split) =>
+  `${int(split.customer_statement)} ${BASIS.customer_statement.toLowerCase()} \u00B7 ${int(split.record_only)} ${BASIS.record_only.toLowerCase()}`;
+const splitSub = (split) => h("span", { class: "sub split" }, splitText(split));
+const basisTag = (basis, label) => h("span", { class: `tag basis basis-${basis}` }, label);
+
 function remember(key, value) {
   try {
     if (value === undefined) return window.localStorage.getItem(key) || "";
@@ -228,11 +236,12 @@ async function pageQueue(main, batch) {
   const items = queue.items;
   const open = items.filter(isOpen).length;
   let show = "all";
+  let basis = "all";
   const list = h("div", null);
   const count = h("p", { class: "small muted", role: "status" });
 
   const draw = () => {
-    const rows = items.filter((it) => show === "all" || isOpen(it));
+    const rows = items.filter((it) => (show === "all" || isOpen(it)) && (basis === "all" || it.basis === basis));
     count.textContent =
       show === "all" ? `Showing ${int(rows.length)} of ${int(items.length)} referred cases.` : `Showing ${int(rows.length)} open of ${int(items.length)} referred cases.`;
     if (items.length === 0) {
@@ -265,6 +274,8 @@ async function pageQueue(main, batch) {
                   h("span", { class: "id" }, it.case_id),
                   ` \u00B7 ${int(it.refer_lines)} ${it.refer_lines === 1 ? "line" : "lines"} for review \u00B7 ${languageName(it.language)} `,
                   sourceTag(it.simulated),
+                  " ",
+                  basisTag(it.basis, it.basis_label),
                 ),
                 it.in_report ? null : h("span", { class: "sub" }, `Not counted in the report: ${it.not_counted_because}`),
               ],
@@ -300,6 +311,23 @@ async function pageQueue(main, batch) {
       }),
       label,
     );
+  const onBasis = (key) => items.filter((it) => it.basis === key).length;
+  const basisRadio = (value, label) =>
+    h(
+      "label",
+      null,
+      h("input", {
+        type: "radio",
+        name: "basis",
+        value,
+        checked: value === basis,
+        onchange: () => {
+          basis = value;
+          draw();
+        },
+      }),
+      label,
+    );
 
   main.replaceChildren(
     h(
@@ -311,15 +339,29 @@ async function pageQueue(main, batch) {
         h("h1", null, "Reviewer queue"),
         h("p", { class: "muted lead" }, "Calls referred for a person to look at. A referral is a request to review a call against the record, and the decision on each case is the reviewer's."),
       ),
-      h("fieldset", { class: "filter" }, h("legend", { class: "vh" }, "Cases to show"), radio("all", `All (${int(items.length)})`), radio("open", `Open (${int(open)})`)),
+      h(
+        "div",
+        { class: "filters" },
+        h("fieldset", { class: "filter" }, h("legend", { class: "vh" }, "Cases to show"), radio("all", `All (${int(items.length)})`), radio("open", `Open (${int(open)})`)),
+        h(
+          "fieldset",
+          { class: "filter" },
+          h("legend", { class: "vh" }, "What the referral rests on"),
+          basisRadio("all", `All referrals (${int(items.length)})`),
+          basisRadio("customer_statement", `${BASIS.customer_statement} (${int(onBasis("customer_statement"))})`),
+          basisRadio("record_only", `${BASIS.record_only} (${int(onBasis("record_only"))})`),
+        ),
+      ),
     ),
     h(
       "ul",
       { class: "stats" },
       h("li", null, h("b", null, `${int(batch.completed)} of ${int(batch.sampled)}`), h("span", null, "sampled loans with a completed call")),
-      h("li", null, h("b", null, `${int(batch.referred)} of ${int(batch.completed)}`), h("span", null, "completed calls referred")),
-      h("li", null, h("b", null, `${int(batch.open_cases)} of ${int(batch.referred)}`), h("span", null, "counted referrals open (no final decision)")),
-      batch.other_referrals ? h("li", null, h("b", null, int(batch.other_referrals)), h("span", null, "referred calls outside the sample or the window")) : null,
+      h("li", null, h("b", null, `${int(batch.referred)} of ${int(batch.completed)}`), h("span", null, "completed calls referred"), h("span", { class: "split" }, splitText(batch.referred_split))),
+      h("li", null, h("b", null, `${int(batch.open_cases)} of ${int(batch.referred)}`), h("span", null, "counted referrals open (no final decision)"), h("span", { class: "split" }, splitText(batch.open_split))),
+      batch.other_referrals
+        ? h("li", null, h("b", null, int(batch.other_referrals)), h("span", null, "referred calls outside the sample or the window"), h("span", { class: "split" }, splitText(batch.other_referrals_split)))
+        : null,
     ),
     count,
     list,
@@ -598,6 +640,7 @@ async function pageCase(main) {
         h("h1", null, "Case ", h("span", { class: "id" }, c.case_id)),
         sevLabel(c.severity),
         h("span", { class: `tier tier-${c.tier}` }, c.tier_label),
+        basisTag(c.referral_basis, c.basis_label),
         sourceTag(call.simulated),
         h(
           "p",
@@ -608,7 +651,13 @@ async function pageCase(main) {
         ),
       ),
     ),
-    h("p", { class: "notice" }, "This call was referred so that a person can compare what the customer said with the record. Nothing on this page is a conclusion about the sale. The decision is the reviewer's."),
+    h(
+      "p",
+      { class: "notice" },
+      c.referral_basis === "record_only"
+        ? "This call was referred so that a person can look at the lender's record for this loan. Nothing on this page is a conclusion about the sale. The decision is the reviewer's."
+        : "This call was referred so that a person can compare what the customer said with the record. Nothing on this page is a conclusion about the sale. The decision is the reviewer's.",
+    ),
     c.in_report ? null : h("p", { class: "notice warn" }, `The half-yearly report does not count this call: ${c.not_counted_because}. It is here so that a person still looks at it.`),
     h(
       "div",
@@ -621,6 +670,7 @@ async function pageCase(main) {
           "section",
           { "aria-labelledby": "words-h" },
           h("h2", { id: "words-h" }, "The customer's words, against the record"),
+          c.first_line ? h("p", { class: "first-line" }, c.first_line) : null,
           c.refer_lines.map((line) => lineCard(line, ctx)),
         ),
         h(
@@ -846,7 +896,7 @@ function proportionTable({ caption, first, rows, bars = false, intervals = true 
     rows: rows.map((r) => ({
       cells: [
         r.label,
-        pCount(r.value),
+        r.referred_split ? [pCount(r.value), splitSub(r.referred_split)] : pCount(r.value),
         pShare(r.value),
         ...(intervals ? [pInterval(r.value)] : []),
         ...(bars ? [h("span", { class: "bar", "aria-hidden": "true" }, h("span", { style: `width:${r.value.share === null ? 0 : Math.round(r.value.share * 100)}%` }))] : []),
@@ -874,7 +924,7 @@ function tileStrip(t) {
       tile("Sold in the period", int(t.sold)),
       tile("Sampled", int(t.sampled)),
       tile("Completed within 30 days", int(t.completed)),
-      tile("Referred", int(t.referred)),
+      tile("Referred", int(t.referred), splitText(t.referred_split)),
       tile("Understanding gap", int(t.understanding_gap)),
       tile("Most common gap", t.most_common_gap.label, t.most_common_gap.key === "none" ? null : `${int(t.most_common_gap_count)} calls`, "gap"),
     ),
@@ -911,7 +961,7 @@ async function pageReport(main) {
       pShare(x.flagged),
       ...(ci ? [pInterval(x.flagged)] : []),
       `${int(x.undecided)} of ${int(x.flagged.n)}`,
-      `${int(x.referred)} of ${int(x.flagged.count)}`,
+      [`${int(x.referred)} of ${int(x.flagged.count)}`, splitSub(x.referred_split)],
       int(x.understanding_gap),
       x.previous ? pBoth(x.previous) : h("span", { class: "muted" }, "None"),
       x.may_engage ? h("span", { class: "engage" }, x.may_engage) : h("span", { class: "muted" }, DASH),
@@ -937,6 +987,7 @@ async function pageReport(main) {
       h("button", { class: "btn no-print", type: "button", onclick: () => window.print() }, "Print or save as PDF"),
     ),
     tileStrip(r.tiles),
+    h("p", { class: "small muted basis-note" }, r.basis_note),
     h(
       "section",
       { class: "limits", "aria-labelledby": "limits-h" },
@@ -1001,6 +1052,7 @@ async function pageReport(main) {
       h("p", null, `${para} asks that this feedback be used to review product features and risks. Each rule runs on every counted call. Undecided calls had a gap under the rule and no flag. Referred is the number of the flagged calls that went to a reviewer for that rule. Understanding-gap calls are counted calls whose outcome is an understanding gap, with a gap under the rule; the rule with the most is the most common gap at the top of the page.`),
       h("p", { class: "notice" }, r.risk_note),
       h("p", { class: "small muted" }, r.seriousness_note),
+      h("p", { class: "small muted rule-split-note" }, r.rule_split_note),
       table({
         caption: "A paragraph is one that a line may engage. It is not a conclusion about any sale.",
         cols: [
@@ -1028,13 +1080,15 @@ async function pageReport(main) {
       table({
         caption: "Counted referrals by the reviewer's latest decision",
         cols: [{ label: "Decision", head: true }, { label: "Count", num: true }],
-        rows: r.referrals.map((row) => ({ cells: [row.label, cCount(row.value)] })),
+        rows: r.referrals.map((row) => ({ cells: [row.label, [cCount(row.value), splitSub(row.split)]] })),
       }),
       h(
         "p",
         null,
-        `${cCount(r.open_referrals)} counted referrals are open (no final decision yet). Of the ${int(e.n)} with a final decision, ${int(e.count)} were marked "${supported ? supported.label : ""}".`,
-        r.other_referrals ? ` ${int(r.other_referrals)} further referred call(s) outside the sample or the window are in the reviewer queue and not counted here.` : "",
+        `${cCount(r.open_referrals)} counted referrals are open (no final decision yet; ${splitText(r.open_referrals_split)}). Of the ${int(e.n)} with a final decision (${splitText(r.decided_split)}), ${int(e.count)} were marked "${supported ? supported.label : ""}" (${splitText(r.supported_split)}).`,
+        r.other_referrals
+          ? ` ${int(r.other_referrals)} further referred call(s) outside the sample or the window (${splitText(r.other_referrals_split)}) are in the reviewer queue and not counted here.`
+          : "",
       ),
     ),
     section(
@@ -1062,8 +1116,8 @@ async function pageReport(main) {
             cells: [
               row.label,
               `${int(row.completed)} of ${int(row.sampled)} sampled`,
-              withInterval(row.referred),
-              withInterval(row.rest_referred),
+              [withInterval(row.referred), splitSub(row.referred_split)],
+              [withInterval(row.rest_referred), splitSub(row.rest_referred_split)],
               withInterval(row.understanding_gap),
               withInterval(row.rest_understanding_gap),
             ],
@@ -1114,6 +1168,7 @@ async function start() {
     showError(main, err);
     return;
   }
+  for (const b of batch.basis_labels || []) BASIS[b.key] = b.label;
   renderHeader(batch, page);
   try {
     await PAGES[page](main, batch);

@@ -78,7 +78,8 @@ def test_every_dialogue_outcome_has_an_attempt_outcome() -> None:
             unconfirmed_request = confirmed is False and dialogue in UNCONFIRMED_REQUESTS
             expected = AttemptOutcome.request_unconfirmed if unconfirmed_request else FROM_DIALOGUE[dialogue]
             assert outcome is expected, (dialogue, confirmed)
-    assert UNCONFIRMED_REQUESTS == {"do_not_call", "human_requested", "call_back_later"}
+    assert UNCONFIRMED_REQUESTS == {"do_not_call", "human_requested", "call_back_later", "written_requested"}
+    assert set(UNCONFIRMED_REQUESTS) <= set(wording.UNCONFIRMED_REQUEST_LABEL)  # each request has its words
     assert AttemptOutcome.request_unconfirmed in RETRY_AFTER  # nobody confirmed who spoke: called again
     assert FinalStatus.request_unconfirmed in wording.STATUS_LABEL
 

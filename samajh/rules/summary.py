@@ -6,11 +6,13 @@ issue share a key and become one line. A line is evidence for review, never a fi
 """
 
 from collections.abc import Iterable
+from typing import ClassVar
 
 from samajh.rules.checks import CONSENT_LABEL, FEATURE_LABEL, KIND_LABEL, QUESTION_RULE, rupees
 from samajh.rules.clauses import KIND_ON_RECORD
 from samajh.types import (
     AnswerConflict,
+    Basis,
     CaseResult,
     FeatureClaim,
     Flag,
@@ -27,12 +29,18 @@ from samajh.types import (
     RuleId,
     Tier,
     TurnId,
+    referral_basis,
 )
 
 R = FlagReason
 
 NOT_ASKED = "not_asked"  # the key of a case-level line of questions never asked
 RECORD_ONLY_MARK = "from the lender's record; no customer statement"
+# The first line of a summary whose referral rests on the lender's record alone. True of every such
+# referral: a gap or a lower-tier flag may rest on the customer's words, but never the referral.
+RECORD_ONLY_FIRST_LINE = (
+    "Referred on the lender's record alone; nothing the customer said is the reason for the referral."
+)
 
 
 class IssueLine(Frozen):
@@ -50,15 +58,28 @@ class IssueLine(Frozen):
     # True for a note, not an issue: a correction the customer made inside one reply. A note has
     # tier `clear` so that no display or count treats it as something to refer or report.
     note: bool = False
+    # On a `refer` line: what its refer-tier flags rest on (`referral_basis`). None on other lines.
+    basis: Basis | None = None
+
+    added_later: ClassVar[frozenset[str]] = frozenset({"basis"})
 
 
 class CaseSummary(Frozen):
-    """Every issue of one call: refer first, then incomplete, then understanding gaps."""
+    """Every issue of one call: refer first, then incomplete, then understanding gaps.
+
+    `referral_basis` is the case's (`CaseResult.referral_basis`). `first_line` is set only on a
+    referral on the record alone: `RECORD_ONLY_FIRST_LINE`, shown above
+    the lines.
+    """
 
     loan_id: str
     call_id: str
     tier: Tier
     lines: tuple[IssueLine, ...]
+    referral_basis: Basis | None = None
+    first_line: str | None = None
+
+    added_later: ClassVar[frozenset[str]] = frozenset({"referral_basis", "first_line"})
 
 
 # --- which flags are one issue -------------------------------------------------
@@ -80,14 +101,10 @@ ISSUE: dict[FlagReason, str] = {
     R.bundled_no_choice_on_record: "bundling",
     R.bundled_no_choice_told: "bundling",
     R.premium_differs_confirmed: "premium",
+    R.cover_differs_confirmed: "cover",
     R.recall_denied: "denied",
     R.recall_off_record: "off_record",
 }
-
-# Flags raised from the record alone: their quote is incidental, so it is the last choice.
-FROM_RECORD = frozenset(
-    {R.consent_no_record, R.funded_no_consent, R.bundled_not_mitigant, R.bundled_no_choice_on_record}
-)
 
 
 def never_asked(o: Flag | Gap) -> bool:
@@ -215,12 +232,13 @@ def _sentence(text: str) -> str:
 def _best_quote(outcomes: list[Flag | Gap]) -> tuple[str | None, TurnId | None]:
     """The customer's own words: a flag from their answer, then a record flag, then a gap's quote.
 
+    A flag on the record alone (`Flag.basis`) has an incidental quote, so it comes after the others.
     A gap whose quote was not found in the transcript is never quoted.
     """
     flags = [o for o in outcomes if isinstance(o, Flag)]
     ranked = [
-        *(f for f in flags if f.reason not in FROM_RECORD),
-        *(f for f in flags if f.reason in FROM_RECORD),
+        *(f for f in flags if f.basis is Basis.customer_statement),
+        *(f for f in flags if f.basis is Basis.record_only),
         *(g for g in outcomes if isinstance(g, Gap) and g.reason is not GapReason.quote_not_grounded),
     ]
     for o in ranked:
@@ -340,6 +358,8 @@ def _title(key: tuple, record: LoanRecord, p: Product | None, outcomes: list[Fla
         return f"customer believes {believed}; the record does not list this feature"
     if issue == "premium":
         return f"{flags[0].heard} and confirmed it at the read-back; the record shows {rupees(p.premium_inr)}"
+    if issue == "cover":
+        return f"{flags[0].heard} and confirmed it at the read-back; the record shows cover of {rupees(p.cover_inr)}"
     if issue == "denied":
         return "customer said they took nothing with the loan; the record shows this product"
     if issue == "consent":
@@ -361,9 +381,10 @@ def _line(key: tuple, record: LoanRecord, p: Product | None, outcomes: list[Flag
     record_only = any(isinstance(o, Flag) for o in outcomes) and all(o.quote is None for o in outcomes)
     if record_only:
         title += f" ({RECORD_ONLY_MARK})"
+    tier = outcomes[0].tier
     return IssueLine(
         product_id=p.id if p else None,
-        tier=outcomes[0].tier,
+        tier=tier,
         title=_sentence(title),
         record_value="; ".join(_unique(_record_part(rule, record, p) for rule in shown)),
         quote=quote,
@@ -371,6 +392,7 @@ def _line(key: tuple, record: LoanRecord, p: Product | None, outcomes: list[Flag
         clauses=tuple(_unique(o.clause for o in outcomes)),
         rule_ids=rule_ids,
         record_only=record_only,
+        basis=referral_basis(o for o in outcomes if isinstance(o, Flag)) if tier is Tier.refer else None,
     )
 
 
@@ -428,7 +450,15 @@ def summarise(record: LoanRecord, result: CaseResult) -> CaseSummary:
     order = list(Tier)
     lines.sort(key=lambda line: order.index(line.tier))
     lines += [_note(record, products[p.product_id], item) for p in result.products for item in p.self_corrections]
-    return CaseSummary(loan_id=result.loan_id, call_id=result.call_id, tier=result.tier, lines=tuple(lines))
+    basis = result.referral_basis
+    return CaseSummary(
+        loan_id=result.loan_id,
+        call_id=result.call_id,
+        tier=result.tier,
+        lines=tuple(lines),
+        referral_basis=basis,
+        first_line=RECORD_ONLY_FIRST_LINE if basis is Basis.record_only else None,
+    )
 
 
 # --- how the call ended ----------------------------------------------------------

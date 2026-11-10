@@ -1,6 +1,6 @@
 # Text path on the `frozen` set, model `openai/gpt-6-luna`
 
-Run at 2026-11-10T15:44:55+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
+Run at 2026-11-10T16:48:39+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
 
 ## Headline
 
@@ -17,23 +17,23 @@ False clear: gold is flag_for_review or unclear_needs_human and the pipeline say
 
 ## Triage: where each kind of customer ended up
 
-| group | languages | calls (base cases) | tiers | misses, calls | misses, base cases | referrals, calls | referrals, base cases | misses on the set's own extraction, calls |
-|---|---|---|---|---|---|---|---|---|
-| problem | hi + hi-en | 38 (19) | refer 30, incomplete 6, understanding_gap 2 | 5 per 100 (2/38; 95% 1 to 17) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (30/38; 95% 64 to 89) | 79 per 100 (15/19; 95% 57 to 91) | 5 per 100 (2/38; 95% 1 to 17) |
-| problem | hi | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 5 per 100 (1/19; 95% 1 to 25) |
-| problem | hi-en | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 5 per 100 (1/19; 95% 1 to 25) |
-| problem | ta (experimental) | 19 (19) | refer 14, incomplete 3, understanding_gap 1, clear 1 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 74 per 100 (14/19; 95% 51 to 88) | 74 per 100 (14/19; 95% 51 to 88) | 5 per 100 (1/19; 95% 1 to 25) |
-| problem | kn (experimental) | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 5 per 100 (1/19; 95% 1 to 25) |
-| informed_clear | hi + hi-en | 18 (9) | clear 18 | 100 per 100 (18/18; 95% 82 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/18; 95% 0 to 18) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (18/18; 95% 82 to 100) |
-| informed_clear | hi | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
-| informed_clear | hi-en | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
-| informed_clear | ta (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
-| informed_clear | kn (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 100 per 100 (9/9; 95% 70 to 100) |
-| informed_flagged | hi + hi-en | 16 (8) | refer 8, incomplete 2, understanding_gap 6 | 38 per 100 (6/16; 95% 18 to 61) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (8/16; 95% 28 to 72) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (6/16; 95% 18 to 61) |
-| informed_flagged | hi | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | hi-en | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | ta (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
-| informed_flagged | kn (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 38 per 100 (3/8; 95% 14 to 69) |
+| group | languages | calls (base cases) | tiers | misses, calls | misses, base cases | referrals, calls | referrals, base cases | referred on what the customer said, calls | referred on the record alone, calls | misses on the set's own extraction, calls |
+|---|---|---|---|---|---|---|---|---|---|---|
+| problem | hi + hi-en | 38 (19) | refer 30, incomplete 6, understanding_gap 2 | 5 per 100 (2/38; 95% 1 to 17) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (30/38; 95% 64 to 89) | 79 per 100 (15/19; 95% 57 to 91) | 30/38 (15/19) | 0/38 (0/19) | 5 per 100 (2/38; 95% 1 to 17) |
+| problem | hi | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 15/19 (15/19) | 0/19 (0/19) | 5 per 100 (1/19; 95% 1 to 25) |
+| problem | hi-en | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 15/19 (15/19) | 0/19 (0/19) | 5 per 100 (1/19; 95% 1 to 25) |
+| problem | ta (experimental) | 19 (19) | refer 14, incomplete 3, understanding_gap 1, clear 1 | 11 per 100 (2/19; 95% 3 to 31) | 11 per 100 (2/19; 95% 3 to 31) | 74 per 100 (14/19; 95% 51 to 88) | 74 per 100 (14/19; 95% 51 to 88) | 14/19 (14/19) | 0/19 (0/19) | 5 per 100 (1/19; 95% 1 to 25) |
+| problem | kn (experimental) | 19 (19) | refer 15, incomplete 3, understanding_gap 1 | 5 per 100 (1/19; 95% 1 to 25) | 5 per 100 (1/19; 95% 1 to 25) | 79 per 100 (15/19; 95% 57 to 91) | 79 per 100 (15/19; 95% 57 to 91) | 15/19 (15/19) | 0/19 (0/19) | 5 per 100 (1/19; 95% 1 to 25) |
+| informed_clear | hi + hi-en | 18 (9) | clear 18 | 100 per 100 (18/18; 95% 82 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/18; 95% 0 to 18) | 0 per 100 (0/9; 95% 0 to 30) | 0/18 (0/9) | 0/18 (0/9) | 100 per 100 (18/18; 95% 82 to 100) |
+| informed_clear | hi | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 0/9 (0/9) | 0/9 (0/9) | 100 per 100 (9/9; 95% 70 to 100) |
+| informed_clear | hi-en | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 0/9 (0/9) | 0/9 (0/9) | 100 per 100 (9/9; 95% 70 to 100) |
+| informed_clear | ta (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 0/9 (0/9) | 0/9 (0/9) | 100 per 100 (9/9; 95% 70 to 100) |
+| informed_clear | kn (experimental) | 9 (9) | clear 9 | 100 per 100 (9/9; 95% 70 to 100) | 100 per 100 (9/9; 95% 70 to 100) | 0 per 100 (0/9; 95% 0 to 30) | 0 per 100 (0/9; 95% 0 to 30) | 0/9 (0/9) | 0/9 (0/9) | 100 per 100 (9/9; 95% 70 to 100) |
+| informed_flagged | hi + hi-en | 16 (8) | refer 8, incomplete 2, understanding_gap 6 | 38 per 100 (6/16; 95% 18 to 61) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (8/16; 95% 28 to 72) | 50 per 100 (4/8; 95% 22 to 78) | 6/16 (3/8) | 2/16 (1/8) | 38 per 100 (6/16; 95% 18 to 61) |
+| informed_flagged | hi | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 3/8 (3/8) | 1/8 (1/8) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | hi-en | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 3/8 (3/8) | 1/8 (1/8) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | ta (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 3/8 (3/8) | 1/8 (1/8) | 38 per 100 (3/8; 95% 14 to 69) |
+| informed_flagged | kn (experimental) | 8 (8) | refer 4, incomplete 1, understanding_gap 3 | 38 per 100 (3/8; 95% 14 to 69) | 38 per 100 (3/8; 95% 14 to 69) | 50 per 100 (4/8; 95% 22 to 78) | 50 per 100 (4/8; 95% 22 to 78) | 3/8 (3/8) | 1/8 (1/8) | 38 per 100 (3/8; 95% 14 to 69) |
 
 Misses (a customer with a problem ends `clear` or `understanding_gap`): 5.
 - U07-hi: tier `understanding_gap`
@@ -48,7 +48,7 @@ Misses (a customer with a problem ends `clear` or `understanding_gap`): 5.
 
 False referrals (an informed customer on a compliant record ends `refer`): 0.
 
-A miss is counted only for customers the set labels misled, unaware or did not agree. `incomplete` is not a miss and not a referral: the call did not yield enough to decide. The last column runs the rule engine on the set's own extraction, so a miss there is the rules', not the extractor's. Base cases, not calls, are the independent unit.
+A miss is counted only for customers the set labels misled, unaware or did not agree. `incomplete` is not a miss and not a referral: the call did not yield enough to decide. The last column runs the rule engine on the set's own extraction, so a miss there is the rules', not the extractor's. Base cases, not calls, are the independent unit. A referral on the record alone rests only on the lender's record (for example no consent on record) and on nothing the customer said; a referral on what the customer said has at least one refer-tier flag that rests on the customer's words (counts of the group's calls, base cases in brackets).
 
 ## Verdicts, gold against pipeline (all calls)
 

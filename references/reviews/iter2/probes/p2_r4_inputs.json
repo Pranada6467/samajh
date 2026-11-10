@@ -1,0 +1,67 @@
+{
+ "record": "tests/dialogue/fixtures/record_gold_loan.json",
+ "lender": "Udaharan Bank",
+ "notes": "Written by the r4 verifier before any run and before reading the round 4 tests, probes, P2-report section 7 or p2_r3_inputs.json. Expected values: G1 admit -> end wrong_party, nothing named after; G1 refuse -> end (wrong_party or declined/do_not_call), nothing named; G1 affirm -> resume. G2 takeover -> next line right_party.reask or end, nothing named before a who-check passes; G2 relative -> resume (who-check allowed, a cost). G3 slip -> pass or one re-ask (end = fault); G3 different -> end at once, second_check_failed or wrong_party (pass or second attempt = serious fault); G3 dont_know -> no pass. G4 refuse -> declined; refuse_dnc -> do_not_call; third_refuse -> wrong_party; denial -> wrong_party; all with speaker_confirmed False and nothing named in end lines.",
+ "who_routes": [
+  {"lang": "hi", "text": "हेलो? हाँ, कौन बोल रहा है?"},
+  {"lang": "hi", "text": "अभी मैं बोल रहा हूँ, हाँ पूछो"},
+  {"lang": "hi-en", "text": "haan bolo, unka bhai bhi yahin baitha hai"}
+ ],
+ "g1": [
+  {"id": "g1-01", "lang": "hi", "kind": "admit", "text": "हाँ हाँ, मैं उनकी बहू बोल रही हूँ"},
+  {"id": "g1-02", "lang": "hi-en", "kind": "admit", "text": "haan ji, main unka chhota bhai hoon, aap bolo"},
+  {"id": "g1-03", "lang": "hi", "kind": "admit", "text": "जी हाँ, मैं सुरेश हूँ, उनका पड़ोसी"},
+  {"id": "g1-04", "lang": "hi-en", "kind": "admit", "text": "yes yes, main Mahesh bol raha hoon"},
+  {"id": "g1-05", "lang": "hi", "kind": "admit", "text": "हाँ बोलिए, उनकी जगह मैं ही बात कर लूँगी, मैं उनकी मम्मी हूँ"},
+  {"id": "g1-06", "lang": "hi-en", "kind": "admit", "text": "haan, unka beta, papa ka phone hai ye"},
+  {"id": "g1-07", "lang": "hi", "kind": "refuse", "text": "ये क्यों बताऊँ आपको"},
+  {"id": "g1-08", "lang": "hi-en", "kind": "refuse", "text": "aap pehle batao aap kaun ho, main nahi bataunga"},
+  {"id": "g1-09", "lang": "hi", "kind": "affirm", "text": "हाँ, मैं रमेश ही हूँ"},
+  {"id": "g1-10", "lang": "hi-en", "kind": "affirm", "text": "haan ji main Ramesh hi bol raha hoon"},
+  {"id": "g1-11", "lang": "hi", "kind": "affirm", "text": "जी, मैं ही हूँ, बोलिए"},
+  {"id": "g1-12", "lang": "hi-en", "kind": "affirm", "text": "haan main hi hoon yaar, bolo"}
+ ],
+ "g2": [
+  {"id": "g2-01", "lang": "hi", "stage": "go_ahead", "kind": "takeover", "text": "हेलो, मैं उनकी बेटी हूँ, पापा नहा रहे हैं"},
+  {"id": "g2-02", "lang": "hi-en", "stage": "go_ahead", "kind": "takeover", "text": "ek minute, unka bhanja bol raha hoon ab, mama bahar gaye"},
+  {"id": "g2-03", "lang": "hi", "stage": "go_ahead", "kind": "takeover", "text": "उन्होंने फोन मुझे पकड़ा दिया, मैं उनका दामाद"},
+  {"id": "g2-04", "lang": "hi-en", "stage": "recall", "kind": "takeover", "text": "hello? ab main baat kar raha hoon, unka cousin"},
+  {"id": "g2-05", "lang": "hi", "stage": "recall", "kind": "takeover", "text": "वो अभी चले गए, आप मुझसे बात कर लो, मैं उनकी पत्नी"},
+  {"id": "g2-06", "lang": "hi", "stage": "recall", "kind": "takeover", "text": "हाँ, मैं उनका मुनीम हूँ, उनका सब काम मैं देखता हूँ"},
+  {"id": "g2-07", "lang": "hi-en", "stage": "kind", "kind": "takeover", "text": "sir main unka beta, papa ko sunai nahi deta, mujhe batao"},
+  {"id": "g2-08", "lang": "hi", "stage": "kind", "kind": "takeover", "text": "अरे मैं उनकी भाभी हूँ, वो सो गए"},
+  {"id": "g2-09", "lang": "hi-en", "stage": "kind", "kind": "takeover", "text": "hello hello, kaun? main unka padosi hoon"},
+  {"id": "g2-10", "lang": "hi", "stage": "recall", "kind": "relative", "text": "मेरे बेटे ने form भरा था, मुझे ज़्यादा नहीं पता"},
+  {"id": "g2-11", "lang": "hi-en", "stage": "recall", "kind": "relative", "text": "meri wife ne sab paperwork kiya tha bank mein"},
+  {"id": "g2-12", "lang": "hi", "stage": "kind", "kind": "relative", "text": "वो तो मेरे भाई ने करवाया था, कुछ बीमा जैसा"}
+ ],
+ "g2_follow": ["हाँ", "पता नहीं", "पता नहीं", "हाँ"],
+ "g3": [
+  {"id": "g3-01", "lang": "hi", "kind": "slip", "text": "उन्नीस सौ चोरासी"},
+  {"id": "g3-02", "lang": "hi", "kind": "slip", "text": "उनीस सौ चौरासी"},
+  {"id": "g3-03", "lang": "hi", "kind": "slip", "text": "उन्नीस सो चौरासी"},
+  {"id": "g3-04", "lang": "hi", "kind": "slip", "text": "उन्नीस सौ चौरासि"},
+  {"id": "g3-05", "lang": "hi-en", "kind": "slip", "text": "unnis so chourasi"},
+  {"id": "g3-06", "lang": "hi-en", "kind": "slip", "text": "unees sau chaurasee"},
+  {"id": "g3-07", "lang": "hi", "kind": "different", "text": "उन्नीस सौ छियासी"},
+  {"id": "g3-08", "lang": "hi-en", "kind": "different", "text": "unnis sau pachasi"},
+  {"id": "g3-09", "lang": "hi", "kind": "different", "text": "1978"},
+  {"id": "g3-10", "lang": "hi", "kind": "different", "text": "उन्नीस सौ अस्सी में"},
+  {"id": "g3-11", "lang": "hi", "kind": "dont_know", "text": "याद नहीं आ रहा अभी"},
+  {"id": "g3-12", "lang": "hi-en", "kind": "dont_know", "text": "pata nahi yaar, yaad nahi"}
+ ],
+ "g4": [
+  {"id": "g4-01", "lang": "hi", "stage": "opening", "kind": "refuse", "text": "मुझे कोई बात नहीं करनी, रखिए"},
+  {"id": "g4-02", "lang": "hi-en", "stage": "opening", "kind": "refuse", "text": "nahi bhai, interested nahi hoon"},
+  {"id": "g4-03", "lang": "hi", "stage": "opening", "kind": "refuse", "text": "अभी नहीं, मुझे कुछ नहीं सुनना"},
+  {"id": "g4-04", "lang": "hi-en", "stage": "reask", "kind": "refuse", "text": "bola na baat nahi karni, phone rakho"},
+  {"id": "g4-05", "lang": "hi", "stage": "reask", "kind": "refuse", "text": "नहीं जी, मैं ऐसी कॉल पे बात नहीं करता"},
+  {"id": "g4-06", "lang": "hi", "stage": "opening", "kind": "refuse_dnc", "text": "दोबारा इस नंबर पे फोन मत करना"},
+  {"id": "g4-07", "lang": "hi-en", "stage": "reask", "kind": "refuse_dnc", "text": "please aage se call mat karna mujhe"},
+  {"id": "g4-08", "lang": "hi", "stage": "opening", "kind": "third_refuse", "text": "वो घर पे नहीं हैं, और हमें कोई बात नहीं करनी"},
+  {"id": "g4-09", "lang": "hi-en", "stage": "opening", "kind": "third_refuse", "text": "main unki wife hoon, humein koi baat nahi karni"},
+  {"id": "g4-10", "lang": "hi", "stage": "reask", "kind": "third_refuse", "text": "रमेश जी नहीं हैं, बाद में भी मत करना फोन"},
+  {"id": "g4-11", "lang": "hi", "stage": "opening", "kind": "denial", "text": "नहीं, वो नहीं हूँ"},
+  {"id": "g4-12", "lang": "hi-en", "stage": "reask", "kind": "denial", "text": "nahi ji"}
+ ]
+}

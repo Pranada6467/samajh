@@ -25,6 +25,27 @@ tier_of(flags, gaps) -> Tier    # samajh.types: the one pure function. Order: re
 
 Every flag and gap is still in `flags` and `gaps`. The tier is derived from them and from nothing else.
 
+**Basis of a referral (P3c, 2026-11-10).** A tag beside the tier, never a tier: it changes no tier,
+verdict, flag or gap.
+
+```python
+class Basis(StrEnum):           # samajh.types
+    customer_statement = "customer_statement"
+    record_only = "record_only"             # rests on the lender's record and nothing the customer said
+
+FLAG_BASIS: dict[FlagReason, Basis]         # beside FLAG_TIER, total over every FlagReason (import-time check)
+referral_basis(flags) -> Basis | None       # over refer-tier flags only: None when none; customer_statement
+                                            # when any rests on a statement; else record_only
+ProductResult.referral_basis -> Basis | None   # property, over its flags
+CaseResult.referral_basis -> Basis | None      # property, over all_flags(); None exactly when tier is not refer
+```
+
+`record_only` reasons: `consent_no_record`, `funded_no_consent`, `bundled_not_mitigant`,
+`bundled_no_choice_on_record`. Every other reason, `answers_conflict` included, is
+`customer_statement`. The one exception is `Flag.rests_on` (§2). The referrals per 100 are reported
+apart by basis, so that a fault on the record alone (which needs no call) is not counted as
+something the call found.
+
 | Tier | Flags (by `Flag.reason`) | Gaps (by `Gap.rule_id`) |
 |---|---|---|
 | `refer` | `kind_*`, `premium_differs_confirmed`, `cover_differs_confirmed`, `recall_denied`, `recall_off_record`, `consent_*`, `funded_*`, `unfunded_says_deducted`, `bundled_*`, `feature_contradicted`, `sale_concern`, `answers_conflict` on a refer-tier rule | none |
@@ -93,6 +114,12 @@ class Flag(Frozen):
     reason: FlagReason                      # NEW, required
     claim: FeatureClaim | None = None       # NEW: the belief, on a feature_contradicted flag
     also: tuple[Evidence, ...] = ()         # NEW: further quotes; a conflict flag holds every differing answer here after `quote`
+    rests_on: Basis | None = None           # P3c, added_later: overrides FLAG_BASIS, only record_only -> customer_statement
+    basis -> Basis                          # property: rests_on or FLAG_BASIS[reason]
+
+# `checks.bundling` sets rests_on=customer_statement on bundled_not_mitigant and
+# bundled_no_choice_on_record exactly when the record does not mark the product as required and only
+# the customer said it was. Nothing else sets it. Left out of a dump while None, so stored files keep their bytes.
 
 class GapReason(StrEnum):       # NEW values
     extraction_failed = "extraction_failed" # the model gave no valid output for this reply
@@ -280,6 +307,7 @@ class IssueLine(Frozen):
     turn_id: TurnId | None
     clauses: tuple[str, ...]        # the paragraphs the merged flags may engage
     rule_ids: tuple[RuleId, ...]    # the rules merged into this line
+    basis: Basis | None = None      # P3c, added_later: on a refer line, referral_basis of its refer-tier flags
 
 class CaseSummary(Frozen):
     loan_id: str
@@ -287,6 +315,8 @@ class CaseSummary(Frozen):
     tier: Tier
     lines: tuple[IssueLine, ...]    # refer first, then incomplete, then understanding gaps; one per distinct
                                     # refer issue, and one per rule for incomplete and understanding-gap lines
+    referral_basis: Basis | None = None   # P3c, added_later: CaseResult.referral_basis
+    first_line: str | None = None         # P3c, added_later: only on a referral on the record alone
 
 summarise(record: LoanRecord, result: CaseResult) -> CaseSummary      # pure
 call_ended_label(outcome: str | None) -> str                         # pure; gives a label for any value
@@ -296,6 +326,11 @@ call_ended_label(outcome: str | None) -> str                         # pure; giv
   rendered as a sentence: "The call did not get to: the cover."
 - A flag line whose outcomes carry no customer quote ends its title with
   "(from the lender's record; no customer statement)" (`RECORD_ONLY_MARK`).
+- `first_line` on a referral on the record alone is `RECORD_ONLY_FIRST_LINE`, "Referred on the
+  lender's record alone; nothing the customer said is the reason for the referral." (one sentence,
+  true even when a gap or a lower-tier flag rests on the customer's words). The quote-based
+  `record_only` field and `RECORD_ONLY_MARK` are unchanged. `_best_quote` ranks flags on a statement
+  before flags on the record (`Flag.basis`).
 - On every case, clear ones included, a note line (tier `clear`, `note=True`, no clauses) follows
   every issue line for each item of `ProductResult.self_corrections`: 'Customer first said "…"
   about …, then corrected it in the same reply.' A note line is never part of the case tier.

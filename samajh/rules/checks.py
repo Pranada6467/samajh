@@ -14,7 +14,9 @@ from samajh.amounts import too_wide
 from samajh.rules.clauses import KIND_ON_RECORD
 from samajh.types import (
     REFER_RULES,
+    TOLD_REQUIRED_HEARD,
     Answer,
+    Basis,
     Beliefs,
     ConsentMethod,
     DontKnow,
@@ -181,6 +183,7 @@ def _flag(
     heard: str,
     evidence: Evidence | None = None,
     claim: FeatureClaim | None = None,
+    rests_on: Basis | None = None,
 ) -> Flag:
     return Flag(
         rule_id=rule.id,
@@ -193,6 +196,7 @@ def _flag(
         quote=evidence.quote if evidence else None,
         turn_id=evidence.turn_id if evidence else None,
         claim=claim,
+        rests_on=rests_on,
     )
 
 
@@ -629,20 +633,29 @@ def bundling(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
 
     expected = "a product required for the loan is a risk mitigant the customer may buy from any provider"
     how = "the record marks this product as required for the loan"
+    # Required only on the customer's word: the flags below then rest on what the customer said.
+    rests_on = None
     if not p.required_for_loan:
-        how = "customer says the product was required for the loan"
+        how = TOLD_REQUIRED_HEARD
+        rests_on = Basis.customer_statement
     required_ev = _evidence_of(required)
     flags: list[Outcome] = []
     deposit = _described_as_deposit(p, beliefs)
     if not p.risk_mitigant:
         heard = f"{how}; the record does not mark it as a risk mitigant"
-        flags.append(_flag(rule, p.id, Why.bundled_not_mitigant, expected, heard, required_ev))
+        flags.append(
+            _flag(rule, p.id, Why.bundled_not_mitigant, expected, heard, required_ev, rests_on=rests_on)
+        )
     elif deposit is not None:
         heard = f"{how}; customer describes it as a deposit, which is not a risk mitigant"
         flags.append(_flag(rule, p.id, Why.bundled_described_as_deposit, expected, heard, deposit))
     if not p.provider_choice_offered:
         heard = f"{how}; the record shows no choice of provider was offered"
-        flags.append(_flag(rule, p.id, Why.bundled_no_choice_on_record, expected, heard, required_ev))
+        flags.append(
+            _flag(
+                rule, p.id, Why.bundled_no_choice_on_record, expected, heard, required_ev, rests_on=rests_on
+            )
+        )
     if isinstance(choice, Stated) and not choice.value:
         heard = f"{how}; customer says they were not told they could buy it from another provider"
         flags.append(_flag(rule, p.id, Why.bundled_no_choice_told, expected, heard, choice.evidence))

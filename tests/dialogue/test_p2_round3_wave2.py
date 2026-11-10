@@ -7,7 +7,7 @@ from dialogue_kit import CUSTOMERS, LENDER, play, product, record
 from test_p2_round3 import ARMS, STRONG, Labels, figure_positions, interp, sensible, text_of
 
 from samajh.clients.errors import TransportError
-from samajh.dialogue import Expecting, Outcome, RuleInterpreter, load_prompts, step
+from samajh.dialogue import Expecting, Intent, Outcome, RuleInterpreter, load_prompts, step
 from samajh.dialogue.llm_fallback import LlmFallbackInterpreter
 from samajh.dialogue.machine import AtCallbackTime, AtStopCheck
 from samajh.types import Language
@@ -26,12 +26,18 @@ def keys_after(replies, rec=None, **kw):
 
 
 @pytest.mark.parametrize("text", [
-    "बीमा-वीमा की बात बैंक जाकर करूँगा, अभी नहीं", "Insurance ki baat mujhe phone pe nahi karni",
+    "बीमा-वीमा की बात बैंक जाकर करूँगा, अभी नहीं",
     "मेरे बेटे से बात करो, सब कागज़ वही रखता है", "मैनेजर साहब से बात करवाइए, तभी बताऊँगा",
     "Policy ki details main khud dekh lunga, aap rehne do",
 ])  # fmt: skip
 def test_a_product_word_with_a_risk_cue_goes_to_the_classifier(text):
     assert not RULES.interpret(text, language=HE, expecting=Expecting.open).settled
+
+
+def test_a_refusal_to_talk_about_the_product_is_a_refusal():
+    # Round 4: a no-word, a talk word and a doing word together are a refusal to talk (was: unsettled).
+    heard = RULES.interpret("Insurance ki baat mujhe phone pe nahi karni", language=HE, expecting=Expecting.open)
+    assert heard.intent is Intent.decline
 
 
 @pytest.mark.parametrize("text", ["एक बीमा लिया था", "लोन में से कट गया", "फॉर्म पर साइन किया था बस"])

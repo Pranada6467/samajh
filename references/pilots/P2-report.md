@@ -123,3 +123,92 @@ The remaining third party ("हाँ मैं ही हूँ", "हाँ", 
   as `call_back_later` in every arm; "साल? वो तो याद नहीं अभी" at the year ends as `wrong_party` ("वो");
   on a two-reading turn "Mera number list se hata do." beside a figure is asked to say the figure again
   (live it ends as `do_not_call`); "office" is still a relation word outside the year question.
+
+## 7. Round 4 (builder's report; an independent verifier follows)
+
+Typed text, not speech. Inputs from the round 3 verifier (`references/reviews/iter2/verify-P2-r3.md`) were
+used only as examples of a class; none was added to a word list. No line text changed.
+
+1. **The who-check** (`right_party.reask` after a sign of another speaker). Root cause: the reply was read
+   as an ordinary stop-check answer, where takeover cues were not computed, so a leading "हाँ" resumed the
+   call. Now, in every arm: a reply that points elsewhere (a relation word that is not a form of address,
+   a third-person word or possessive, an absent or "not me" cue, a denial, a takeover sign) ends as
+   `wrong_party` with `end.third_party`. The call resumes only on an affirmation by a closed vocabulary
+   (yes-words, first-person claim words, the borrower's first name, address forms, go-on words, fillers;
+   every word must be explained), or on the classifier's `confirms_self` with a first-person word. A stop
+   request ends as asked; anything else ends as `wrong_party`. Every `wrong_party` end now carries
+   `speaker_confirmed` False. Known and accepted: a third party who answers with a false "हाँ" or
+   "हाँ मैं ही हूँ" passes; no text rule can catch that.
+2. **Takeovers with the classifier off or failing.** Root causes: the takeover frames needed "I + their +
+   relation + am" ("मैं उनका भाई," without "हूँ" missed), romanised "chale" was not folded, "मुझसे बात करो" and
+   a restart ("हेलो? क्या पूछ रहे थे") were no sign at all, so the turn was taken as an answer; and with a
+   failed classifier, "shall I go on?" came before the takeover check. Now the word lists see two tiers of
+   signs (contract §8). Any sign with no usable classifier label, or with a label that says nothing about who
+   is speaking (`asks_repeat`, `who_or_why`, `off_topic`, `unclear`), gets the who-check before anything
+   else is said or taken as an answer, at every answering position after the opening, including the stop
+   checks and the call-back question. A strong sign keeps round 3's rule: a label can end the call but
+   not clear it. The who-check has its own cap (`Limits.max_who_checks`, 2); past it the call ends as
+   `wrong_party`.
+3. **The birth year.** A word one edit (Devanagari code points; romanised: folded key, at least 5 letters)
+   from exactly one number word is read as that word; the year must still match. Built also: a word right
+   after "सौ"/"हज़ार" two edits from a number, or one edit from two numbers, makes the reply "no year" (the one
+   re-ask), not 1900. Neighbours among the 306 Devanagari number words `samajh.amounts` reads (120 values):
+   61 pairs of different values lie one edit apart (for example पचास/पचासी, छियासठ/छियासी, उन्नीस/उनतीस,
+   चौबीस/चौतीस), 710 two apart. चौरासी has no valid word one edit away and only तिरासी two away; a slip
+   from one valid year word to another (पचासी) is a different year and still fails. What a false claimant
+   gains: nothing from the correction itself, which only reaches the record's year from a non-word next to
+   it; and a second attempt when the first reply holds an unreadable number-like word ("उन्नीस सौ पचासि"
+   is one edit from both पचासी and पचास, so it is re-asked).
+4. **A refusal at the opening.** Root cause: "नहीं करनी कोई बात" matched no refusal phrase, so "नहीं" read as
+   "not me". A refusal to talk is now read by structure at every stage (a no-word, a talk or listen word and
+   a wanting or doing word within three words of the talk word, or a hang-up word with a no-word). At the
+   first-name question and its re-ask it ends as `declined` (`do_not_call` when the words ask so), with
+   `end.declined` (names nothing) and `speaker_confirmed` False. A bare "नहीं", or a refusal with a third
+   party or a third-person word, stays `wrong_party`.
+5. **`verify.before_loan`** plays only before the year has passed; after it, a who/why question gets
+   `verify.after_loan` and the pending question. No line text changed.
+6. **Residuals.** At the call-back question a no-word answers "later?" unless it negates the now ("अभी
+   नहीं") and a "later" counts only when not negated, so "नहीं नहीं, अभी कर लीजिए।" and "Na, later nahi, abhi
+   karte hain." resume. At the year, "वो" before "तो", a year word or a number is "that", not a person:
+   "साल? वो तो याद नहीं अभी" gets the one re-ask, "वो बाहर गए हैं" still ends as `wrong_party`, and
+   "अरे वो उन्नीस सौ चौरासी" (round 3's known residual) now passes.
+
+**Evidence.** `uv run pytest tests/dialogue -q`: 2,181 passed (1,786 before; the new tests are
+`tests/dialogue/test_p2_round4.py`). `uv run ruff check samajh/dialogue tests/dialogue`: all checks passed.
+Round 3 tests changed: `test_p2_round3_wave3.py::test_an_account_is_not_a_takeover` ("मेरे भाई का भी वहीं लोन
+है" now gets the who-check with no label or a label silent on the speaker) and
+`test_p2_round3_wave2.py::test_a_product_word_with_a_risk_cue_goes_to_the_classifier` ("Insurance ki baat
+mujhe phone pe nahi karni" is now a refusal; moved to its own test).
+
+**Blind probe** (`tests/dialogue/probes/p2_round4_fresh.py`, 127 hi and hi-en inputs written before the round
+4 code ran on them; setup turns by the word lists, the probe turn by the arm). First run, as expected:
+
+| group (n) | rules | failing | live |
+|---|---|---|---|
+| W who-check replies: resume (11) / end (13) | 11 / 13 | 11 / 13 | 11 / 13 |
+| T takeovers: who-check or end next (22) | 22 | 22 | 19 |
+| Tc genuine answers: plain, no who-check (5) / ambiguous (3) | 5 / 3 | 5 / 3 | 5 / 3 |
+| Y year: genuine pass (16) / other year fails (7) / slip not ended (1) | 13 / 6 / 1 | 13 / 6 / 1 | 13 / 6 / 1 |
+| R opening: declined (11) / do_not_call (4) / wrong_party (7); later stages declined (3) | 9 / 4 / 7; 3 | 9 / 4 / 7; 3 | 10 / 4 / 7; 3 |
+| C call-back: now (10) / later (5); year: re-ask (6) / wrong_party (3) | 10 / 5; 6 / 3 | same | same |
+
+The probe's judge printed the 3 later-stage refusals as misses because it wanted `speaker_confirmed` False
+after the year too; the outcomes were `declined` (judge fixed). Misses: years "उनीस सौ चौरासी", "unnees sau
+chorasi", "उन्नसी सौ चौरासी" (two edits; re-asked once, not ended); "उन्नीस सौ पचासि" re-asked instead of
+failing; "नहीं भाई, अभी बात नहीं करनी, फ़ोन रखो" ended `wrong_party` ("भाई"); "रहने दो, नहीं करनी कोई बात" got
+"shall I go on?" (rules, failing); live, three weak signs went on: "हैलो? हाँ, अब मैं बात कर रहा हूँ, क्या
+चाहिए", "hello? kaun? kya baat chal rahi thi?", "hello? ye kiska phone hai? kya puch rahe ho?". After that run
+(the rerun is contaminated): labels silent on the speaker no longer let a weak sign pass, the refusal
+window grew from two to three words, and a relation word not covered by an address form points elsewhere at
+the who-check. Rerun: T live 21 of 22 (the "अब मैं बात कर रहा हूँ" turn, labelled `answer`, still goes on);
+R declined 10 of 11 in each arm; everything else unchanged. The round 3 verifier's 3 who-check replies and 5
+takeovers (at two stages) end as `wrong_party` with the classifier live. Classifier: 63 new requests,
+about US$0.0028 (client figures); reruns from the cache.
+
+**Not covered.** A takeover with no lexical sign ("हाँ", "पता नहीं" from someone else), in any arm. A weak sign
+the classifier labels `answer`. Relation words outside the list. Another person's name at the who-check is
+caught only as an unexplained word (word lists) or by the classifier. Tamil and Kannada have no weak signs
+and no near-spelling rule. A genuine borrower who mentions a relative's act ("मेरे बेटे ने फॉर्म भरा था") gets
+one who-check when no classifier label decides it.
+
+**Round 4 follow-up (item 4).** At the first-name question and its re-ask, an address form inside a structural refusal ("नहीं भाई, बात नहीं करनी", "sir nahi chahiye, phone rakho") is address when there is no possessive, no third-person word and no "हूं / बोल रहा / am" after it: the call ends `declined`. At the who-check, a leading no-word before a first-person claim ("नहीं भाई, मैं ही हूँ") is read as "no, it is me". Rerun of the blind probe (contaminated): opening refusals declined 11 of 11, do_not_call 4 of 4, wrong_party 7 of 7, later stages 3 of 3, in rules and in failing; the other groups did not change.

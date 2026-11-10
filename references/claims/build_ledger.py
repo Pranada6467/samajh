@@ -23,9 +23,10 @@ GROUPS = {
     "C": "Supporting practice and evidence",
     "D": "Statements in DESIGN.md sections 11 and 12, and measured numbers",
     "E": "Rules for an automated, recorded, AI-voiced outbound call",
+    "F": "Identity on an outbound call (package P8)",
 }
 STATUSES = ("secondary-only", "unverifiable", "verified", "wrong")
-CLAIM_ID = re.compile(r"^#{3,4} +((?:A\d+|B\d+b?|B-N\d+|C\d\.\d+|D\d\.\d+[ab]?|E\d\.\d+))\b\s*(.*)$")
+CLAIM_ID = re.compile(r"^#{3,4} +((?:A\d+|B\d+b?|B-N\d+|C\d\.\d+|D\d\.\d+[ab]?|E\d\.\d+|F\d\.\d+))\b\s*(.*)$")
 FIELD = re.compile(r"^- ([A-Z][A-Za-z /]{2,24}?)(?: \(.*?\))?:\s*(.*)$")
 QUOTE_LIMIT = 420
 NOT_A_DESIGN_CLAIM = re.compile(r"^(not in DESIGN\.md|requested|n/a)\b", re.IGNORECASE)

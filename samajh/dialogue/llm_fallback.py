@@ -22,7 +22,8 @@ import logging
 import threading
 import time
 from collections import OrderedDict
-from concurrent.futures import Future, ThreadPoolExecutor
+from collections.abc import Callable
+from concurrent.futures import Future
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
@@ -48,11 +49,46 @@ FALLBACK_MODEL = "mistralai/mistral-small-3.2-24b-instruct"
 MAX_TOKENS = 512
 # Wall-clock limit on one classifier call inside a live turn (W9 report §6).
 TIMEOUT_S = 2.5
-# Calls that outlive their turn finish here in the background; their answer is dropped.
-_POOL = ThreadPoolExecutor(max_workers=4, thread_name_prefix="samajh-turn-classifier")
+# Each classifier request runs on its own daemon thread, started at once, so no call waits in a queue
+# behind another call's request, and a request whose turn gave up finishes in the background (its
+# answer is dropped) without holding up later ones. How long it can live is bounded by the client
+# (the server's: one send per output attempt, three output attempts, `[fallback] timeout_s` each).
+# At most this many run at once in the process; past it a turn is not asked and reads as a failed
+# classifier (degraded), at once, instead of waiting for a slot it would not get in time.
+_MAX_LIVE = 64
+_LIVE = threading.BoundedSemaphore(_MAX_LIVE)
 # Calls started by `begin` and not yet read. The oldest is forgotten past this many (it still finishes
-# in the pool and its answer is dropped), so a begun call that is never read cannot pile up.
-_PENDING_LIMIT = 16
+# in the background and its answer is dropped), so a begun call that is never read cannot pile up.
+# The server shares one interpreter across all its calls, so this is per process too.
+_PENDING_LIMIT = _MAX_LIVE
+
+
+class _Saturated(RuntimeError):
+    """`_MAX_LIVE` classifier requests are already running in this process."""
+
+
+def _start(ask: Callable[[list[Message]], _Label], messages: list[Message]) -> Future[_Label]:
+    """Run `ask(messages)` on a new daemon thread now; its outcome lands in the returned future."""
+    future: Future[_Label] = Future()
+    live = _LIVE  # released to the semaphore that was acquired, whatever the global is by then
+    if not live.acquire(blocking=False):
+        future.set_exception(_Saturated(f"{_MAX_LIVE} classifier requests already running"))
+        return future
+
+    def run() -> None:
+        try:
+            future.set_result(ask(messages))
+        except BaseException as error:  # noqa: BLE001 - the waiter reads every failure from the future
+            future.set_exception(error)
+        finally:
+            live.release()
+
+    try:
+        threading.Thread(target=run, name="samajh-turn-classifier", daemon=True).start()
+    except BaseException:
+        live.release()
+        raise
+    return future
 
 
 class _Label(StrEnum):
@@ -85,7 +121,10 @@ _STAGE = {
     Expecting.identity: "first_name: the assistant asked whether it is speaking with the person it named",
     Expecting.go_ahead: "go_ahead: the assistant asked whether it may ask a few questions now",
     Expecting.birth_year: "birth_year: the assistant asked the person for their own year of birth",
-    Expecting.stop_check: "stop_check: the assistant asked whether to go on with the call",
+    Expecting.stop_check: (
+        "stop_check: the assistant asked whether to go on with the call, or whether it is speaking with the "
+        "named person"
+    ),
 }
 
 _SYSTEM = """You label one customer reply in a phone call. An automated customer-care assistant of a \
@@ -152,6 +191,13 @@ _READS_AS: dict[Expecting, dict[_Label, Intent]] = {
         _Label.refuse: Intent.maybe_decline,
         _Label.stop: Intent.maybe_decline,
         _Label.human_request: Intent.maybe_human,
+        # Round 4: the who-check ("is it you speaking?") is a stop check too.
+        _Label.confirms_self: Intent.yes,
+        _Label.wrong_person: Intent.wrong_person,
+        _Label.third_party_handoff: Intent.wrong_person,
+        _Label.remove_number: Intent.do_not_call,
+        _Label.written_request: Intent.written_request,
+        _Label.call_back: Intent.call_later,
     },
     Expecting.open: _LATER,
     Expecting.told: _LATER | {_Label.yes: Intent.yes, _Label.no: Intent.no},
@@ -199,7 +245,7 @@ class LlmFallbackInterpreter:
             with self._lock:
                 if key in self._pending:
                     return
-                future = _POOL.submit(self._ask, self._messages(text, expecting, question))
+                future = _start(self._ask, self._messages(text, expecting, question))
                 self._pending[key] = (future, time.monotonic())
                 while len(self._pending) > _PENDING_LIMIT:
                     self._pending.popitem(last=False)
@@ -236,10 +282,10 @@ class LlmFallbackInterpreter:
         if expecting is Expecting.go_ahead and label in (_Label.answer, _Label.yes, _Label.confirms_self):
             # Never falls through to a word-list end: a yes or go-on word makes it yes, else ask again.
             intent = Intent.yes if affirms_or_goes_on(text, language) else Intent.asks_repeat
-            return first.model_copy(update={"intent": intent, "settled": True})
+            return first.model_copy(update={"intent": intent, "settled": True, "classifier_label": label.value})
         if expecting is Expecting.birth_year and label in (_Label.answer, _Label.confirms_self):
             # Read as the speaker's own year: the loose year counts. No year at all: asked again.
-            return first.model_copy(update={"year": first.loose_year, "settled": True})
+            return first.model_copy(update={"year": first.loose_year, "settled": True, "classifier_label": label.value})
         if label is _Label.confirms_self and not speaks_in_first_person(text, language):
             # a claim needs an "I": at the first-name question the reply is an ordinary confirmation
             label = _Label.yes if expecting is Expecting.identity else _Label.unclear
@@ -252,6 +298,8 @@ class LlmFallbackInterpreter:
             intent = Intent.maybe_decline  # "busy, but ask quickly": the two readings disagree, so ask once
         # The classifier can confirm a possible takeover (an end label ends the call) but never clears it.
         update: dict = {"intent": intent, "settled": True}
+        if label is not _Label.unclear:  # round 4: `unclear` is no usable label
+            update["classifier_label"] = label.value
         if intent is Intent.call_later and first.callback is None:
             update["callback"] = "ask"
         return first.model_copy(update=update)
@@ -275,7 +323,7 @@ class LlmFallbackInterpreter:
             messages = self._messages(text, expecting, question)
             if self._timeout_s is None:
                 return self._ask(messages)
-            return _POOL.submit(self._ask, messages).result(timeout=self._timeout_s)
+            return _start(self._ask, messages).result(timeout=self._timeout_s)
         future, started = begun
         if self._timeout_s is None:
             return future.result()

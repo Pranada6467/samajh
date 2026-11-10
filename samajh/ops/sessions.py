@@ -58,15 +58,30 @@ day 30 from the sale is logged and shown, and its status keeps it out of the cou
 
 **Outcomes.** The dialogue's outcome and the case file's `speaker_confirmed` map to an attempt
 outcome through `samajh.ops.model.attempt_outcome_for`, the one place that mapping lives. A
-`do_not_call`, `human_requested` or `call_back_later` with `speaker_confirmed` false came from a
-speaker nobody confirmed as the borrower: it is `request_unconfirmed` (the loan is called again),
-never the borrower's own request. When `speaker_confirmed` is present, `right_party_confirmed`
+`do_not_call`, `human_requested`, `call_back_later` or `written_requested` with `speaker_confirmed`
+false came from a speaker nobody confirmed as the borrower: it is `request_unconfirmed` (the loan
+is called again), never the borrower's own request. When `speaker_confirmed` is present, `right_party_confirmed`
 follows it; a case file whose `speaker_confirmed` contradicts its outcome (false with a completed
 call, true with a wrong party, an identity not confirmed or nothing heard) is skipped with the
 reason. A session whose outcome is missing from `FROM_DIALOGUE` is skipped with the reason. A
 completed call whose case file is `ready` is analysed; one whose case file failed is
 `completed_not_analysed` (no tier, never a clear). A case file still `running`, unreadable,
 malformed or absent is skipped with the reason.
+
+**A turn the classifier failed on.** The case file's `degraded_turns` lists the customer turns the
+dialogue read by its word lists alone, because its LLM turn classifier failed or ran out of time.
+Such a call can go wrong unnoticed (someone else taking the phone), so a session with any is void:
+it is skipped as "not counted: the classifier failed on N turn(s) (turn ids ...)", its own reason,
+and is in no tier, attempt outcome, funnel stage or report count. It takes no attempt number, so the
+loan can be called again. A case file without the field has no such turn; one whose field is not a
+list of whole numbers is unreadable (a skip). Order: a session that fails a check of the file itself
+(not a session id, no case file, unreadable or malformed, another session's, still running, an
+outcome with no attempt outcome, a `speaker_confirmed` that contradicts the outcome) is skipped for
+that reason, because a file that cannot be read or contradicts itself cannot be trusted for its
+`degraded_turns` either, and that defect must be seen; the classifier reason then wins over every
+book, loan, draw and chain rule (an unknown loan, a batch or draw that does not match, a chain that
+has ended), because a void call is not an attempt at all. A session brought in before this rule
+stays where it is and is listed as changed, saying it is still counted.
 
 **Running it again** changes nothing for a session whose case file is unchanged. One change is
 taken in: a case file that failed and was rebuilt to `ready` turns that session's
@@ -125,9 +140,18 @@ from samajh.ops.model import (
     attempt_outcome_for,
 )
 from samajh.ops.store import OpsStore, may_supersede
+from samajh.ops.wording import CLASSIFIER_FAILED
 from samajh.types import CallStep, CaseResult, Language, LoanRecord, Speaker, Transcript, Turn
 
-__all__ = ["CHANGED_NOTE", "IST", "PARTIAL_NOTE", "Ingested", "ingest", "packaged_records"]
+__all__ = [
+    "CHANGED_NOTE",
+    "CLASSIFIER_FAILED",
+    "IST",
+    "PARTIAL_NOTE",
+    "Ingested",
+    "ingest",
+    "packaged_records",
+]
 
 _SESSION = re.compile(SESSION_ID_PATTERN)
 # A call whose transcript reaches one of these steps got past both identity checks.
@@ -268,6 +292,8 @@ class _CaseFile(BaseModel):
     started_at: datetime  # UTC after validation; the case file writes UTC
     call_outcome: StrictStr
     speaker_confirmed: StrictBool | None = None  # None: the case file does not say
+    # The customer turns read without the dialogue's classifier; [] in a case file written before it.
+    degraded_turns: list[StrictInt] = []
     recording: Any = None
     models: Any = None
     turns: list[_Turn] = []
@@ -339,11 +365,28 @@ class _CaseFile(BaseModel):
 
 
 class _Skip(Exception):
-    """This session is skipped; `reason` says why, in words."""
+    """This session is skipped; `reason` says why, in words. `changed`: what to list instead when an
+    earlier run brought the session in (None: `reason` itself)."""
 
-    def __init__(self, reason: str) -> None:
+    def __init__(self, reason: str, changed: str | None = None) -> None:
         super().__init__(reason)
         self.reason = reason
+        self.changed = changed
+
+
+def _turns(n: int) -> str:
+    return f"{n} turn" if n == 1 else f"{n} turns"
+
+
+def _classifier_failed(turns: list[int]) -> _Skip:
+    """A session with a turn the classifier failed on: void, never counted, the call to be repeated."""
+    ids = ", ".join(str(t) for t in turns)
+    said = f"the classifier failed on {_turns(len(turns))} (turn ids {ids})"
+    return _Skip(
+        f"{CLASSIFIER_FAILED} {_turns(len(turns))} (turn ids {ids})",
+        changed=f"{said}, and the session was brought in before ingest left such sessions out: "
+        "the version brought in first is kept and still counted",
+    )
 
 
 def _why(error: Exception) -> str:
@@ -388,16 +431,22 @@ class Ingested:
             changed=tuple(ChangedSession(session_id=sid, differs=what) for sid, what in self.changed),
         )
 
-    def refuse(self, sid: str, reason: str, brought: dict[str, Literal["linked", "outside"]]) -> None:
+    def refuse(
+        self,
+        sid: str,
+        reason: str,
+        brought: dict[str, Literal["linked", "outside"]],
+        changed: str | None = None,
+    ) -> None:
         """A session that is not brought in this run: skipped, unless an earlier run brought it in,
-        in which case it stays where it is and is listed as changed."""
-        reason = _capped(reason)
+        in which case it stays where it is and is listed as changed (with `changed` when given,
+        else `reason`)."""
         place = brought.get(sid)
         if place is None:
-            self.skipped.append((sid, reason))
+            self.skipped.append((sid, _capped(reason)))
             return
         (self.linked if place == "linked" else self.outside).append(sid)
-        self.changed.append((sid, reason))
+        self.changed.append((sid, _capped(changed or reason)))
 
 
 def packaged_records() -> Callable[[str], LoanRecord | None]:
@@ -565,6 +614,8 @@ def _read_case(folder: Path) -> _CaseFile:
         )
     if why := _contradiction(case):
         raise _Skip(why)
+    if case.degraded_turns:  # after the file's own checks, before any book, loan or chain rule
+        raise _classifier_failed(case.degraded_turns)
     return case
 
 
@@ -779,7 +830,9 @@ def ingest(store: OpsStore, sessions: Path, records: Callable[[str], LoanRecord 
             try:
                 cases.append(_read_case(folder))
             except Exception as error:  # noqa: BLE001 - no session may stop the run
-                found.refuse(folder.name, _why(error), brought)
+                found.refuse(
+                    folder.name, _why(error), brought, error.changed if isinstance(error, _Skip) else None
+                )
         for case in sorted(cases, key=lambda c: (c.started, c.session_id)):
             try:
                 kind = _one(store, batch, case, records)

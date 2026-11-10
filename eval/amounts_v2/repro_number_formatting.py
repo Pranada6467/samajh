@@ -10,7 +10,7 @@ POST /stt/v3: prisma-v3.0 transcribe, prisma-v3.0 verbatim, prisma-v2.5 transcri
 amount that was spoken and the digits each transcribe output wrote. About 2.1 credits in all by
 our estimates (0.002 per TTS character, 0.010 per STT audio second; 10 clips of about 55
 characters, 30 STT requests of about 3.5 s). Requests go one at a time:
-the API allows one active request per key and answers a second one with 429 at once.
+the API allows one active request per account and answers a second one with 429 at once.
 """
 
 from __future__ import annotations

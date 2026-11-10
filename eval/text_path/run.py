@@ -352,6 +352,11 @@ def _clusters(runs: list[CaseRun]) -> str:
     return "\n".join(lines)
 
 
+def _basis(r: CaseRun) -> str | None:
+    basis = r.run.result.referral_basis if r.run else None
+    return basis.value if basis else None
+
+
 def triage_rows(runs: list[CaseRun]) -> list[triage.TriageRow]:
     return [
         triage.TriageRow(
@@ -361,6 +366,7 @@ def triage_rows(runs: list[CaseRun]) -> list[triage.TriageRow]:
             group=triage.group(r.scenario.customer_state, r.score.gold_verdict is Verdict.clear),
             tier=r.score.tier,
             ceiling=r.scenario.perfect.tier if r.scenario.perfect else None,
+            basis=_basis(r),
         )
         for r in runs
     ]
@@ -394,7 +400,11 @@ def _triage(runs: list[CaseRun]) -> str:
         "A miss is counted only for customers the set labels misled, unaware or did not agree. "
         "`incomplete` is not a miss and not a referral: the call did not yield enough to decide. "
         "The last column runs the rule engine on the set's own extraction, so a miss there is the "
-        "rules', not the extractor's. Base cases, not calls, are the independent unit."
+        "rules', not the extractor's. Base cases, not calls, are the independent unit. "
+        "A referral on the record alone rests only on the lender's record (for example no consent on "
+        "record) and on nothing the customer said; a referral on what the customer said has at least "
+        "one refer-tier flag that rests on the customer's words (counts of the group's calls, base "
+        "cases in brackets)."
     )
     return "\n".join(lines)
 

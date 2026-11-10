@@ -41,7 +41,10 @@ from samajh.dialogue.interpret import (
     Interpretation,
     RuleInterpreter,
     TurnInterpreter,
+    affirms_self,
     means_now,
+    points_elsewhere,
+    speaks_in_first_person,
     starts_with_yes,
 )
 from samajh.dialogue.prompts import LINES, PRODUCT_QUESTIONS, load_prompts
@@ -83,6 +86,9 @@ class Limits(Frozen):
     max_stop_checks: int = Field(default=2, ge=0)  # times a call asks "shall we go on?"
     max_silences: int = Field(default=2, ge=1)  # consecutive silent turns before the call ends
     max_side_answers: int = Field(default=2, ge=0)  # "who is this?" answers before it counts as unclear
+    # Round 4: "is it you speaking?" checks after a sign of another speaker. Its own count, not
+    # `max_stop_checks`: a borrower who used the "shall I go on?" checks still gets one, and the reverse.
+    max_who_checks: int = Field(default=2, ge=0)
 
 
 class CallPlan(Frozen):
@@ -297,6 +303,10 @@ class CallState(Frozen):
     carried_forward: tuple[CarriedAnswer, ...] = ()
     said_again_cover: tuple[ProductId, ...] = ()
     speaker_confirmed: bool = False  # True once the birth year has passed (either path)
+    who_checks: int = 0  # round 4: times the bot has asked who is speaking after the opening
+    # Round 4: a turn showed a sign of another speaker that a classifier label let pass, and no who-check
+    # has passed since: a later turn nobody can judge gets the who-check.
+    speaker_doubt: bool = False
 
     def transcript(self) -> Transcript:
         """The call so far, in the shape the extractor and the rules consume."""
@@ -320,7 +330,7 @@ class EndOfCall(Frozen):
     requested_language: str | None = None
     degraded_turns: tuple[TurnId, ...] = ()
     carried_forward: tuple[CarriedAnswer, ...] = ()
-    speaker_confirmed: bool = False  # the birth year passed before the call ended
+    speaker_confirmed: bool = False  # the birth year passed before the call ended; never on `wrong_party`
 
 
 log = logging.getLogger(__name__)
@@ -536,7 +546,10 @@ def _end(
         keys = ("close.thanks", *middle, "close.verify", "close.bye")
     elif keys is None:
         keys = _END_LINES[outcome]
-    ended = state.model_copy(update={"position": Ended(outcome=outcome)})
+    update: dict = {"position": Ended(outcome=outcome)}
+    if outcome is Outcome.wrong_party:  # round 4: someone else had the phone, whatever passed before
+        update["speaker_confirmed"] = False
+    ended = state.model_copy(update=update)
     ended, utterance = _speak(ended, tuple(_line(state, key) for key in keys))
     return ended, EndOfCall(
         utterance=utterance,
@@ -704,6 +717,10 @@ def _carry_forward(state: CallState, position: Position) -> tuple[CallState, Pos
     return state, AtReadBack(product=0, amount_inr=amount, read_backs=1)
 
 
+# Classifier labels that say nothing about who is speaking ("हेलो? क्या बात चल रही थी?" read as a request to
+# repeat): after a sign of another speaker they count as no label, so the who-check comes first (round 4).
+_SILENT_ON_SPEAKER = frozenset({None, "asks_repeat", "who_or_why", "off_topic", "unclear"})
+
 _QUESTION_POSITIONS = (AtRecall, AtRecallFollowUp, AtTeachBack, AtSayAgain, AtConsent, AtReadBack, AtRestate)
 
 
@@ -816,6 +833,8 @@ def step(
 
     if silent and state.silences >= state.limits.max_silences:
         return _end(state, Outcome.no_response)
+    if isinstance(position, AtStopCheck) and position.wish == "who":
+        return _on_who_check(state, position, heard, customer_text)
     if heard.intent is Intent.other_language:
         return _end(
             state.model_copy(update={"requested_language": heard.language_name}), Outcome.language_switch
@@ -828,8 +847,17 @@ def step(
         return _end(state, Outcome.do_not_call)
     if heard.intent is Intent.written_request:
         return _end(state, Outcome.written_requested)
-    if heard.intent is Intent.wrong_person and not isinstance(position, (*_BEFORE_LOAN, AtStopCheck)):
+    if heard.intent is Intent.wrong_person and not isinstance(position, _BEFORE_LOAN):
         return _end(state, Outcome.wrong_party)  # "talk to my son, he handles it"
+    if not isinstance(position, _BEFORE_LOAN):
+        # Round 4: a sign of another speaker that no classifier label judged, or a turn nobody can judge
+        # after such a sign, gets the who-check before anything else is said or taken as an answer.
+        unjudged = heard.classifier_label in _SILENT_ON_SPEAKER
+        doubt = state.speaker_doubt and unjudged and not heard.settled
+        if heard.possible_takeover or (heard.other_speaker and unjudged) or doubt:
+            return _who_check(state, position)
+        if heard.other_speaker:
+            state = state.model_copy(update={"speaker_doubt": True})
     if isinstance(position, AtCallbackTime):
         if position.resume is not None and means_now(customer_text, state.language):
             return _say(state, position.resume)  # "अभी बोलिए, अभी फ़्री हूँ": back to the pending question
@@ -847,12 +875,6 @@ def step(
             return _end(state, Outcome.declined if wish == "decline" else Outcome.human_requested)
         state = state.model_copy(update={"stop_checks": state.stop_checks + 1})
         return _say(state, AtStopCheck(wish=wish, resume=position))
-    if heard.possible_takeover and isinstance(position, _QUESTION_POSITIONS):
-        # Someone else may have the phone and nobody judged it: ask who is speaking, or end.
-        if state.stop_checks >= state.limits.max_stop_checks:
-            return _end(state, Outcome.wrong_party)
-        state = state.model_copy(update={"stop_checks": state.stop_checks + 1})
-        return _say(state, AtStopCheck(wish="who", resume=position))
     if heard.intent is Intent.asks_who:
         if state.side_answers < state.limits.max_side_answers:
             state = state.model_copy(update={"side_answers": state.side_answers + 1})
@@ -860,7 +882,10 @@ def step(
                 return _say(state, AtIdentity(reasked=True), before=("purpose.before_confirm",))
             if isinstance(position, AtBirthYear) and position.early:  # the lender is not named yet
                 return _say(state, position, before=("purpose.before_confirm",))
-            verify = "verify.before_loan" if isinstance(position, _BEFORE_LOAN) else "verify.after_loan"
+            # Round 4: once the birth year has passed, identity is confirmed: the after-loan answer.
+            confirmed = state.speaker_confirmed or (isinstance(position, AtGoAhead) and position.year_passed)
+            before = isinstance(position, _BEFORE_LOAN) and not confirmed
+            verify = "verify.before_loan" if before else "verify.after_loan"
             return _say(state, position, before=(verify,))
         heard = heard.model_copy(update={"intent": Intent.asks_repeat})
     # The classifier failed on a free reply: ask once whether to go on.
@@ -889,10 +914,11 @@ _PROTECTIVE = (
 
 def _protects(heard: Interpretation) -> int | None:
     """The rank of a reading's stop intent in `_PROTECTIVE` (lower is stronger); None when it has none.
-    A possible takeover ranks just after `wrong_person`."""
+    A possible takeover, or a sign of another speaker no classifier judged, ranks just after `wrong_person`."""
     if heard.intent in _PROTECTIVE:
         return 2 * _PROTECTIVE.index(heard.intent)
-    return 1 if heard.possible_takeover else None
+    unjudged_sign = heard.other_speaker and heard.classifier_label in _SILENT_ON_SPEAKER
+    return 1 if heard.possible_takeover or unjudged_sign else None
 
 
 def _protects_more(a: Interpretation, b: Interpretation) -> bool:
@@ -960,6 +986,50 @@ def _on_reply(state: CallState, position: _Waiting, heard: Interpretation, other
             return _on_read_back(state, position, heard, other)
         case AtRestate():
             return _on_restate(state, position, heard, other)
+        case AtCallbackTime():  # back from a who-check asked at "when shall we call?": ask it again
+            return _say(state, position)
+
+
+def _who_check(state: CallState, position: Position) -> tuple[CallState, BotUtterance | EndOfCall]:
+    """Ask who is speaking (`right_party.reask`, which names neither the lender nor the loan), then go back to
+    the pending question. Past `Limits.max_who_checks` the call ends as `wrong_party` instead."""
+    resume = position.resume if isinstance(position, AtStopCheck) else position
+    if state.who_checks >= state.limits.max_who_checks:
+        return _end(state, Outcome.wrong_party)
+    state = state.model_copy(update={"who_checks": state.who_checks + 1})
+    return _say(state, AtStopCheck(wish="who", resume=resume))
+
+
+_WHO_CHECK_ENDS = {
+    Intent.decline: Outcome.declined, Intent.maybe_decline: Outcome.declined,
+    Intent.wants_human: Outcome.human_requested, Intent.maybe_human: Outcome.human_requested,
+    Intent.do_not_call: Outcome.do_not_call, Intent.written_request: Outcome.written_requested,
+}  # fmt: skip
+
+
+def _on_who_check(state: CallState, position: AtStopCheck, heard: Interpretation, text: str):
+    """ "Is it you speaking?" (round 4), the same in every arm.
+
+    A reply that points at someone else (a relation, a third person, a denial, a takeover sign) ends the call
+    as `wrong_party`, whatever the classifier says. The call goes back to the question only on an
+    affirmation: every word explained by the closed vocabulary (`affirms_self`), or the classifier's
+    `confirms_self` on a reply with a first-person word. A stop request ends as asked; anything else ends as
+    `wrong_party`. Known and accepted: a false "हाँ" or "हाँ मैं ही हूँ" passes; no text rule can catch it.
+    """
+    language = state.language
+    if heard.possible_takeover or heard.other_speaker or heard.intent is Intent.wrong_person \
+            or points_elsewhere(text, language):  # fmt: skip
+        return _end(state, Outcome.wrong_party)
+    claimed = heard.classifier_label == "confirms_self" and speaks_in_first_person(text, language)
+    if affirms_self(text, language, state.plan.first_name) or claimed:
+        state = state.model_copy(update={"speaker_doubt": False})
+        return _on_reply(state, position.resume, Interpretation(intent=position.then), None)
+    if heard.intent is Intent.other_language:
+        state = state.model_copy(update={"requested_language": heard.language_name})
+        return _end(state, Outcome.language_switch)
+    if heard.intent is Intent.call_later:
+        return _call_back(state, text if heard.callback == "time" else None)
+    return _end(state, _WHO_CHECK_ENDS.get(heard.intent, Outcome.wrong_party))
 
 
 def _on_stop_check(state: CallState, position: AtStopCheck, heard: Interpretation):
@@ -967,10 +1037,6 @@ def _on_stop_check(state: CallState, position: AtStopCheck, heard: Interpretatio
 
     Anything else goes back to the question, as if its last reply had been unclear.
     """
-    if position.wish == "who":  # a claim or a plain yes resumes the question; anything else ends
-        if heard.intent is Intent.yes and not heard.possible_takeover:
-            return _on_reply(state, position.resume, Interpretation(intent=position.then), None)
-        return _end(state, Outcome.wrong_party)
     if heard.intent is Intent.maybe_decline:
         return _end(state, Outcome.declined)
     if heard.intent is Intent.maybe_human:

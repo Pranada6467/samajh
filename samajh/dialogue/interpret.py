@@ -14,11 +14,13 @@ from __future__ import annotations
 
 import re
 from enum import StrEnum
+from functools import cache
 from typing import Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from samajh.amounts import Ambiguous, AmountResult, Approximate, Parsed, parse_amount, parse_approx_amount
+from samajh.amounts._lexicon import WORDS, norm_key
 from samajh.dialogue._lexicon import (
     LANGUAGE_NAMES,
     LEXICONS,
@@ -139,6 +141,13 @@ class Interpretation(BaseModel):
     possible_takeover: bool = False
     # Birth year (wave 2): the reply names more than one year ("1984 या 85"); it never passes.
     two_years: bool = False
+    # Mid-call (round 4): any sign the word lists see that someone other than the borrower is speaking,
+    # the strong `possible_takeover` ones and weaker ones ("मेरे पति का लोन है", "हेलो? क्या पूछ रहे थे?").
+    # Without a classifier label for the turn the call asks who is speaking; a label decides a weak one.
+    other_speaker: bool = False
+    # The classifier label this reading follows (`LlmFallbackInterpreter`); None when no label was used
+    # (no classifier, a failure, a timeout, `unclear`, or a turn the word lists settled).
+    classifier_label: str | None = None
 
 
 class TurnInterpreter(Protocol):
@@ -265,6 +274,11 @@ def _denials(lexicon: Lexicon) -> frozenset[Phrase]:
     return lexicon.no | lexicon.no_at_start | lexicon.nothing | lexicon.took_nothing | lexicon.denial
 
 
+# Readings that end the call whatever else the turn says: a sign of another speaker does not unsettle them.
+_ENDS_AT_ONCE = frozenset({
+    Intent.decline, Intent.wants_human, Intent.do_not_call, Intent.written_request, Intent.other_language,
+    Intent.wrong_person,
+})  # fmt: skip
 _GO_AHEAD_ENDS = frozenset({
     Intent.no, Intent.decline, Intent.wants_human, Intent.call_later, Intent.do_not_call, Intent.written_request,
     Intent.maybe_decline, Intent.maybe_human,
@@ -346,6 +360,18 @@ def _without_own_office(words: Phrase, lexicon: Lexicon) -> Phrase:
     return words
 
 
+def _without_year_vo(words: Phrase, lexicon: Lexicon) -> Phrase:
+    """At the year (Hindi and Hinglish, round 4): "वो" before "तो", a year word or a number is "that", not a
+    person ("साल? वो तो याद नहीं", "वो उन्नीस सौ चौरासी"). Any other sign stays: "वो तो बाहर हैं" keeps "बाहर हैं"."""
+    if not lexicon.ack_ok:
+        return words
+    year_words = ("तो", "साल", "सन", "year", "ईयर")
+    return tuple(
+        word for k, word in enumerate(words)
+        if not (word == "वो" and k + 1 < len(words) and (words[k + 1] in year_words or _number_word(words[k + 1])))
+    )  # fmt: skip
+
+
 def _year_reply_cleaned(text: str) -> str:
     """The birth-year reply without a leading yes-"ya", with numeric dates as their year and no "तारीख" day."""
     first = tokens(text)[:1]
@@ -361,6 +387,79 @@ def _devanagari_numbers(text: str) -> str:
     """Romanised Hindi number words in Devanagari ("unnees sau chaurasi" -> "उन्नीस सौ चौरासी"), so the year
     is read the same in either script (wave 4). Other words are left as they are."""
     return _LATIN_WORD.sub(lambda m: ROMAN_NUMBERS.get(roman_key(m.group()), m.group()), text)
+
+
+def _distance(a: str, b: str, limit: int = 1) -> int:
+    """Edit distance in code points (one vowel sign is one edit), counted up to `limit + 1`."""
+    if abs(len(a) - len(b)) > limit:
+        return limit + 1
+    row = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        prev, row[0] = row[0], i
+        for j, cb in enumerate(b, 1):
+            prev, row[j] = row[j], min(row[j] + 1, row[j - 1] + 1, prev + (ca != cb))
+    return row[-1]
+
+
+@cache
+def _number_words() -> tuple[dict[str, tuple], dict[str, str]]:
+    """The Devanagari number words `samajh.amounts` reads (lookup key -> value), and the romanised spellings
+    of `ROMAN_NUMBERS` (folded key -> Devanagari word)."""
+    devanagari = {key: word.atoms for key, word in WORDS.items()
+                  if word.kind == "num" and re.search(r"[\u0900-\u097F]", key)}  # fmt: skip
+    return devanagari, ROMAN_NUMBERS
+
+
+@cache
+def _known_words(language: Language) -> frozenset[str]:
+    """Every single word of the language's lexicon and every word `samajh.amounts` knows: never corrected."""
+    lexicon = LEXICONS[language]
+    words = {word for name in lexicon.__dataclass_fields__ for phrase in getattr(lexicon, name) for word in phrase}
+    return frozenset(words | set(WORDS))
+
+
+def _near_numbers(text: str, language: Language) -> tuple[str, bool]:
+    """At the year question (round 4): a word one edit from exactly one number word is read as that word.
+
+    "चौरसी" (one vowel sign dropped) -> "चौरासी"; "chaurassee" -> "चौरासी". A word that is a number word or a
+    known word is left alone, as is a Devanagari word under 4 code points or a romanised one under 5
+    letters. A word one edit from two different numbers, or a word straight after "सौ" / "हज़ार" that is two
+    edits from some number and not corrected, is number-like but unreadable: the reply is then read as
+    holding no year (`True` in the result), so it gets the one re-ask instead of being read as "उन्नीस सौ"
+    alone. The corrected year must still equal the
+    record's.
+    """
+    devanagari, roman = _number_words()
+    known = _known_words(language)
+    unsure = False
+
+    def fix(match: re.Match) -> str:
+        nonlocal unsure
+        word = match.group()
+        if re.fullmatch(r"[A-Za-z]+", word):
+            key = roman_key(word)
+            if key in roman or len(key) < 5 or tokens(word)[0] in known or norm_key(word) in WORDS:
+                return word
+            spans = {other: roman[other] for other in roman}
+        else:
+            key = norm_key(word)
+            if key in devanagari or len(key) < 4 or key in known or tokens(word)[0] in known:
+                return word
+            spans = {other: atoms for other, atoms in devanagari.items()}
+        near, like = {}, False
+        for other, value in spans.items():
+            distance = _distance(key, other, limit=2)
+            like = like or distance <= 2
+            if distance <= 1:
+                near.setdefault(value, other)
+        if len(near) == 1:
+            value, other = near.popitem()
+            return value if isinstance(value, str) else other
+        before = tokens(match.string[: match.start()])[-1:]
+        unsure = unsure or len(near) > 1 or (like and before in (("सौ",), ("सो",), ("हजार",), ("sau",), ("sao",)))
+        return word
+
+    return re.sub(r"[A-Za-z]+|[\u0900-\u097F]+", fix, text), unsure
 
 
 def _year_in(text: str, words: Phrase, lexicon: Lexicon) -> tuple[int | None, bool]:
@@ -417,6 +516,25 @@ def _names_something(text: str, lexicon: Lexicon) -> bool:
     return False
 
 
+_NEGATORS = frozenset(tokens(w) for w in ("dont", "do not", "not", "never", "मत"))
+_LATER = frozenset({"बाद", "later"})
+
+
+def _refuses_to_talk(words: Phrase, lexicon: Lexicon) -> bool:
+    """A refusal to talk, by structure (round 4): a no-word, a talk or listen word and a wanting or doing
+    word within three words either side of the talk word ("नहीं करनी कोई बात", "mujhe baat nahi karni", "kuch nahi sunna"),
+    or a hang-up word with a no-word in the turn ("नहीं चाहिए कुछ, रखिए"). "कोई बात नहीं" alone is not one."""
+    words = _rest(words, lexicon.yes_despite_no)
+    negators = lexicon.no | lexicon.no_at_start | _NEGATORS
+    if _has(words, lexicon.hang_up) and _has(words, negators):
+        return True
+    for k in range(len(words)):
+        window = words[max(0, k - 3) : k + 4]
+        if phrase_at(words, k, lexicon.talk) is not None and _has(window, negators) and _has(window, lexicon.want_do):
+            return True
+    return False
+
+
 def means_now(text: str, language: Language) -> bool:
     """At "when shall we call?": does the reply mean now ("अभी बोलिए", "now is fine"), naming no later time
     and holding no no-word ("अभी नहीं")?"""
@@ -425,14 +543,149 @@ def means_now(text: str, language: Language) -> bool:
         return False
     if _has(words, lexicon.go_on | lexicon.hurry | lexicon.do_now):
         return True  # "नहीं, अभी ठीक है, आगे बढ़िए": now and go on wins over any no-word or later time
-    later = lexicon.time_words | lexicon.call_later | lexicon.no | lexicon.no_at_start | lexicon.decline
-    return not _has(words, later)
+    # Round 4: a no-word is the answer to "later?" ("नहीं नहीं, अभी कर लीजिए", "later nahi, abhi") unless it
+    # negates the now ("अभी नहीं", "not now"), and a "later" counts only when nothing negates it.
+    no = lexicon.no | lexicon.no_at_start | _NEGATORS
+    for k, word in enumerate(words):
+        if (word,) in lexicon.now_words and (
+            (k + 1 < len(words) and phrase_at(words, k + 1, no) is not None) or (k and words[k - 1] == "not")
+        ):
+            return False
+        if word in _LATER and not _has(words[k + 1 : k + 4], no):
+            return False
+    return not _has(words, lexicon.time_words | lexicon.call_later | lexicon.decline | lexicon.occupied)
 
 
 def affirms_or_goes_on(text: str, language: Language) -> bool:
     """Does the reply hold a yes-word or a go-on word ("हाँ", "बोलिए", "pucho")?"""
     lexicon = LEXICONS[language]
     return _has(tokens(text), lexicon.yes | lexicon.identity_yes | lexicon.go_on | lexicon.hurry)
+
+
+def _self_words(lexicon: Lexicon) -> frozenset[Phrase]:
+    """The closed vocabulary of a reply that affirms being the borrower (round 4): yes-words, first-person
+    claim words, courtesy, address forms, go-on words and fillers."""
+    return (
+        lexicon.yes | lexicon.identity_yes | lexicon.is_self | lexicon.first_person | lexicon.self_ok
+        | lexicon.go_on | lexicon.hurry | lexicon.address | lexicon.filler
+    )  # fmt: skip
+
+
+_DEVANAGARI_LETTERS = dict(zip(
+    "अआइईउऊएऐओऔकखगघचछजझटठडढतथदधनपफबभमयरलवशषसहऋ",
+    ["a", "aa", "i", "ii", "u", "uu", "e", "ai", "o", "au", "k", "kh", "g", "gh", "ch", "chh", "j", "jh", "t", "th", "d", "dh", "t", "th", "d", "dh", "n", "p", "ph", "b", "bh", "m", "y", "r", "l", "v", "sh", "sh", "s", "h", "ri"],
+    strict=True,
+))  # fmt: skip
+_DEVANAGARI_SIGNS = dict(zip("ािीुूेैोौृ", ["a", "i", "ii", "u", "uu", "e", "ai", "o", "au", "ri"], strict=True))
+
+
+def _romanised(word: str) -> str:
+    """A rough Latin spelling of a Devanagari word ("रमेश" -> "ramesh"), to compare with a Latin name."""
+    out = []
+    for k, ch in enumerate(word):
+        if ch in _DEVANAGARI_SIGNS:
+            out.append(_DEVANAGARI_SIGNS[ch])
+        elif ch in _DEVANAGARI_LETTERS:
+            out.append(_DEVANAGARI_LETTERS[ch])
+            following = word[k + 1] if k + 1 < len(word) else ""
+            consonant = not "\u0905" <= ch <= "\u0914"
+            if consonant and following and following not in _DEVANAGARI_SIGNS and following != "\u094d":
+                out.append("a")  # the inherent vowel, except before a sign, a virama or at the end
+        elif ch == "ं":
+            out.append("n")
+        elif ch != "\u094d":
+            out.append(ch)
+    return "".join(out)
+
+
+def _is_name(word: str, first_name: str) -> bool:
+    name = roman_key(first_name)
+    return len(name) >= 3 and roman_key(_romanised(word)) == name
+
+
+def _denies(words: Phrase, lexicon: Lexicon) -> bool:
+    """A no-word or a denial, not counting "no problem" forms."""
+    words = _rest(words, lexicon.yes_despite_no)
+    return _has(words, lexicon.no | lexicon.nothing | lexicon.denial) or _has(
+        words, lexicon.no_at_start, at_start=True
+    )
+
+
+def _without_leading_no(words: Phrase, lexicon: Lexicon) -> Phrase:
+    """At the who-check: "नहीं भाई, मैं ही हूँ" is "no, it is me". A no-word at the start goes when the reply holds
+    a first-person claim ("मैं ही", "बोल रहा हूं"); the rest is read as usual."""
+    if not _has(words, lexicon.is_self):
+        return words
+    no = lexicon.no | lexicon.no_at_start
+    while words and phrase_at(words, 0, no) is not None:
+        words = words[len(phrase_at(words, 0, no)) :]
+    return words
+
+
+def points_elsewhere(text: str, language: Language) -> bool:
+    """At the who-check (round 4): does the reply speak of another person or deny being the borrower? A
+    relation word that is not a form of address, a third-person word or possessive, an absent or "not me"
+    cue, a denial, or a takeover sign. Such a reply ends the call whatever the classifier says."""
+    lexicon = LEXICONS[language]
+    words = _without_leading_no(tokens(text), lexicon)
+    if not words:
+        return False
+    relations = lexicon.kin | lexicon.relation
+    address_only = RuleInterpreter._only_address(words, lexicon) and not _has(_rest(words, lexicon.address), relations)
+    related = _has(words, relations) and not address_only
+    elsewhere = lexicon.third_person | lexicon.wrong_person | lexicon.absent | lexicon.absent_frame | lexicon.pointer
+    possessive_s = any(m.group().casefold().replace("’", "'") not in _CONTRACTIONS
+                       for m in _POSSESSIVE_S.finditer(text))  # fmt: skip
+    return (
+        related or possessive_s or _has(words, elsewhere | lexicon.not_me) or _denies(words, lexicon)
+        or any(_signs(words, lexicon))
+    )  # fmt: skip
+
+
+def affirms_self(text: str, language: Language, first_name: str) -> bool:
+    """At the who-check (round 4): an affirmation of being the borrower by the word lists alone.
+
+    Every word must be explained by the closed vocabulary (`_self_words`) or be the borrower's own first
+    name, the reply must hold a yes-word or a first-person claim, and nothing may point elsewhere
+    (`points_elsewhere`). "हाँ", "हाँ जी बोलिए", "मैं Ramesh बोल रहा हूँ" pass; "हाँ, मैं उनका बेटा, बोलो" does not.
+    """
+    lexicon = LEXICONS[language]
+    words = _without_leading_no(tokens(text), lexicon)
+    if not words or points_elsewhere(text, language):
+        return False
+    rest = [word for word in _rest(words, _self_words(lexicon)) if not _is_name(word, first_name)]
+    claims = lexicon.yes | lexicon.identity_yes | lexicon.is_self | lexicon.first_person | lexicon.go_on
+    return not rest and _has(words, claims)
+
+
+def _signs(words: Phrase, lexicon: Lexicon) -> tuple[bool, bool]:
+    """Mid-call signs that someone other than the borrower is speaking (round 4): (strong, any).
+
+    Strong: the round 3 takeover frames (`RuleInterpreter._takeover`), and "I" beside a relation of
+    someone else ("मैं उनका भाई", "main unka driver"). Weak (Hindi and Hinglish only, empty lists
+    elsewhere): a relation of someone else without "I" ("unka bhai"), the speaker's own relative owning or
+    doing something ("मेरे पति का लोन", "मेरे बेटे ने भरा"), "talk to me" or "now I am speaking" ("मुझसे बात
+    करो", "ab main bol raha hoon"), and a restart: a greeting with a question word ("हेलो? क्या पूछ रहे थे").
+    """
+    strong = RuleInterpreter._takeover(words, lexicon)
+    first = _has(words, lexicon.first_person)
+    weak = False
+    for k in range(len(words)):
+        if phrase_at(words, k, lexicon.pointer) is not None and any(
+            phrase_at(words, j, lexicon.relation) is not None for j in range(k + 1, min(k + 3, len(words)))
+        ):
+            strong, weak = strong or first, True
+        relative = phrase_at(words, k + 1, lexicon.relation) if k + 1 < len(words) else None
+        if relative is not None and phrase_at(words, k, lexicon.my) is not None:
+            after = k + 1 + len(relative)
+            after += after < len(words) and words[after] == "जी"
+            weak = weak or (after < len(words) and phrase_at(words, after, lexicon.possessive | lexicon.agent) is not None)
+        if words[k] in ("अब", "ab", "now") and _has(words[k + 1 : k + 3], lexicon.first_person) \
+                and _has(words[k + 1 : k + 5], lexicon.speak):  # fmt: skip
+            weak = True
+    if _has(words, lexicon.talk_to_me) or (_has(words, lexicon.greeting) and _has(words, lexicon.what_q)):
+        weak = True
+    return strong, strong or weak
 
 
 def speaks_in_first_person(text: str, language: Language) -> bool:
@@ -463,20 +716,25 @@ class RuleInterpreter:
             intent, extra = Intent.unclear, {"settled": False}
         recall = expecting in (Expecting.open, Expecting.told)
         named = recall and _names_something(text, lexicon)
-        mid_call = expecting not in _NO_ACCOUNT_OF_THE_SALE
+        # Round 4: the stop checks and the call-back question are answered mid-call too.
+        mid_call = expecting not in _OPENING
         # Also "मम्मी, ये किसका फ़ोन है?": a who-question mid-call from someone who speaks of or to another.
         asks_for_another = _has(words, lexicon.who | lexicon.asks_who) and _has(
             words, lexicon.kin | lexicon.third_person | lexicon.absent_frame
         )
-        takeover = mid_call and (self._takeover(words, lexicon) or asks_for_another)
+        strong, sign = _signs(words, lexicon) if mid_call else (False, False)
+        takeover = mid_call and (strong or asks_for_another)
+        sign = sign or takeover
         if takeover and intent is Intent.said:
             extra["settled"] = False
         year = loose = None
         two = False
         guessed = False
         if expecting is Expecting.birth_year and intent is not Intent.wrong_person:
+            unsure = False
             if lexicon.ack_ok:  # Hindi and Hinglish only; Tamil and Kannada read as before
                 text = _year_reply_cleaned(text)
+                text, unsure = _near_numbers(text, language)
             text = _devanagari_numbers(text)
             words = tokens(text)
             if _has(words, lexicon.months):  # a date of birth: the month and the day beside it are not years
@@ -489,7 +747,7 @@ class RuleInterpreter:
             )
             # A guess uses the one attempt: a year with a hedge, a tag, an "or" or a self-correction.
             guessed = numbers and _has(words, lexicon.hedge)
-            if two or guessed or _has(words, lexicon.asks_repeat):
+            if two or guessed or unsure or _has(words, lexicon.asks_repeat):
                 heard = None
             if heard is not None and self._tight_year(words, lexicon):
                 year = heard
@@ -507,6 +765,10 @@ class RuleInterpreter:
         approx = _approximate(text) if figure else None
         if figure and (_amount(parsed) is not None or approx is not None):
             settled = True  # a figure the bot can read back: the read-back settles the rest
+        if sign and intent not in _ENDS_AT_ONCE:
+            settled = False  # round 4: someone else may be speaking; only a classifier can judge a weak sign
+        if expecting is Expecting.stop_check and intent is Intent.yes and _rest(words, _self_words(lexicon)):
+            settled = False  # round 4: a yes with other words ("हाँ, मैं उनका बेटा, बोलो") goes to the classifier
         return Interpretation(
             intent=intent,
             amount_inr=_amount(parsed),
@@ -520,6 +782,7 @@ class RuleInterpreter:
             names_nothing=recall and not named and _has(words, _denials(lexicon)),
             two_years=two or guessed,
             possible_takeover=takeover,
+            other_speaker=sign,
             settled=settled,
             **extra,
         )
@@ -589,7 +852,8 @@ class RuleInterpreter:
         )  # fmt: skip
         if len(words) >= 2 and (words[-1],) in lexicon.address and _number_word(words[-2]) is not None:
             words = words[:-1]  # "उन्नीस सौ चौरासी भाई": a form of address after the year
-        if _has(_without_own_office(words, lexicon), deny) or _has(words, lexicon.no_at_start, at_start=True):
+        if _has(_without_year_vo(_without_own_office(words, lexicon), lexicon), deny) \
+                or _has(words, lexicon.no_at_start, at_start=True):  # fmt: skip
             return False
         for k in range(1, len(words)):  # "रमेश का", "भैया का": a possessive after a name or relation
             if phrase_at(words, k, lexicon.possessive) is not None and _number_word(words[k - 1]) is None:
@@ -611,8 +875,18 @@ class RuleInterpreter:
             expecting is Expecting.birth_year and len(words) >= 2 and (words[-1],) in lexicon.address
             and _number_word(words[-2]) is not None and not _has(words[:-1], lexicon.kin | lexicon.possessive)
         )  # fmt: skip
-        kin_words = _without_own_office(words, lexicon) if expecting is Expecting.birth_year else words
-        if _has(kin_words, lexicon.kin) and not (RuleInterpreter._only_address(words, lexicon) or year_then_address):
+        kin_words = words
+        if expecting is Expecting.birth_year:
+            kin_words = _without_year_vo(_without_own_office(words, lexicon), lexicon)
+        # Round 4: in a refusal at the opening ("नहीं भाई, बात नहीं करनी"), an address form with no possessive, no
+        # third-person word and no "हूं / बोल रहा / am" after it is address, not a relation.
+        refusal_address = (
+            expecting is Expecting.identity and _refuses_to_talk(words, lexicon)
+            and not _has(words, lexicon.third_person)
+            and RuleInterpreter._only_address(words, lexicon, beside_yes=False)
+        )  # fmt: skip
+        address = RuleInterpreter._only_address(words, lexicon) or year_then_address or refusal_address
+        if _has(kin_words, lexicon.kin) and not address:
             return True
         if expecting is not Expecting.identity:
             return False
@@ -652,10 +926,11 @@ class RuleInterpreter:
         return False
 
     @staticmethod
-    def _only_address(words: Phrase, lexicon: Lexicon) -> bool:
-        """Is every relation word a form of address ("हाँ भाई बोलो", "yes sir")? Only beside a yes or go-on
-        word, with no possessive and no relation word followed by "हूं" / "बोल रहा" / "am"."""
-        if not lexicon.address or not _has(words, lexicon.yes | lexicon.go_on | lexicon.is_self):
+    def _only_address(words: Phrase, lexicon: Lexicon, *, beside_yes: bool = True) -> bool:
+        """Is every relation word a form of address ("हाँ भाई बोलो", "yes sir")? Beside a yes or go-on word
+        (or, round 4, inside a refusal: `beside_yes=False`), with no possessive and no relation word followed
+        by "हूं" / "बोल रहा" / "am"."""
+        if not lexicon.address or (beside_yes and not _has(words, lexicon.yes | lexicon.go_on | lexicon.is_self)):
             return False
         if _has(words, lexicon.possessive) or _POSSESSIVE_S.search(" ".join(words)):
             return False
@@ -696,7 +971,7 @@ class RuleInterpreter:
         goes_on = _has(words, lexicon.go_on | lexicon.hurry)
         if busy and expecting in _OPENING and not _has(words, lexicon.first_person) and not goes_on:
             return Intent.wrong_person, {}  # "साहब मीटिंग में हैं": busy, but someone else is
-        refuses = _has(words, lexicon.decline)
+        refuses = _has(words, lexicon.decline) or _refuses_to_talk(words, lexicon)
         if busy and _has(words, lexicon.hurry) and not (later or refuses):
             busy = False  # "थोड़ा बिज़ी हूँ, जल्दी बोलिए": busy, and still says go on
         human = _has(words, lexicon.wants_human)
@@ -738,6 +1013,9 @@ class RuleInterpreter:
         if expecting in _OPENING and self._third_party(text, words, lexicon, expecting):
             return Intent.wrong_person, {}
         stop = self._stop_signal(words, lexicon, expecting)
+        if stop is not None and expecting in _OPENING and stop[0] in (Intent.decline, Intent.do_not_call) \
+                and _has(words, lexicon.third_person):  # fmt: skip
+            return Intent.wrong_person, {}  # round 4: "वो नहीं हैं, बात नहीं हो सकती" is about someone else
         if stop is not None:
             return stop
         if expecting is Expecting.callback_time:

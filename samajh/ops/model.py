@@ -19,6 +19,7 @@ from pydantic import Field, StringConstraints, model_validator
 from samajh.rules import IssueLine
 from samajh.scenarios.model import ProductBelief
 from samajh.types import (
+    Basis,
     CaseResult,
     Frozen,
     Language,
@@ -84,9 +85,10 @@ class AttemptOutcome(StrEnum):
     written_requested = "written_requested"  # asked for this in writing instead of a call
     completed_not_analysed = "completed_not_analysed"  # the call ended normally; its case file failed
     completed = "completed"
-    # A request to stop, to speak to a person or to call later, from a speaker nobody confirmed as the
-    # borrower (the case file's `speaker_confirmed` is false): not the borrower's own request, so it
-    # ends nothing and the loan is called again (`attempt_outcome_for`).
+    # A request to stop, to speak to a person, to call later or to have this in writing, from a
+    # speaker nobody confirmed as the borrower (the case file's `speaker_confirmed` is false): not
+    # the borrower's own request, so it ends nothing and the loan is called again
+    # (`attempt_outcome_for`).
     request_unconfirmed = "request_unconfirmed"
 
 
@@ -115,7 +117,7 @@ FROM_DIALOGUE: dict[str, AttemptOutcome] = {
 
 # The dialogue outcomes that are a request of the borrower's own: from a speaker the case file says
 # was not confirmed (`speaker_confirmed` false) each is `request_unconfirmed` instead.
-UNCONFIRMED_REQUESTS = frozenset({"do_not_call", "human_requested", "call_back_later"})
+UNCONFIRMED_REQUESTS = frozenset({"do_not_call", "human_requested", "call_back_later", "written_requested"})
 
 
 def attempt_outcome_for(dialogue_outcome: str, speaker_confirmed: bool | None) -> AttemptOutcome:
@@ -359,12 +361,19 @@ class Triage(Frozen):
     tier: Tier
     severity: Severity | None  # the highest severity among the `refer` flags; None unless tier is refer
     lines: tuple[IssueLine, ...]  # `samajh.rules.summarise`: refer, then incomplete, then understanding gaps
+    # What the referral rests on (`CaseResult.referral_basis`); set exactly when tier is refer.
+    referral_basis: Basis | None = None
+    first_line: str | None = None  # `CaseSummary.first_line`: only on a referral on the record alone
 
     @model_validator(mode="after")
     def _coherent(self) -> "Triage":
         refer = [line for line in self.lines if line.tier is Tier.refer]
         if (self.tier is Tier.refer) != bool(refer) or (self.severity is None) != (not refer):
             raise ValueError("tier refer, a refer line and a severity go together")
+        if (self.tier is Tier.refer) != (self.referral_basis is not None):
+            raise ValueError("a referral basis is set exactly when the tier is refer")
+        if self.first_line is not None and self.referral_basis is not Basis.record_only:
+            raise ValueError("a first line is set only on a referral on the record alone")
         return self
 
 

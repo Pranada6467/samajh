@@ -47,7 +47,8 @@ def group(customer_state: str | None, gold_clear: bool) -> str:
 @dataclass(frozen=True)
 class TriageRow:
     """One call. `tier` is None when the pipeline gave no result; `ceiling` is the rule engine on
-    the set's own extraction, so a miss there is not the extractor's."""
+    the set's own extraction, so a miss there is not the extractor's. `basis` is what a referral
+    rests on (`samajh.types.Basis` value), None unless `tier` is refer."""
 
     id: str
     base: str | None
@@ -55,6 +56,7 @@ class TriageRow:
     group: str
     tier: Tier | None
     ceiling: Tier | None = None
+    basis: str | None = None  # `CaseResult.referral_basis`: set exactly when the call is referred
 
 
 def _per_100(hits: int, n: int) -> str:
@@ -74,6 +76,16 @@ def _hits(rows: list[TriageRow], hit: frozenset[Tier], field: str) -> tuple[str,
     return calls, _per_100(len({r.base for r in hits if r.base}), len(bases))
 
 
+def _on_basis(rows: list[TriageRow], basis: str) -> str:
+    """Calls referred on `basis` as a plain count of the rows, then the base cases in brackets."""
+    hits = [r for r in rows if r.basis == basis]
+    bases = {r.base for r in rows if r.base}
+    calls = f"{len(hits)}/{len(rows)}"
+    if not bases:
+        return calls
+    return f"{calls} ({len({r.base for r in hits if r.base})}/{len(bases)})"
+
+
 def _tiers(rows: list[TriageRow]) -> str:
     counts = Counter(r.tier.value if r.tier else "no result" for r in rows)
     return ", ".join(f"{name} {counts[name]}" for name in (*(t.value for t in Tier), "no result") if counts[name])
@@ -83,7 +95,9 @@ def table(rows: Iterable[TriageRow]) -> str:
     rows = list(rows)
     header = [
         "group", "languages", "calls (base cases)", "tiers", "misses, calls", "misses, base cases",
-        "referrals, calls", "referrals, base cases", "misses on the set's own extraction, calls",
+        "referrals, calls", "referrals, base cases",
+        "referred on what the customer said, calls", "referred on the record alone, calls",
+        "misses on the set's own extraction, calls",
     ]  # fmt: skip
     lines = ["| " + " | ".join(header) + " |", "|" + "---|" * len(header)]
     for name in GROUPS:
@@ -103,6 +117,8 @@ def table(rows: Iterable[TriageRow]) -> str:
                 miss_bases,
                 refer_calls,
                 refer_bases,
+                _on_basis(own, "customer_statement"),
+                _on_basis(own, "record_only"),
                 _hits(ceiling, MISS, "ceiling")[0],
             ]
             lines.append("| " + " | ".join(cells) + " |")

@@ -463,7 +463,7 @@ def _speaker(store: OpsStore, of, outcome: str, confirmed, day: int = 3, hour: i
     return case
 
 
-@pytest.mark.parametrize("outcome", ["do_not_call", "human_requested", "call_back_later"])
+@pytest.mark.parametrize("outcome", ["do_not_call", "human_requested", "call_back_later", "written_requested"])
 def test_a_request_from_an_unconfirmed_speaker_is_its_own_outcome_and_the_loan_is_called_again(
     tmp_path: Path, outcome: str
 ) -> None:
@@ -484,7 +484,7 @@ def test_a_request_from_an_unconfirmed_speaker_is_its_own_outcome_and_the_loan_i
     report = build_report(store)
     exits = {row.key: row.value.count for row in report.funnel.exits}
     assert exits["request_unconfirmed"] == 1
-    assert exits["do_not_call"] == exits["call_back_later"] == exits["incomplete"] == 0
+    assert exits["do_not_call"] == exits["call_back_later"] == exits["incomplete"] == exits["written_requested"] == 0
     stages = {row.key: row.value.count for row in report.funnel.stages}
     assert stages["reached"] == 1 and stages["right_party_confirmed"] == 0
     label = next(row.label for row in report.funnel.exits if row.key == "request_unconfirmed")
@@ -504,7 +504,7 @@ def test_a_request_from_an_unconfirmed_speaker_is_its_own_outcome_and_the_loan_i
     assert [x.outcome for x in chain.attempts] == [AttemptOutcome.request_unconfirmed, AttemptOutcome.completed]
 
 
-@pytest.mark.parametrize("outcome", ["do_not_call", "human_requested", "call_back_later"])
+@pytest.mark.parametrize("outcome", ["do_not_call", "human_requested", "call_back_later", "written_requested"])
 @pytest.mark.parametrize("confirmed", [True, None, "absent"])
 def test_with_speaker_confirmed_true_or_unknown_the_request_maps_as_before(
     tmp_path: Path, outcome: str, confirmed
@@ -518,6 +518,7 @@ def test_with_speaker_confirmed_true_or_unknown_the_request_maps_as_before(
         "do_not_call": AttemptOutcome.do_not_call,
         "human_requested": AttemptOutcome.incomplete,
         "call_back_later": AttemptOutcome.call_back_later,
+        "written_requested": AttemptOutcome.written_requested,
     }[outcome]
     assert attempt.outcome is expected
     # present: it decides; unknown: derived as before (no transcript, so not claimed)
@@ -591,6 +592,28 @@ def test_an_unconfirmed_request_outside_the_sample_says_what_was_asked(tmp_path:
     (o,) = attempt_log_view(load_batch(store)).outside
     assert o.outcome is AttemptOutcome.request_unconfirmed and o.dialogue_outcome == "do_not_call"
     assert o.request == "asked not to be called again"
+
+
+def test_a_written_request_from_an_unconfirmed_speaker_is_shown_in_words_and_never_ends_the_chain(
+    tmp_path: Path,
+) -> None:
+    a = loan(1)
+    store, _ = open_batch(tmp_path / "ops", [a], DRAWN_ON)
+    sessions = tmp_path / "sessions"
+    first = _speaker(store, a, "written_requested", False)
+    later = _speaker(store, a, "written_requested", True, day=4, hour=1)
+    put_case(sessions, first)
+    put_case(sessions, later)
+    found = ingest(store, sessions, nothing)
+    assert found.linked == [first["session_id"], later["session_id"]]  # the first ended nothing
+    log = attempt_log_view(load_batch(store))
+    (row,) = log.loans
+    unconfirmed, confirmed = row.attempts
+    assert unconfirmed.outcome is AttemptOutcome.request_unconfirmed
+    assert unconfirmed.request == "asked for this in writing instead" and not wording.banned_in(unconfirmed.request)
+    # From the confirmed borrower it is their own request and ends the chain, as before.
+    assert (confirmed.outcome, confirmed.request) == (AttemptOutcome.written_requested, None)
+    assert row.status is FinalStatus.written_requested
 
 
 def test_hostile_table_is_not_shared_state() -> None:

@@ -25,7 +25,11 @@ CLAIMS = Path(__file__).resolve().parent
 REPO = CLAIMS.parent.parent
 MIN_CHARS = 30
 TEXT_SUFFIXES = {".txt", ".md", ".json", ".jsonl", ".html", ".py"}
-EXTRA_SOURCES = {"D": [REPO / "references" / "pilots", REPO / "DESIGN.md", REPO / "IDEAS-HILLCLIMB.md"]}
+EXTRA_SOURCES = {
+    "D": [REPO / "references" / "pilots", REPO / "DESIGN.md", REPO / "IDEAS-HILLCLIMB.md"],
+    # Group F (identity on an outbound call) also quotes texts already saved for groups C and E.
+    "F": [CLAIMS / "sources" / "C", CLAIMS / "sources" / "E"],
+}
 DROPPED = re.compile(r"[\"'“”‘’`*\\\u00ad]|\s+")
 DASHES = str.maketrans({"–": "-", "—": "-", "−": "-", "‐": "-", "‑": "-"})
 PAGE_MARKER = re.compile(r"=+ page \d+ =+")
@@ -90,7 +94,7 @@ def check_group(group: str) -> tuple[int, list[tuple[str, int, str]]]:
 
 def main(groups: list[str]) -> int:
     failed = False
-    for group in groups or ["A", "B", "C", "D", "E"]:
+    for group in groups or ["A", "B", "C", "D", "E", "F"]:
         if not (CLAIMS / f"findings-{group}.md").exists():
             print(f"group {group}: findings file missing")
             failed = True

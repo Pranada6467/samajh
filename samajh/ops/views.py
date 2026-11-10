@@ -16,9 +16,12 @@ a count of reviewer decisions is a `Count` (no interval: the decisions are not a
 shown without its n.
 """
 
+from collections.abc import Iterable
 from datetime import date, datetime
 from pathlib import Path
 from typing import Literal
+
+from pydantic import model_validator
 
 from samajh.evalkit.score import wilson
 from samajh.ops import wording
@@ -43,6 +46,7 @@ from samajh.ops.model import (
 from samajh.ops.store import OpsStore
 from samajh.rules import IssueLine
 from samajh.types import (
+    Basis,
     Frozen,
     Language,
     LenderType,
@@ -83,6 +87,31 @@ class Labelled(Frozen):
     label: str
 
 
+class ReferralSplit(Frozen):
+    """A count of referrals by what each rests on (`Triage.referral_basis`). It sits beside the
+    referral count it splits and sums to it: no referral figure is shown without both parts."""
+
+    customer_statement: int
+    record_only: int
+
+    @property
+    def total(self) -> int:
+        return self.customer_statement + self.record_only
+
+
+def referral_split(triages: Iterable[Triage | None]) -> ReferralSplit:
+    """The referrals among `triages`, by basis. A call with no triage or no referral counts in neither."""
+    bases = [t.referral_basis for t in triages if t is not None]
+    return ReferralSplit(
+        customer_statement=bases.count(Basis.customer_statement), record_only=bases.count(Basis.record_only)
+    )
+
+
+def _sums(split: ReferralSplit | None, count: int, what: str) -> None:
+    if split is not None and split.total != count:
+        raise ValueError(f"the referral split beside {what} does not sum to it")
+
+
 # --- batch, shown in the header of every page ---------------------------------
 
 
@@ -97,6 +126,18 @@ class BatchView(Frozen):
     referred: int  # referrals the report counts
     open_cases: int  # of those, with no final decision (the report's "open" uses this definition)
     other_referrals: int  # referred calls outside the sample or the window: reviewed, not counted
+    # Each referral count above, by what the referral rests on.
+    referred_split: ReferralSplit
+    open_split: ReferralSplit
+    other_referrals_split: ReferralSplit
+    basis_labels: tuple[Labelled, ...]  # each Basis with its words (wording.BASIS_LABEL), for the pages
+
+    @model_validator(mode="after")
+    def _splits_sum(self) -> "BatchView":
+        _sums(self.referred_split, self.referred, "referred")
+        _sums(self.open_split, self.open_cases, "open_cases")
+        _sums(self.other_referrals_split, self.other_referrals, "other_referrals")
+        return self
 
 
 # --- the queue ------------------------------------------------------------------
@@ -129,6 +170,8 @@ class QueueItem(Frozen):
     in_report: bool  # counted in the half-yearly report
     not_counted_because: str | None  # why the report does not count it
     disposition: DispositionView | None  # the latest, if any
+    basis: Basis  # what the referral rests on
+    basis_label: str  # wording.BASIS_LABEL
 
 
 class QueueView(Frozen):
@@ -232,6 +275,9 @@ class CaseView(Frozen):
     decisions: tuple[Labelled, ...]  # the choices the reviewer has, in order
     disposition: DispositionView | None
     history: tuple[DispositionView, ...]  # oldest first
+    referral_basis: Basis  # what the referral rests on
+    basis_label: str  # wording.BASIS_LABEL
+    first_line: str | None  # shown above the summary lines; set only on a referral on the record alone
 
 
 class DispositionIn(Frozen):
@@ -378,12 +424,26 @@ class TierRow(Frozen):
     tier: Tier
     label: str
     value: Proportion  # n is analysed calls
+    referred_split: ReferralSplit | None = None  # on the refer row only: its count by basis
+
+    @model_validator(mode="after")
+    def _split(self) -> "TierRow":
+        if (self.tier is Tier.refer) != (self.referred_split is not None):
+            raise ValueError("the refer row, and only it, carries a referral split")
+        _sums(self.referred_split, self.value.count, "the refer row")
+        return self
 
 
 class RuleRow(Frozen):
     """One rule over the analysed calls. `flagged` counts calls with at least one flag under the
     rule and its n is every analysed call (each rule runs on every call). `undecided` calls had a
-    gap under the rule and no flag. `referred` of the flagged calls have a `refer` line for the rule."""
+    gap under the rule and no flag. `referred` of the flagged calls have a `refer` line for the rule.
+
+    `referred_split` splits `referred` by the basis of the rule's own refer lines
+    (`IssueLine.basis`), not the call's: `record_only` counts referred calls where every refer line
+    naming the rule rests on the record alone, `customer_statement` those where at least one rests
+    on what the customer said. A call referred on what the customer said under another rule can
+    so count as record-only here."""
 
     rule_id: RuleId
     rule_label: str
@@ -395,16 +455,28 @@ class RuleRow(Frozen):
     flagged: Proportion
     undecided: int
     referred: int
+    referred_split: ReferralSplit
     # counted calls whose outcome is understanding gap and whose summary has an understanding-gap
     # line naming this rule
     understanding_gap: int
     previous: Proportion | None  # the previous period's share; None when there is no previous period
+
+    @model_validator(mode="after")
+    def _split(self) -> "RuleRow":
+        _sums(self.referred_split, self.referred, "the rule's referred count")
+        return self
 
 
 class DispositionRow(Frozen):
     key: str  # a Decision value, or "none"
     label: str
     value: Count  # n is counted referrals
+    split: ReferralSplit  # `value.count` by basis
+
+    @model_validator(mode="after")
+    def _split(self) -> "DispositionRow":
+        _sums(self.split, self.value.count, "the decision count")
+        return self
 
 
 class BreakdownRow(Frozen):
@@ -416,6 +488,14 @@ class BreakdownRow(Frozen):
     rest_referred: Proportion  # every other row together
     understanding_gap: Proportion
     rest_understanding_gap: Proportion
+    referred_split: ReferralSplit  # `referred.count` by basis
+    rest_referred_split: ReferralSplit  # `rest_referred.count` by basis
+
+    @model_validator(mode="after")
+    def _split(self) -> "BreakdownRow":
+        _sums(self.referred_split, self.referred.count, "the row's referrals")
+        _sums(self.rest_referred_split, self.rest_referred.count, "the other rows' referrals")
+        return self
 
 
 class Breakdown(Frozen):
@@ -444,9 +524,15 @@ class ReportTiles(Frozen):
     sampled: int  # Sampling.sampled (= Funnel.sampled)
     completed: int  # the funnel's "completed" stage count
     referred: int  # the refer tier row's count
+    referred_split: ReferralSplit  # the refer tier row's split
     understanding_gap: int  # the understanding gap tier row's count
     most_common_gap: Labelled  # the rule row with the most understanding-gap calls; key "none" if none
     most_common_gap_count: int  # that row's `understanding_gap`; 0 when none
+
+    @model_validator(mode="after")
+    def _split(self) -> "ReportTiles":
+        _sums(self.referred_split, self.referred, "the referred tile")
+        return self
 
 
 class ReportView(Frozen):
@@ -473,13 +559,27 @@ class ReportView(Frozen):
     referrals: tuple[DispositionRow, ...]
     open_referrals: Count  # no final decision; the same count as the page header
     supported_of_decided: Count  # n is referrals with a final decision
+    decided_split: ReferralSplit  # `supported_of_decided.n` by basis
+    supported_split: ReferralSplit  # `supported_of_decided.count` by basis
     other_referrals: int  # referred calls the report does not count
+    open_referrals_split: ReferralSplit
+    other_referrals_split: ReferralSplit
+    basis_note: str  # wording.BASIS_NOTE: what the two kinds of referral are; shown once
+    rule_split_note: str  # wording.RULE_SPLIT_NOTE: the rules table splits by the rule's own lines
     outside_calls: int  # phone calls outside the sample
     phone_sessions_not_ingested: int | None  # left out by the last ingest; None when none has run
     phone_sessions_changed: int | None  # brought in, case file changed since (still counted); None: no ingest
     ingest_note: str
     breakdowns: tuple[Breakdown, ...]
     policy_review: tuple[PolicyItem, ...]
+
+    @model_validator(mode="after")
+    def _splits_sum(self) -> "ReportView":
+        _sums(self.open_referrals_split, self.open_referrals.count, "the open referrals")
+        _sums(self.other_referrals_split, self.other_referrals, "the other referrals")
+        _sums(self.decided_split, self.supported_of_decided.n, "the decided referrals")
+        _sums(self.supported_split, self.supported_of_decided.count, "the supported referrals")
+        return self
 
 
 # --- building the views ------------------------------------------------------------
@@ -508,6 +608,7 @@ def plain_share(count: int, n: int) -> Proportion:
 
 def batch_view(batch: Batch) -> BatchView:
     referrals = batch.referrals
+    open_ids = {s.call.call_id for s in referrals if not batch.decided(s.call.call_id)}
     return BatchView(
         meta=batch.meta,
         simulated=batch.simulated,
@@ -519,6 +620,10 @@ def batch_view(batch: Batch) -> BatchView:
         referred=len(referrals),
         open_cases=batch.open(tuple(s.call.call_id for s in referrals)),
         other_referrals=len(batch.other_referrals),
+        referred_split=referral_split(s.triage for s in referrals),
+        open_split=referral_split(s.triage for s in referrals if s.call.call_id in open_ids),
+        other_referrals_split=referral_split(o.triage for o in batch.other_referrals),
+        basis_labels=tuple(Labelled(key=b.value, label=wording.BASIS_LABEL[b]) for b in Basis),
     )
 
 
@@ -606,7 +711,14 @@ def _queue_item(batch: Batch, c: _Case) -> QueueItem:
         in_report=c.in_report,
         not_counted_because=c.why,
         disposition=_disposition_view(batch.latest(c.case_id)),
+        basis=_basis(c),
+        basis_label=wording.BASIS_LABEL[_basis(c)],
     )
+
+
+def _basis(c: _Case) -> Basis:
+    assert c.triage.referral_basis is not None  # a case is a referral
+    return c.triage.referral_basis
 
 
 def queue_view(batch: Batch) -> QueueView:
@@ -769,6 +881,9 @@ def case_view(batch: Batch, case_id: str, sessions: Path | None = None) -> CaseV
         decisions=tuple(Labelled(key=d.value, label=wording.DECISION_LABEL[d]) for d in Decision),
         disposition=_disposition_view(batch.latest(case_id)),
         history=tuple(_disposition_view(d) for d in batch.history.get(case_id, ())),
+        referral_basis=_basis(c),
+        basis_label=wording.BASIS_LABEL[_basis(c)],
+        first_line=c.triage.first_line,
     )
 
 

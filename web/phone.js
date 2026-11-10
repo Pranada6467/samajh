@@ -597,7 +597,7 @@ function modelName(model) {
 }
 
 // Requests that must not read as the borrower's own when the speaker was never confirmed.
-const NEEDS_CONFIRMED_SPEAKER = new Set(["do_not_call", "human_requested", "call_back_later"]);
+const NEEDS_CONFIRMED_SPEAKER = new Set(["do_not_call", "human_requested", "call_back_later", "written_requested"]);
 
 function outcomeText(outcome, speakerConfirmed) {
   const unconfirmed = speakerConfirmed === false && NEEDS_CONFIRMED_SPEAKER.has(outcome);
@@ -947,6 +947,37 @@ const TIER_TEXT = {
   clear: "Clear",
 };
 
+// The notice for a call with a turn the classifier failed on (the case file's `degraded_turns`):
+// the session is void, samajh.ops does not count it, and the call is to be repeated. Null when the
+// case file lists none, or is written before the field. Pure: tests/server/test_phone_card.py runs it.
+function voidNotice(caseFile) {
+  const n = Array.isArray(caseFile?.degraded_turns) ? caseFile.degraded_turns.length : 0;
+  if (!n) return null;
+  const turns = n === 1 ? "1 turn" : `${n} turns`;
+  const read = n === 1 ? "That turn was" : "Those turns were";
+  return `Repeat this call: the classifier failed on ${turns}, so this session is not counted. ${read} read by the word lists alone.`;
+}
+
+// What a referral rests on, from the case file's `summary.referral_basis` (samajh.types.Basis):
+// "on what the customer said", "on the record alone", or null when the call is not a referral or
+// the case file was written before the field. Pure: tests/server/test_phone_basis.py runs it.
+function basisText(caseFile) {
+  const words = { customer_statement: "on what the customer said", record_only: "on the record alone" };
+  return words[caseFile?.summary?.referral_basis] ?? null;
+}
+
+// Shown above the case status, so it is read first whatever the rest of the card says.
+function voidBox() {
+  let node = $("case-void");
+  if (!node) {
+    node = el("p", { id: "case-void" });
+    node.setAttribute("role", "alert");
+    node.style.cssText = "margin: 0; color: var(--danger); font-weight: 600;";
+    $("case-status").before(node);
+  }
+  return node;
+}
+
 function renderCase() {
   const box = $("case");
   const c = call.caseFile;
@@ -957,6 +988,7 @@ function renderCase() {
   let status;
   let lines = [];
   let figures = [];
+  let first = null; // the summary's first line, on a referral on the record alone
   if (err && err.code === "no_case_file") status = "This call's dialogue makes no case file.";
   else if (err) status = `The case file could not be made. ${err.code}: ${err.message}`;
   else if (!c) status = "Starting the case file.";
@@ -966,16 +998,21 @@ function renderCase() {
     const failed = c.steps.filter((x) => !x.ok).map((x) => `${x.name} (${x.error})`);
     status = `The case file is not complete. Failed: ${failed.join("; ")}.`;
   } else {
-    status = `${TIER_TEXT[c.tier] ?? c.tier}. Call outcome: ${outcomeText(c.call_outcome, c.speaker_confirmed)}.`;
-    const degraded = c.degraded_turns?.length ?? 0;
-    if (degraded) status += ` ${degraded} turn${degraded === 1 ? " was" : "s were"} read by the word lists because the classifier did not answer in time.`;
+    const basis = basisText(c);
+    status = `${TIER_TEXT[c.tier] ?? c.tier}${basis ? `, ${basis}` : ""}. Call outcome: ${outcomeText(c.call_outcome, c.speaker_confirmed)}.`;
     lines = c.summary?.lines ?? [];
+    first = c.summary?.first_line ?? null;
     // Both readings of every figure turn, from the case file (its `acted_on` is the model's name).
     figures = (c.turns ?? []).map((t) => readingsLine(t.readings, t.readings_agreed, t.followed_by, t.acted_on)).filter(Boolean);
   }
   box.dataset.status = err ? "failed" : (c?.status ?? "running");
+  const notice = err ? null : voidNotice(c);
+  const voided = voidBox();
+  voided.hidden = !notice;
+  voided.textContent = notice ?? "";
   $("case-status").textContent = status;
   $("case-lines").replaceChildren(
+    ...(first ? [el("li", { className: "first-line", textContent: first })] : []),
     ...lines.map((l) =>
       el(
         "li",

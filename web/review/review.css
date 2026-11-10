@@ -422,3 +422,8 @@ tr.uncounted { opacity: 0.85; }
   .tiles li b { font-size: 1.25rem; }
   .tiles li.gap b { font-size: 0.875rem; }
 }
+
+/* What a referral rests on (samajh.types.Basis): the queue filter, the split beside each count, the case's first line. */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.stats .split { display: block; font-size: 0.75rem; }
+.first-line { font-weight: 600; margin: 0 0 12px; max-width: 80ch; }

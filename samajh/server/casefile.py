@@ -161,7 +161,8 @@ class CaseFile(_Model):
     recording: Recording | None = None
     models: dict[str, Any] = Field(default_factory=dict)  # every model and parameter used
     # Transcript turn ids of the customer turns the dialogue read without its LLM classifier (it
-    # failed or ran out of time): [] when none. A call with any may be voided.
+    # failed or ran out of time): [] when none. Set in the head (`new_case`), from the session alone.
+    # A session with any is void: samajh.ops does not count it, and the call is to be repeated.
     degraded_turns: list[int] = Field(default_factory=list)
     turns: list[TurnEvidence] = Field(default_factory=list)
     # The customer turns that count (not superseded), by where their audio came from.
@@ -261,6 +262,8 @@ def new_case(log: SessionLog, record: CallRecord) -> CaseFile:
         started_at=log.created_at,
         call_outcome=call_outcome(log),
         speaker_confirmed=call_speaker_confirmed(log),
+        # In the head, so a case file whose later steps fail still says the call is void.
+        degraded_turns=list(degraded_turns(call_state(log))),
         ended_reason=log.ended_reason,
         customer_audio={kind: sum(e.source == kind for e in customers) for kind in ("mic", "file", "none")},
     )
@@ -313,7 +316,6 @@ def build_case(
     def do_transcript() -> None:
         state = call_state(log)
         agreed = {r.turn_id: r.agreed for r in state.second_readings}
-        case.degraded_turns = list(degraded_turns(state))
         customers = [e for e in log.events if isinstance(e, CustomerEvent) and not e.superseded]
         # Customer turns of the transcript in order; `call_transcript` checks they match the events.
         found["transcript"] = transcript = call_transcript(log)

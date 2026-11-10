@@ -2,6 +2,55 @@
 
 Builder, 2026-11-10. Took over from three cut-off workers; their committed work (types, tiers, checks, summary, extractor) was kept. Not yet independently verified. Synthetic text only, no speech. Tamil and Kannada not human-reviewed.
 
+## P3c: what a referral rests on (2026-11-10)
+
+Status: built (Opus medium), then one narrow check by an Opus-high subagent that wrote none of it; its six defects were fixed in one pass and the fixes were confirmed by the coordinating worker only (tests, frozen comparison, demo), not by a second independent check. Synthetic text only, no speech.
+
+A tag, not a tier. Every tier, verdict, flag and gap is unchanged: the raw results of all 144 frozen rows are byte-identical before and after (cache only, 4,498 of 4,498 LLM calls from the cache, 0 extractor errors), and `samajh.scenarios verify` passes.
+
+**Class of every flag** (`FLAG_BASIS` beside `FLAG_TIER` in `samajh/types.py`; an import-time check and a test cover every `FlagReason`):
+
+| rests on | flag reasons |
+|---|---|
+| the record alone (`record_only`) | `consent_no_record`, `funded_no_consent`, `bundled_not_mitigant`, `bundled_no_choice_on_record` |
+| a customer statement (`customer_statement`) | all 34 others, including `answers_conflict` and `cancel_not_on_record` |
+
+One exception: the two bundling reasons rest on a customer statement when the record does not mark the product as required and only the customer said it was. `checks.bundling` then sets `Flag.rests_on`; a result stored before the field existed is corrected on load from its `heard` text (`TOLD_REQUIRED_HEARD`).
+
+**New names.** `Basis`, `FLAG_BASIS`, `Flag.rests_on` (stored, left out of dumps when unset), `Flag.basis`, `referral_basis(flags)`, and the derived properties `ProductResult.referral_basis` and `CaseResult.referral_basis` (`customer_statement` when at least one refer-tier flag rests on a customer statement, `record_only` when it is `refer` and none does, else None). Summary: `IssueLine.basis`, `CaseSummary.referral_basis`, `CaseSummary.first_line`. Ops: `Triage.referral_basis` and `first_line`; `ReferralSplit` beside every referral count in the views and the report (batch header, queue rows, case view, tiles, tier row, rule rows, decision rows, decided and supported, open, other, breakdowns), each validated to sum to its count. Contract: `P3a-contract.md` sections 1, 2 and 6.
+
+**New strings.**
+- Summary first line, record-only referrals only: "Referred on the lender's record alone; nothing the customer said is the reason for the referral."
+- Labels: "On what the customer said", "On the record alone"; "Referred on what the customer said", "Referred on the record alone". Beside each count: "a on what the customer said · b on the record alone".
+- Queue filter: "All referrals (n)", "On what the customer said (a)", "On the record alone (b)".
+- Report note: "A referral on the record alone rests on the lender's own record (for example no consent on record) and on nothing the customer said. It is counted apart, so that the referrals on what the customer said describe the calls and not the lender's records. Either kind is a request for a person to look, and nothing more."
+- Rules table note: "In this table the two counts are by rule: whether the lines under that rule rest on the record alone or on what the customer said. A call counted on the record alone under one rule may be referred on what the customer said under another."
+- Case page notice for a record-only referral: "This call was referred so that a person can look at the lender's record for this loan. Nothing on this page is a conclusion about the sale. The decision is the reviewer's."
+- Phone case card: "Refer to a reviewer, on the record alone. Call outcome: ..." (or "..., on what the customer said. ..."), with the first line above the issue lines.
+- Demo and `run` output: "referred on what the customer said: A of N", "referred on the record alone: B of N".
+
+**Counts.**
+- Demo batch (scripted): 64 analysed, 7 referred: 7 on what the customer said, 0 on the record alone. The book produces no record-only referral, so the demo does not exercise that side.
+- Frozen text set, Hindi and Hinglish (`eval/text_path/runs/frozen__openai-gpt-6-luna.md`, two new columns; no earlier number changed):
+
+| kind of customer | calls (base cases) | referred | on what the customer said | on the record alone |
+|---|---|---|---|---|
+| problem | 38 (19) | 30 | 30 (15 base cases) | 0 |
+| informed, record fault or boundary | 16 (8) | 8 | 6 (3 base cases: G03, V02, V03) | 2 (1 base case: W01) |
+| informed, compliant record | 18 (9) | 0 | 0 | 0 |
+
+Tamil and Kannada (experimental, not human-reviewed) split the same way: problem 14 and 15 of 19, all on what the customer said; informed with a fault 4 of 8 each, 3 and 1.
+
+**This corrects the premise of the change.** The 8 of 16 informed customers referred are not all referred on the record: only W01 (no consent on record) is. G03 (the customer names another way of agreeing than the record's) and V02 and V03 (the customer says nobody told them of another provider) rest on what the customer said, so the split moves 2 of the 8, not 8.
+
+**Tests.** `uv run pytest tests/core tests/extract tests/ops tests/server -q`: 3,084 passed, 1 deselected (core 2,027, extract 352, ops 312, server 393). Before P3c: 3,037 (1,993, 352, 306, 386).
+
+**The check** recounted both sets from raw results with its own classification and no project classes, and agreed on every number and every split. It found: the first line could be false (it said the customer said nothing that conflicts, also when a differing premium ended as a gap); stored results lacked the bundling exception; the rules table split was unexplained; one decided/supported count had no split; the case page notice clashed with a record-only first line. All five were fixed. It also found a crash that predates P3c: `summarise` raised `KeyError` on a confirmed differing cover figure (`cover_differs_confirmed`, refer tier since the coordinator's decision), which failed the case file and ops triage for such a call. Fixed in `summary.py` with a test that every refer-tier reason has a summary line.
+
+**Left.** The fixes after the check were not independently re-checked. No page was rendered after the fix pass (JavaScript syntax check only; the builder rendered the four pages once before it). `data/loanbook/README.md` is unchanged (it is generated by `samajh/ops/book.py`). `references/pilots/p3b-artifacts/` is stale. A `recall_not_named` flag can carry no quote and is still classed as a customer statement; it is never refer tier, so no count depends on it.
+
+May say: referrals are given as two counts side by side; on the frozen text set 2 of 16 informed calls with a record fault (1 base case) were referred on the record alone and all 30 problem referrals rest on what the customer said. Must not say: that a record-only referral means the customer understood; any record-only rate as a fact about a lender.
+
 ## Fix round 3 (2026-11-10)
 
 Status: built; independent verification: **sound with conditions** (`references/reviews/iter2/verify-P3a-r3.md`, an Opus-high verifier that wrote none of the code, on its own fresh inputs, 79 replies through the real extraction model). The r2 findings 1 to 3 are fixed on fresh inputs. The verifier found two new false-clear paths. One (the carried premium) was fixed afterwards; the other (a reply of one clause has no retraction protection) is open.

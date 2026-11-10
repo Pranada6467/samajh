@@ -76,6 +76,11 @@ _FOLD: dict[str, str] = {
     "marathi": "मराठी", "telugu": "तेलुगु", "bengali": "बंगाली", "bangla": "बांग्ला", "gujarati": "गुजराती",
     "malayalam": "मलयालम", "punjabi": "पंजाबी", "odia": "उडिया", "oriya": "उडिया", "aati": "आती", "aata": "आता",
     "bolo": "बोलो", "pooch": "पूछ", "lo": "लो", "batao": "बताओ", "kaho": "कहो", "namaste": "नमस्ते", "diya": "दिया", "diye": "दिए", "paise": "पैसे", "paisa": "पैसा",
+    # round 4: who is speaking mid-call
+    "chale": "चले", "chala": "चला", "chali": "चली", "nikal": "निकल", "nikle": "निकले", "mujhse": "मुझसे",
+    "inka": "इनका", "inki": "इनकी", "inke": "इनके", "uska": "उसका", "uski": "उसकी", "uske": "उसके", "mera": "मेरा",
+    "mere": "मेरे", "hamara": "हमारा", "hamari": "हमारी", "hamare": "हमारे", "kiska": "किसका", "kiski": "किसकी",
+    "kiske": "किसके", "ne": "ने", "sunna": "सुनना", "rakho": "रखो", "rakhiye": "रखिए", "rakhna": "रखना",
 }  # fmt: skip
 
 _NUKTA = "़"
@@ -233,7 +238,19 @@ class Lexicon:
     absent: frozenset[Phrase] = frozenset()
     # Wave 5: a request to keep the call short ("ज़्यादा लंबा मत करना"): after a yes, still a go-ahead.
     keep_short: frozenset[Phrase] = frozenset()
-    not_me: frozenset[Phrase] = frozenset()  # "नहीं हूं", "not him": with "मैं", the speaker is not the borrower  # "पर", "लेकिन", "but": a denial before one does not reach past it
+    not_me: frozenset[Phrase] = frozenset()  # "नहीं हूं", "not him": with "मैं", the speaker is not the borrower
+    # --- round 4 (Hindi and Hinglish only): who is speaking mid-call, and a refusal to talk
+    relation: frozenset[Phrase] = frozenset()  # relation and role nouns: "भाई", "बेटे", "driver", "padosi"
+    pointer: frozenset[Phrase] = frozenset()  # possessives that point at someone else: "उनका", "उसकी", "his"
+    my: frozenset[Phrase] = frozenset()  # first-person possessives: "मेरे", "हमारी", "my"
+    agent: frozenset[Phrase] = frozenset()  # the agent marker "ने": "मेरे बेटे ने भरा"
+    greeting: frozenset[Phrase] = frozenset()  # "हेलो": with a question word mid-call, a restart
+    what_q: frozenset[Phrase] = frozenset()  # question words: "क्या", "कौन", "किसका", "what"
+    talk_to_me: frozenset[Phrase] = frozenset()  # "मुझसे बात", "talk to me"
+    speak: frozenset[Phrase] = frozenset()  # "बोल*", "बात", "speak*": with "अब मैं", "now I am speaking"
+    talk: frozenset[Phrase] = frozenset()  # talk, listen and hang-up words: the object of a refusal to talk
+    want_do: frozenset[Phrase] = frozenset()  # "करनी", "करना", "चाहिए", "sunna": wanting or doing it
+    hang_up: frozenset[Phrase] = frozenset()  # a bare "put it down": "रखो", "रख दो", "रखिए"
 
     def __or__(self, other: Lexicon) -> Lexicon:
         return Lexicon(*(getattr(self, name) | getattr(other, name) for name in self.__dataclass_fields__))
@@ -447,6 +464,30 @@ _HI = Lexicon(
                     "निकल गए", "चले गए", "step out", "stepped out", "had to step", "कॉल pe नहीं", "कॉल पे नहीं",
                     "कॉल पर नहीं", "लाइन पर नहीं"),
     not_me=_phrases("नहीं हूं", "not him", "not her", "not ramesh", "nahi hoon"),
+    relation=_phrases(
+        "पापा", "पिताजी", "पिता", "डैडी", "डैड", "मम्मी", "मां", "माताजी", "बेटा", "बेटे", "बेटी", "पति", "पत्नी", "वाइफ",
+        "हस्बैंड", "मिसेज", "भाई", "भैया", "भाभी", "बहन", "बहू", "दीदी", "चाचा", "चाची", "मामा", "मामी", "ताऊ", "ताई",
+        "ससुर", "सास", "दामाद", "जीजा", "नाना", "नानी", "दादा", "दादी", "पोता", "पोती", "भतीजा", "भतीजी", "भांजा",
+        "भांजी", "पड़ोसी", "ड्राइवर", "नौकर", "असिस्टेंट", "सेक्रेटरी", "कलीग", "दोस्त", "मालिक", "मुनीम", "अकाउंटेंट",
+        "लड़का", "लड़की", "घरवाले", "घरवाली", "pitaji", "pita", "maa", "bete", "pati", "patni", "bhabhi", "behen",
+        "bahen", "bahan", "didi", "chacha", "chachi", "mama", "mami", "tau", "sasur", "saas", "bahu", "damad", "jija",
+        "nana", "nani", "dada", "dadi", "bhatija", "bhatiji", "bhanja", "bhanji", "padosi", "naukar", "dost",
+        "malik", "munim", "munshi", "ladka", "ladki", "gharwale", "gharwali", "wife", "husband", "son", "daughter",
+        "father", "mother", "brother", "sister", "uncle", "aunt", "neighbour", "neighbor", "colleague", "assistant",
+        "secretary", "driver", "servant", "friend", "boss", "cousin", "nephew", "niece", "accountant",
+    ),
+    pointer=_phrases("उनका", "उनकी", "उनके", "इनका", "इनकी", "इनके", "उसका", "उसकी", "उसके", "his", "her", "their"),
+    my=_phrases("मेरा", "मेरी", "मेरे", "हमारा", "हमारी", "हमारे", "my", "our"),
+    agent=_phrases("ने"),
+    greeting=_phrases("हेलो", "हाय", "hey"),
+    what_q=_phrases("क्या", "कौन", "किस", "किसका", "किसकी", "किसके", "what", "who"),
+    talk_to_me=_phrases("मुझसे बात", "मुझ से बात", "मेरे से बात", "talk to me", "speak to me", "talk with me",
+                        "speak with me"),
+    speak=_phrases("बोल*", "बात", "speak*", "talk*"),
+    talk=_phrases("बात", "बातें", "कॉल", "फोन", "सुनना", "जवाब", "talk", "speak", "listen"),
+    want_do=_phrases("करनी", "करना", "करूंगा", "करूंगी", "करेंगे", "चाहिए", "चाहता", "चाहती", "चाहते", "सुनना", "देना",
+                     "want", "wanna"),
+    hang_up=_phrases("रखो", "रख दो", "रख दीजिए", "रखिए", "रख दें", "रखें", "hang up"),
     months=_phrases("जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "सितम्बर", "अक्टूबर",
                     "नवंबर", "नवम्बर", "दिसंबर", "दिसम्बर", "january", "february", "march", "april", "may", "june",
                     "july", "august", "september", "october", "november", "december", "jan", "feb", "aug", "sept",

@@ -44,3 +44,13 @@ No audio existed. Full report: `eval/p5/VERIFY.md`.
 - **Known about the `defer` replies** (the builder's reading of all 840; none was changed): none names the product, gives a figure or says "I don't know"; 3 carry some content (P5-C024 `anything_else` and `how_paid`, P5-C003 `how_often`) and about 14 more are borderline, among them assents ("सब okay है", P5-C042). Many say "leave that, move on", which the dialogue may read as unwillingness and end the call: that outcome is counted, not avoided. Three customers who ask for a later call do so in every `defer` reply (P5-C049, P5-C057, P5-C058).
 - **Also recorded after verification, with no data change:** `eval/p5/gold-rules.md` now lists where it is looser than the code, and the tier is scored only as `refer` or not; the reply faults and the two topic paraphrases the verifier found are listed in `README.md`.
 - OpenRouter spend for this step: about USD 0.23.
+
+## 2026-11-10, late evening: second verification, documents only
+
+No frozen file changed (all 11 digests in `FROZEN.json` still match; every frozen file equals git HEAD). No audio exists. Full report: `eval/p5/VERIFY.md`, round 2.
+
+- **Corrected here, not rewritten above:** the version 2 entry's "3 carry some content ... about 14 more are borderline" understates the `defer` replies. The round 2 verifier's sample of 230 found 6 with content about the matter and 43 with an assent word, 7 of those on a question where it reads as a yes; 140 of all 840 hold an assent word. `README.md` (Known limits) has the detail.
+- **Contract:** the arms are compared only at level 0; above it each arm is reported on its own (sections 1 and 8). The `defer` definition is marked as the project's choice. Trimmed to two pages (10 pt, A4); the smaller run and the out-of-budget items moved to `eval/p5/RUNNER-PLAN.md` Part 0.
+- **Datasheet:** coaching is not voiced at level 0 by any of the four `coached` customers (new Known limit); the closed `go_along` count over all 60 customers (77 of 600) added; the sentences on what the build scripts load into the process corrected after the phone was joined to the loan book.
+- **Runner plan:** Part 0 added (what changed in the phone, the extractor's change check, credits, the iteration 2 judge's smaller run).
+- **P4 cards** (outside this set, `.samajh-human/cards/`): rebuilt so that no counted card is on a packaged demo record; see `eval/p5/VERIFY.md`.

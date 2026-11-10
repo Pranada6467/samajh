@@ -10,7 +10,7 @@ from collections.abc import Sequence
 
 from samajh.ops.model import AttemptOutcome, Channel, Decision, FinalStatus, IngestSummary, PhoneSession
 from samajh.rules.clauses import INTERNAL
-from samajh.types import GapReason, LoanKind, RuleId, Tier
+from samajh.types import Basis, GapReason, LoanKind, RuleId, Tier
 
 BANNED: tuple[str, ...] = (
     r"mis[\s-]?s(?:ell|old)",
@@ -107,6 +107,7 @@ UNCONFIRMED_REQUEST_LABEL: dict[str, str] = {
     "do_not_call": "asked not to be called again",
     "human_requested": "asked to speak to a person",
     "call_back_later": "asked to be called later",
+    "written_requested": "asked for this in writing instead",
 }
 
 STATUS_LABEL: dict[FinalStatus, str] = {
@@ -143,6 +144,25 @@ DECISION_LABEL: dict[Decision, str] = {
 }
 NO_DECISION_LABEL = "No decision recorded yet"
 OPEN_LABEL = "Open: no final decision yet"
+
+# What a referral rests on (samajh.types.Basis), beside every referral count and on each case.
+BASIS_LABEL: dict[Basis, str] = {
+    Basis.customer_statement: "On what the customer said",
+    Basis.record_only: "On the record alone",
+}
+REFERRED_ON_STATEMENT = "Referred on what the customer said"
+REFERRED_ON_RECORD = "Referred on the record alone"
+BASIS_NOTE = (
+    "A referral on the record alone rests on the lender's own record (for example no consent on record) "
+    "and on nothing the customer said. It is counted apart, so that the referrals on what the customer said "
+    "describe the calls and not the lender's records. Either kind is a request for a person to look, and "
+    "nothing more."
+)
+RULE_SPLIT_NOTE = (
+    "In this table the two counts are by rule: whether the lines under that rule rest on the record alone "
+    "or on what the customer said. A call counted on the record alone under one rule may be referred on "
+    "what the customer said under another."
+)
 
 BREAKDOWN_LABEL: dict[str, str] = {"loan_kind": "Loan type", "branch": "Branch", "channel": "Sales channel"}
 LOAN_KIND_LABEL: dict[LoanKind, str] = {LoanKind.gold: "Gold loan", LoanKind.personal: "Personal loan"}
@@ -299,6 +319,9 @@ def window_note(after: int, phone_after: int, attempts: int) -> str:
 
 
 CHANGED_LABEL = "Case file changed after it was brought in: the version brought in first is kept"
+# Every skip reason for a session with a turn the classifier failed on begins with this
+# (samajh.ops.sessions): such a session is void, in no count, and the call is to be repeated.
+CLASSIFIER_FAILED = "not counted: the classifier failed on"
 
 
 def ingest_note(summary: IngestSummary | None) -> str:
@@ -319,6 +342,12 @@ def ingest_note(summary: IngestSummary | None) -> str:
             f"{len(summary.outside)} as calls outside the sample. Each session left out is listed on the "
             "attempt log with the reason."
         )
+        void = sum(s.reason.startswith(CLASSIFIER_FAILED) for s in summary.skipped)
+        if void:
+            note += (
+                f" {void} of those left out had a turn the classifier failed on, so the word lists alone "
+                "read it: each such call is void and is to be repeated."
+            )
     if summary.changed:
         note += (
             f" {len(summary.changed)} of the sessions brought in have a case file that changed after it was "
