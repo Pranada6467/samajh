@@ -19,29 +19,41 @@ Preparation and build workspace for Gnani AI's **Great Indian AI Internship Chal
 - **Agent Builder is out of scope.** Use the Speech APIs (STT, TTS, voice cloning) directly.
 - Evon LLM is not on the API — use any LLM for reasoning, or self-host Evon.
 
-## Gnani API facts (verify against docs.gnani.ai before relying on them)
-- Base URL `https://api.vachana.ai`; auth header `X-API-Key-ID` → browsers can't set it on WebSockets, so use a backend proxy.
-- **Prisma STT:** v2.5 (set language; number formatting hi/en only; `bias_list` ≤100 letter-only words; ≤10 substitutions) and v3.0 (`indic-auto` language ID, `codemix`, `keyterms` ≤200, topic hints). REST clips ≤30 s; WebSocket streaming; Batch (segment timestamps, speaker labels, denoising, long files).
-- **Timbre TTS:** v2.5/v3.0, REST/SSE/WebSocket, number/date/ID normalisation, audio tags (v3.0). **Voice cloning:** embeddings + REST/SSE/WebSocket.
-- No confidence scores or word timestamps on REST/streaming — derive confidence from validation and read-back.
-- Expect 429 `RATE_LIMITED`; treat concurrency as 1: single-flight queue, exponential backoff, cache every response.
-- 5,000 credits; per-call cost undocumented — measure burn with a few calls before generating test sets.
-- Unsupported languages: Odia, Assamese, Bhojpuri.
+## Gnani API facts (verified live on 2026-11-10; evidence in `references/pilots/api-probe-iter1.md`)
+Where docs.gnani.ai and live behaviour differ, live wins. `[docs]` marks what was read in the docs and not exercised: re-verify it before relying on it.
+- Base URL `https://api.vachana.ai`; auth header `X-API-Key-ID` (one key serves STT, TTS and Batch) → browsers can't set it on WebSockets, so use a backend proxy.
+- **Prisma STT REST:** `POST /stt/v3` serves both models; the `model` field picks `prisma-v2.5` (the default if omitted) or `prisma-v3.0`. `language_code` is required. Always send `format`: the server's default changes with model and language. Clips ≤30 s inclusive on both models (31 s gives 400 `MAX_AUDIO_DURATION_EXCEEDED`).
+- **v2.5:** `format` is `verbatim` or `transcribe`; no `indic-auto`. `format=transcribe` writes numbers as digits for Tamil and Kannada as well as Hindi and English (the docs say Hindi/English only), and the reply's `output.literal` holds the wording before formatting. `bias_list` ≤100 letter-only words `[docs]` is accepted, effect not measured; the substitution map (≤10 `[docs]`) is accepted, effect not shown.
+- **v3.0:** `indic-auto` and comma-separated language lists work. `format` is `verbatim`, `transcribe`, `transliterate` or `codemix` (`codemix` is a `format` value, not a separate option, and v2.5 rejects it). `keyterms` (≤200 `[docs]`) changed the output; `topic` takes free text.
+- **Streaming and Batch:** WebSocket streaming (`/stt/v3/stream`) is reachable (probed, not built). Prisma Batch works end to end (create, start, poll, fetch the transcript from a pre-signed URL) and returns segment start/end times and speaker ids. Segments follow pauses and speaker changes, not sentences: two similar voices joined with no pause came back as one segment (n = 2 TTS clips; nothing yet on real phone audio). Denoising and long-file limits are `[docs]`.
+- **Timbre TTS:** `POST /api/v1/tts/inference` works on v2.5 and v3.0 (13 voices on v3.0, 73 on v2.5; no list-voices endpoint). The server doesn't validate `language`. Every WAV has streaming-style size fields that break Python's `wave`; the client repairs them. SSE, WebSocket, number/date/ID normalisation and audio tags (v3.0) are `[docs]`. **Voice cloning** (embeddings + REST/SSE/WebSocket) is `[docs]`.
+- No confidence scores (Batch segments carry `confidence: null`) and no word timestamps (Batch gives segment times; REST gives none) — derive confidence from validation and read-back.
+- **Concurrency is 1.** A second simultaneous REST request gets an instant 429 `RATE_LIMITED` (0.2 to 0.3 s) with no `Retry-After`: it is rejected, not queued, and STT and TTS share the slot. A WebSocket streaming session does not occupy the slot. Batch routes have a separate 429 for calls less than about 1 s apart. Not established: whether a running Batch job holds the slot. Use the single-flight lock, exponential backoff, and a cache of every response.
+- **Credits:** 5,000 on the account; the project caps itself at 1,000. No API surface reports cost (no header, no body field, no usage endpoint); the dashboard at app.gnani.ai is the only source. The client's guard runs on estimates: 0.010 credits per STT audio second and 0.002 per TTS character (`samajh/clients/defaults.toml`), rounded up from one pilot dashboard reading (about 0.0087 and 0.0018, read off a chart, so each could be 20% off or more). Batch is assumed to bill like STT; streaming billing is unknown.
+- Unsupported languages `[docs]`: Odia, Assamese, Bhojpuri. Live, v3.0 rejects Assamese (400 `MODEL_UNSUPPORTED_LANGUAGE`), matching the docs; the others were not exercised.
 - The challenge page names v2.5 models; v3.0 is newer. Build so either works, and report results for both.
 
 ## How to work in this repo
 - Prefer the converged design pattern: capture speech → LLM extracts into a strict schema → **deterministic** validation against the official rule/form (no LLM arithmetic) → TTS read-back of critical fields → evidence log → evaluation on a synthetic, rule-derived test set.
 - Every accuracy claim needs a metric and a gold standard. Report failure cases honestly; include self-recorded audio, not only TTS audio.
 - Ground regulatory claims in primary sources and cite them; flag anything unverified.
+- Regulatory and case claims must match `references/claims/claims-ledger.md` (its allowed and banned wording).
+- Update documentation as soon as a verified result makes it stale.
+- Do not claim "nobody has built this" or "no vendor offers this": adjacent vendors exist (SquadStack, Edesy, Ringg, NuSummit). Say what Samajh adds: an open question before any product is named, a deterministic comparison with the lender's record, an evidence log, a measured evaluation.
+- A flag produces an evidence pack for human review, never a "refund case" and never a mis-selling finding: the 85Z refund duty arises only where mis-selling is established, and a flag is not that.
 - Avoid saturated themes unless there's a clear, evidenced twist: kirana billing, govt-scheme helpers, generic ASHA intake, scam-call shields, farmer helplines, tutors, interview coaches.
 - The spoken-numbers/FASTag direction was explored and dropped (weak demand evidence) — don't revive it without new evidence.
 - The women's-safety distress agent ("Pukaar") was explored and dropped (evidence/product mismatch, bot-to-112 risk, concurrency limit, weak Gnani-market fit; `RESEARCH.md` §10b) — don't revive it without new evidence.
 - For real-voice STT evaluation, use public consent-based datasets per `references/real-voice-datasets.md` — evaluation only, never in the demo or repo.
 
 ## Files
-- `DESIGN.md` — **current design (v1): Samajh, the RBI 85Y post-sale understanding callback.**
-- `IDEAS-HILLCLIMB.md` — 5-round idea evaluation (scores, verdicts, allowed/banned claims).
-- `references/pilots/` — measured pilots (spoken-amounts pilot, credit cost).
+- `DESIGN.md` — **current design (v2): Samajh, the RBI 85Y post-sale understanding callback.** v2 applies the claims check.
+- `ORCHESTRATION.md` — build rules and iteration log; every worker reads it.
+- `IDEAS-HILLCLIMB.md` — 5-round idea evaluation (scores, verdicts, allowed/banned claims); a note at its top lists what `references/claims/` supersedes.
+- `DESIGN-kasauti.md` — Kasauti, an earlier explored proposal (a compliance test suite that red-teams Indian collections voice agents against RBI recovery-call conduct); unreviewed, not the current design.
+- `references/claims/` — claims ledger (`claims-ledger.md`), design corrections (`design-corrections.md`), quote checker (`check_quotes.py`). The saved sources (`references/claims/sources/`) are local-only and gitignored.
+- `references/pilots/` — measured pilots (spoken-amounts pilot, credit cost). `api-probe-iter1.md` there is the measured live Gnani API behaviour; `W2-clients-report.md` has the client signatures and caveats.
+- `samajh/` — the package. `clients/` is done; the core (types, amount normaliser, rules) is in progress. **All Gnani calls go through `samajh/clients/gnani`** (cross-process lock, cache, ledger, credit cap) **and all LLM calls through `samajh/clients/llm.py`** (OpenRouter). Never run `tests/clients/probes/gnani_probe.py`: it bypasses the lock.
 - `RESEARCH.md` — full research: challenge, Gnani products, market, competitive field, past winners, all idea directions, evaluation.
 - `references/challenge-entries-github.json` — catalogued public GitHub entries from other participants.
 - `references/pvpi-adr-form-v1.3.pdf` — PvPI suspected adverse drug reaction reporting form.

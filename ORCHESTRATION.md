@@ -40,6 +40,7 @@ Load `pstack-poteto-mode` at the start. These principles are binding:
 - **Synthetic data only.** No real phone numbers, account numbers, Aadhaar, PAN or names of real people. Generated IDs obey formats but are obviously fake. Ombudsman cases are templates with invented parties.
 - **Honesty.** Report failures and skipped steps plainly. No accuracy claim without a metric and a gold standard. Tamil and Kannada content has no fluent human reviewer yet: label it `not human-reviewed`.
 - **Agent Builder is out of scope.** Speech APIs only.
+- **Documentation.** When your work makes a document stale, say so in your report with the exact lines; the coordinator has a Sonnet agent update it at once.
 
 ## Stack
 
@@ -56,7 +57,7 @@ Python 3.11, `uv` for the environment, `pydantic` v2 for types, `pytest`, `ruff`
 
 ## Verified facts that override older documents
 
-- Gnani API: `references/pilots/api-probe-iter1.md` is the measured truth and overrides the API facts in `CLAUDE.md`. In short: `codemix` is a `format` value on v3.0; v2.5 `format=transcribe` gives digits beyond Hindi and English; a second simultaneous REST request gets an instant 429; a WebSocket streaming session does not occupy the one active-request slot; no API surface reports credit cost.
+- Gnani API: the "Gnani API facts" section of `CLAUDE.md` now matches `references/pilots/api-probe-iter1.md`, which stays the evidence (measured live) and wins if the two ever differ. In short: `codemix` is a `format` value on v3.0; v2.5 `format=transcribe` gives digits beyond Hindi and English; a second simultaneous REST request gets an instant 429; a WebSocket streaming session does not occupy the one active-request slot; no API surface reports credit cost.
 - Regulation and cases: `references/claims/claims-ledger.md` and `references/claims/design-corrections.md`. `DESIGN.md` is v2 and already applies them.
 - Client signatures and caveats: `references/pilots/W2-clients-report.md`. Never run `tests/clients/probes/gnani_probe.py` (it bypasses the lock).
 - Workers hit account usage limits. Keep subagent use lean: one planner pass, builders, one reviewer pass.
@@ -69,12 +70,16 @@ Python 3.11, `uv` for the environment, `pydantic` v2 for types, `pytest`, `ruff`
 
 Goal: everything that needs no audio loop. At the end, a transcript goes in and a flagged case with evidence comes out, the gold set is frozen, and the Gnani and LLM clients are proven live.
 
-| WP | Scope | Owns | Wave |
-|---|---|---|---|
-| W1 core | types, amount normaliser, rule engine | `samajh/types.py`, `samajh/amounts/`, `samajh/rules/`, `tests/core/` | A |
-| W2 clients | Gnani client (STT/TTS, lock, backoff, cache, ledger, cap) and OpenRouter client | `samajh/clients/`, `tests/clients/` | A |
-| W3 claims | Verify regulatory and Gnani-API claims against primary sources | `references/claims/` | A |
-| W4 scenarios | 96 scenarios, gold verdicts, hash freeze | `samajh/scenarios/`, `data/scenarios/`, `tests/scenarios/` | B (after W1) |
-| W5 extractor | LLM extraction to strict schema with quoted spans, text-path eval | `samajh/extract/`, `tests/extract/`, `eval/text_path/` | B (after W1, W2) |
+| WP | Scope | Owns | Wave | Status |
+|---|---|---|---|---|
+| W1 core | types, amount normaliser, rule engine | `samajh/types.py`, `samajh/amounts/`, `samajh/rules/`, `tests/core/` | A | Replaced by W1b after a usage-limit stall; in progress |
+| W2 clients | Gnani client (STT/TTS, lock, backoff, cache, ledger, cap) and OpenRouter client | `samajh/clients/`, `tests/clients/` | A | Done |
+| W3 claims | Verify regulatory and Gnani-API claims against primary sources | `references/claims/` | A | Done |
+| W4 scenarios | 96 scenarios, gold verdicts, hash freeze | `samajh/scenarios/`, `data/scenarios/`, `tests/scenarios/` | B (after W1) | Waiting on W1b |
+| W5 extractor | LLM extraction to strict schema with quoted spans, text-path eval | `samajh/extract/`, `tests/extract/`, `eval/text_path/` | B (after W1, W2) | Waiting on W1b |
+| W7 voice transport | FastAPI proxy, browser phone, turn-taking measured REST vs streaming | `samajh/server/`, `web/`, `tests/server/` | A2 (started early, independent of the core) | In progress |
+| W8 audio eval harness | phone-line transforms, resumable voicing/STT runner, amounts test set at scale | `samajh/audio/`, `samajh/evalkit/`, `tests/audio/`, `tests/evalkit/`, `eval/amounts/`, `data/amounts/` | A2 (started early, independent of the core) | In progress |
+
+W7 and W8 have live Gnani access, through the shared client lock (`samajh/clients/gnani`).
 
 Then: independent verifier and judge review the iteration before iteration 2 (voice path and browser phone) is planned.

@@ -2,6 +2,8 @@
 
 Everything explored while preparing for Gnani AI's *Great Indian AI Internship Challenge*: the challenge itself, Gnani's products, the Indian voice-AI market, what other entrants built, what wins hackathons, and every idea direction we evaluated (including the ones we dropped and why).
 
+> **Supersession (2026-11-10).** This file is a historical record and is not rewritten. Where it differs, `references/pilots/api-probe-iter1.md` (Gnani API behaviour, measured live) and `references/claims/claims-ledger.md` (regulatory and case claims) supersede it; `DESIGN.md` v2 is the current design. Dated correction notes mark the spots.
+
 Conventions:
 - **[V]** = vendor's own claim, not independently verified.
 - "Confirmed / Weakened / Refuted / Unverified" = result of an independent fact-check pass.
@@ -70,6 +72,12 @@ Sources: [gnani.ai/internship](https://www.gnani.ai/internship), [challenge blog
 - **Not supported:** Odia, Assamese, Bhojpuri.
 - The challenge page names Prisma v2.5 / Timbre v2.5; v3.0 shipped later and many entrants use it. Rules say "any Gnani model or API" — safest to run both and report both.
 
+> **Correction (2026-11-10), measured live (`references/pilots/api-probe-iter1.md`).**
+> - Prisma table: v2.5 `format=transcribe` also writes digits for Tamil and Kannada (not Hindi/English only), and returns `output.literal`, the wording before formatting. `codemix` is a `format` value on v3.0, not a separate option. Prisma Batch works and returns segment start/end times and speaker ids (probe §1). Streaming was probed, not built.
+> - Concurrency: the limit is 1 active request across STT and TTS. A second simultaneous REST request gets an instant 429 `RATE_LIMITED` (0.18 to 0.32 s) with no `Retry-After`. A WebSocket streaming session does not occupy the slot (probe §4, §5).
+> - Credit cost: no API surface reports it (no header, body field or usage endpoint); only the dashboard does, so the client runs on estimates (probe §8).
+> - "No confidence scores and no word timestamps" holds. Batch segments carry start/end times and `confidence: null`.
+
 Docs: [docs.gnani.ai](https://docs.gnani.ai) · [llms.txt index](https://docs.gnani.ai/llms.txt) · Platform: app.gnani.ai/voice · Community: Discord (official updates now go there).
 
 ### Gnani's business (enterprise products)
@@ -119,7 +127,7 @@ Industry survey (Nasscom–Krisp): 31% of Indian firms in limited production, 13
 - Accuracy in Indian languages and code-mixing on **noisy 8 kHz phone audio** (63% rank language accuracy in top-3 priorities).
 - Correct numbers, names, amounts (a recognised weak spot).
 - A path to a human (Gartner: 87% of customers want one — not re-verified).
-- Compliance: RBI recovery-call hours (8 AM–7 PM), AI-call disclosure, IT Rules on synthetic audio, data-protection (DPDP) consent rules, SEBI/AMFI/IRDAI selling rules.
+- Compliance: RBI recovery-call hours (8 AM–7 PM), AI-call disclosure, IT Rules on synthetic audio, data-protection (DPDP) consent rules, SEBI/AMFI/IRDAI selling rules. **[Correction 2026-11-10: we found no Indian law or RBI direction that requires AI disclosure on a lender's own outbound call; RBI's FREE-AI committee recommends it (`references/claims/claims-ledger.md` N4, E4.8).]**
 - Data sovereignty, low cost per minute, voice-agent testing tools.
 
 ### Where products are heading
@@ -308,6 +316,8 @@ Warning: in mandis, dairy and construction, some parties **benefit** from loose 
 | Electricity compensation calculator | Compensation rarely claimed | Medium–Low (state PDFs) | **Confirmed novel** |
 | Spam-call complaint intake | 31 lakh complaints (2025) | Medium | Weakened and shrinking (TRAI acting on AI-flagged spam) |
 
+> **Correction (2026-11-10), teach-back row.** Reviews report benefits, but the newest systematic review (2026) found no clear pattern of effect on knowledge. We found no study of teach-back for loan or insurance sales, and none by an automated voice. Most rows rest on abstracts, not full papers (`references/claims/claims-ledger.md` C3.1 to C3.10; `references/claims/design-corrections.md` item 15).
+
 Rejected as already done: loan KFS explainer (Saakshi), insurance pre-issuance verification (Ringg; also AuthBridge, Perfios, Signzy, Artivatic; NuSummit compares calls with policy terms), auto job cards (Gnani), Indic role-play training (Disprz), complaint→category mapping (CPGRAMS Samadhan Didi).
 
 Pattern: novelty decays fast — what lasts is the validation layer *after* intake (maintainability checks, compensation maths, understanding checks).
@@ -326,7 +336,7 @@ Sources: [RB-IOS 2021](https://rbi.org.in/Scripts/NotificationUser.aspx?Id=12192
 | **Recovery-call conduct auditor** | Flags threats, wrong-hour calls, third-party disclosure in collection recordings with timestamps → RBI clause | None seen beyond Maryada (a challenge entry) |
 | **Mis-selling auditor** | Flags rule breaks in insurance/loan/DSA sales calls | One winner exists (Vigil); variants open |
 
-Feasibility note: Prisma Batch returns per-segment timestamps and speaker labels — this makes the "timestamp → rule clause" evidence pattern buildable.
+Feasibility note: Prisma Batch returns per-segment timestamps and speaker labels — this makes the "timestamp → rule clause" evidence pattern buildable. **[Qualification 2026-11-10, measured live: segment boundaries follow pauses and speaker changes, not sentences, and a timestamp is a segment start, never a word time. Two similar voices joined with no pause came back as one segment (n = 2 TTS clips; nothing on real phone audio). `references/pilots/api-probe-iter1.md` §1.]**
 
 Sources: [CCPA guidelines](https://www.scconline.com/blog/post/2023/12/04/ccpa-notifies-guidelines-for-prevention-and-regulation-of-dark-patterns-2023-legal-news/), [DarkBench](https://arxiv.org/abs/2503.10728), [DPDP Rule 3 explainer](https://www.sansalegal.com/post/how-to-draft-a-dpdp-notice-that-meets-rule-3-of-the-dpdp-rules-2025), [RBI recovery rules](https://www.business-standard.com/amp/article/finance/rbi-directs-loan-recovery-agents-not-to-intimidate-borrowers-no-calling-before-8am-after-7pm-122081201144_1.html).
 
@@ -414,7 +424,7 @@ Chosen after a 5-round evaluation (`IDEAS-HILLCLIMB.md`): **Samajh**, an RBI 85Y
 
 ## 13. Open items / unverified
 - Whether Prisma/Timbre v3.0 are explicitly allowed (rules say "any Gnani model or API").
-- Gnani concurrency limit and per-call credit cost.
+- Gnani concurrency limit and per-call credit cost. **[Update 2026-11-10: concurrency measured at 1 active request; no API reports per-call cost, so only estimates exist. See the correction note in §2 and `references/pilots/api-probe-iter1.md` §4, §8.]**
 - Primary texts read only via summaries: some TRAI, CCPA, DPDP, RBI annual-report figures.
 - Electricity research files were not preserved; claims rely on cited URLs.
 - Real noise levels in target environments; dark-store tooling; current immunisation schedule details.

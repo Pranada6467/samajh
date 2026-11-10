@@ -67,7 +67,7 @@ Insurance sold with a loan is a "third-party product or service" that the bank s
 - Deciding whether something *is* mis-selling: we only flag cases for human review.
 - Testing whether the product was suitable or appropriate for the customer (4(20A)(i)).
 - Re-teaching: Samajh assesses understanding and does not explain the product.
-- Live streaming STT (we use REST per turn; see §8).
+- Live streaming STT (we use REST per turn; see §8). Whether to adopt it for iteration 2 is open decision 12 in §15.
 
 ## 5. The call
 
@@ -171,7 +171,7 @@ Rule ids are neutral and the paragraph is looked up by lender type. Housing fina
 
 ## 8. Engineering constraints
 
-- **Concurrency 1** (429 "Only 1 active request", seen in a burst test on 2026-11-10): one queue for all requests, exponential backoff, no parallel calls. Bot audio is pre-generated, so a live call only uses STT.
+- **Concurrency 1** (429 "Only 1 active request", seen in a burst test on 2026-11-10): one queue for all requests, exponential backoff, no parallel REST calls. Bot audio is pre-generated, so a live call only uses STT. In the probe a WebSocket streaming session did not occupy that slot; v1 still uses REST per turn, and streaming is open decision 12 in §15.
 - **Caching:** key = sha256(model, params, audio/text). Noise and 8 kHz variants are made offline, and only STT is re-run per condition.
 - **Measured cost** (pilot): about 0.02 credits per 3-second STT call (n = 78) and 0.06 per short TTS sentence (n = 20), from one dashboard reading with no saved screenshot. The four-language plan (~1,350 TTS + ~7,400 STT) is about 230 to 265 credits, which is about a quarter of the 1,000-credit project cap.
 - **Latency:** STT about 0.2 to 0.3 s and TTS about 0.6 to 0.8 s on short clips (pilot and client probe). Pre-generated prompts keep the bot responsive.
@@ -261,7 +261,7 @@ Unknowns: banks may build it in-house or adapt survey bots, and we found no publ
 | Circularity (we write both the records and the answers) | Scenarios templated on awards; gold frozen with a hash; ≥10 improvised human calls per supported language (none recorded yet); TTS and human results reported separately |
 | No human voice recordings and no fluent Tamil/Kannada reviewer yet | Every language is reported as "TTS-only, not human-tested" and Tamil/Kannada text as "not human-reviewed" until the §4 bar is met |
 | Tamil/Kannada amounts and phone-line misses | Fraction-aware normaliser, read-back, v2.5 vs v3.0 reported |
-| Unclear whether an open streaming session counts as the one active request | v1 uses REST per turn; test streaming separately later |
+| Streaming STT: billing unknown, session cap undocumented | Measured 2026-11-10 (`references/pilots/api-probe-iter1.md` §5): an open streaming session does not occupy the one active-request slot, because REST STT returned 200 while a session was open, mid-audio and after close. Streaming was probed, not built. v1 uses REST per turn; adopting streaming is open decision 12 in §15 |
 | Judges know the adjacent vendors (SquadStack, Edesy, Ringg, NuSummit) | Name them ourselves and say what Samajh adds (§12) |
 | Regulatory wording drifts | Recheck RBI's notifications for amendments dated after 6 August 2026 before submission; quote text, not summaries |
 | Four documents were read in copies the issuer does not host (FREE-AI report, SPDI Rules 2011, IRDAI circular 274/11/2020, Baramulla order) | Check each against the official copy before quoting it to judges |
@@ -288,3 +288,7 @@ From the claims check. These are judgement calls, so design v2 does not adopt th
 9. **A text-confirmation arm in E1.** Without one we keep the narrower claim in §13 about SMS.
 10. **The dark-pattern quote on a slide** (Annex IIA, "loan protection insurance by default"). It is a related pattern, not the hero case.
 11. **A retention setting.** RBI fixes one year after contract end for consent records and nothing for feedback audio; the DPDP Rules set a one-year floor for logs from 13 May 2027.
+
+From the API probe (`references/pilots/api-probe-iter1.md`). Not adopted:
+
+12. **Live streaming STT for iteration 2.** A WebSocket streaming session did not occupy the one active-request slot (REST STT returned 200 while a session was open, mid-audio and after close), and two sessions could be open at once. The per-organisation session cap is undocumented, partial results and billing were not checked, and nothing is built. v1 stays with REST per turn.
