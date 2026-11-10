@@ -93,7 +93,7 @@ def test_the_funnel_of_the_demo_batch_adds_up(store: OpsStore) -> None:
 def test_a_hand_built_batch_gives_the_counts_and_intervals_worked_out_by_hand(tmp_path: Path) -> None:
     a, b, c, d, e = (loan(n) for n in range(1, 6))
     customers = [
-        customer(a, COMPLETED),  # states everything: no finding
+        customer(a, COMPLETED),  # states everything: no flag
         coached(b, NO_ANSWER, COMPLETED),  # reached on the second attempt: referred
         customer(c, NO_ANSWER, NO_ANSWER, NO_ANSWER),  # never answers
         customer(d, DECLINED_AFTER_CHECKS),
@@ -132,24 +132,24 @@ def test_a_hand_built_batch_gives_the_counts_and_intervals_worked_out_by_hand(tm
     assert one_of_three.low == pytest.approx(0.0615, abs=5e-4)
     assert one_of_three.high == pytest.approx(0.7923, abs=5e-4)
 
-    findings = {f.rule_id: f for f in report.findings}
-    assert RuleId.evidence not in findings and len(findings) == len(RuleId) - 1
-    flagged = {rule: (f.flagged.count, f.flagged.n, f.undecided, f.referred) for rule, f in findings.items()}
+    rules = {f.rule_id: f for f in report.rules}
+    assert RuleId.evidence not in rules and len(rules) == len(RuleId) - 1
+    flagged = {rule: (f.flagged.count, f.flagged.n, f.undecided, f.referred) for rule, f in rules.items()}
     assert flagged.pop(RuleId.cover) == (1, 3, 0, 0)
     assert flagged.pop(RuleId.sale_conduct) == (1, 3, 0, 1)
     assert set(flagged.values()) == {(0, 3, 0, 0)}
-    cover, conduct = findings[RuleId.cover], findings[RuleId.sale_conduct]
+    cover, conduct = rules[RuleId.cover], rules[RuleId.sale_conduct]
     assert (cover.group, cover.seriousness_label, cover.may_engage) == (
         "features",
         "Lower",
         "may engage para 85Y",
     )
     assert (conduct.group, conduct.seriousness_label, conduct.may_engage) == ("sale", "Serious", None)
-    assert findings[RuleId.belief_mismatch].group == "risks"
-    assert [f.group for f in report.findings] == sorted(
-        (f.group for f in report.findings), key=("features", "risks", "sale").index
+    assert rules[RuleId.belief_mismatch].group == "risks"
+    assert [f.group for f in report.rules] == sorted(
+        (f.group for f in report.rules), key=("features", "risks", "sale").index
     )
-    assert all(f.previous is None for f in report.findings) and report.previous_period is None
+    assert all(f.previous is None for f in report.rules) and report.previous_period is None
 
     # Most serious first, then most common: the coached customer outranks the forgotten cover.
     assert [i.rule_id for i in report.policy_review] == [RuleId.sale_conduct, RuleId.cover]

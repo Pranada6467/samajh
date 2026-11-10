@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Neha, born 1995, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c012",
+  "label": "Synthetic P5 record. Neha: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1995-10-21",
+      "language": "hi-en",
+      "name": "Neha Kalpanik"
+    },
+    "disbursed_inr": 661100,
+    "disbursed_on": "2026-10-22",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5-LN-012",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-22",
+          "method": "digital_click"
+        },
+        "cover_inr": 700000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 38900,
+        "provider": "Kalpanik Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 48
+      }
+    ],
+    "sanctioned_inr": 700000,
+    "tenure_months": 60
+  }
+}

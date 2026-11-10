@@ -8,6 +8,7 @@ from samajh.rules.checks import Rule
 from samajh.rules.clauses import CLAUSES
 from samajh.types import (
     EVIDENCE_PACK_RULES,
+    AnswerConflict,
     Beliefs,
     CaseResult,
     EvidencePack,
@@ -18,8 +19,11 @@ from samajh.types import (
     Outcome,
     Passed,
     Product,
+    ProductBeliefs,
     ProductResult,
+    Question,
     RuleId,
+    Stated,
     Verdict,
     tier_of,
 )
@@ -143,6 +147,43 @@ def _check_ids(record: LoanRecord, beliefs: Beliefs) -> None:
         raise ValueError(f"recall items name products that are not on the record: {stray}")
 
 
+# The question each stated belief answers, for a self-correction kept beside it.
+_BELIEF_QUESTION: dict[str, Question] = {
+    "kind": Question.kind,
+    "premium_inr": Question.premium,
+    "cover_inr": Question.cover,
+    "term_months": Question.term,
+    "payment_source": Question.payment_source,
+    "payment_frequency": Question.payment_frequency,
+    "required_for_loan": Question.required_for_loan,
+    "provider_choice_offered": Question.provider_choice,
+    "cancel_allowed": Question.cancel_window,
+    "cancel_window_days": Question.cancel_window,
+    "consent_given": Question.consent,
+    "consent_method": Question.consent,
+    "feature_probe": Question.features,
+}
+
+
+def self_corrections(beliefs: ProductBeliefs) -> tuple[AnswerConflict, ...]:
+    """Each stated belief kept with earlier words from its own reply: (the earlier words, the whole reply).
+
+    The extractor puts them there when the customer corrected themselves inside one reply and both
+    model readings agreed on the clause holding the final answer. Not an outcome: never in the tier.
+    """
+    found: list[AnswerConflict] = []
+    for name, question in _BELIEF_QUESTION.items():
+        answer = getattr(beliefs, name)
+        if not isinstance(answer, Stated):
+            continue
+        for earlier in answer.also:
+            if earlier.turn_id == answer.evidence.turn_id and earlier != answer.evidence:
+                item = AnswerConflict(question=question, answers=(earlier, answer.evidence))
+                if item not in found:
+                    found.append(item)
+    return tuple(found)
+
+
 def evaluate(record: LoanRecord, beliefs: Beliefs) -> CaseResult:
     """Run every rule. The case verdict and tier are the worst of any product or case-level rule.
 
@@ -177,6 +218,7 @@ def evaluate(record: LoanRecord, beliefs: Beliefs) -> CaseResult:
             )
         gaps = tuple(o for o in own if isinstance(o, Gap))
         return ProductResult(
+            self_corrections=self_corrections(beliefs.for_product(product.id)),
             product_id=product.id,
             verdict=verdict_of(own),
             tier=tier_of(flags, gaps),

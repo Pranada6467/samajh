@@ -18,9 +18,11 @@ from test_rules_engine import (
     recall_of,
     record,
     said,
+    unclear,
 )
 
-from samajh.rules import CaseSummary, IssueLine, evaluate, summarise
+from samajh.dialogue.machine import Outcome
+from samajh.rules import CaseSummary, IssueLine, call_ended_label, evaluate, summarise
 from samajh.types import (
     AnswerConflict,
     CaseResult,
@@ -35,6 +37,7 @@ from samajh.types import (
     OpenRecall,
     PaymentFrequency,
     PaymentSource,
+    ProductBeliefs,
     Question,
     RuleId,
     SaleConcern,
@@ -187,7 +190,7 @@ def test_each_understanding_gap_of_a_product_is_one_line_per_rule():
     term = by_rule[(RuleId.term,)]
     assert term.title.startswith("Customer gave a different figure for the term")
     assert term.quote == "ek saal" and term.record_value == "term 36 months"
-    assert "undecided" in by_rule[(RuleId.cancel_window,)].title
+    assert by_rule[(RuleId.cancel_window,)].title == "The call did not get to: the cancellation window."
 
 
 def test_each_incomplete_finding_of_a_product_is_one_line_per_rule():
@@ -311,3 +314,131 @@ def test_every_flag_and_gap_is_in_exactly_one_line_of_its_tier(case):
             rules = [line.rule_ids for line in own if line.tier is tier]
             if product_id is not None:
                 assert all(len(r) == 1 for r in rules) and len(set(rules)) == len(rules)  # one line per rule
+
+
+# --- never asked, record-only lines, how the call ended (product review iter2, item 5) -------
+
+NOTHING_ASKED = beliefs(ProductBeliefs(product_id=P1), recall=OpenRecall(asked=False))
+NOT_KNOWING = re.compile(r"did not know|different (answer|figure)|undecided|differing", re.IGNORECASE)
+
+
+def test_a_wrong_party_call_that_asked_nothing_says_only_that_the_call_did_not_get_there():
+    rec = record()
+    summary = summarise(rec, evaluate(rec, NOTHING_ASKED))
+    assert summary.tier is INCOMPLETE  # unchanged: silence is never a pass
+    assert summary.lines
+    for line in summary.lines:
+        assert line.title.startswith("The call did not get to: "), line.title
+        assert not NOT_KNOWING.search(line.title) and line.quote is None and not line.record_only
+    by_rule = {line.rule_ids: line.title for line in summary.lines}
+    assert by_rule[(RuleId.cover,)] == "The call did not get to: the cover."
+    assert by_rule[(RuleId.recall_unmatched,)] == (
+        "The call did not get to: the open question about what they took with the loan."
+    )
+
+
+def test_a_premium_read_back_never_asked_is_not_a_question_never_asked():
+    """The premium was asked; only the read-back was not. The customer's amount is the quote."""
+    summary = summary_of({}, {"premium_inr": said(52_000, "bavan hazaar", 6), "premium_readback": NotAsked()})
+    line = one_line(summary, INCOMPLETE)
+    assert line.title == "The call left the premium undecided." and line.quote == "bavan hazaar"
+
+
+def test_a_case_level_group_is_split_so_each_line_is_true():
+    summary = summary_of(recall=recall_of(asked=False), ungrounded=(ev("made up", 5),))
+    case = [line for line in lines(summary, INCOMPLETE) if line.product_id is None]
+    assert [(line.rule_ids, line.title) for line in case] == [
+        ((RuleId.recall_unmatched,), "The call did not get to: the open question about what they took with the loan."),
+        ((RuleId.evidence,), "The call left these questions undecided: quotes the transcript does not support."),
+    ]
+
+
+def test_a_rule_line_that_mixes_a_question_never_asked_with_an_unusable_answer_says_both():
+    summary = summary_of({}, {"feature_probe": NotAsked(), "payment_frequency": unclear()})
+    line = one_line(summary, INCOMPLETE)
+    assert line.rule_ids == (RuleId.belief_mismatch,)
+    assert line.title == (
+        "The call left how often it is paid undecided; the call did not get to: getting the money back."
+    )
+
+
+def test_a_line_on_the_record_alone_is_marked_and_a_quoted_line_is_not():
+    rec = record(product(consent=None))
+    summary = summarise(rec, evaluate(rec, NOTHING_ASKED))  # a call hung up before any question
+    assert summary.tier is REFER
+    line = one_line(summary)
+    assert line.record_only and line.quote is None
+    assert line.title == (
+        "The record has no consent for this product; the premium was deducted from the loan "
+        "without a recorded consent (from the lender's record; no customer statement)."
+    )
+    quoted = one_line(summary_of({"consent": None}))  # the same flags, with the customer's answers on the call
+    assert quoted.quote is not None and not quoted.record_only
+    assert "lender's record" not in quoted.title
+    for rec, result in worst_cases():
+        for line in summarise(rec, result).lines:
+            assert line.record_only == ("(from the lender's record; no customer statement)" in line.title)
+            assert not (line.record_only and line.quote)
+
+
+def test_wording_changes_leave_tiers_rules_and_outcomes_as_they_were():
+    """Wording only: the tier, each line's tier and rules, and the outcomes behind the lines."""
+    cases = [*worst_cases(), (record(), evaluate(record(), NOTHING_ASKED))]
+    rec = record(product(consent=None))
+    cases.append((rec, evaluate(rec, NOTHING_ASKED)))
+    for rec, result in cases:
+        summary = summarise(rec, result)
+        assert summary.tier is result.tier
+        outcomes = [*result.all_flags(), *result.all_gaps()]
+        for line in summary.lines:
+            behind = [o for o in outcomes if o.product_id == line.product_id and o.rule_id in line.rule_ids]
+            assert {o.tier for o in behind if o.tier is line.tier} == {line.tier}
+        covered = {(o.product_id, o.rule_id, o.tier) for o in outcomes}
+        shown = {(line.product_id, rule, line.tier) for line in summary.lines for rule in line.rule_ids}
+        assert shown == covered
+
+
+def test_every_way_a_call_ends_has_a_reviewer_label():
+    labels = {value: call_ended_label(value) for value in Outcome}
+    assert all(label and label[0].isupper() and "_" not in label for label in labels.values())
+    assert len(set(labels.values())) == len(labels)  # no two outcomes read the same
+    assert labels[Outcome.completed] == "The call reached its closing lines"
+    assert labels[Outcome.wrong_party] == "Ended early: the person who answered said they are not the borrower"
+
+
+@pytest.mark.parametrize("outcome", ["in_progress", None, ""])
+def test_a_call_that_stopped_early_is_called_a_hang_up_or_a_dropped_line(outcome):
+    label = call_ended_label(outcome)
+    assert label == "Stopped before the call finished: the recording ends there (a hang-up or a dropped line)"
+    assert "progress" not in label
+
+
+def test_an_unknown_outcome_comes_back_readable():
+    assert call_ended_label("line_busy") == "Ended: line busy"
+
+
+# --- notes: a correction inside one reply whose final answer stood --------------------------------
+
+
+def _corrected_kind() -> Stated:
+    return Stated(value=KindClaim.insurance, evidence=ev("ek FD, nahi nahi, bima hai"), also=(ev("ek FD"),))
+
+
+def test_a_clear_case_shows_one_note_for_a_self_correction_and_stays_clear():
+    summary = summary_of(belief_changes={"kind": _corrected_kind()})
+    assert summary.tier is Tier.clear
+    (note,) = summary.lines
+    assert note.note is True and note.tier is Tier.clear and note.product_id == P1
+    assert note.title == 'Customer first said "ek FD" about what the product is, then corrected it in the same reply.'
+    assert (note.quote, note.rule_ids) == ("ek FD, nahi nahi, bima hai", (RuleId.kind,))
+
+
+def test_a_case_that_is_not_clear_ends_with_one_note_per_self_correction():
+    summary = summary_of(belief_changes={"kind": _corrected_kind(), "payment_source": said(PaymentSource.separately)})
+    *issues, note = summary.lines
+    assert issues and not any(line.note for line in issues)
+    assert note.note and note.tier is Tier.clear and note.product_id == P1
+    assert note.title == 'Customer first said "ek FD" about what the product is, then corrected it in the same reply.'
+    assert (note.quote, note.rule_ids) == ("ek FD, nahi nahi, bima hai", (RuleId.kind,))
+    plain = summary_of(belief_changes={"payment_source": said(PaymentSource.separately)})
+    assert summary.tier is plain.tier and tuple(issues) == plain.lines

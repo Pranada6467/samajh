@@ -151,15 +151,19 @@ def test_unclear_go_ahead_gets_one_short_reask_then_ends(language):
 
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_second_check_fails_after_one_reask_and_the_loan_is_never_mentioned(language):
+    # Wave 2: one attempt: a wrong year ends at once; a reply with no year gets the one re-ask.
     customer = CUSTOMERS[language]
-    call = play(record(), language, [customer.identity, customer.go_ahead, "1990", "1991"])
+    call = play(record(), language, [customer.identity, customer.go_ahead, "1990"])
+    assert call.end.outcome is Outcome.second_check_failed
+    assert call.keys[-2:] == ("second_check.ask", "end.check_failed")
+    call = play(record(), language, [customer.identity, customer.go_ahead, "", "1991"])
     assert call.end.outcome is Outcome.second_check_failed
     assert call.keys[-3:] == ("second_check.ask", "second_check.reask", "end.check_failed")
     assert CallStep.context not in {line.step for line in call.lines}
 
 
 @pytest.mark.parametrize("language", LANGUAGES)
-@pytest.mark.parametrize("years", [["84"], ["1990", "1984"], [""] + ["1984"]])
+@pytest.mark.parametrize("years", [["84"], ["हम्म", "1984"], [""] + ["1984"]])  # wave 2: no "1990" first
 def test_second_check_passes_on_two_digits_or_on_the_second_try(language, years):
     customer = CUSTOMERS[language]
     call = play(record(), language, [customer.identity, customer.go_ahead, *years])
@@ -299,9 +303,11 @@ def test_two_products_are_asked_in_record_order_by_ordinal(language):
         *product_questions("P2", read_back=False),
         (CallStep.consent_check, Question.consent, None),
     ]
+    # Wave 2: the first product is introduced as in a one-product record; `intro_nth` only from the second.
+    assert [line.key for line in call.lines if line.key.startswith("teach_back.intro")] == [
+        "teach_back.intro", "teach_back.intro_nth"]  # fmt: skip
     intros = [line for line in call.lines if line.key == "teach_back.intro_nth"]
-    assert [line.slots["ordinal"] for line in intros] == list(call_ordinals(language)[:2])
-    assert "teach_back.intro" not in call.keys
+    assert [line.slots["ordinal"] for line in intros] == list(call_ordinals(language)[1:2])
 
 
 @pytest.mark.parametrize("language", LANGUAGES)

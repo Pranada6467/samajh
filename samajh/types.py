@@ -823,6 +823,9 @@ class ProductResult(Frozen):
     gaps: tuple[Gap, ...] = ()
     passed: tuple[RuleId, ...] = ()
     evidence_pack: EvidencePack | None = None
+    # A correction inside one reply whose final answer stood: the earlier words, then the whole
+    # reply. For the reviewer only: not a flag, not a gap, and never part of the verdict or tier.
+    self_corrections: tuple[AnswerConflict, ...] = ()
 
     @model_validator(mode="after")
     def _consistent(self) -> "ProductResult":

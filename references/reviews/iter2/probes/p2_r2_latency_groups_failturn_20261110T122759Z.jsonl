@@ -1,0 +1,335 @@
+{"arm": "failturn", "case": "tp-026", "turn": 1, "reply": "नहीं, मेरा नाम सुरेश है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-027", "turn": 1, "reply": "nahi main Rakesh bol raha hu, Ramesh nahi", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-028", "turn": 1, "reply": "कौन रमेश? यह नंबर तो मैंने अभी नया लिया है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-028", "turn": 3, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-036", "turn": 1, "reply": "एक मिनट, मैं अपने बेटे को देती हूँ, वो सब देखता है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-036", "turn": 3, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-037", "turn": 1, "reply": "aap mere bete se baat karo, woh handle karta hai sab", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-037", "turn": 3, "reply": "kaun bol raha hai? kis baare mein?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-037", "turn": 5, "reply": "aap mujhe bata do na, main bol dunga unko", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-043", "turn": 3, "reply": "हाँ", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-044", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-045", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-046", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-047", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-048", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-049", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-050", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-051", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-051", "turn": 5, "reply": "मेरी उम्र? मैं तो 1990 की हूँ, रमेश जी 1984 के", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-051", "turn": 7, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-052", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-053", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-053", "turn": 7, "reply": "रुकिए, मेरी बीवी से बात कीजिए, वो सब जानती है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-053", "turn": 11, "reply": "मुझे बता दीजिए, मैं उनको बता दूँगी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-054", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-054", "turn": 7, "reply": "ek minute, main beta hoon, papa ne phone de diya, kya puch rahe the aap?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-054", "turn": 11, "reply": "aap mujhe bata do na, main bol dunga unko", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-054", "turn": 13, "reply": "kahan se call hai ye, bank se?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-055", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-055", "turn": 7, "reply": "हेलो, मैं इनकी बेटी हूँ, पापा को सुनाई नहीं देता, मुझे बताइए क्या लिया था", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-055", "turn": 11, "reply": "मुझे बता दीजिए, मैं उनको बता दूँगी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-056", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-056", "turn": 7, "reply": "hello? papa bahar chale gaye, main unka bhai hu, kya baat chal rahi thi", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-056", "turn": 11, "reply": "aap mujhe bata do na, main bol dunga unko", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-056", "turn": 13, "reply": "kahan se call hai ye, bank se?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-057", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-057", "turn": 11, "reply": "मुझे बता दीजिए, मैं उनको बता दूँगी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-058", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-058", "turn": 7, "reply": "main unka CA hoon, unke saare loan main manage karta hoon, aap mujhe bolo", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-058", "turn": 11, "reply": "aap mujhe bata do na, main bol dunga unko", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-058", "turn": 13, "reply": "kahan se call hai ye, bank se?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-059", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-059", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "tp-059", "turn": 9, "reply": "बेटा बोल रहा हूँ, पापा की तबीयत ठीक नहीं, आगे क्या पूछना है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-059", "turn": 13, "reply": "मुझे बता दीजिए, मैं उनको बता दूँगी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-060", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-060", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "tp-060", "turn": 9, "reply": "aunty bol rahi hu padosi, ramesh ji ne phone pakda diya", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-060", "turn": 13, "reply": "aap mujhe bata do na, main bol dunga unko", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-060", "turn": 15, "reply": "kahan se call hai ye, bank se?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-061", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-061", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "tp-061", "turn": 9, "reply": "हाँ जी, मैं उनका दामाद हूँ, आप मुझे बताओ कितने का था", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-061", "turn": 13, "reply": "मुझे बता दीजिए, मैं उनको बता दूँगी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-062", "turn": 3, "reply": "haan", "seconds": 0.007, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-062", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "tp-062", "turn": 9, "reply": "sorry woh kisi aur se baat kar rahe hain, main unki wife, aap continue karo", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-062", "turn": 13, "reply": "aap mujhe bata do na, main bol dunga unko", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-062", "turn": 15, "reply": "kahan se call hai ye, bank se?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-063", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-063", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "tp-063", "turn": 9, "reply": "ये कौन है? रमेश किससे बात कर रहे हो... मैं उनकी माँ हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-063", "turn": 13, "reply": "मुझे बता दीजिए, मैं उनको बता दूँगी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-064", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-064", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "tp-064", "turn": 9, "reply": "hello main unka dost hoon, phone mere paas reh gaya", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-064", "turn": 13, "reply": "aap mujhe bata do na, main bol dunga unko", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-064", "turn": 15, "reply": "kahan se call hai ye, bank se?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-065", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-065", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "tp-065", "turn": 9, "reply": "वो बाहर चले गए, मैं उनकी पत्नी, जो पूछना है मुझसे पूछो", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-065", "turn": 13, "reply": "मुझे बता दीजिए, मैं उनको बता दूँगी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-066", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "tp-066", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "tp-066", "turn": 9, "reply": "papa gaye, main unki beti, aap mujhe batao kitne paise kate", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-066", "turn": 13, "reply": "aap mujhe bata do na, main bol dunga unko", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-066", "turn": 15, "reply": "kahan se call hai ye, bank se?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-067", "turn": 1, "reply": "हाँ मैं ही रमेश हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-068", "turn": 1, "reply": "haan main hi Ramesh", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-069", "turn": 3, "reply": "जी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-069", "turn": 5, "reply": "याद नहीं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-069", "turn": 7, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-070", "turn": 3, "reply": "ok", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-070", "turn": 5, "reply": "yaad nahi hai exact", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-070", "turn": 7, "reply": "kaun bol raha hai? kis baare mein?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-071", "turn": 3, "reply": "हाँ जी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-072", "turn": 3, "reply": "theek hai", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-072", "turn": 5, "reply": "unnis sau chaurasi", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-072", "turn": 7, "reply": "kaun bol raha hai? kis baare mein?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-073", "turn": 3, "reply": "ठीक है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-073", "turn": 5, "reply": "अस्सी के आसपास", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-073", "turn": 7, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-074", "turn": 1, "reply": "haan main Ramesh", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-075", "turn": 1, "reply": "मैं ही रमेश", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-076", "turn": 3, "reply": "haan", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-076", "turn": 7, "reply": "kya galat hai? 1982?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-077", "turn": 1, "reply": "जी हाँ मैं ही बोल रहा", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-078", "turn": 3, "reply": "haan", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-079", "turn": 3, "reply": "हाँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-079", "turn": 5, "reply": "1984 है ना? सही है?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-079", "turn": 7, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "tp-080", "turn": 1, "reply": "yes I am Ramesh", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-003", "turn": 3, "reply": "अभी टाइम नहीं है, खेत में हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-004", "turn": 3, "reply": "busy hu abhi, baad me", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-005", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-005", "turn": 5, "reply": "अरे अभी दुकान पे ग्राहक खड़े हैं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-006", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-006", "turn": 7, "reply": "bhai abhi bahut kaam hai, main free nahi hoon", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-007", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-007", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-008", "turn": 1, "reply": "हम बस में हैं, कुछ सुनाई नहीं दे रहा, बाद में", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-009", "turn": 1, "reply": "नहीं चाहिए कुछ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-011", "turn": 3, "reply": "नहीं, मुझे कोई बात नहीं करनी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-012", "turn": 3, "reply": "nahi nahi rehne do, koi zaroorat nahi", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-013", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-013", "turn": 5, "reply": "ये सब मैं नहीं बताऊँगा, रहने दीजिए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-014", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-015", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-015", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-015", "turn": 9, "reply": "छोड़िए ना, क्या फायदा इन सब का", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-016", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-016", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-019", "turn": 3, "reply": "मेरा नंबर अपनी लिस्ट से हटा दो", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-020", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-020", "turn": 5, "reply": "aage se mujhe call mat karna, samjhe", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-021", "turn": 3, "reply": "हाँ", "seconds": 0.008, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-021", "turn": 7, "reply": "आज के बाद इस नंबर पर फ़ोन नहीं आना चाहिए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-022", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-022", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-022", "turn": 9, "reply": "number delete karo mera, roz roz call aate hain", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-023", "turn": 3, "reply": "दोबारा कॉल किया तो शिकायत कर दूँगा", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-026", "turn": 3, "reply": "आप एक घंटे बाद कर लीजिए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-027", "turn": 3, "reply": "sunday ko karna, abhi nahi", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-028", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-028", "turn": 5, "reply": "बाद में बात करते हैं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-029", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-030", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-030", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-031", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-031", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-033", "turn": 3, "reply": "mujhe kisi real insaan se baat karni hai", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-034", "turn": 3, "reply": "आपके मैनेजर से बात करवाइए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-035", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-035", "turn": 5, "reply": "branch wale se baat karwao", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-036", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-037", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-037", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-037", "turn": 9, "reply": "koi agent hai kya? usko line pe lo", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-038", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-038", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-038", "turn": 9, "reply": "बैंक वाले भैया से बात करा दो जिन्होंने लोन किया था", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-040", "turn": 3, "reply": "email kar do, main padh lunga", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-041", "turn": 3, "reply": "मुझे चिट्ठी भेज दीजिए, फ़ोन पर नहीं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-042", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-042", "turn": 5, "reply": "whatsapp pe message kar do details", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-043", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-044", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-044", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-044", "turn": 9, "reply": "sms bhej do, abhi baat nahi kar sakta", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-045", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-045", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-045", "turn": 9, "reply": "मेल पे डाल दो सवाल, मैं जवाब दे दूँगा", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-047", "turn": 1, "reply": "kya bakwaas hai yeh, kaat do phone", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-048", "turn": 3, "reply": "तुम लोग चोर हो, सब फ्रॉड है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-049", "turn": 3, "reply": "bhaad mein jao", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-050", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-050", "turn": 5, "reply": "क्यों बताऊँ अपना साल? चलो भागो", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-051", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-051", "turn": 7, "reply": "pagal ho kya, kitni baar puchoge, chup karo", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-052", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-052", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-052", "turn": 9, "reply": "बकवास बंद करो", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-053", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-053", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-057", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-058", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-059", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-059", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-060", "turn": 1, "reply": "[शोर]", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-060", "turn": 3, "reply": "[शोर]", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-061", "turn": 3, "reply": "hmm", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-062", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-062", "turn": 7, "reply": "उम्म", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-062", "turn": 9, "reply": "अं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-062", "turn": 11, "reply": "उम्म", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-063", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-063", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "rf-063", "turn": 9, "reply": "(background TV noise)", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-064", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "rf-064", "turn": 5, "reply": "हैलो? हैलो?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "rf-064", "turn": 7, "reply": "हैलो", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-001", "turn": 1, "reply": "हाँ, रमेश जी से हो रही है।", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-002", "turn": 1, "reply": "हाँ, रमेश जी से हो रही है।", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-007", "turn": 1, "reply": "रमेश", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-012", "turn": 1, "reply": "haan ji ramesh here", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-013", "turn": 1, "reply": "हाँ रमेश बोल रहा हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-014", "turn": 1, "reply": "Ramesh speaking", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-015", "turn": 1, "reply": "जी, हम ही हैं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-018", "turn": 1, "reply": "हाँ जी, हम रमेश बोल रहे हैं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-019", "turn": 1, "reply": "हां जी बोल रहे हैं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-020", "turn": 1, "reply": "haan haan bolo na", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-021", "turn": 1, "reply": "जी, बताइए क्या बात है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-022", "turn": 1, "reply": "ha ji ramesh hi hu", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-023", "turn": 1, "reply": "हाँ वही हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-024", "turn": 1, "reply": "han me hi hu", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-025", "turn": 1, "reply": "हाँ जी हाँ, रमेश ही बात कर रहा है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-026", "turn": 1, "reply": "ji haan, Ramesh Namoona", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-027", "turn": 1, "reply": "रमेश नमूना बोल रहा, बोलो", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-030", "turn": 1, "reply": "हाँ जी रमेश जी से बात हो रही है आपकी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-031", "turn": 1, "reply": "haan, Ramesh ji se hi baat ho rahi hai", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-032", "turn": 1, "reply": "अरे हाँ हाँ, मैं ही, बोलिए बोलिए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-033", "turn": 1, "reply": "matlab haan, main hi hoon", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-034", "turn": 1, "reply": "जी सर बोलिए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-036", "turn": 1, "reply": "yes speaking, who is this", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-037", "turn": 1, "reply": "हाँ मैं हूँ रमेश, कौन बोल रहा है?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-038", "turn": 1, "reply": "woh... haan ji, Ramesh, boliye", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-039", "turn": 1, "reply": "हाँ जी मेरा ही नंबर है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-040", "turn": 1, "reply": "haan mera hi number hai", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-041", "turn": 1, "reply": "हाँ, बोलिए, सुन रहा हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-042", "turn": 1, "reply": "bolo bolo sun raha hu", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-043", "turn": 1, "reply": "हाँ, सुनीता जी से हो रही है।", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-044", "turn": 1, "reply": "जी, सुनीता बोल रही हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-045", "turn": 1, "reply": "haan ji, Sunita here, boliye", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-047", "turn": 1, "reply": "हाँ, इरफ़ान जी से हो रही है।", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-048", "turn": 1, "reply": "ji Irfan bol raha", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-049", "turn": 1, "reply": "जी हाँ, इरफ़ान", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-050", "turn": 1, "reply": "haan irfaan hi hu", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-051", "turn": 1, "reply": "हाँ, गुरप्रीत जी से हो रही है।", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-052", "turn": 1, "reply": "haanji, Gurpreet bol rahi aan", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-053", "turn": 1, "reply": "हाँ जी, गुरप्रीत", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-054", "turn": 1, "reply": "हाँ, लक्ष्मी जी से हो रही है।", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-055", "turn": 1, "reply": "haan Laxmi speaking", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-056", "turn": 1, "reply": "जी, मैं लछमी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-057", "turn": 1, "reply": "हाँ जी, रामेश बोल रहा हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-058", "turn": 1, "reply": "haan Rames ji se baat ho rahi", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-059", "turn": 1, "reply": "हाँ, आप सही नंबर पे बात कर रहे हैं", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-060", "turn": 1, "reply": "haan ji, aap Ramesh se hi baat kar rahe ho", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-063", "turn": 1, "reply": "हाँ जी हाँ बताइए क्या सेवा करूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gi-064", "turn": 1, "reply": "haan main hi Sunita, boliye", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gy-001", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-002", "turn": 3, "reply": "हाँ", "seconds": 0.003, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-003", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-004", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-005", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-006", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-007", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-007", "turn": 5, "reply": "mera 1984 hai", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gy-008", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-009", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-010", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-010", "turn": 5, "reply": "साल... 1984, जून का", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gy-011", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-011", "turn": 5, "reply": "1984 mein paida hua tha main", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gy-012", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-012", "turn": 5, "reply": "पंद्रह जून उन्नीस सौ चौरासी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "gy-013", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-014", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-015", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "gy-016", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-001", "turn": 1, "reply": "नहीं नहीं, बोलिए, मैं ही हूँ", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-002", "turn": 1, "reply": "nahi nahi boliye, main Ramesh hi hoon", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-003", "turn": 3, "reply": "अभी बिज़ी था, अब बोलो", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-004", "turn": 3, "reply": "abhi busy tha, ab bolo", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-005", "turn": 3, "reply": "बंद मत कीजिए, बोलिए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-006", "turn": 3, "reply": "phone mat kaatna, haan pucho", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-007", "turn": 3, "reply": "ठीक है, पूछिए, पर जल्दी", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-008", "turn": 3, "reply": "haan haan two minute hai, pucho", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-009", "turn": 3, "reply": "मना क्यों करूँगा, पूछिए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-010", "turn": 3, "reply": "koi dikkat nahi, pucho", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-011", "turn": 3, "reply": "नहीं कोई बात नहीं, पूछ लीजिए", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-012", "turn": 3, "reply": "time to nahi hai zyada par chalo pucho", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-013", "turn": 3, "reply": "हाँ, किसी इंसान से नहीं, आपसे ही कर लेंगे बात", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-014", "turn": 3, "reply": "machine ho to bhi chalega, bolo", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-015", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-015", "turn": 5, "reply": "बताने में कोई दिक्कत नहीं, 1984", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-016", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-016", "turn": 5, "reply": "nahi chhupana kya, 1984", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-017", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-017", "turn": 7, "reply": "लिख के नहीं चाहिए, फ़ोन पे ही बता दो... हाँ, एक बीमा लिया था", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-018", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-018", "turn": 7, "reply": "likh ke nahi chahiye, phone pe hi bata do, haan insurance liya tha", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-019", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-020", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-021", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-021", "turn": 7, "reply": "मैनेजर ने बोला था लेना पड़ेगा, तो ले लिया एक बीमा", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-022", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-022", "turn": 7, "reply": "agent bola tha ki baad mein call aayega, haan ek policy li thi", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-023", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-023", "turn": 7, "reply": "बैंक वाले ने कहा मना मत करो, तो एक बीमा ले लिया", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-024", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-024", "turn": 7, "reply": "maine mana kiya tha par unhone add kar diya insurance", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-025", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-025", "turn": 7, "reply": "रुकिए मत, बताता हूँ, एक बीमा लिया था", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-026", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-026", "turn": 7, "reply": "nahi nahi, band mat karo, mujhe yaad aa raha hai, ek insurance tha", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-027", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-027", "turn": 7, "reply": "मुझे शिकायत करनी है, उन्होंने ज़बरदस्ती बीमा डाल दिया", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-028", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-028", "turn": 7, "reply": "unhone bola tha phone pe call aayega to haan bolna, bas", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-029", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-029", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-030", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-030", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-031", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-031", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-031", "turn": 9, "reply": "मना नहीं करूँगा, वो बीमा है ज़िंदगी का", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-032", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-032", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-032", "turn": 9, "reply": "woh life insurance hai, band karna ho to kaise karte hain?", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-033", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-033", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-033", "turn": 9, "reply": "बाद में पता चला कि वो बीमा है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-034", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-034", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-034", "turn": 9, "reply": "baad mein bataunga bolke unhone kuch nahi bataya, policy thi shayad", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-035", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-035", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-035", "turn": 9, "reply": "इसमें इंसान को कुछ होने पर पैसा मिलता है", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-036", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-036", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-036", "turn": 9, "reply": "agar mujhe kuch ho gaya to loan maaf, aisa kuch", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-037", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-037", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-038", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-038", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-038", "turn": 9, "reply": "stop... matlab ruko, haan yaad aaya, insurance liya tha", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-039", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-039", "turn": 7, "reply": "हाँ लिया था, पर अभी गाड़ी में हूँ, जल्दी पूछो", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-040", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-040", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-040", "turn": 9, "reply": "nahi chahiye tha mujhe, par le liya, bima tha", "seconds": 0.0, "error": "RuntimeError"}
+{"arm": "failturn", "case": "nr-041", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-041", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "failturn", "case": "nr-042", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "failturn", "case": "nr-042", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}

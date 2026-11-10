@@ -1,6 +1,6 @@
 # Samajh: what you personally need to do
 
-**Status (2026-11-10, kept current by the coordinator):** human calls are NOT open yet. Ready now: the dashboard reading, recruiting friends, the decisions in §2.5, and two short answers for the coordinator (§2.7: what the phrase "teen lakh chalis" means, and a go-ahead to copy two reports into the repo). **Hold the wording review (§2.2) until the P2 fix round lands:** an independent check found the call not ready for a live line, its lines are being changed, and `references/pilots/P2-lines-for-review.md` will be regenerated; the coordinator will say when to start. The listening pass and the calls wait for packages P1 and P2 to be verified. Keep the consent messages, the call log and friends' audio in `.samajh-human/` at the repo root; git ignores that folder.
+**Status (2026-11-10, kept current by the coordinator):** human calls are NOT open yet, and you have decided to make no more calls, practice included, until the go signal. **The Hindi and Hinglish wording review (§2.2) is OPEN now**: the P2 fix round has landed (commit 993edf4) and `references/pilots/P2-lines-for-review.md` matches its lines. Also ready now: the dashboard reading, recruiting friends, the decisions in §2.5, and two short answers for the coordinator (§2.7: what the phrase "teen lakh chalis" means, and a go-ahead to copy two reports into the repo). The listening pass and the calls wait for packages P1 and P2 to be verified; P2 is not yet independently verified. P3a and P3b were re-verified today, both "sound with conditions" (`references/reviews/iter2/verify-P3a-r2.md`, `verify-P3b-r2.md`), and fix workers are running. Keep the consent messages, the call log and friends' audio in `.samajh-human/` at the repo root; git ignores that folder.
 
 Written 2026-11-10 by the guide agent, from the repo as it stood that evening, and updated the same day with the coordinator's answers. Other agents are still building, so anything marked **coming** is not ready: do not do it yet. What is still open is in section 5. Suggestions that are mine, not the project's, are marked "(guide's suggestion)".
 
@@ -12,7 +12,7 @@ Package names used below: **P1** = the real call on the browser phone, **P2** = 
 |---|---|---|---|---|---|
 | 1 | Read the STT and TTS totals off the Gnani dashboard, twice | Every credit figure in the project is an estimate. A reading turns them into measurements | First reading now; second after the human calls | 5 to 10 min each | Dashboard numbers, the time, and the ledger output sent to the coordinator |
 | 2 | Line up one to three friends and get their consent | The human calls cannot happen without people. The judge calls them the single most valuable evidence | Now | 30 min of messages | Each person has sent a written yes to the points in §2.3 |
-| 3 | Review the Hindi and Hinglish wording of the bot's lines | No fluent human has read any line. The judge found the wording stiff where it matters | **Hold**: do not start until the coordinator says the P2 fix round has landed; `references/pilots/P2-lines-for-review.md` exists but its lines are changing | About 1 to 2 hours (guide's estimate) | Every line marked keep, change or unsure |
+| 3 | Review the Hindi and Hinglish wording of the bot's lines | No fluent human has read any line. The judge found the wording stiff where it matters | **Now**: `references/pilots/P2-lines-for-review.md` is final for review (69 lines, each in Hindi and Hinglish) | About 1 to 2 hours (guide's estimate) | Every line marked keep, change or unsure |
 | 4 | Listen to the bot's lines and pick its voice | Nobody has checked by ear how Timbre says the lines, or compared the voices | **Coming**: after P1 pre-generates the bot's audio, the coordinator gives you a local page | Not estimated | A voice chosen per language; lines that sound wrong noted |
 | 5 | Make the human calls (P4) | Answers both objections at once: "synthetic voices" and "you scripted the customers" | **Coming**: on the coordinator's go signal (P1 and P2 verified) | About 2 hours with the friends (judge's estimate) | 20 calls made, each with a row in the log, failures included |
 | 6 | Record and post the demo video; submit the written explanation (P7) | It is the submission | **Coming**: last | Not estimated | Video posted with the tags; written explanation sent |
@@ -40,20 +40,21 @@ Do not edit `samajh/clients/defaults.toml` yourself. An agent will work out the 
 
 Take one reading now and a second, the same way, after the human calls.
 
-### 2.2 Hindi and Hinglish wording review (coming, do not start yet)
+### 2.2 Hindi and Hinglish wording review (open now)
 
-**What it will be.** `references/pilots/P2-lines-for-review.md`: the bot's lines for you to read. A copy exists now, but the lines are still changing: wait until the coordinator regenerates it and tells you to start. The lines themselves live in `data/prompts/hi.toml` and `hi-en.toml`. **Do not edit those files.** They are guarded by a lint and tests, and P2 is rewriting them now. Tamil and Kannada are out of scope for you: the project has cut them to an experimental appendix.
+**What it is.** `references/pilots/P2-lines-for-review.md`: a table of the bot's 69 lines, one row per line, with the Hindi, the Hinglish, a plain English meaning and when the line is said. It matches the lines in the code as of commit 993edf4. Since the earlier draft, 6 lines are new and 16 are reworded; they are marked **(new, round 2)** and **(changed, round 2)** in the Key column, and their keys are listed in `references/pilots/P2-report.md`. If you read the earlier draft, read those 22 again. **A line the verifier later forces to change will come back to you for a second look**: the call has not yet passed its independent check. The lines themselves live in `data/prompts/hi.toml` and `hi-en.toml`. **Do not edit those files.** They are guarded by a lint and tests. Tamil and Kannada are out of scope for you: the project has cut them to an experimental appendix.
 
-**How to mark it up** (convention confirmed by the coordinator). Add one line directly under each bot line, starting with `REVIEW:` and one of three words:
+**How to mark it up** (convention confirmed by the coordinator). Open the file in a plain text editor. Add a new line directly under each table row, starting with `REVIEW:` and one of three words. That one line covers both languages. If your verdict differs between them, write two lines, `REVIEW hi:` and `REVIEW hi-en:`. The added lines break the table's layout when rendered; that is fine, the file is read by an agent.
 
 ```
 REVIEW: keep
 REVIEW: change to "आपने लोन के साथ जो लिया था, वो आपके हिसाब से क्या है?"
 REVIEW: unsure - sounds like a riddle, but I can't think of a better line
+REVIEW hi-en: change to "Loan के साथ आपने और क्या लिया था?"
 ```
 
 Rules for the markup, so an agent can apply it without asking you anything:
-- Mark every line, including the ones you keep. An unmarked line reads as "not reviewed".
+- Mark every row, including the ones you keep. An unmarked line reads as "not reviewed".
 - A `change to` gives the complete new line in quotes, not a description of the change.
 - Keep any `{slot}` placeholders (for example the first name, the lender, an amount) exactly as they are.
 - A reason after a dash is welcome and optional.
@@ -78,7 +79,7 @@ Rules for the markup, so an agent can apply it without asking you anything:
 2. For any line that sounds wrong (a mispronounced word, an odd pause, wrong stress), add a line under it in the same review file with a `LISTEN:` prefix, for example `LISTEN: "ओ-टी-पी" is read as one word`. Lines that sound fine need no `LISTEN:` line.
 
 **To get a feel for the call today (optional).** You can play the call as text in the terminal. It uses no Gnani credits and no network:
-`uv run python -m samajh.dialogue play --record tests/dialogue/fixtures/record_gold_loan.json --lang hi` (or `--lang hi-en`). You type the customer's replies. P2 is changing this code right now, so it may be mid-edit or briefly broken. Do not start the review from it; wait for the file.
+`uv run python -m samajh.dialogue play --record tests/dialogue/fixtures/record_gold_loan.json --lang hi` (or `--lang hi-en`). You type the customer's replies. It makes no phone call and no Gnani request, so it is not covered by your no-calls decision. Mark up the review file, not the terminal output.
 
 ### 2.3 The human calls (coming, do not make them yet; you can recruit now)
 
@@ -99,11 +100,7 @@ Rules for the markup, so an agent can apply it without asking you anything:
 
 **No script for the speakers.** They get a brief card and answer in their own words. A scripted call would bring back the objection these calls exist to answer ("you scripted the customers"). What you can prepare is what you say to them: the invitation and consent message, and a two-minute briefing before their first call (how the page works, play the person on the card, never say anything real, "I don't know" is a fine answer).
 
-**Practice calls** (decided by the coordinator). Each speaker makes one practice call before their counted calls, on the record "Ramesh: a gold loan and one add-on". It is logged with card id `practice-hero` and left out of every number. You may make a handful of practice calls now, with these limits:
-- Use the server that is already running. Do not restart it: a restart would load call code that an agent is editing.
-- If a bot line sounds odd, note it. It may be a mid-edit artefact, not a finding.
-- Stop when the coordinator says in chat that re-voicing or an evaluation is starting, until it says the key is clear.
-- A practice call is described only as "practice, n = 1, not scored", never as a result.
+**Practice calls.** You have decided to make no more calls, practice included, until the go signal. After the go signal, each speaker makes one practice call before their counted calls, on the record "Ramesh: a gold loan and one add-on" (decided by the coordinator). It is logged with card id `practice-hero`, left out of every number, and described only as "practice, not scored", never as a result. Your two practice calls of 2026-11-10 are already in the log.
 
 **Who can take part.** You, and adults (18+) who agree; family members count the same as friends. The challenge's own wording is "record yourself or your teammate with consent". The coordinator's recommendation follows from it: friends' recordings are used for the evaluation numbers only, stay on your machine, and never enter the repo or the video; the public video uses only your own voice. Whether to list a friend as a team member is your decision (§2.5).
 
@@ -148,7 +145,7 @@ The bot asks about the same topics on every call: who you are, your year of birt
 2. Tell the coordinator the time of your calling session first. Gnani allows one request at a time for the whole key. If an agent runs an evaluation during your call, your turns fail with `gnani_busy`.
 3. In the repo folder: `uv run python -m samajh.server --port 8085`
 4. Open `http://127.0.0.1:8085/` in Chrome. Pick the record and language the card names. Press "Place demo call", then "Answer". When the call ends, copy the id shown beside "Session" into the log, and wait until the "Case file" box on the page has finished before the next call (guide's suggestion: the after-call work also uses the Gnani key).
-5. Every call spends Gnani credits. The code on disk now starts the Samajh call by default, but P1 is mid-build and unverified, and `README.md` still describes the older three-question stub. **Wait for the coordinator to say P1 and P2 are verified before making any call that counts.**
+5. Every call spends Gnani credits. The phone starts the Samajh call by default, but P1 and P2 are not yet independently verified. **Make no call, practice included, before the go signal.**
 
 **The "who to play" note stays on screen.** The page shows a note under the header (for example "Play Ramesh, born 1984, ...") from the start screen through the whole call. The three demo records: "Ramesh: a gold loan and one add-on" and "Ramesh: a sale he understood" are both Ramesh, born **1984**; "Sunita: someone else answers" is Sunita, born 1979, and there you play a family member who picks up her phone.
 
@@ -225,8 +222,8 @@ Tell the coordinator each answer. None blocks the build today; all are needed be
 ### 2.7 The order from here (coordinator, 2026-11-10)
 
 No clock times: each step depends on verification results and the account's usage limit.
-1. **Now:** recruit and collect consent messages; take the dashboard reading; answer the "teen lakh chalis" question below; optional practice calls; fill in `.samajh-human/practice-call-1-check.md` for your first practice call.
-2. **On the coordinator's word:** the wording review. Wait: the lines are still changing, and the coordinator will regenerate the review file and tell you.
+1. **Now:** the wording review (§2.2); recruit and collect consent messages; take the dashboard reading; answer the "teen lakh chalis" question below; fill in `.samajh-human/practice-call-1-check.md` for your first practice call. No calls of any kind until the go signal.
+2. **If the verifier forces a line to change:** that line comes back to you for a second look.
 3. **After the final lines are re-voiced:** the listening page.
 4. **Then:** the brief cards arrive, then the go signal (P1 and P2 verified), then the 20 calls.
 
@@ -254,7 +251,7 @@ Two more things the coordinator is waiting on from you (`ORCHESTRATION.md`, "Wai
 4. **Check Chrome, a microphone and headphones.** Make sure Chrome is installed and that the laptop's microphone setting allows Chrome. Have a pair of headphones ready: half the calls use them. Do not place phone calls for this yet: they spend credits and can collide with running agents.
 5. **Draft your one-line description of the project.** A starting point from the README: "a callback in which a borrower explains in their own words what they bought with their loan, and plain code compares that with the bank's record". Do not claim nobody else does this: adjacent vendors exist.
 6. **Think about the decisions in §2.5**: name, category, whose voice, team and contributions, publishing the repo.
-7. **Optional:** play the text call once (§2.2, last paragraph) to hear what the bot asks.
+7. **Do the wording review** (§2.2). It is open. Optional: play the text call once (§2.2, last paragraph) to hear the lines in order; it places no call and uses no credits.
 8. **Start the interview reading** (§2.6, last paragraph).
 
 ## 5. Still open

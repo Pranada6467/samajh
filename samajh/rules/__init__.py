@@ -3,7 +3,7 @@
 from samajh.rules.clauses import CLAUSES
 from samajh.rules.engine import RULES, RuleSpec, evaluate, verdict_of
 from samajh.rules.normalise import to_beliefs
-from samajh.rules.summary import CaseSummary, IssueLine, summarise
+from samajh.rules.summary import CaseSummary, IssueLine, call_ended_label, summarise
 
 __all__ = [
     "CLAUSES",
@@ -11,6 +11,7 @@ __all__ = [
     "CaseSummary",
     "IssueLine",
     "RuleSpec",
+    "call_ended_label",
     "evaluate",
     "summarise",
     "to_beliefs",

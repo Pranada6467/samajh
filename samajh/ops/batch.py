@@ -19,7 +19,9 @@ from samajh.ops.model import (
     Draw,
     DrawnLoan,
     FinalStatus,
+    IngestSummary,
     OutsideCall,
+    PhoneSession,
     Triage,
 )
 from samajh.ops.sampler import verify_draw
@@ -35,7 +37,7 @@ class Sampled:
     draw: Draw
     drawn: DrawnLoan
     loan: BookLoan
-    attempts: tuple[Attempt, ...]  # in order
+    attempts: tuple[Attempt, ...]  # by number, which is time order (samajh.ops.chain)
     call: CallRecord | None  # the analysed call; set exactly when the last attempt completed
     triage: Triage | None
 
@@ -44,8 +46,8 @@ class Sampled:
         """From the last attempt.
 
         None: not_attempted. Completed on day 0 to 30 from the sale: completed; on any other day:
-        completed_late. A retry outcome (no answer, call back later, another language) on day 30
-        or later: not_reached_in_time, since no attempt is made after day 30. Otherwise no_answer
+        completed_late. A retry outcome (no answer, call back later, another language, a request
+        from a speaker not confirmed as the borrower) on day 30 or later: not_reached_in_time, since no attempt is made after day 30. Otherwise no_answer
         is unreachable, and every other outcome keeps its name.
         """
         if not self.attempts:
@@ -62,7 +64,7 @@ class Sampled:
 
     @property
     def counted(self) -> bool:
-        """The call is one the findings count: completed within 30 days of the sale and analysed."""
+        """The call is one the report counts: completed within 30 days of the sale and analysed."""
         return self.call is not None and self.status is FinalStatus.completed
 
     @property
@@ -86,12 +88,20 @@ class Batch:
     verified: dict[str, bool]  # draw id -> the draw was recomputed from the book and matched
     sampled: tuple[Sampled, ...]  # every drawn loan of every draw, in draw order
     history: dict[str, tuple[Disposition, ...]]  # case id -> its decisions, oldest first
-    outside: tuple[Outside, ...] = ()  # phone calls whose loan was not drawn: listed, never counted
+    outside: tuple[Outside, ...] = ()  # phone calls that are not attempts in the sample: never counted
     book: tuple[BookLoan, ...] = ()  # every loan on the book
+    ingest: IngestSummary | None = None  # the last ingest of phone sessions; None if none has run
+
+    @property
+    def phone_sessions(self) -> tuple[PhoneSession, ...]:
+        """Every phone session in the batch, linked attempts and calls outside the sample."""
+        linked = (a.source for s in self.sampled for a in s.attempts if isinstance(a.source, PhoneSession))
+        outside = (o.call.source for o in self.outside if isinstance(o.call.source, PhoneSession))
+        return (*linked, *outside)
 
     @property
     def completed(self) -> tuple[Sampled, ...]:
-        """The calls the findings count: completed within 30 days of the sale and analysed."""
+        """The calls the report counts: completed within 30 days of the sale and analysed."""
         return tuple(s for s in self.sampled if s.counted)
 
     @property
@@ -181,4 +191,5 @@ def load_batch(store: OpsStore) -> Batch:
         history={case_id: tuple(entries) for case_id, entries in history.items()},
         outside=tuple(outside),
         book=book,
+        ingest=store.ingest_summary(),
     )

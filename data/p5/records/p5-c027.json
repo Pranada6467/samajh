@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Prakash, born 1964, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c027",
+  "label": "Synthetic P5 record. Prakash: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1964-09-04",
+      "language": "hi",
+      "name": "Prakash Kalpanik"
+    },
+    "disbursed_inr": 239250,
+    "disbursed_on": "2026-10-21",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5-LN-027",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-21",
+          "method": "signed_form"
+        },
+        "cover_inr": 250000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 10750,
+        "provider": "Kalpanik Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 250000,
+    "tenure_months": 24
+  }
+}

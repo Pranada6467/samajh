@@ -58,7 +58,9 @@ def _fillings(slots: frozenset[str], ordinals: Sequence[str], records: Sequence[
     fillings = []
     for record in records:
         names = {"first_name": record.record.borrower.name.split()[0], "lender": record.lender_name}
-        said = ordinals[: len(record.record.products)] if "ordinal" in slots else ("",)
+        # An ordinal line comes before the second and later products only (the first product is
+        # introduced as in a one-product record), so a one-product record has none to make.
+        said = ordinals[1 : len(record.record.products)] if "ordinal" in slots else ("",)
         fillings += [{slot: (names | {"ordinal": ordinal})[slot] for slot in slots} for ordinal in said]
     return fillings
 

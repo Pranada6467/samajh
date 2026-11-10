@@ -1300,3 +1300,33 @@ def test_rules_package_imports_no_network_llm_or_client_code():
     )
     done = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert done.stdout.strip() == "[]"
+
+
+# --- a correction inside one reply whose final answer stood (extractor change check) ------------
+
+
+def corrected(value, earlier: str = "ek FD", reply: str = "ek FD, nahi nahi, bima hai") -> Stated:
+    return Stated(value=value, evidence=ev(reply), also=(ev(earlier),))
+
+
+def test_a_self_correction_is_kept_on_the_product_result_and_nowhere_in_the_tier():
+    result = run(belief_changes={"kind": corrected(KindClaim.insurance)})
+    (product_result,) = result.products
+    assert [[e.quote for e in c.answers] for c in product_result.self_corrections] == [
+        ["ek FD", "ek FD, nahi nahi, bima hai"]
+    ]
+    assert result.verdict is CLEAR
+    plain = run()
+    assert (plain.tier, plain.verdict) == (result.tier, result.verdict)
+
+
+def test_an_answer_kept_from_another_asking_is_not_a_self_correction():
+    other_turn = Stated(value=KindClaim.insurance, evidence=ev(), also=(ev("pata nahi", TURN - 4),))
+    assert run(belief_changes={"kind": other_turn}).products[0].self_corrections == ()
+
+
+def test_a_two_field_question_gives_one_self_correction():
+    method = corrected(ConsentMethod.otp, "form pe sign", "haan, form pe sign, nahi nahi, OTP se")
+    given = corrected(True, "form pe sign", "haan, form pe sign, nahi nahi, OTP se")
+    items = run(belief_changes={"consent_method": method, "consent_given": given}).products[0].self_corrections
+    assert [c.question.value for c in items] == ["consent"]

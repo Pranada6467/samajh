@@ -38,8 +38,8 @@
     },
     {
       "file": "06.wav",
-      "answers": "premium.ask",
-      "text": "बावन हज़ार"
+      "answers": "read_back.confirm",
+      "text": "हाँ, सही है"
     },
     {
       "file": "07.wav",
@@ -48,43 +48,43 @@
     },
     {
       "file": "08.wav",
+      "answers": "payment_frequency.ask",
+      "text": "एक ही बार दिया था"
+    },
+    {
+      "file": "09.wav",
       "answers": "required_for_loan.ask",
       "text": "हाँ, बोला था ज़रूरी है, उसके बिना लोन नहीं मिलेगा"
     },
     {
-      "file": "09.wav",
+      "file": "10.wav",
       "answers": "provider_choice.ask",
       "text": "कुछ नहीं बताया"
     },
     {
-      "file": "10.wav",
+      "file": "11.wav",
       "answers": "cover.ask",
       "text": "पैसा सुरक्षित रहेगा"
     },
     {
-      "file": "11.wav",
+      "file": "12.wav",
       "answers": "term.ask",
       "text": "दो साल"
     },
     {
-      "file": "12.wav",
+      "file": "13.wav",
       "answers": "cancel_window.ask",
       "text": "नहीं बताया"
     },
     {
-      "file": "13.wav",
+      "file": "14.wav",
       "answers": "features.ask",
       "text": "एक साल बाद ब्याज के साथ निकाल सकते हैं"
     },
     {
-      "file": "14.wav",
+      "file": "15.wav",
       "answers": "consent.ask",
       "text": "फॉर्म पर साइन किया था बस"
-    },
-    {
-      "file": "15.wav",
-      "answers": "read_back.confirm",
-      "text": "हाँ, सही है"
     }
   ]
 }

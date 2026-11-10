@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Tanvi, born 2001, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c057",
+  "label": "Synthetic P5 record. Tanvi: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "2001-05-10",
+      "language": "hi-en",
+      "name": "Tanvi Kalpanik"
+    },
+    "disbursed_inr": 67950,
+    "disbursed_on": "2026-11-01",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-057",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-11-01",
+          "method": "digital_click"
+        },
+        "cover_inr": 70000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 2050,
+        "provider": "Kalpanik Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 6
+      }
+    ],
+    "sanctioned_inr": 70000,
+    "tenure_months": 3
+  }
+}

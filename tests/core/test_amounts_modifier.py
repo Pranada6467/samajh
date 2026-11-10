@@ -3,7 +3,8 @@
 Found by the scenario set (data/scenarios/W4-report.md, U01-ta): "ஒரே தடவைதான்" (only once)
 after a premium was read as a second amount of 1 and the turn was refused. The same
 construction in Hindi, English and Kannada had the same fault, and without a currency word
-in between it gave a wrong amount ("पचास हज़ार एक बार" -> 50,001).
+in between it gave a wrong amount ("पचास हज़ार एक बार" -> 50,001); since P3a fix round 3 that
+shape is refused, because the "one" may also be the units digit.
 Tamil and Kannada rows are not human-reviewed.
 """
 
@@ -27,47 +28,27 @@ def test_u01_ta_only_once_after_the_premium_is_not_a_second_amount():
         # Tamil: ஒரே is "only one / a single", like the article ஒரு
         ("பன்னிரண்டரை ஆயிரம் ரூபாய் ஒரே முறை", 12_500),
         ("ஐம்பதாயிரம் ஒரே தடவை", 50_000),
-        ("ஐம்பதாயிரம் ரூபாய், இரண்டு தடவை", 50_000),
         # Hindi
         ("पचास हज़ार रुपये, एक बार देना है", 50_000),
         ("पचास हज़ार रुपये एक बार देना है", 50_000),
         ("पचास हज़ार रुपये, एक ही बार देना है", 50_000),
-        ("पचास हज़ार रुपये, दो बार", 50_000),
-        ("₹50,000, 2 बार", 50_000),
-        # no currency word in between: the number used to join the amount (50,001)
-        ("पचास हज़ार एक बार देना है", 50_000),
-        ("पचास हज़ार एक ही बार देना है", 50_000),
-        ("पचास हज़ार दो बार कटे", 50_000),
         # Hinglish and English
         ("50 hazaar rupaye, ek baar dena hai", 50_000),
         ("50,000 rupaye ek time", 50_000),
         ("fifty thousand rupees, one time payment", 50_000),
         ("fifty thousand rupees one time", 50_000),
-        ("fifty thousand one time", 50_000),
-        ("fifty thousand rupees, two times", 50_000),
         # Kannada
         ("ಐವತ್ತು ಸಾವಿರ ರೂಪಾಯಿ, ಒಂದು ಸಲ ಕಟ್ಟಬೇಕು", 50_000),
         ("ಐವತ್ತು ಸಾವಿರ ರೂಪಾಯಿ, ಒಂದೇ ಸಲ ಕಟ್ಟಬೇಕು", 50_000),
-        ("ಐವತ್ತು ಸಾವಿರ ಒಂದು ಸಲ", 50_000),
-        ("ಐವತ್ತು ಸಾವಿರ ರೂಪಾಯಿ, ಎರಡು ಬಾರಿ", 50_000),
         # a determiner "one" before any other noun
         ("पचास हज़ार रुपये, एक पॉलिसी", 50_000),
         ("fifty thousand rupees, one policy", 50_000),
         ("ಐವತ್ತು ಸಾವಿರ ರೂಪಾಯಿ, ಒಂದು ಪಾಲಿಸಿ", 50_000),
         ("fifty thousand rupees, one year", 50_000),
-        # after a unit word with nothing in between: the one used to be a units digit (50,001)
-        ("पचास हज़ार एक FD में", 50_000),
-        ("पचास हज़ार एक policy", 50_000),
-        ("पचास हज़ार एक बीमा", 50_000),
-        ("एक लाख एक पॉलिसी के लिए", 100_000),
+        # a duration after a unit word binds the number: not 50,001
         ("पचास हज़ार एक साल का", 50_000),
         ("ஐம்பதாயிரம் ஒரு பாலிசி", 50_000),
         ("ஐம்பதாயிரம் ஒரே பாலிசி", 50_000),
-        ("ಐವತ್ತು ಸಾವಿರ ಒಂದು ಪಾಲಿಸಿ", 50_000),
-        ("ಒಂದು ಲಕ್ಷ ಒಂದು ಪಾಲಿಸಿಗೆ", 100_000),
-        ("fifty thousand one insurance", 50_000),
-        ("one lakh one policy", 100_000),
-        ("2 lakh one FD", 200_000),
     ],
 )
 def test_a_count_or_a_determiner_after_an_amount_leaves_the_amount(text, rupees):
@@ -96,7 +77,6 @@ def test_a_lone_count_in_a_script_we_read_stays_a_bare_number_and_never_an_amoun
     [
         ("एक लाख", 100_000),
         ("एक लाख रुपये", 100_000),
-        ("एक हज़ार एक बार", 1_000),
         ("ஒரு லட்சம்", 100_000),
         ("ஒரே லட்சம்", 100_000),
         ("ஒன்றே கால் லட்சம்", 125_000),
@@ -137,7 +117,7 @@ def test_a_small_number_that_may_still_be_an_amount_keeps_the_turn_refused(text)
     assert isinstance(result, Ambiguous), f"{text!r} -> {result}"
 
 
-# --- "one" after hundreds, or before a verb, is part of the number (dialogue verifier) -----
+# --- "one" after hundreds is part of the number; after a thousand-or-larger unit it is refused -----
 
 
 @pytest.mark.parametrize(
@@ -157,15 +137,36 @@ def test_one_after_a_hundreds_word_is_part_of_the_number(text, rupees):
     assert isinstance(result, Parsed) and result.rupees == rupees, result
 
 
-@pytest.mark.parametrize("text", ["पचास हज़ार एक दिए", "पचास हज़ार एक कटे थे", "50 thousand one paid", "दो लाख एक लगे"])
-def test_one_after_a_thousand_word_and_before_a_verb_is_ambiguous_never_the_smaller_figure(text):
-    assert isinstance(parse_amount(text), Ambiguous), parse_amount(text)
-
-
 @pytest.mark.parametrize(
-    ("text", "rupees"),
-    [("पचास हज़ार एक FD", 50_000), ("पचास हज़ार एक बार", 50_000), ("fifty thousand one policy", 50_000)],
+    "text",
+    [
+        "पचास हज़ार एक दिए",
+        "पचास हज़ार एक कटे थे",
+        "50 thousand one paid",
+        "दो लाख एक लगे",
+        # before a noun or a count, too: "one" of something, or the units digit (P3a fix round 3)
+        "पचास हज़ार एक बार देना है",
+        "पचास हज़ार एक ही बार देना है",
+        "पचास हज़ार दो बार कटे",
+        "fifty thousand one time",
+        "पचास हज़ार एक FD में",
+        "पचास हज़ार एक policy",
+        "पचास हज़ार एक बीमा",
+        "एक लाख एक पॉलिसी के लिए",
+        "fifty thousand one insurance",
+        "one lakh one policy",
+        "2 lakh one FD",
+        "एक हज़ार एक बार",
+        "ಐವತ್ತು ಸಾವಿರ ಒಂದು ಸಲ",
+        "ಐವತ್ತು ಸಾವಿರ ಒಂದು ಪಾಲಿಸಿ",
+        "ಒಂದು ಲಕ್ಷ ಒಂದು ಪಾಲಿಸಿಗೆ",
+        # a count that starts the next clause touches the amount (P3a fix round 3c)
+        "ஐம்பதாயிரம் ரூபாய், இரண்டு தடவை",
+        "पचास हज़ार रुपये, दो बार",
+        "₹50,000, 2 बार",
+        "fifty thousand rupees, two times",
+        "ಐವತ್ತು ಸಾವಿರ ರೂಪಾಯಿ, ಎರಡು ಬಾರಿ",
+    ],
 )
-def test_one_before_a_noun_after_a_thousand_word_is_still_a_determiner(text, rupees):
-    result = parse_amount(text)
-    assert isinstance(result, Parsed) and result.rupees == rupees, result
+def test_a_small_number_after_a_thousand_word_and_before_any_word_is_ambiguous_never_either_figure(text):
+    assert isinstance(parse_amount(text), Ambiguous), parse_amount(text)

@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Shalini, born 1986, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c044",
+  "label": "Synthetic P5 record. Shalini: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1986-05-29",
+      "language": "hi-en",
+      "name": "Shalini Pareekshan"
+    },
+    "disbursed_inr": 838500,
+    "disbursed_on": "2026-10-18",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5-LN-044",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-18",
+          "method": "digital_click"
+        },
+        "cover_inr": 900000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 61500,
+        "provider": "Pareekshan Insurance (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": true,
+        "risk_mitigant": true,
+        "term_months": 60
+      }
+    ],
+    "sanctioned_inr": 900000,
+    "tenure_months": 60
+  }
+}

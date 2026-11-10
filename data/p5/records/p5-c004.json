@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Pooja, born 1993, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c004",
+  "label": "Synthetic P5 record. Pooja: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1993-06-30",
+      "language": "hi-en",
+      "name": "Pooja Banawati"
+    },
+    "disbursed_inr": 276400,
+    "disbursed_on": "2026-10-28",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-004",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-28",
+          "method": "digital_click"
+        },
+        "cover_inr": 300000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 23600,
+        "provider": "Banawati Life Cover (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 300000,
+    "tenure_months": 24
+  }
+}

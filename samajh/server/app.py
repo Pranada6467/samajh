@@ -9,6 +9,7 @@ file plus the lock that orders the requests of one call.
 from __future__ import annotations
 
 import asyncio
+import logging
 import math
 import os
 import queue
@@ -46,9 +47,11 @@ from samajh.server.audio import (
     to_line_pcm,
 )
 from samajh.server.casefile import CaseFile, StepResult, build_case, new_case
-from samajh.server.dialogue import Dialogue, DialogueFactory, Heard, Step, stub_factory
+from samajh.server.dialogue import Dialogue, DialogueFactory, Heard, Step
 from samajh.server.errors import ApiProblem, Stage, problem_from
+from samajh.server.loanbook import LINK_PARAMS, LoanBook, LoanRefused, resolve_record
 from samajh.server.review_routes import review_router
+from samajh.server.samajh_dialogue import followed_by, readings_agreed
 from samajh.server.sessionlog import (
     AUDIO_NAME,
     BotEvent,
@@ -117,7 +120,9 @@ class _Body(BaseModel):
 
 
 class CreateSession(_Body):
-    dialogue: str | None = None  # None: the server's default (`/api/health` names it)
+    # None: the server's default (`/api/health` names it). Any name the app was not built with is
+    # refused (422 unknown_dialogue); the app `python -m samajh.server` runs has only "samajh".
+    dialogue: str | None = None
     line_rate: LineRate = 8000
     params: dict[str, str] = {}
 
@@ -184,6 +189,21 @@ class _Live:
 
 class _TooLate(Exception):
     pass
+
+
+log = logging.getLogger(__name__)
+
+
+def _prefetch(dialogue: Dialogue, state: str, text: str) -> None:
+    """Let the dialogue start reading the primary transcript before the second reading is awaited.
+    Skipped for empty text or a dialogue without `prefetch`; a failure is logged, never raised."""
+    prefetch = getattr(dialogue, "prefetch", None)
+    if prefetch is None or not text.strip():
+        return
+    try:
+        prefetch(state, text)
+    except Exception:
+        log.warning("dialogue prefetch raised; the turn goes on", exc_info=True)
 
 
 def _within(seconds: float, call: Callable[[], T]) -> T:
@@ -267,6 +287,12 @@ def _reading(
     )
 
 
+def _acted_on(readings: list[SttReading], text: str) -> SttReading | None:
+    """The reading whose text the dialogue recorded as the turn. When both readings say the same,
+    the primary is named (either is true). None: nothing was read, or the text is neither."""
+    return next((r for r in readings if r.ok and r.text and r.text == text), None)
+
+
 def _plan(
     log: SessionLog, reply_to: int, part: int
 ) -> tuple[CustomerEvent, BotEvent] | Literal["fresh", "supersede"]:
@@ -312,9 +338,11 @@ class Sessions:
         dialogues: Mapping[str, DialogueFactory],
         settings: Settings,
         default_dialogue: str,
+        loans: LoanBook | None = None,
     ) -> None:
         self.store, self.gnani, self.second = store, gnani, second
         self.dialogues, self.settings, self.default_dialogue = dialogues, settings, default_dialogue
+        self.loans = loans
         self.live: dict[str, _Live] = {}
 
     @asynccontextmanager
@@ -385,7 +413,13 @@ class Sessions:
                 "seq": customer.seq,
                 "part": customer.part,
                 "transcript": customer.transcript,
+                "acted_on": customer.acted_on,
+                "literal": customer.literal,
+                "detected_language": customer.detected_language,
                 "readings": [r.model_dump(include=shown) for r in customer.readings],
+                "readings_agreed": customer.readings_agreed,
+                "followed_by": customer.followed_by,
+                "degraded": customer.degraded,
                 "audio_url": _audio_url(log.session_id, name) if name else None,
                 "audio_seconds": customer.audio_seconds,
                 "latency": customer.latency and customer.latency.model_dump(),
@@ -393,6 +427,10 @@ class Sessions:
             },
             "bot": self.bot_json(log, bot),
             "ended": bot.end_call,
+            # The dialogue's outcome on the reply that ends the call, else None; and whether the
+            # person on the line had passed the identity checks (None: the dialogue does not say).
+            "outcome": bot.tags.get("outcome") if bot.end_call else None,
+            "speaker_confirmed": log.speaker_confirmed,
         }
 
     def stored_reply(self, log: SessionLog, reply_to: int, part: int) -> dict[str, Any] | None:
@@ -424,29 +462,53 @@ class Sessions:
             tags=dict(said.tags),
         )
 
+    def _link(self, params: dict[str, str]) -> dict[str, str]:
+        """The params to store: a `loan` session gets its link to the batch (`LINK_PARAMS`) here,
+        once, after the check that a call may be placed on it. ApiProblem when it may not. A
+        session on a packaged record has no link, so a client that sends one is refused."""
+        if "loan" not in params:
+            if params.keys() & set(LINK_PARAMS):
+                raise ApiProblem(422, "request", "invalid_params", "only a loan-book call has a batch link")
+            return params
+        if "record" in params:
+            raise ApiProblem(
+                422, "request", "record_and_loan", "a session names a record or a loan, not both"
+            )
+        if params.keys() & (set(LINK_PARAMS) - {"call_date"}):  # the client may ask for a call date
+            raise ApiProblem(422, "request", "invalid_params", "the batch link is set by the server")
+        if self.loans is None:
+            raise ApiProblem(409, "request", "no_batch", "this server has no loan book")
+        try:
+            link = self.loans.open_call(params["loan"], params.get("call_date"))
+        except LoanRefused as refused:
+            raise ApiProblem(refused.status, "request", refused.code, refused.message) from None
+        return params | link.params()
+
     def create(self, request: CreateSession) -> _Live:
         name = request.dialogue or self.default_dialogue
         factory = self.dialogues.get(name)
         if factory is None:
             raise ApiProblem(422, "request", "unknown_dialogue", "no dialogue has that name")
+        params = self._link(dict(request.params))
         try:
-            dialogue = factory(request.params)
+            dialogue = factory(params)
         except ValueError:
             raise ApiProblem(422, "request", "invalid_params", "the dialogue refused these params") from None
         log = SessionLog(
             session_id=new_session_id(),
             created_at=datetime.now(UTC).isoformat(timespec="milliseconds"),
             dialogue=name,
-            params=request.params,
+            params=params,
             line_rate=request.line_rate,
             stt=self.settings.stt,
-            tts=self.settings.tts_for(_call_language(request.params)),
+            tts=self.settings.tts_for(_call_language(params)),
         )
         live = _Live(log, time.monotonic(), dialogue)
         try:
             step = dialogue.start()
             log.events.append(self._bot_event(log, step, 0, live.now()))
             log.dialogue_state = step.state
+            log.speaker_confirmed = step.speaker_confirmed
         except Exception as exc:
             raise problem_from(exc, "dialogue") from exc
         self.save(log)
@@ -552,6 +614,7 @@ class Sessions:
                 clock = time.perf_counter()
                 readings.append(_reading("primary", options, self.gnani.get().stt(wav, options)))
                 stt_ms = _ms(clock)
+                _prefetch(dialogue, state, readings[0].text)
                 second: str | None = None
                 if asked.second_reading:
                     clock = time.perf_counter()
@@ -571,16 +634,22 @@ class Sessions:
             dialogue_ms = _ms(clock)
         except Exception as exc:
             raise self._fail(live, exc, stage, **audio) from exc
+        transcript = heard.text if step.heard is None else step.heard
+        acted = _acted_on(readings, transcript)
         customer = CustomerEvent(
             seq=seq,
             at=at,
             source=request.source,
             reply_to=request.reply_to,
             part=request.part,
-            transcript=heard.text,
-            literal=heard.literal,
+            transcript=transcript,
+            acted_on=acted.role if acted else None,
+            literal=acted.literal if acted else heard.literal,
             detected_language=heard.detected_language,
             readings=readings,
+            readings_agreed=readings_agreed(readings, step.agreed),
+            degraded=step.degraded,
+            followed_by=followed_by(bot.lines),
             latency=TurnLatency(
                 normalise_ms=normalise_ms,
                 stt_ms=stt_ms,
@@ -603,6 +672,7 @@ class Sessions:
                 draft.dialogue_undo = draft.dialogue_state
             draft.events += [customer, bot]
             draft.dialogue_state = step.state
+            draft.speaker_confirmed = step.speaker_confirmed
             if bot.end_call:
                 draft.status, draft.ended_reason = "ended", "dialogue"
 
@@ -709,17 +779,21 @@ class CaseJobs:
         records: RecordBook | None,
         batch: _Gnani,
         llm: Callable[[], Llm],
+        loans: LoanBook | None = None,
     ) -> None:
         self.sessions, self.records, self.batch, self.llm = sessions, records, batch, llm
+        self.loans = loans
         self._threads: dict[str, threading.Thread] = {}
         self._lock = threading.Lock()
 
     def _record(self, log: SessionLog) -> CallRecord:
-        if log.dialogue != "samajh" or self.records is None:
+        """The call's record, resolved from its stored params. Never asks whether a call may be
+        placed: a loan-book call that has been ingested must still have its case read and rebuilt."""
+        if log.dialogue != "samajh" or (self.records is None and self.loans is None):
             raise ApiProblem(409, "session", "no_case_file", "only a Samajh call has a case file")
         try:
-            return self.records.get(log.params.get("record", ""))
-        except KeyError:
+            return resolve_record(log.params, self.records, self.loans)[0]
+        except ValueError:
             raise ApiProblem(
                 409, "session", "no_case_file", "the call's record is not on this server"
             ) from None
@@ -956,24 +1030,32 @@ def create_app(
     Batch after the call (an injected `gnani` by default, else the patient real client), and
     `llm` builds the extraction client (default `samajh.pipeline.default_llm`)."""
     settings = settings or load_settings()
+    # Sessions, the review batch and the loan book live under `state`. The Gnani and OpenRouter
+    # clients keep their lock, cache and ledger under `samajh.clients._runtime.state_dir()`
+    # whatever `state` is, so a server on another state directory still shares the one-slot lock.
+    root = state or state_dir()
+    loans = LoanBook(root)
     if dialogues is None:
         # Imported here so that an app given its own dialogues does not need these modules.
         from samajh.server.records import default_book
         from samajh.server.samajh_dialogue import samajh_factory
 
         records = records or default_book()
-        dialogues = {"samajh": samajh_factory(records, settings), "stub": stub_factory}
+        # The Samajh call only. The stub (which asks about a loan with no identity check) is
+        # reachable only by a caller that passes it in `dialogues`: a test, or the in-process replay.
+        dialogues = {"samajh": samajh_factory(records, settings, loans=loans)}
     registry = dict(dialogues)
     client = _Gnani(gnani, LIVE if profile == "live" else PATIENT)
     calls = Sessions(
-        SessionStore((state or state_dir()) / "sessions"),
+        SessionStore(root / "sessions"),
         client,
         _Gnani(second or gnani, second_profile(settings.stt.second_timeout_s)),
         registry,
         settings,
         "samajh" if "samajh" in registry else next(iter(registry)),
+        loans,
     )
-    jobs = CaseJobs(calls, records, _Gnani(batch or gnani, PATIENT), llm or _default_llm)
+    jobs = CaseJobs(calls, records, _Gnani(batch or gnani, PATIENT), llm or _default_llm, loans)
     clips_dir = clips_dir or _default_clips_dir()
     app = FastAPI(title="Samajh voice transport", docs_url=None, redoc_url=None, openapi_url=None)
     app.state.sessions = calls
@@ -1002,6 +1084,13 @@ def create_app(
             "default_dialogue": calls.default_dialogue,
             "line_rates": [8000, 16000],
             "stt_models": list(get_args(SttModelName)),
+            # What a call on this server uses, from its settings: the phone's model strip.
+            "models": {
+                "stt_primary": {"model": settings.stt.model, "format": settings.stt.format},
+                "stt_second": {"model": settings.stt.second_model, "format": settings.stt.second_format},
+                "tts": {"model": settings.tts.model},
+                "batch": {"model": settings.batch.model},
+            },
             "streaming": False,
             "languages": list(LANGUAGES),
             "turn_taking": {kind: p.model_dump() for kind, p in settings.turn_taking.items()},
@@ -1015,6 +1104,11 @@ def create_app(
     @app.get("/api/records")
     def list_records() -> dict[str, Any]:
         return {"records": records.listing() if records is not None else [], "languages": list(LANGUAGES)}
+
+    @app.get("/api/loans")
+    def list_loans() -> dict[str, Any]:
+        """The drawn loans of the batch under the state directory that a call may be placed on now."""
+        return {"loans": loans.callable(), "languages": list(LANGUAGES)}
 
     @app.get("/api/clips")
     def list_clips() -> dict[str, Any]:
@@ -1102,7 +1196,7 @@ def create_app(
         async with calls.use(session_id) as live, live.lock:
             return await anyio.to_thread.run_sync(jobs.get, live)
 
-    app.include_router(review_router(state or state_dir()))
+    app.include_router(review_router(root))
     if web_dir is not None and web_dir.is_dir():
         app.mount("/", StaticFiles(directory=web_dir, html=True), name="web")
     return app

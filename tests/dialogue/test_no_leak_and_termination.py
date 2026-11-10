@@ -140,9 +140,11 @@ def assert_loan_is_private(call) -> None:
     before_context = call.lines[: steps.index(CallStep.context)] if CallStep.context in steps else call.lines
     for line in before_context:
         assert not [word for word in LOAN_WORDS if holds(tokens(line.text), tokens(word))], line.text
-    confirmed = "disclosure.who" in call.keys
-    if not confirmed:
-        assert all(LENDER not in line.text for line in call.lines)
+    # Round 3: the lender is named only from the go-ahead disclosure on, which follows a strong claim at
+    # the first-name question or, on the ordinary path, a birth year that passed.
+    keys = list(call.keys)
+    first_who = keys.index("disclosure.who") if "disclosure.who" in keys else len(keys)
+    assert all(LENDER not in line.text for line in call.lines[:first_who]), call.keys
 
 
 def natural_bound(products: int, limits: Limits) -> int:

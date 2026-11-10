@@ -8,6 +8,7 @@ evaluation writes its records there).
 from __future__ import annotations
 
 import os
+import re
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Annotated
@@ -17,17 +18,23 @@ from pydantic import StringConstraints, ValidationError
 from samajh.types import Frozen, LoanRecord
 
 PACKAGED_DIR = Path(__file__).with_name("records")
-RECORD_ID = r"^[a-z0-9][a-z0-9-]{0,40}$"
+RECORD_ID = r"^[a-z0-9][a-z0-9-]{0,40}$"  # a record file's id
+# A loan on the synthetic loan book (`samajh.server.loanbook`); ASCII digits only.
+LOAN_ID = r"^SYN-[A-Z]{2}-[0-9]{6}-[0-9]{4}$"
 _Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
 class CallRecord(Frozen):
-    id: Annotated[str, StringConstraints(pattern=RECORD_ID)]
+    # A record file's id, or, for a loan-book call, the book's loan id (never a file name).
+    id: Annotated[str, StringConstraints(pattern=f"{RECORD_ID}|{LOAN_ID}")]
     # For the operator who picks a record on the phone. Never spoken, never shown to the LLM.
     label: _Text
     description: _Text
     lender_name: _Text  # spoken in the disclosure; `LoanRecord` does not carry it
     record: LoanRecord
+    # Shown on the phone beside the two readings of an amount and on the case card, for a demo
+    # record whose clip was chosen for what it shows (never spoken, never shown to the LLM).
+    readings_note: _Text | None = None
 
 
 class RecordBook:
@@ -46,7 +53,8 @@ class RecordBook:
         return sorted(self._records)
 
     def listing(self) -> list[dict[str, str]]:
-        """What the phone's picker may show. Never a value the call tests."""
+        """What the phone's picker may show. Never a value the call tests. `readings_note` only
+        for a record that has one."""
         return [
             {
                 "id": r.id,
@@ -55,6 +63,7 @@ class RecordBook:
                 "first_name": r.record.borrower.name.split()[0],
                 "language": r.record.borrower.language.value,
             }
+            | ({"readings_note": r.readings_note} if r.readings_note else {})
             for _, r in sorted(self._records.items())
         ]
 
@@ -64,7 +73,7 @@ def _load(path: Path) -> CallRecord:
         record = CallRecord.model_validate_json(path.read_bytes())
     except ValidationError as error:
         raise ValueError(f"{path}: not a call record: {error}") from None
-    if record.id != path.stem:
+    if record.id != path.stem or not re.fullmatch(RECORD_ID, record.id):
         raise ValueError(f"{path}: the id {record.id!r} is not the file's name")
     if not record.record.borrower.name.split():
         raise ValueError(f"{path}: the borrower has no name")

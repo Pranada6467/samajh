@@ -19,7 +19,10 @@ after the call, and this call sits inside a live turn.
 from __future__ import annotations
 
 import logging
-from concurrent.futures import ThreadPoolExecutor
+import threading
+import time
+from collections import OrderedDict
+from concurrent.futures import Future, ThreadPoolExecutor
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
@@ -31,6 +34,7 @@ from samajh.dialogue.interpret import (
     Interpretation,
     RuleInterpreter,
     TurnInterpreter,
+    affirms_or_goes_on,
     speaks_in_first_person,
 )
 from samajh.types import Language
@@ -46,6 +50,9 @@ MAX_TOKENS = 512
 TIMEOUT_S = 2.5
 # Calls that outlive their turn finish here in the background; their answer is dropped.
 _POOL = ThreadPoolExecutor(max_workers=4, thread_name_prefix="samajh-turn-classifier")
+# Calls started by `begin` and not yet read. The oldest is forgotten past this many (it still finishes
+# in the pool and its answer is dropped), so a begun call that is never read cannot pile up.
+_PENDING_LIMIT = 16
 
 
 class _Label(StrEnum):
@@ -87,8 +94,9 @@ the assistant's question and the reply (Hindi, Hinglish, English, Tamil or Kanna
 
 Choose exactly one label:
 - confirms_self: the speaker says, in the first person, that they ARE the person named in the question \
-("haan main hi bol raha hoon", "ji main Ramesh", "speaking"). A greeting or "yes, tell me" alone is NOT \
-this; use unclear.
+("haan main hi bol raha hoon", "ji main Ramesh", "speaking"). At the first_name stage an acknowledgement \
+("haan ji", "yes, tell me", "boliye"), or the named person's name without "I", is NOT this; use yes. A \
+greeting alone ("hello", "namaste") is unclear.
 - wrong_person: the speaker is someone else, or speaks of the named person in the third person ("he is \
 out", "unki wife", "sahab meeting mein hain", "hamare ye", "mrs Ramesh", "ghar se bol rahi hoon"), gives \
 a different name, gives SOMEONE ELSE'S year of birth, or says it is a wrong number.
@@ -132,7 +140,8 @@ _LATER = _ENDS | {
     _Label.unclear: Intent.unclear,
 }
 _READS_AS: dict[Expecting, dict[_Label, Intent]] = {
-    Expecting.identity: _ENDS | {_Label.confirms_self: Intent.yes, _Label.asks_repeat: Intent.asks_repeat},
+    Expecting.identity: _ENDS
+    | {_Label.confirms_self: Intent.yes, _Label.yes: Intent.acknowledges, _Label.asks_repeat: Intent.asks_repeat},
     Expecting.go_ahead: _ENDS
     | {_Label.yes: Intent.yes, _Label.confirms_self: Intent.yes, _Label.no: Intent.no,
        _Label.asks_repeat: Intent.asks_repeat},
@@ -173,6 +182,39 @@ class LlmFallbackInterpreter:
         self._model = model
         self._max_tokens = max_tokens
         self._timeout_s = timeout_s
+        self._lock = threading.Lock()
+        self._pending: OrderedDict[tuple, tuple[Future[_Label], float]] = OrderedDict()
+
+    def begin(self, text: str, *, language: Language, expecting: Expecting, question: str) -> None:
+        """Start the classifier call for this turn now, if `interpret` would ask it. Never raises.
+
+        A later `interpret` with the same arguments uses this call and waits only for what is left of
+        `timeout_s`, counted from here.
+        """
+        try:
+            first = self._rules.interpret(text, language=language, expecting=expecting, question=question)
+            if _READS_AS.get(expecting) is None or first.settled:
+                return
+            key = (text, language, expecting, question)
+            with self._lock:
+                if key in self._pending:
+                    return
+                future = _POOL.submit(self._ask, self._messages(text, expecting, question))
+                self._pending[key] = (future, time.monotonic())
+                while len(self._pending) > _PENDING_LIMIT:
+                    self._pending.popitem(last=False)
+        except Exception:
+            log.warning("turn classifier prefetch failed", exc_info=True)
+
+    @staticmethod
+    def _messages(text: str, expecting: Expecting, question: str) -> list[Message]:
+        stage = _STAGE.get(
+            expecting, "question: the assistant asked about the loan or what was bought with it"
+        )
+        return [
+            Message(role="system", content=_SYSTEM),
+            Message(role="user", content=f"Stage: {stage}\nQuestion: {question}\nReply: {text}"),
+        ]
 
     def interpret(
         self, text: str, *, language: Language, expecting: Expecting, question: str
@@ -181,15 +223,8 @@ class LlmFallbackInterpreter:
         table = _READS_AS.get(expecting)
         if table is None or first.settled:
             return first
-        stage = _STAGE.get(
-            expecting, "question: the assistant asked about the loan or what was bought with it"
-        )
-        messages = [
-            Message(role="system", content=_SYSTEM),
-            Message(role="user", content=f"Stage: {stage}\nQuestion: {question}\nReply: {text}"),
-        ]
         try:
-            label = self._label(messages)
+            label = self._label(text, language, expecting, question)
         except Exception as error:  # noqa: BLE001 - any client failure must leave the turn readable
             log.warning(
                 "turn classifier failed, turn read by the word lists: %s from %s: %s",
@@ -198,11 +233,16 @@ class LlmFallbackInterpreter:
                 error,
             )
             return self._unjudged(first, expecting)
+        if expecting is Expecting.go_ahead and label in (_Label.answer, _Label.yes, _Label.confirms_self):
+            # Never falls through to a word-list end: a yes or go-on word makes it yes, else ask again.
+            intent = Intent.yes if affirms_or_goes_on(text, language) else Intent.asks_repeat
+            return first.model_copy(update={"intent": intent, "settled": True})
         if expecting is Expecting.birth_year and label in (_Label.answer, _Label.confirms_self):
             # Read as the speaker's own year: the loose year counts. No year at all: asked again.
             return first.model_copy(update={"year": first.loose_year, "settled": True})
         if label is _Label.confirms_self and not speaks_in_first_person(text, language):
-            label = _Label.unclear  # a claim needs an "I": an acknowledgement is not one
+            # a claim needs an "I": at the first-name question the reply is an ordinary confirmation
+            label = _Label.yes if expecting is Expecting.identity else _Label.unclear
         intent = table.get(label)
         if intent is None or (expecting in _CONFIRMING and label is _Label.unclear):
             return self._unjudged(first, expecting) if expecting in _CONFIRMING else first
@@ -210,6 +250,7 @@ class LlmFallbackInterpreter:
             return first  # a weak stop signal stays one question to the customer unless clearly an answer or an end
         if first.intent is Intent.yes and intent in (Intent.decline, Intent.call_later):
             intent = Intent.maybe_decline  # "busy, but ask quickly": the two readings disagree, so ask once
+        # The classifier can confirm a possible takeover (an end label ends the call) but never clears it.
         update: dict = {"intent": intent, "settled": True}
         if intent is Intent.call_later and first.callback is None:
             update["callback"] = "ask"
@@ -220,13 +261,22 @@ class LlmFallbackInterpreter:
         """No judgment: at the confirming questions nobody is confirmed; later, the call asks once."""
         if expecting is Expecting.identity and first.intent is Intent.yes:
             first = first.model_copy(update={"intent": Intent.said})
+        # An ordinary confirmation stands: that path discloses nothing before the birth year.
         return first.model_copy(update={"degraded": True, "year": None})
 
-    def _label(self, messages: list[Message]) -> _Label:
-        def ask() -> _Label:
-            reply = self._llm.complete(_Verdict, messages, model=self._model, max_tokens=self._max_tokens)
-            return reply.value.label
+    def _ask(self, messages: list[Message]) -> _Label:
+        reply = self._llm.complete(_Verdict, messages, model=self._model, max_tokens=self._max_tokens)
+        return reply.value.label
 
+    def _label(self, text: str, language: Language, expecting: Expecting, question: str) -> _Label:
+        with self._lock:
+            begun = self._pending.pop((text, language, expecting, question), None)
+        if begun is None:
+            messages = self._messages(text, expecting, question)
+            if self._timeout_s is None:
+                return self._ask(messages)
+            return _POOL.submit(self._ask, messages).result(timeout=self._timeout_s)
+        future, started = begun
         if self._timeout_s is None:
-            return ask()
-        return _POOL.submit(ask).result(timeout=self._timeout_s)
+            return future.result()
+        return future.result(timeout=max(0.0, self._timeout_s - (time.monotonic() - started)))

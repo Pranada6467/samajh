@@ -45,7 +45,8 @@ def test_templates_use_only_their_declared_slots(language):
     pack = load_prompts(language)
     allowed_anywhere = {"first_name", "lender", "ordinal"}
     for key, template in pack.templates.items():
-        assert slots_of(template) == LINES[key].slots
+        used = slots_of(template)  # wave 2: a slot marked optional may be left out
+        assert used <= LINES[key].slots and LINES[key].slots - used <= LINES[key].optional, key
         if not key.startswith("read_back."):
             assert slots_of(template) <= allowed_anywhere, key
     amount_lines = {key for key, spec in LINES.items() if "amount_words" in spec.slots}

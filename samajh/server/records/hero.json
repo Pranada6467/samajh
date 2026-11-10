@@ -28,7 +28,7 @@
         "risk_mitigant": true,
         "provider_choice_offered": false,
         "cancel_window_days": 30,
-        "features": [],
+        "features": ["one_time_payment"],
         "consent": null
       }
     ]

@@ -56,7 +56,7 @@ MEANINGS: dict[str, tuple[str, str]] = {
         "With the first mention of the loan, before the first question about it.",
     ),
     "verify.before_loan": (
-        "This is a feedback call from {lender} customer care; what it is about we will say once the year of birth is confirmed. If in doubt, hang up and ask {lender} customer care yourself. We never ask for an OTP or PIN.",
+        "This is a feedback call from {lender} customer care; what it is about we will tell you once your identity is confirmed. If in doubt, hang up and ask {lender} customer care yourself. We never ask for an OTP or PIN.",
         "When the customer asks who is calling, what this is about or whether it is genuine, after the name claim and before the loan is named (at most twice); then the question again.",
     ),
     "verify.after_loan": (
@@ -96,8 +96,8 @@ MEANINGS: dict[str, tuple[str, str]] = {
         "Before the product questions, one product on record, only after the customer has named or affirmed something.",
     ),
     "teach_back.intro_nth": (
-        "Now a few short questions about the {ordinal} thing on our record with the loan.",
-        "Before each product's questions when the record has several products.",
+        "I see. If you also took anything else with the loan, there are now a few short questions about that.",
+        "Before the questions on the second and each later product, when the record has several products.",
     ),
     "kind.ask": ("What is it? Tell me in your own words.", "Product question 1."),
     "kind.reask": (
@@ -154,7 +154,7 @@ MEANINGS: dict[str, tuple[str, str]] = {
     ),
     "cancel_window.ask": ("What were you told about stopping or cancelling it?", "Product question 9."),
     "cancel_window.reask": (
-        "I mean, were you told you could cancel it, and by when?",
+        "I mean, did anyone tell you anything about stopping or cancelling it? Tell me whatever you remember.",
         "Once, after an unclear answer.",
     ),
     "features.ask": (
@@ -274,11 +274,15 @@ ROUND2_CHANGED = frozenset({
     "verify.before_loan", "verify.after_loan", "context.loan", "consent.ask", "consent.reask", "read_back.confirm",
     "read_back.cover_confirm", "read_back.reconfirm", "stop_check.decline", "stop_check.human", "end.human",
 })  # fmt: skip
+# Lines reworded in round 3; the English meaning above translates the current text.
+ROUND3_CHANGED = frozenset({"verify.before_loan", "teach_back.intro_nth", "cancel_window.reask"})
 
 
 def _mark(key: str) -> str:
     return (
-        " **(new, round 2)**"
+        " **(changed, round 3)**"
+        if key in ROUND3_CHANGED
+        else " **(new, round 2)**"
         if key in ROUND2_NEW
         else " **(changed, round 2)**"
         if key in ROUND2_CHANGED
@@ -304,6 +308,7 @@ def main() -> None:
         "",
         "**Round 2** (after the iteration-2 verifier): lines marked *new* or *changed* moved; the verifier's",
         "eight wording changes are adopted, and read-backs say the figure in words only.",
+        "**Round 3**: lines marked *changed, round 3* were reworded; their English meaning is of the new text.",
         "",
         "| Key | Hindi | Hinglish | Plain English meaning | When it is said |",
         "|---|---|---|---|---|",

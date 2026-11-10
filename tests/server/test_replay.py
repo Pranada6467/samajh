@@ -13,14 +13,20 @@ from test_samajh_dialogue import answer
 
 from samajh.clients.errors import RateLimited
 from samajh.server import create_app, replay
-from samajh.server.dialogue import Heard
+from samajh.server.dialogue import Heard, stub_factory
 from samajh.server.replay import ReplayFailed, load_script, replay_call, turn_files
 from samajh.server.samajh_dialogue import samajh_factory
 
 
 @pytest.fixture
 def phone(fake: FakeSpeech, state: Path) -> TestClient:
-    return TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, llm=FailingLlm))
+    """The Samajh call as the server runs it, and the stub beside it: test wiring only (the app
+    `python -m samajh.server` builds has no stub)."""
+    dialogues = {"samajh": samajh_factory(BOOK, SETTINGS), "stub": stub_factory}
+    return TestClient(
+        create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, llm=FailingLlm, dialogues=dialogues,
+                   records=BOOK, settings=SETTINGS)
+    )  # fmt: skip
 
 
 def call_dir(root: Path, names: list[str]) -> Path:
@@ -224,6 +230,7 @@ def test_cli_prints_one_json_summary(
 
     def app_with_fake(**kwargs: object):
         profiles.append(kwargs.pop("profile"))
+        assert kwargs.pop("state") == state  # without --state: the state directory of the clients
         return create_app(gnani=fake, state=state, llm=FailingLlm, **kwargs)
 
     monkeypatch.setattr("samajh.server.app.create_app", app_with_fake)
@@ -246,6 +253,21 @@ def test_cli_prints_one_json_summary(
     captured = capsys.readouterr()
     assert captured.out == ""
     assert json.loads(captured.err)["error"]["code"] == "gnani_rate_limited"
+
+
+def test_cli_runs_the_stub_only_in_this_process(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    directory = call_dir(tmp_path / "stub", ["01.wav"])
+    with pytest.raises(SystemExit) as caught:
+        replay.main([str(directory), "--dialogue", "stub", "--url", "http://127.0.0.1:9"])
+    assert caught.value.code == 2 and "drop --url" in capsys.readouterr().err
+
+
+def test_a_running_server_refuses_the_stub_by_request(fake: FakeSpeech, state: Path, tmp_path: Path) -> None:
+    default = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, llm=FailingLlm))
+    with pytest.raises(ReplayFailed) as caught:
+        replay_call(default, stub(turn_files(call_dir(tmp_path / "call", ["01.wav"]))))
+    assert (caught.value.step, caught.value.error["code"]) == ("create", "unknown_dialogue")
+    assert not (state / "sessions").exists() and not fake.tts_calls
 
 
 def test_cli_refuses_a_missing_directory(tmp_path: Path) -> None:

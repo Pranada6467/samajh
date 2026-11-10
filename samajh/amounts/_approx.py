@@ -15,7 +15,7 @@ from decimal import Decimal
 from typing import Literal
 
 from samajh.amounts._grammar import evaluate
-from samajh.amounts._lexicon import Atom, near_fraction, near_unit, norm_key
+from samajh.amounts._lexicon import Atom, near_coefficient, near_fraction, near_unit, norm_key
 from samajh.amounts._parse import (
     _CURRENCY,
     _GAP,
@@ -27,6 +27,7 @@ from samajh.amounts._parse import (
     Parsed,
     Span,
     parse_amount,
+    takes_coefficient,
 )
 from samajh.amounts._text import Tok, scan
 from samajh.types import Frozen
@@ -243,10 +244,10 @@ def _read_range(text: str, exact: bool) -> Approximate | None:
     for stretch in stretches:
         first, last = stretch[0], stretch[-1]
         before = first - 1
-        if (
-            before >= 0
-            and toks[before].kind == "other"
-            and near_fraction(text[toks[before].start : toks[before].end])
+        word = text[toks[before].start : toks[before].end] if before >= 0 else ""
+        if before >= 0 and toks[before].kind == "other" and (
+            near_fraction(word)
+            or (toks[first].kind == "num" and takes_coefficient(toks[first].atoms) and near_coefficient(word))
         ):
             return None  # "सारे पचास से बावन हज़ार": the word before may be a fraction misspelt
         after = last + 1

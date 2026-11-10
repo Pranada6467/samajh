@@ -10,7 +10,7 @@ Kannada sentences are not human-reviewed.
 from __future__ import annotations
 
 import pytest
-from dialogue_kit import CUSTOMERS, LANGUAGES, play, product, record
+from dialogue_kit import CUSTOMERS, LANGUAGES, LENDER, play, product, record
 
 from samajh.amounts import parse_amount
 from samajh.dialogue import (
@@ -150,10 +150,16 @@ def test_the_reask_asks_whether_the_speaker_is_the_borrower_not_whether_he_is_th
     assert call.keys[-1] == "right_party.reask"
 
 
-@pytest.mark.parametrize(
-    "replies",
-    [["कौन?", "बताइए"], ["कौन?", "okay go ahead"], ["हेलो?", "बोलिए बोलिए"], ["हाँ, आप कौन?", "हम्म"]],
-)
+# Round 3: a go-on reply after the re-ask is an ordinary confirmation (birth year, no lender); a reply
+# that confirms nothing still ends the call at the second try.
+@pytest.mark.parametrize("replies", [["कौन?", "बताइए"], ["कौन?", "okay go ahead"], ["हेलो?", "बोलिए बोलिए"]])
+def test_a_go_on_reply_after_the_reask_asks_the_birth_year_and_never_names_the_lender(replies):
+    call = play(record(), HI, replies)
+    assert call.keys[-1] == "second_check.ask" and "disclosure.who" not in call.keys
+    assert LENDER not in " ".join(line.text for line in call.lines)
+
+
+@pytest.mark.parametrize("replies", [["आप कौन?", "हम्म"], ["हेलो?", "नमस्ते"]])
 def test_a_reply_that_does_not_claim_to_be_the_borrower_is_never_a_yes(replies):
     call = play(record(), HI, replies)
     assert call.end is not None and call.end.outcome is Outcome.not_confirmed
@@ -168,21 +174,28 @@ def test_an_explicit_first_person_claim_goes_on(reply):
     assert call.keys[-1] == "disclosure.go_ahead"
 
 
-@pytest.mark.parametrize("ack", ["हाँ बोलिए", "जी कहिए", "जी", "हेलो", "नमस्ते", "हाँ जी", "haan boliye"])
-def test_an_acknowledgement_is_not_a_claim_and_twice_ends_the_call(ack):
-    call = play(record(), HI, [ack, ack])
+# Round 3: an acknowledgement is an ordinary confirmation: the birth year next, the lender not named.
+@pytest.mark.parametrize("ack", ["हाँ बोलिए", "जी कहिए", "जी", "हाँ जी", "haan boliye"])
+def test_an_acknowledgement_goes_to_the_birth_year_without_naming_the_lender(ack):
+    call = play(record(), HI, [ack])
+    assert call.keys[-1] == "second_check.ask" and "disclosure.who" not in call.keys
+    assert LENDER not in " ".join(line.text for line in call.lines)
+
+
+@pytest.mark.parametrize("greeting", ["हेलो", "नमस्ते"])
+def test_a_greeting_is_not_a_confirmation_and_twice_ends_the_call(greeting):
+    call = play(record(), HI, [greeting, greeting])
     assert call.keys == ("right_party.ask", "right_party.reask", "end.third_party")
-    assert call.end.outcome is Outcome.not_confirmed and "Udaharan" not in " ".join(
-        line.text for line in call.lines
-    )
+    assert call.end.outcome is Outcome.not_confirmed
 
 
 @pytest.mark.parametrize(
     "reply", ["हाँ, मैं रमेश बोल रहा हूँ", "ji main Ramesh", "मैं सुरेश बोल रहा हूँ", "हाँ साहब बोलिए"]
 )
-def test_a_reply_outside_the_tight_patterns_never_confirms_without_the_classifier(reply):
+def test_a_reply_outside_the_tight_patterns_never_takes_the_strong_path_without_the_classifier(reply):
     call = play(record(), HI, [reply])
-    assert call.keys[-1] in ("right_party.reask", "end.third_party")
+    assert "disclosure.who" not in call.keys
+    assert call.keys[-1] in ("right_party.reask", "end.third_party", "second_check.ask")
 
 
 # --- 2. refusals and non-refusals ---------------------------------------------------------------

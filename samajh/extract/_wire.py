@@ -142,6 +142,30 @@ class RecallReply(Frozen):
     took_nothing: bool  # the customer says they took nothing with the loan besides the loan
 
 
+class Change(StrEnum):
+    """Does the customer, inside one reply, give an answer and then change it?"""
+
+    none = "none"  # one answer, however often repeated or stressed; or no answer at all
+    corrected = "corrected"  # an answer, then a DIFFERENT answer to the same question
+    withdrawn = "withdrawn"  # an answer, then taken back, with no other answer given
+
+
+# This docstring is sent to the model as the schema's description: it is part of the prompt and of
+# the cache key. Do not reword it without rerunning the evaluations (a rewording on 2026-11-10
+# changed 1 of 1,107 frozen-set readings). Its last sentence is out of date about the code: code
+# keeps a corrected answer's earlier words in `also` or takes a stated answer away, and adds no
+# conflict (`samajh.extract._extract._Assembly.check`).
+class ChangeReply(Frozen):
+    """The change check: a separate call on every checked reply of two or more clauses.
+
+    It never gives a value. Code uses it only to take a stated answer away or to add a conflict.
+    """
+
+    change: Change
+    first_clauses: Clauses  # the clause(s) holding the answer given first; empty for none
+    final_clauses: Clauses  # the clause(s) holding the answer that replaces it; corrected only, else empty
+
+
 WireReply = (
     KindReply
     | PaymentReply

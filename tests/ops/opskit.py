@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, date, datetime
 from pathlib import Path
 
 from samajh.ops import sampler
 from samajh.ops.book import book_sha256
 from samajh.ops.model import AttemptOutcome, BookLoan, BookMeta, Channel, Draw, SimCustomer, SimStep
-from samajh.ops.simulate import run_draw, scripted_analysis
+from samajh.ops.simulate import run_draw, script_call, scripted_analysis
 from samajh.ops.store import OpsStore
 from samajh.scenarios.model import ProductBelief, Recall
 from samajh.types import (
@@ -132,3 +133,89 @@ def run_batch(root: Path, loans: list[BookLoan], customers: list[SimCustomer], a
     store, drawn = open_batch(root, loans, as_of)
     run_draw(store, drawn, {c.loan_id: c for c in customers}, scripted_analysis)
     return store
+
+
+# --- phone sessions, as samajh/server/casefile.py writes their case files ------------------------
+
+WALL = datetime(2026, 11, 10, 5, 30, tzinfo=UTC)  # the wall clock of a session (the book is dated 2027)
+_serial = iter(range(1, 10**6))
+
+
+def session_id(started: datetime) -> str:
+    return f"{started.astimezone(UTC):%Y%m%dT%H%M%S}-{next(_serial):012x}"
+
+
+def phone_case(
+    store: OpsStore,
+    of: BookLoan,
+    who: SimCustomer | None,
+    call_date: date | None,
+    outcome: str = "completed",
+    status: str = "ready",
+    *,
+    started: datetime = WALL,
+    sid: str | None = None,
+    audio: dict[str, int] | None = None,
+    **changes,
+) -> dict:
+    """A case file for a session on `of`. With `call_date`, a loan-book call with its `book` block
+    worked out from the store; with None, no `book` block. A completed call carries the scripted
+    transcript and result of `who`, also when its status is failed (a failed case keeps them)."""
+    sid = sid or session_id(started)
+    case: dict = {
+        "version": 1,
+        "session_id": sid,
+        "record_id": of.record.loan_id,
+        "loan_id": of.record.loan_id,
+        "language": "hi",
+        "status": status,
+        "started_at": started.isoformat(),
+        "call_outcome": outcome,
+        "ended_reason": "dialogue",
+        "models": {"extraction": {"model": "scripted (test)"}},
+        "turns": [],
+    }
+    if audio is not None:
+        case["customer_audio"] = audio
+    if call_date is not None:
+        draw = next((d for d in store.draws() if any(x.loan_id == of.record.loan_id for x in d.drawn)), None)
+        case["book"] = {
+            "batch_id": store.meta().batch_id,
+            "draw_id": draw.draw_id if draw else "D-none",
+            "sold_on": of.sold_on.isoformat(),
+            "call_date": call_date.isoformat(),
+            "day_since_sale": (call_date - of.sold_on).days,
+        }
+    if outcome == "completed" and who is not None:
+        script = script_call(of, who)
+        result, _ = scripted_analysis(script, of.record)
+        transcript = script.transcript.model_dump(mode="json")
+        transcript["call_id"] = sid
+        case["transcript"] = transcript
+        case["result"] = result.model_dump(mode="json")
+    return case | changes
+
+
+def put_case(sessions: Path, case: dict) -> Path:
+    folder = sessions / case["session_id"]
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / "case.json").write_text(json.dumps(case, ensure_ascii=False), encoding="utf-8")
+    return folder
+
+
+def snapshot(root: Path) -> dict[str, bytes]:
+    """Every file of a store but its lock, by path."""
+    return {
+        str(p.relative_to(root)): p.read_bytes()
+        for p in sorted(root.rglob("*"))
+        if p.is_file() and p.name != ".lock"
+    }
+
+
+def assert_each_call_named_once(store: OpsStore) -> None:
+    """Every call file is named by exactly one effective attempt or outside call."""
+    named = [a.call_id for a in store.attempts() if a.call_id] + [
+        o.call_id for o in store.outside() if o.call_id
+    ]
+    files = sorted(p.stem for p in (store.root / "calls").glob("*.json"))
+    assert sorted(named) == files, (named, files)

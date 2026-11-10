@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Radha, born 1972, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c041",
+  "label": "Synthetic P5 record. Radha: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1972-09-09",
+      "language": "hi",
+      "name": "Radha Udaharan"
+    },
+    "disbursed_inr": 278400,
+    "disbursed_on": "2026-10-13",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5-LN-041",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-13",
+          "method": "signed_form"
+        },
+        "cover_inr": 300000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 21600,
+        "provider": "Udaharan Suraksha (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 300000,
+    "tenure_months": 36
+  }
+}

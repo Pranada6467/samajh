@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Priya, born 1987, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c022",
+  "label": "Synthetic P5 record. Priya: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1987-08-08",
+      "language": "hi-en",
+      "name": "Priya Kalpanik"
+    },
+    "disbursed_inr": 472500,
+    "disbursed_on": "2026-10-25",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-022",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-25",
+          "method": "otp"
+        },
+        "cover_inr": 500000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 27500,
+        "provider": "Kalpanik Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": true,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 500000,
+    "tenure_months": 36
+  }
+}

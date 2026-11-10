@@ -10,7 +10,7 @@ import pytest
 
 from samajh.amounts import format_inr, spoken_amount
 from samajh.clients.errors import ClientError, ConfigError
-from samajh.dialogue import LINES, PRODUCT_QUESTIONS, Intent, Interpretation
+from samajh.dialogue import LINES, PRODUCT_QUESTIONS, CallState, Expecting, Intent, Interpretation, expecting
 from samajh.server import samajh_dialogue as adapter
 from samajh.server.dialogue import BotLine, BotUtterance, Heard, Step
 from samajh.server.records import PACKAGED_DIR, CallRecord, RecordBook, load_book
@@ -143,13 +143,31 @@ def test_a_whole_call_runs_from_the_hero_record_to_the_end(language: str) -> Non
     assert {line.tags.get("product_id") for line in lines_of(steps)} == {None, "P1"}
 
 
-@pytest.mark.parametrize("language", ["hi", "hi-en"])
-def test_only_the_amount_and_read_back_prompts_ask_for_a_second_reading(language: str) -> None:
-    steps, _ = converse(dialogue(language=language), language)
-    asks_premium = [step.say.lines[-1].tags.get("asks") == "premium" for step in steps]
+FIGURE_REPLIES = {
+    Expecting.amount,
+    Expecting.confirmation,
+}  # the dialogue's own: replies that may carry a figure
 
-    assert [step.say.second_reading for step in steps] == asks_premium
-    assert sum(asks_premium) >= 2  # the premium question and its read-back
+
+def waits_for_a_figure(step: Step) -> bool:
+    """Whether the dialogue, at this step's position, waits for a reply that may carry a figure."""
+    if step.say.end_call:
+        return False
+    return expecting(CallState.model_validate_json(step.state).position) in FIGURE_REPLIES
+
+
+@pytest.mark.parametrize("language", ["hi", "hi-en"])
+def test_only_prompts_that_wait_for_a_figure_ask_for_a_second_reading(language: str) -> None:
+    steps, _ = converse(dialogue(language=language), language)
+    figure = [waits_for_a_figure(step) for step in steps]
+
+    assert [step.say.second_reading for step in steps] == figure
+    # The premium question, its read-back and the cover question (contract section 5): each read twice.
+    twice = [(step.say.lines[-1].tags["step"], step.say.lines[-1].tags.get("asks")) for s, step in
+             zip(figure, steps, strict=True) if s]  # fmt: skip
+    assert {("teach_back", "premium"), ("read_back", "premium"), ("teach_back", "cover")} <= set(twice)
+    # A question with no figure in its answer is read once.
+    assert not any(step.say.second_reading for step in steps if step.say.lines[-1].tags.get("asks") == "kind")
     assert {step.say.listen for step in steps if step.say.second_reading} == {"amount", "yes_no"}
     assert [step.say.listen for step in steps[:3]] == ["yes_no", "yes_no", "short"]
     assert "open" in {step.say.listen for step in steps}
@@ -305,13 +323,17 @@ def test_with_a_key_the_fallback_client_gets_a_short_timeout_and_one_attempt(
     first = call.start()
     assert built == []
 
-    steps, _ = converse(call, "hi")
+    # The informed customer's replies are all settled by the word lists since P2 round 3, so one
+    # reply here (to the term question) is plain words to the rules: the LLM must be asked.
+    unsettled = "उस दिन बैंक में भीड़ थी"
+    steps, replies = converse(call, "hi", term=unsettled)
 
     assert len(built) == 1 and steps[0] == first
     assert built[0]["timeout"] == SETTINGS.fallback.timeout_s and built[0]["retry"].max_attempts == 1
-    # Some reply of a whole call is plain words to the rules, so the LLM is asked. It fails, and
-    # the call goes on to its end without it.
+    # The LLM is asked on that turn and fails: the turn is marked degraded, and the call goes on to
+    # its end without it.
     assert llm.calls >= 1 and outcome(steps) is not None
+    assert steps[replies.index(unsettled) + 1].degraded
 
 
 def test_the_fallback_switch_in_the_settings_turns_it_off(no_openrouter_key: list[dict]) -> None:
@@ -338,9 +360,19 @@ def test_an_injected_interpreter_reads_every_turn(no_openrouter_key: list[dict])
 
 
 def test_the_two_readings_are_ordered_in_one_place() -> None:
-    assert adapter.readings(Heard(text="बावन हज़ार", second="पचपन हज़ार")) == ("बावन हज़ार", "पचपन हज़ार")
+    # The second reading (v2.5) goes first when it has text; missing or empty, the primary stays first.
+    assert adapter.readings(Heard(text="बावन हज़ार", second="पचपन हज़ार")) == ("पचपन हज़ार", "बावन हज़ार")
     assert adapter.readings(Heard(text="बावन हज़ार", second="")) == ("बावन हज़ार", "")
     assert adapter.readings(Heard(text="हाँ")) == ("हाँ", None)
+
+
+def test_the_shipped_settings_make_the_second_reading_v25_which_the_order_relies_on() -> None:
+    """`readings` puts the second reading first because the contract asks for v2.5 first. If the
+    settings swap the models, this fails until the order in `readings` is revisited."""
+    from samajh.server.settings import DEFAULT_FILE, parse_settings
+
+    shipped = parse_settings(DEFAULT_FILE.read_text(encoding="utf-8")).stt
+    assert (shipped.model, shipped.second_model) == ("prisma-v3.0", "prisma-v2.5")
 
 
 # --- silence ------------------------------------------------------------------

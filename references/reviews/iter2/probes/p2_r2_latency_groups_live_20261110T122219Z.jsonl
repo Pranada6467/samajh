@@ -1,0 +1,319 @@
+{"arm": "live", "case": "tp-026", "turn": 1, "reply": "नहीं, मेरा नाम सुरेश है", "seconds": 0.633, "cache_hit": false, "usd": 4.695e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-027", "turn": 1, "reply": "nahi main Rakesh bol raha hu, Ramesh nahi", "seconds": 0.789, "cache_hit": false, "usd": 1.517e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-028", "turn": 1, "reply": "कौन रमेश? यह नंबर तो मैंने अभी नया लिया है", "seconds": 0.644, "cache_hit": false, "usd": 4.755e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-036", "turn": 1, "reply": "एक मिनट, मैं अपने बेटे को देती हूँ, वो सब देखता है", "seconds": 0.78, "cache_hit": false, "usd": 4.925e-05, "label": "third_party_handoff", "late": false}
+{"arm": "live", "case": "tp-037", "turn": 1, "reply": "aap mere bete se baat karo, woh handle karta hai sab", "seconds": 0.602, "cache_hit": false, "usd": 4.8875e-05, "label": "third_party_handoff", "late": false}
+{"arm": "live", "case": "tp-043", "turn": 3, "reply": "हाँ", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-044", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-045", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-046", "turn": 3, "reply": "haan", "seconds": 0.005, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-047", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-048", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-049", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-050", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-051", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-051", "turn": 5, "reply": "मेरी उम्र? मैं तो 1990 की हूँ, रमेश जी 1984 के", "seconds": 0.751, "cache_hit": false, "usd": 1.727e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-052", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-053", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-053", "turn": 7, "reply": "रुकिए, मेरी बीवी से बात कीजिए, वो सब जानती है", "seconds": 0.717, "cache_hit": false, "usd": 4.98e-05, "label": "third_party_handoff", "late": false}
+{"arm": "live", "case": "tp-054", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-054", "turn": 7, "reply": "ek minute, main beta hoon, papa ne phone de diya, kya puch rahe the aap?", "seconds": 0.599, "cache_hit": false, "usd": 4.985e-05, "label": "third_party_handoff", "late": false}
+{"arm": "live", "case": "tp-055", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-055", "turn": 7, "reply": "हेलो, मैं इनकी बेटी हूँ, पापा को सुनाई नहीं देता, मुझे बताइए क्या लिया था", "seconds": 0.602, "cache_hit": false, "usd": 4.9275e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-056", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-056", "turn": 7, "reply": "hello? papa bahar chale gaye, main unka bhai hu, kya baat chal rahi thi", "seconds": 0.592, "cache_hit": false, "usd": 1.603e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-057", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-057", "turn": 11, "reply": "मुझे बता दीजिए, मैं उनको बता दूँगी", "seconds": 0.648, "cache_hit": false, "usd": 4.9175e-05, "label": "third_party_handoff", "late": false}
+{"arm": "live", "case": "tp-058", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-058", "turn": 7, "reply": "main unka CA hoon, unke saare loan main manage karta hoon, aap mujhe bolo", "seconds": 0.693, "cache_hit": false, "usd": 4.985e-05, "label": "third_party_handoff", "late": false}
+{"arm": "live", "case": "tp-059", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-059", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.558, "cache_hit": false, "usd": 4.7325e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-059", "turn": 9, "reply": "बेटा बोल रहा हूँ, पापा की तबीयत ठीक नहीं, आगे क्या पूछना है", "seconds": 0.805, "cache_hit": false, "usd": 4.785e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-060", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-060", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.633, "cache_hit": false, "usd": 4.825e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-060", "turn": 9, "reply": "aunty bol rahi hu padosi, ramesh ji ne phone pakda diya", "seconds": 0.897, "cache_hit": false, "usd": 4.77e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-061", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-061", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-061", "turn": 9, "reply": "हाँ जी, मैं उनका दामाद हूँ, आप मुझे बताओ कितने का था", "seconds": 1.203, "cache_hit": false, "usd": 1.433e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-062", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-062", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-062", "turn": 9, "reply": "sorry woh kisi aur se baat kar rahe hain, main unki wife, aap continue karo", "seconds": 0.745, "cache_hit": false, "usd": 4.7925e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-063", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-063", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-063", "turn": 9, "reply": "ये कौन है? रमेश किससे बात कर रहे हो... मैं उनकी माँ हूँ", "seconds": 0.731, "cache_hit": false, "usd": 1.279e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-064", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-064", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-064", "turn": 9, "reply": "hello main unka dost hoon, phone mere paas reh gaya", "seconds": 0.719, "cache_hit": false, "usd": 4.74e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-065", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-065", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-065", "turn": 9, "reply": "वो बाहर चले गए, मैं उनकी पत्नी, जो पूछना है मुझसे पूछो", "seconds": 1.023, "cache_hit": false, "usd": 4.7625e-05, "label": "wrong_person", "late": false}
+{"arm": "live", "case": "tp-066", "turn": 3, "reply": "haan", "seconds": 0.004, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-066", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.017, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-066", "turn": 9, "reply": "papa gaye, main unki beti, aap mujhe batao kitne paise kate", "seconds": 0.754, "cache_hit": false, "usd": 1.439e-05, "label": "third_party_handoff", "late": false}
+{"arm": "live", "case": "tp-067", "turn": 1, "reply": "हाँ मैं ही रमेश हूँ", "seconds": 1.082, "cache_hit": false, "usd": 4.7825e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "tp-067", "turn": 3, "reply": "हाँ बोलिए", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-068", "turn": 1, "reply": "haan main hi Ramesh", "seconds": 0.013, "cache_hit": true, "usd": 0.0, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "tp-068", "turn": 3, "reply": "haan", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-069", "turn": 3, "reply": "जी", "seconds": 0.755, "cache_hit": false, "usd": 1.109e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "tp-069", "turn": 5, "reply": "याद नहीं", "seconds": 0.636, "cache_hit": false, "usd": 4.73e-05, "label": "dont_know", "late": false}
+{"arm": "live", "case": "tp-069", "turn": 7, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.619, "cache_hit": false, "usd": 4.6575e-05, "label": "who_or_why", "late": false}
+{"arm": "live", "case": "tp-070", "turn": 3, "reply": "ok", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-070", "turn": 5, "reply": "yaad nahi hai exact", "seconds": 0.632, "cache_hit": false, "usd": 4.73e-05, "label": "dont_know", "late": false}
+{"arm": "live", "case": "tp-070", "turn": 7, "reply": "kaun bol raha hai? kis baare mein?", "seconds": 0.578, "cache_hit": false, "usd": 4.665e-05, "label": "who_or_why", "late": false}
+{"arm": "live", "case": "tp-071", "turn": 3, "reply": "हाँ जी", "seconds": 0.595, "cache_hit": false, "usd": 4.71e-05, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-072", "turn": 3, "reply": "theek hai", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-072", "turn": 5, "reply": "unnis sau chaurasi", "seconds": 0.779, "cache_hit": false, "usd": 1.477e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-072", "turn": 7, "reply": "kaun bol raha hai? kis baare mein?", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "who_or_why", "late": false}
+{"arm": "live", "case": "tp-073", "turn": 3, "reply": "ठीक है", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-073", "turn": 5, "reply": "अस्सी के आसपास", "seconds": 0.631, "cache_hit": false, "usd": 4.7475e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-073", "turn": 7, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "who_or_why", "late": false}
+{"arm": "live", "case": "tp-074", "turn": 1, "reply": "haan main Ramesh", "seconds": 1.609, "cache_hit": false, "usd": 4.725e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "tp-074", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-074", "turn": 5, "reply": "1984 ya 85", "seconds": 0.842, "cache_hit": false, "usd": 4.72e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-075", "turn": 1, "reply": "मैं ही रमेश", "seconds": 0.709, "cache_hit": false, "usd": 1.517e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "tp-075", "turn": 3, "reply": "हाँ", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-075", "turn": 5, "reply": "पहले आप बताइए कौन सा साल है रिकॉर्ड में", "seconds": 0.703, "cache_hit": false, "usd": 1.687e-05, "label": "who_or_why", "late": false}
+{"arm": "live", "case": "tp-075", "turn": 7, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.631, "cache_hit": false, "usd": 4.71e-05, "label": "who_or_why", "late": false}
+{"arm": "live", "case": "tp-076", "turn": 3, "reply": "haan", "seconds": 0.003, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-076", "turn": 7, "reply": "kya galat hai? 1982?", "seconds": 0.693, "cache_hit": false, "usd": 1.343e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-077", "turn": 1, "reply": "जी हाँ मैं ही बोल रहा", "seconds": 0.973, "cache_hit": false, "usd": 1.249e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "tp-077", "turn": 3, "reply": "हाँ", "seconds": 0.009, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-077", "turn": 7, "reply": "कौन बोल रहा है? किस बारे में है?", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "who_or_why", "late": false}
+{"arm": "live", "case": "tp-078", "turn": 3, "reply": "haan", "seconds": 0.005, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-079", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "tp-079", "turn": 5, "reply": "1984 है ना? सही है?", "seconds": 0.676, "cache_hit": false, "usd": 4.765e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "tp-080", "turn": 1, "reply": "yes I am Ramesh", "seconds": 0.655, "cache_hit": false, "usd": 4.765e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "tp-080", "turn": 3, "reply": "yes", "seconds": 0.84, "cache_hit": false, "usd": 1.059e-05, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-003", "turn": 3, "reply": "अभी टाइम नहीं है, खेत में हूँ", "seconds": 0.621, "cache_hit": false, "usd": 4.71e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "rf-004", "turn": 3, "reply": "busy hu abhi, baad me", "seconds": 1.724, "cache_hit": false, "usd": 4.7125e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "rf-005", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-005", "turn": 5, "reply": "अरे अभी दुकान पे ग्राहक खड़े हैं", "seconds": 0.679, "cache_hit": false, "usd": 1.175e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "rf-006", "turn": 3, "reply": "haan", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-006", "turn": 7, "reply": "bhai abhi bahut kaam hai, main free nahi hoon", "seconds": 0.642, "cache_hit": false, "usd": 4.83e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "rf-007", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-007", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-008", "turn": 1, "reply": "हम बस में हैं, कुछ सुनाई नहीं दे रहा, बाद में", "seconds": 1.537, "cache_hit": false, "usd": 1.547e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "rf-009", "turn": 1, "reply": "नहीं चाहिए कुछ", "seconds": 0.893, "cache_hit": false, "usd": 4.645e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-011", "turn": 3, "reply": "नहीं, मुझे कोई बात नहीं करनी", "seconds": 0.984, "cache_hit": false, "usd": 4.7875e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-012", "turn": 3, "reply": "nahi nahi rehne do, koi zaroorat nahi", "seconds": 1.549, "cache_hit": false, "usd": 4.77e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-013", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-013", "turn": 5, "reply": "ये सब मैं नहीं बताऊँगा, रहने दीजिए", "seconds": 0.613, "cache_hit": false, "usd": 4.8125e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-014", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-015", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-015", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-015", "turn": 9, "reply": "छोड़िए ना, क्या फायदा इन सब का", "seconds": 0.681, "cache_hit": false, "usd": 4.7375e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-016", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-016", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-019", "turn": 3, "reply": "मेरा नंबर अपनी लिस्ट से हटा दो", "seconds": 1.38, "cache_hit": false, "usd": 1.199e-05, "label": "remove_number", "late": false}
+{"arm": "live", "case": "rf-020", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-020", "turn": 5, "reply": "aage se mujhe call mat karna, samjhe", "seconds": 0.799, "cache_hit": false, "usd": 1.587e-05, "label": "remove_number", "late": false}
+{"arm": "live", "case": "rf-021", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-021", "turn": 7, "reply": "आज के बाद इस नंबर पर फ़ोन नहीं आना चाहिए", "seconds": 0.937, "cache_hit": false, "usd": 1.503e-05, "label": "remove_number", "late": false}
+{"arm": "live", "case": "rf-022", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-022", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-022", "turn": 9, "reply": "number delete karo mera, roz roz call aate hain", "seconds": 0.827, "cache_hit": false, "usd": 4.7375e-05, "label": "remove_number", "late": false}
+{"arm": "live", "case": "rf-023", "turn": 3, "reply": "दोबारा कॉल किया तो शिकायत कर दूँगा", "seconds": 1.004, "cache_hit": false, "usd": 1.537e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-026", "turn": 3, "reply": "आप एक घंटे बाद कर लीजिए", "seconds": 1.375, "cache_hit": false, "usd": 4.7025e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "rf-027", "turn": 3, "reply": "sunday ko karna, abhi nahi", "seconds": 0.691, "cache_hit": false, "usd": 1.169e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "rf-028", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-028", "turn": 5, "reply": "बाद में बात करते हैं", "seconds": 0.624, "cache_hit": false, "usd": 4.7525e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "rf-029", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-030", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-030", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-031", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-031", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.003, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-033", "turn": 3, "reply": "mujhe kisi real insaan se baat karni hai", "seconds": 2.271, "cache_hit": false, "usd": 4.7775e-05, "label": "human_request", "late": false}
+{"arm": "live", "case": "rf-034", "turn": 3, "reply": "आपके मैनेजर से बात करवाइए", "seconds": 0.852, "cache_hit": false, "usd": 4.7025e-05, "label": "human_request", "late": false}
+{"arm": "live", "case": "rf-035", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-035", "turn": 5, "reply": "branch wale se baat karwao", "seconds": 0.753, "cache_hit": false, "usd": 1.393e-05, "label": "human_request", "late": false}
+{"arm": "live", "case": "rf-036", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-037", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-037", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-037", "turn": 9, "reply": "koi agent hai kya? usko line pe lo", "seconds": 0.94, "cache_hit": false, "usd": 1.269e-05, "label": "who_or_why", "late": false}
+{"arm": "live", "case": "rf-038", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-038", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-038", "turn": 9, "reply": "बैंक वाले भैया से बात करा दो जिन्होंने लोन किया था", "seconds": 0.62, "cache_hit": false, "usd": 4.795e-05, "label": "human_request", "late": false}
+{"arm": "live", "case": "rf-040", "turn": 3, "reply": "email kar do, main padh lunga", "seconds": 2.042, "cache_hit": false, "usd": 4.6325e-05, "label": "written_request", "late": false}
+{"arm": "live", "case": "rf-041", "turn": 3, "reply": "मुझे चिट्ठी भेज दीजिए, फ़ोन पर नहीं", "seconds": 0.783, "cache_hit": false, "usd": 1.239e-05, "label": "written_request", "late": false}
+{"arm": "live", "case": "rf-042", "turn": 3, "reply": "haan", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-042", "turn": 5, "reply": "whatsapp pe message kar do details", "seconds": 0.764, "cache_hit": false, "usd": 4.685e-05, "label": "written_request", "late": false}
+{"arm": "live", "case": "rf-043", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-044", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-044", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-044", "turn": 9, "reply": "sms bhej do, abhi baat nahi kar sakta", "seconds": 0.783, "cache_hit": false, "usd": 4.6775e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "rf-045", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-045", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-045", "turn": 9, "reply": "मेल पे डाल दो सवाल, मैं जवाब दे दूँगा", "seconds": 0.749, "cache_hit": false, "usd": 4.7325e-05, "label": "written_request", "late": false}
+{"arm": "live", "case": "rf-047", "turn": 1, "reply": "kya bakwaas hai yeh, kaat do phone", "seconds": 0.658, "cache_hit": false, "usd": 1.507e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-048", "turn": 3, "reply": "तुम लोग चोर हो, सब फ्रॉड है", "seconds": 0.864, "cache_hit": false, "usd": 1.209e-05, "label": "off_topic", "late": false}
+{"arm": "live", "case": "rf-049", "turn": 3, "reply": "bhaad mein jao", "seconds": 1.06, "cache_hit": false, "usd": 1.139e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-050", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-050", "turn": 5, "reply": "क्यों बताऊँ अपना साल? चलो भागो", "seconds": 0.879, "cache_hit": false, "usd": 4.7975e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-051", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-051", "turn": 7, "reply": "pagal ho kya, kitni baar puchoge, chup karo", "seconds": 1.445, "cache_hit": false, "usd": 4.8525e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-052", "turn": 3, "reply": "हाँ", "seconds": 0.008, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-052", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-052", "turn": 9, "reply": "बकवास बंद करो", "seconds": 0.892, "cache_hit": false, "usd": 1.303e-05, "label": "refuse", "late": false}
+{"arm": "live", "case": "rf-053", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-053", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-057", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-058", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-059", "turn": 3, "reply": "हाँ", "seconds": 0.006, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-059", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-060", "turn": 1, "reply": "[शोर]", "seconds": 1.061, "cache_hit": false, "usd": 1.447e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "rf-060", "turn": 3, "reply": "[शोर]", "seconds": 0.939, "cache_hit": false, "usd": 4.745e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "rf-061", "turn": 3, "reply": "hmm", "seconds": 0.748, "cache_hit": false, "usd": 4.5275e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "rf-062", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-062", "turn": 7, "reply": "उम्म", "seconds": 0.75, "cache_hit": false, "usd": 4.76e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "rf-062", "turn": 9, "reply": "अं", "seconds": 0.818, "cache_hit": false, "usd": 1.413e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "rf-062", "turn": 11, "reply": "उम्म", "seconds": 0.721, "cache_hit": false, "usd": 1.417e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "rf-063", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-063", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "rf-063", "turn": 9, "reply": "(background TV noise)", "seconds": 0.627, "cache_hit": false, "usd": 1.139e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "rf-064", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "rf-064", "turn": 5, "reply": "हैलो? हैलो?", "seconds": 0.536, "cache_hit": false, "usd": 1.135e-05, "label": "asks_repeat", "late": false}
+{"arm": "live", "case": "rf-064", "turn": 7, "reply": "हैलो", "seconds": 1.084, "cache_hit": false, "usd": 1.139e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "gi-001", "turn": 1, "reply": "हाँ, रमेश जी से हो रही है।", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-002", "turn": 1, "reply": "हाँ, रमेश जी से हो रही है।", "seconds": 0.969, "cache_hit": false, "usd": 1.587e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-007", "turn": 1, "reply": "रमेश", "seconds": 1.044, "cache_hit": false, "usd": 1.209e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-012", "turn": 1, "reply": "haan ji ramesh here", "seconds": 1.087, "cache_hit": false, "usd": 1.219e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-013", "turn": 1, "reply": "हाँ रमेश बोल रहा हूँ", "seconds": 2.541, "cache_hit": false, "usd": 4.7825e-05, "label": "confirms_self", "late": true}
+{"arm": "live", "case": "gi-014", "turn": 1, "reply": "Ramesh speaking", "seconds": 1.154, "cache_hit": false, "usd": 4.63e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-015", "turn": 1, "reply": "जी, हम ही हैं", "seconds": 1.599, "cache_hit": false, "usd": 4.72e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-018", "turn": 1, "reply": "हाँ जी, हम रमेश बोल रहे हैं", "seconds": 1.097, "cache_hit": false, "usd": 4.725e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-019", "turn": 1, "reply": "हां जी बोल रहे हैं", "seconds": 0.787, "cache_hit": false, "usd": 1.239e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-020", "turn": 1, "reply": "haan haan bolo na", "seconds": 0.674, "cache_hit": false, "usd": 1.209e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-021", "turn": 1, "reply": "जी, बताइए क्या बात है", "seconds": 1.641, "cache_hit": false, "usd": 4.7625e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "gi-022", "turn": 1, "reply": "ha ji ramesh hi hu", "seconds": 0.712, "cache_hit": false, "usd": 1.219e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-023", "turn": 1, "reply": "हाँ वही हूँ", "seconds": 0.669, "cache_hit": false, "usd": 1.075e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-024", "turn": 1, "reply": "han me hi hu", "seconds": 0.739, "cache_hit": false, "usd": 1.189e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-025", "turn": 1, "reply": "हाँ जी हाँ, रमेश ही बात कर रहा है", "seconds": 0.895, "cache_hit": false, "usd": 1.319e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-026", "turn": 1, "reply": "ji haan, Ramesh Namoona", "seconds": 1.097, "cache_hit": false, "usd": 4.795e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-027", "turn": 1, "reply": "रमेश नमूना बोल रहा, बोलो", "seconds": 1.34, "cache_hit": false, "usd": 4.7725e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-030", "turn": 1, "reply": "हाँ जी रमेश जी से बात हो रही है आपकी", "seconds": 1.011, "cache_hit": false, "usd": 1.379e-05, "label": "third_party_handoff", "late": false}
+{"arm": "live", "case": "gi-031", "turn": 1, "reply": "haan, Ramesh ji se hi baat ho rahi hai", "seconds": 0.974, "cache_hit": false, "usd": 1.299e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-032", "turn": 1, "reply": "अरे हाँ हाँ, मैं ही, बोलिए बोलिए", "seconds": 0.756, "cache_hit": false, "usd": 4.8475e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-033", "turn": 1, "reply": "matlab haan, main hi hoon", "seconds": 0.58, "cache_hit": false, "usd": 4.7875e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-034", "turn": 1, "reply": "जी सर बोलिए", "seconds": 1.731, "cache_hit": false, "usd": 4.6725e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "gi-036", "turn": 1, "reply": "yes speaking, who is this", "seconds": 0.888, "cache_hit": false, "usd": 1.209e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-037", "turn": 1, "reply": "हाँ मैं हूँ रमेश, कौन बोल रहा है?", "seconds": 0.609, "cache_hit": false, "usd": 1.165e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-038", "turn": 1, "reply": "woh... haan ji, Ramesh, boliye", "seconds": 1.757, "cache_hit": false, "usd": 4.81e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-039", "turn": 1, "reply": "हाँ जी मेरा ही नंबर है", "seconds": 1.773, "cache_hit": false, "usd": 4.7425e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-040", "turn": 1, "reply": "haan mera hi number hai", "seconds": 1.17, "cache_hit": false, "usd": 4.6725e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-041", "turn": 1, "reply": "हाँ, बोलिए, सुन रहा हूँ", "seconds": 0.609, "cache_hit": false, "usd": 1.125e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-042", "turn": 1, "reply": "bolo bolo sun raha hu", "seconds": 0.809, "cache_hit": false, "usd": 1.209e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-043", "turn": 1, "reply": "हाँ, सुनीता जी से हो रही है।", "seconds": 0.715, "cache_hit": false, "usd": 4.765e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-044", "turn": 1, "reply": "जी, सुनीता बोल रही हूँ", "seconds": 0.842, "cache_hit": false, "usd": 1.249e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-045", "turn": 1, "reply": "haan ji, Sunita here, boliye", "seconds": 0.721, "cache_hit": false, "usd": 1.239e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-047", "turn": 1, "reply": "हाँ, इरफ़ान जी से हो रही है।", "seconds": 0.88, "cache_hit": false, "usd": 4.7725e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-048", "turn": 1, "reply": "ji Irfan bol raha", "seconds": 0.73, "cache_hit": false, "usd": 1.199e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-049", "turn": 1, "reply": "जी हाँ, इरफ़ान", "seconds": 1.04, "cache_hit": false, "usd": 4.735e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-050", "turn": 1, "reply": "haan irfaan hi hu", "seconds": 1.643, "cache_hit": false, "usd": 4.745e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-051", "turn": 1, "reply": "हाँ, गुरप्रीत जी से हो रही है।", "seconds": 0.67, "cache_hit": false, "usd": 4.78e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-052", "turn": 1, "reply": "haanji, Gurpreet bol rahi aan", "seconds": 0.608, "cache_hit": false, "usd": 4.7425e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-053", "turn": 1, "reply": "हाँ जी, गुरप्रीत", "seconds": 0.634, "cache_hit": false, "usd": 4.7425e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-054", "turn": 1, "reply": "हाँ, लक्ष्मी जी से हो रही है।", "seconds": 0.727, "cache_hit": false, "usd": 4.7725e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-055", "turn": 1, "reply": "haan Laxmi speaking", "seconds": 3.684, "cache_hit": false, "usd": 4.765e-05, "label": "confirms_self", "late": true}
+{"arm": "live", "case": "gi-056", "turn": 1, "reply": "जी, मैं लछमी", "seconds": 1.996, "cache_hit": false, "usd": 1.239e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-057", "turn": 1, "reply": "हाँ जी, रामेश बोल रहा हूँ", "seconds": 0.635, "cache_hit": false, "usd": 1.269e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-058", "turn": 1, "reply": "haan Rames ji se baat ho rahi", "seconds": 0.791, "cache_hit": false, "usd": 4.8025e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-059", "turn": 1, "reply": "हाँ, आप सही नंबर पे बात कर रहे हैं", "seconds": 0.762, "cache_hit": false, "usd": 4.7725e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-060", "turn": 1, "reply": "haan ji, aap Ramesh se hi baat kar rahe ho", "seconds": 0.709, "cache_hit": false, "usd": 1.319e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-063", "turn": 1, "reply": "हाँ जी हाँ बताइए क्या सेवा करूँ", "seconds": 2.292, "cache_hit": false, "usd": 4.7725e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gi-064", "turn": 1, "reply": "haan main hi Sunita, boliye", "seconds": 1.496, "cache_hit": false, "usd": 4.72e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "gy-001", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-002", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-003", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-004", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-005", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-006", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-007", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-007", "turn": 5, "reply": "mera 1984 hai", "seconds": 0.813, "cache_hit": false, "usd": 4.7325e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "gy-008", "turn": 3, "reply": "हाँ", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-009", "turn": 3, "reply": "haan", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-010", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-010", "turn": 5, "reply": "साल... 1984, जून का", "seconds": 0.992, "cache_hit": false, "usd": 6.3e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "gy-011", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-011", "turn": 5, "reply": "1984 mein paida hua tha main", "seconds": 0.691, "cache_hit": false, "usd": 4.7425e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "gy-012", "turn": 3, "reply": "हाँ", "seconds": 0.004, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-012", "turn": 5, "reply": "पंद्रह जून उन्नीस सौ चौरासी", "seconds": 2.103, "cache_hit": false, "usd": 4.7725e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "gy-013", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-014", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-015", "turn": 3, "reply": "haan", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "gy-016", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-001", "turn": 1, "reply": "नहीं नहीं, बोलिए, मैं ही हूँ", "seconds": 0.606, "cache_hit": false, "usd": 4.75e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "nr-002", "turn": 1, "reply": "nahi nahi boliye, main Ramesh hi hoon", "seconds": 0.704, "cache_hit": false, "usd": 4.81e-05, "label": "confirms_self", "late": false}
+{"arm": "live", "case": "nr-003", "turn": 3, "reply": "अभी बिज़ी था, अब बोलो", "seconds": 1.088, "cache_hit": false, "usd": 1.487e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "nr-004", "turn": 3, "reply": "abhi busy tha, ab bolo", "seconds": 1.484, "cache_hit": false, "usd": 1.437e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "nr-005", "turn": 3, "reply": "बंद मत कीजिए, बोलिए", "seconds": 0.617, "cache_hit": false, "usd": 4.6675e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-006", "turn": 3, "reply": "phone mat kaatna, haan pucho", "seconds": 0.623, "cache_hit": false, "usd": 4.6675e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-007", "turn": 3, "reply": "ठीक है, पूछिए, पर जल्दी", "seconds": 1.101, "cache_hit": false, "usd": 4.635e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-008", "turn": 3, "reply": "haan haan two minute hai, pucho", "seconds": 0.684, "cache_hit": false, "usd": 4.7275e-05, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-009", "turn": 3, "reply": "मना क्यों करूँगा, पूछिए", "seconds": 0.705, "cache_hit": false, "usd": 1.159e-05, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-010", "turn": 3, "reply": "koi dikkat nahi, pucho", "seconds": 0.794, "cache_hit": false, "usd": 1.139e-05, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-011", "turn": 3, "reply": "नहीं कोई बात नहीं, पूछ लीजिए", "seconds": 0.877, "cache_hit": false, "usd": 1.159e-05, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-012", "turn": 3, "reply": "time to nahi hai zyada par chalo pucho", "seconds": 1.123, "cache_hit": false, "usd": 4.6625e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "nr-013", "turn": 3, "reply": "हाँ, किसी इंसान से नहीं, आपसे ही कर लेंगे बात", "seconds": 1.39, "cache_hit": false, "usd": 1.239e-05, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-015", "turn": 3, "reply": "हाँ", "seconds": 0.007, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-014", "turn": 3, "reply": "machine ho to bhi chalega, bolo", "seconds": 2.672, "cache_hit": false, "usd": 4.74e-05, "label": "unclear", "late": true}
+{"arm": "live", "case": "nr-015", "turn": 5, "reply": "बताने में कोई दिक्कत नहीं, 1984", "seconds": 1.006, "cache_hit": false, "usd": 1.597e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-016", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-016", "turn": 5, "reply": "nahi chhupana kya, 1984", "seconds": 0.738, "cache_hit": false, "usd": 4.75e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-017", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-017", "turn": 7, "reply": "लिख के नहीं चाहिए, फ़ोन पे ही बता दो... हाँ, एक बीमा लिया था", "seconds": 0.639, "cache_hit": false, "usd": 4.8625e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-018", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-018", "turn": 7, "reply": "likh ke nahi chahiye, phone pe hi bata do, haan insurance liya tha", "seconds": 2.049, "cache_hit": false, "usd": 1.533e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-019", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-020", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-021", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-021", "turn": 7, "reply": "मैनेजर ने बोला था लेना पड़ेगा, तो ले लिया एक बीमा", "seconds": 2.505, "cache_hit": false, "usd": 1.667e-05, "label": "answer", "late": true}
+{"arm": "live", "case": "nr-022", "turn": 3, "reply": "haan", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-022", "turn": 7, "reply": "agent bola tha ki baad mein call aayega, haan ek policy li thi", "seconds": 0.776, "cache_hit": false, "usd": 4.8325e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-023", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-023", "turn": 7, "reply": "बैंक वाले ने कहा मना मत करो, तो एक बीमा ले लिया", "seconds": 1.202, "cache_hit": false, "usd": 4.825e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-024", "turn": 3, "reply": "haan", "seconds": 0.02, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-024", "turn": 7, "reply": "maine mana kiya tha par unhone add kar diya insurance", "seconds": 1.436, "cache_hit": false, "usd": 4.8025e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-025", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-025", "turn": 7, "reply": "रुकिए मत, बताता हूँ, एक बीमा लिया था", "seconds": 1.526, "cache_hit": false, "usd": 1.195e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-026", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-026", "turn": 7, "reply": "nahi nahi, band mat karo, mujhe yaad aa raha hai, ek insurance tha", "seconds": 0.714, "cache_hit": false, "usd": 1.687e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-027", "turn": 3, "reply": "हाँ", "seconds": 0.005, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-027", "turn": 7, "reply": "मुझे शिकायत करनी है, उन्होंने ज़बरदस्ती बीमा डाल दिया", "seconds": 1.034, "cache_hit": false, "usd": 4.8475e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-028", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-028", "turn": 7, "reply": "unhone bola tha phone pe call aayega to haan bolna, bas", "seconds": 1.643, "cache_hit": false, "usd": 4.845e-05, "label": "unclear", "late": false}
+{"arm": "live", "case": "nr-029", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-029", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-030", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-030", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-031", "turn": 3, "reply": "हाँ", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-031", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-031", "turn": 9, "reply": "मना नहीं करूँगा, वो बीमा है ज़िंदगी का", "seconds": 0.887, "cache_hit": false, "usd": 1.507e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-032", "turn": 3, "reply": "haan", "seconds": 0.003, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-032", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-032", "turn": 9, "reply": "woh life insurance hai, band karna ho to kaise karte hain?", "seconds": 0.671, "cache_hit": false, "usd": 1.249e-05, "label": "off_topic", "late": false}
+{"arm": "live", "case": "nr-033", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-033", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-033", "turn": 9, "reply": "बाद में पता चला कि वो बीमा है", "seconds": 1.621, "cache_hit": false, "usd": 4.675e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-034", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-034", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-034", "turn": 9, "reply": "baad mein bataunga bolke unhone kuch nahi bataya, policy thi shayad", "seconds": 1.428, "cache_hit": false, "usd": 4.6825e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-035", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-035", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-035", "turn": 9, "reply": "इसमें इंसान को कुछ होने पर पैसा मिलता है", "seconds": 0.586, "cache_hit": false, "usd": 4.605e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-036", "turn": 3, "reply": "haan", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-036", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.003, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-036", "turn": 9, "reply": "agar mujhe kuch ho gaya to loan maaf, aisa kuch", "seconds": 0.994, "cache_hit": false, "usd": 1.249e-05, "label": "off_topic", "late": false}
+{"arm": "live", "case": "nr-037", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-037", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.039, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-038", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-038", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-038", "turn": 9, "reply": "stop... matlab ruko, haan yaad aaya, insurance liya tha", "seconds": 1.232, "cache_hit": false, "usd": 4.755e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-039", "turn": 3, "reply": "हाँ", "seconds": 0.002, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-039", "turn": 7, "reply": "हाँ लिया था, पर अभी गाड़ी में हूँ, जल्दी पूछो", "seconds": 0.87, "cache_hit": false, "usd": 4.805e-05, "label": "call_back", "late": false}
+{"arm": "live", "case": "nr-040", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-040", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.0, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-040", "turn": 9, "reply": "nahi chahiye tha mujhe, par le liya, bima tha", "seconds": 0.639, "cache_hit": false, "usd": 1.229e-05, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-041", "turn": 3, "reply": "हाँ", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-041", "turn": 7, "reply": "हाँ, एक चीज़ और ली थी", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}
+{"arm": "live", "case": "nr-042", "turn": 3, "reply": "haan", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "yes", "late": false}
+{"arm": "live", "case": "nr-042", "turn": 7, "reply": "haan, ek cheez aur li thi", "seconds": 0.001, "cache_hit": true, "usd": 0.0, "label": "answer", "late": false}

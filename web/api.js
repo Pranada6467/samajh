@@ -62,6 +62,7 @@ const session = (id) => `/api/sessions/${encodeURIComponent(id)}`;
 export const api = {
   health: () => json("/api/health"),
   records: () => json("/api/records"),
+  loans: () => json("/api/loans"),
   clips: async () => (await json("/api/clips")).clips,
   createSession: (settings) => postJson("/api/sessions", settings),
   endSession: (id) => postJson(`${session(id)}/end`, { reason: "hangup" }),

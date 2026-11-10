@@ -1,0 +1,100 @@
+{
+  "persona": "informed; her premium is an amount the two Prisma models are known to write differently (chosen clip)",
+  "voice": {
+    "model": "timbre-v3.0",
+    "voice": "Kalpana",
+    "language": "hi-IN"
+  },
+  "synthetic": true,
+  "params": {
+    "record": "amount-check",
+    "language": "hi"
+  },
+  "turns": [
+    {
+      "file": "01.wav",
+      "answers": "right_party.ask",
+      "text": "हाँ जी, बोल रही हूँ"
+    },
+    {
+      "file": "02.wav",
+      "answers": "disclosure.go_ahead",
+      "text": "हाँ, ठीक है"
+    },
+    {
+      "file": "03.wav",
+      "answers": "second_check.ask",
+      "text": "उन्नीस सौ इक्यानवे"
+    },
+    {
+      "file": "04.wav",
+      "answers": "open_recall.ask",
+      "text": "लोन के साथ एक बीमा लिया था, मुझे कुछ हो जाए तो बाकी लोन उससे भर जाएगा"
+    },
+    {
+      "file": "05.wav",
+      "answers": "kind.ask",
+      "text": "लाइफ़ इंश्योरेंस है, मुझे कुछ हुआ तो बाकी लोन उससे चुक जाएगा"
+    },
+    {
+      "file": "06.wav",
+      "answers": "premium.ask",
+      "text": "दो हज़ार बारह रुपये दिए थे"
+    },
+    {
+      "file": "07.wav",
+      "answers": "premium.say_again",
+      "text": "दो हज़ार बारह रुपये दिए थे"
+    },
+    {
+      "file": "08.wav",
+      "answers": "read_back.confirm",
+      "text": "हाँ, सही है"
+    },
+    {
+      "file": "09.wav",
+      "answers": "payment_source.ask",
+      "text": "लोन की रकम में से कट गया"
+    },
+    {
+      "file": "10.wav",
+      "answers": "payment_frequency.ask",
+      "text": "एक ही बार दिया था"
+    },
+    {
+      "file": "11.wav",
+      "answers": "required_for_loan.ask",
+      "text": "ज़रूरी नहीं था, मैंने अपनी मर्ज़ी से लिया"
+    },
+    {
+      "file": "12.wav",
+      "answers": "cover.ask",
+      "text": "मुझे कुछ हुआ तो एक लाख तक का लोन चुक जाता है"
+    },
+    {
+      "file": "13.wav",
+      "answers": "read_back.cover_confirm",
+      "text": "हाँ, सही है"
+    },
+    {
+      "file": "14.wav",
+      "answers": "term.ask",
+      "text": "एक साल का"
+    },
+    {
+      "file": "15.wav",
+      "answers": "cancel_window.ask",
+      "text": "हाँ, तीस दिन में कैंसल करा सकते हैं"
+    },
+    {
+      "file": "16.wav",
+      "answers": "features.ask",
+      "text": "पैसा वापस नहीं मिलता, ये बीमा है, निवेश नहीं"
+    },
+    {
+      "file": "17.wav",
+      "answers": "consent.ask",
+      "text": "लोन के फॉर्म पर साइन किया था, बीमा के फॉर्म पर भी अलग से साइन किया था"
+    }
+  ]
+}

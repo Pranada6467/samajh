@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Amit, born 1985, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c048",
+  "label": "Synthetic P5 record. Amit: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1985-09-15",
+      "language": "hi-en",
+      "name": "Amit Banawati"
+    },
+    "disbursed_inr": 160000,
+    "disbursed_on": "2026-10-29",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-048",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-29",
+          "method": "signed_form"
+        },
+        "cover_inr": 160000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 6400,
+        "provider": "Banawati Life Cover (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 160000,
+    "tenure_months": 6
+  }
+}

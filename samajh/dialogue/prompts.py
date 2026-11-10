@@ -30,6 +30,9 @@ class LineSpec:
     step: CallStep
     asks: Question | None = None
     slots: frozenset[str] = frozenset()
+    # Slots a language's text may leave out (wave 2: Hindi and Hinglish `teach_back.intro_nth` no longer
+    # names an ordinal; Tamil and Kannada still do). The caller always passes them.
+    optional: frozenset[str] = frozenset()
 
 
 def _question(key: str, question: Question) -> dict[str, LineSpec]:
@@ -60,7 +63,7 @@ LINES: dict[str, LineSpec] = {
     "open_recall.reask": LineSpec(CallStep.open_recall),
     "open_recall.nothing": LineSpec(CallStep.open_recall),
     "teach_back.intro": LineSpec(CallStep.teach_back),
-    "teach_back.intro_nth": LineSpec(CallStep.teach_back, slots=_ORDINAL),
+    "teach_back.intro_nth": LineSpec(CallStep.teach_back, slots=_ORDINAL, optional=_ORDINAL),
     **_question("kind", Question.kind),
     **_question("premium", Question.premium),
     "premium.say_again": LineSpec(CallStep.teach_back, Question.premium),
@@ -164,7 +167,8 @@ def load_prompts(language: Language, directory: Path = PROMPT_DIR) -> PromptPack
             raise ValueError(
                 f"{path.name}: line {key!r} needs a non-empty `text` and `design` and nothing else"
             )
-        if slots_of(line["text"]) != LINES[key].slots:
+        used, spec = slots_of(line["text"]), LINES[key]
+        if not (used <= spec.slots and spec.slots - used <= spec.optional):
             raise ValueError(
                 f"{path.name}: line {key!r} uses slots {sorted(slots_of(line['text']))}, "
                 f"allowed exactly {sorted(LINES[key].slots)}"

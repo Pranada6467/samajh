@@ -55,6 +55,7 @@ class Found:
 
     words: str  # exactly the matched words
     clauses: str  # the whole clauses that contain them
+    numbers: tuple[int, int]  # the first and last of those clauses, numbered as in the prompt
 
 
 class Reply:
@@ -115,7 +116,9 @@ class Reply:
             if forms[k : k + len(wanted)] == wanted:
                 first, last = self._words[k], self._words[k + len(wanted) - 1]
                 return Found(
-                    words=self.text[first.start : last.end], clauses=self._slice(first.clause, last.clause)
+                    words=self.text[first.start : last.end],
+                    clauses=self._slice(first.clause, last.clause),
+                    numbers=(self._clauses.index(first.clause) + 1, self._clauses.index(last.clause) + 1),
                 )
         return None
 

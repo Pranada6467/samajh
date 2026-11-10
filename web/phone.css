@@ -121,6 +121,8 @@ body:not([data-state="idle"], [data-state="ringing"]) #view-call { display: flex
 .center { text-align: center; }
 .hint { color: var(--muted); font-size: 0.8125rem; }
 .hint:empty { display: none; }
+.persona { padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+.persona:empty { display: none; }
 
 .settings { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px 12px; margin-top: 4px; }
 label { font-size: 0.875rem; color: var(--muted); }
@@ -308,3 +310,10 @@ th { color: var(--muted); font-weight: 600; font-size: 0.75rem; }
 .case-lines:empty { display: none; }
 .case-lines .tier { font-weight: 600; }
 .case-lines q { display: block; color: var(--muted); }
+
+/* Both readings of a figure turn, and the degraded-turn mark, under the customer's bubble. */
+.bubble .readings { font-size: 0.8125rem; line-height: 1.5; color: var(--muted); }
+.bubble .readings-note, .case-readings .readings-note { font-size: 0.75rem; color: var(--muted); font-style: italic; }
+.bubble .degraded { font-size: 0.8125rem; color: var(--danger); }
+.case-readings { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; font-size: 0.8125rem; }
+.case-readings:empty { display: none; }

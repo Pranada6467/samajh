@@ -53,7 +53,7 @@ class Word(NamedTuple):
     | dur | pct | pctpfx | vague | art | glue (unit letter valid only glued to digits)
     | unitafter (सो) | conn | neg | negpre | cmp | cmpdirect | cmppre (see the table below)
     | plain (an ordinary word that cannot be a number: a Tamil or Kannada noun in the ablative)
-    | times (a noun that counts occurrences: "एक बार", "one time").
+    | times (a noun that counts occurrences: "एक बार", "one time") | clock ("बजे": a time of day).
     """
 
     kind: str
@@ -198,8 +198,16 @@ _add(WORDS, "से या और लेकर to or se ya அல்லது �
 _add(WORDS, "नहीं नही नहि ना nahi nahin இல்லை இல்ல ಅಲ್ಲ ಇಲ್ಲ", Word("neg"))
 # Directly before or after an amount: "not 52,000".
 _add(WORDS, "not no never", Word("negpre"))
-# After an amount and a connector: "पचास हज़ार से कम", "50,000 or more".
-_add(WORDS, "कम ज़्यादा जादा अधिक ऊपर नीचे more less", Word("cmp"))
+# Anywhere in the clause of an amount: a comparison or a bound, so the amount is not the figure.
+# "पचास हज़ार से कम", "50,000 or more", "कम से कम पचास हज़ार", "at least 50,000", "minimum 50,000".
+_add(
+    WORDS,
+    """
+    कम ज़्यादा जादा अधिक ऊपर नीचे न्यूनतम अधिकतम मिनिमम मैक्सिमम
+    kam zyada jyada jada adhik more less least most minimum maximum min max atleast atmost
+    """,
+    Word("cmp"),
+)
 # Directly after an amount: "ஐம்பதாயிரம் ரூபாய்க்கு மேல்", "ಐವತ್ತು ಸಾವಿರ ರೂಪಾಯಿಗಿಂತ ಹೆಚ್ಚು".
 _add(WORDS, "மேல் கீழ் குறைவு குறைவாக ಹೆಚ್ಚು ಕಡಿಮೆ", Word("cmpdirect"))
 # Directly before an amount: "less than 50,000", "under 50,000".
@@ -215,17 +223,24 @@ _add(
 )
 _YEAR, _MONTH = Decimal(12), Decimal(1)
 _DAYS_YEAR, _DAYS_MONTH, _DAYS_WEEK, _DAYS_DAY = Decimal(365), Decimal(30), Decimal(7), Decimal(1)
-_add(WORDS, "year years yr yrs साल सालों वर्ष वर्षों बरस ईयर ईयर्स इयर इयर्स", Word("dur", (), _YEAR, _DAYS_YEAR))
-_add(WORDS, "month months महीना महीने महीनों माह मंथ मंथ्स", Word("dur", (), _MONTH, _DAYS_MONTH))
-_add(WORDS, "day days दिन दिनों डे डेज़", Word("dur", (), None, _DAYS_DAY))
-_add(WORDS, "week weeks हफ़्ता हफ़्ते हफ़्तों सप्ताह", Word("dur", (), None, _DAYS_WEEK))
-_add(WORDS, "hour hours minute minutes घंटा घंटे घंटों मिनट", Word("dur"))
+_add(WORDS, "year years yr yrs साल सालों वर्ष वर्षों बरस ईयर ईयर्स इयर इयर्स saal sal saalon salon baras", Word("dur", (), _YEAR, _DAYS_YEAR))
+_add(WORDS, "month months महीना महीने महीनों माह मंथ मंथ्स mahina mahine mahino mahinon maheena maheene mahena mahene", Word("dur", (), _MONTH, _DAYS_MONTH))
+_add(WORDS, "day days दिन दिनों डे डेज़ din dino dinon", Word("dur", (), None, _DAYS_DAY))
+_add(WORDS, "week weeks हफ़्ता हफ़्ते हफ़्तों सप्ताह hafta hafte hafton", Word("dur", (), None, _DAYS_WEEK))
+_add(WORDS, "hour hours minute minutes घंटा घंटे घंटों मिनट ghanta ghante", Word("dur"))
+# A clock word: the number before it is a time of day ("साढ़े तीन बजे"), not part of an amount.
+_add(WORDS, "बजे baje", Word("clock"))
 _add(WORDS, "percent प्रतिशत परसेंट फीसदी फ़ीसद சதவீதம் சதவிகிதம்", Word("pct"))
 _add(WORDS, "ಶೇಕಡ ಶೇಕಡಾ", Word("pctpfx"))
 # The number before one of these says how often, not how much: "एक बार", "one time".
 _add(WORDS, "बार दफ़ा दफ़े मर्तबा टाइम time times baar", Word("times"))
 # "एक ही बार": the particle may stand between the number and the noun.
 EMPHATIC = frozenset({norm_key("ही")})
+# Postpositions, a closed class: after "उन्नीस हज़ार अस्सी" one closes the amount ("…अस्सी की है"),
+# where a noun would make the small number a count ("पचास हज़ार दो एफडी").
+POSTPOSITIONS = frozenset(
+    norm_key(w) for w in _words("का की के को में पर तक वाला वाली वाले ka ki ke ko mein me par pe tak wala wali wale")
+)
 
 # Tamil and Kannada inflect these words, so they match by stem.
 STEMS: tuple[tuple[str, Word], ...] = (
@@ -388,38 +403,36 @@ _add(KN, "ವರೆ", Morph((n("0.5"),), head=True, suffix_only=True))  # ಒಂ
 _add(KN, "ಸೊನ್ನೆ", Morph((n(0),)))
 _add(KN, "ಪಾಯಿಂಟ್", Morph((PT,)))
 
-# Verbs and verb-like clause endings: a "one" before one of these is not a determiner ("एक दिए").
-_VERBS = """
-दिए दिया दी दिये लगे लगा लगी काटे काटा कटा कटे कटी भरे भरा भरी था थे थी है हैं
-diye diya di lage laga kata kate kaata bhare bhara tha the thi hai hain paid deducted given cut
-"""
-VERB_AFTER = frozenset(norm_key(w) for w in _VERBS.split())
-
 # --- near misses of fraction and unit words ------------------------------------------
 # A word the lexicon does not know, standing directly before a number or a unit word, that is a
 # small edit away from a fraction or multiplier word may be that word misheard or misspelt:
 # "सारे तीन लाख" (साढ़े), "pauney 2 lakh" (paune), "लख पचास हज़ार". Dropping it would give a
 # confident wrong amount, so the parser refuses. The rule is structural, not a list of
 # misspellings: both words are reduced to a skeleton (no nukta or nasal mark, long vowels as
-# short, sounds that speech-to-text confuses merged, for Latin every vowel run as one vowel) and
-# compared by edit distance. A word in `ORDINARY` (an everyday word that happens to be close) is
-# not refused. Hindi and Latin only; Tamil and Kannada are not covered (not human-reviewed).
+# short, sounds that speech-to-text confuses merged (aspirated with plain, ड with द and the flap र), for Latin every vowel run as one vowel) and
+# compared by edit distance, and their consonant frames (the skeleton without vowels and h) must
+# be the same: a misspelling changes vowels, not consonants ("maine" is not "paune", "sirf" is
+# not "sadhe"). The flap र/r is merged with ड/d only inside a word, because the flaps ड़ and ढ़
+# never begin a Hindi word ("रहा" is not "ढाई"). A word in `ORDINARY` (an everyday word that
+# happens to be close) is not refused. Hindi and Latin only; Tamil and Kannada are not covered
+# (not human-reviewed).
 
-_DEVA_TARGETS = ("सवा", "साढ़े", "पौने", "डेढ़", "ढाई", "अढ़ाई", "आधा", "लाख", "हज़ार", "करोड़")
-_LATIN_TARGETS = (
-    "sawa", "sadhe", "paune", "dedh", "dhai", "adhai", "adha", "lakh", "hazaar", "thousand", "crore", "karod",
-    "hundred",
-)  # fmt: skip
-# Everyday words a small edit from a target. Not a list of misspellings: the opposite.
-ORDINARY = frozenset(
-    norm_key(w)
-    for w in ["भाई", "सब", "पूरे", "बाद", "said", "side", "one", "done", "gone", "none", "phone", "open", "upon", "loan", "yaani", "yani", "yaane"]
-)
+# सवा, साढ़े, पौने stand before a number or a unit ("साढ़े तीन लाख", "सवा लाख"); the units before a
+# number ("एक लख पचास हज़ार").
+_DEVA_TARGETS = ("सवा", "साढ़े", "पौने", "लाख", "हज़ार", "करोड़")
+_LATIN_TARGETS = ("sawa", "sadhe", "paune", "lakh", "hazaar", "thousand", "crore", "karod", "hundred")
+# डेढ़, ढाई, अढ़ाई, आधा are coefficients: they stand only before a unit word, or before digits that
+# are one unit ("डेढ़ 1,00,000", Prisma's partial formatting). See `near_coefficient`.
+_DEVA_COEFFICIENTS = ("डेढ़", "ढाई", "अढ़ाई", "आधा")
+_LATIN_COEFFICIENTS = ("dedh", "dhai", "adhai", "adha")
+# Everyday words a small edit from a target with the same consonant frame. Not a list of
+# misspellings: the opposite.
+ORDINARY = frozenset(norm_key(w) for w in ["सब", "said", "side", "open", "upon"])
 _DEVA_MERGE = str.maketrans(
     {
         "\u093c": None, "\u0901": None, "\u0902": None, "\u094d": None,  # nukta, nasal marks, virama
         "ी": "ि", "ू": "ु", "ै": "े", "ौ": "ो", "ॉ": "ो", "ई": "इ", "ऊ": "उ", "ऐ": "ए", "औ": "ओ",
-        "ढ": "ड", "र": "ड", "ध": "ड", "ठ": "ड", "ण": "न", "श": "स", "ष": "स", "ब": "व",
+        "ढ": "ड", "ध": "ड", "ठ": "ड", "द": "ड", "ख": "क", "घ": "ग", "छ": "च", "झ": "ज", "थ": "त", "फ": "प", "भ": "व", "ण": "न", "श": "स", "ष": "स", "ब": "व",
     }
 )  # fmt: skip
 _DEVA_CONSONANT = re.compile("[\u0915-\u0939]")
@@ -428,6 +441,7 @@ _DEVA_CONSONANT = re.compile("[\u0915-\u0939]")
 def _deva_skeleton(word: str) -> str:
     key = unicodedata.normalize("NFD", norm_key(word)).replace("ाउ", "ो").replace("उ", "ो")
     key = unicodedata.normalize("NFC", key).translate(_DEVA_MERGE)
+    key = key[:1] + key[1:].replace("र", "ड")  # the flap: never word-initial
     out: list[str] = []
     for ch in key:
         if ch == "ह" and out and _DEVA_CONSONANT.fullmatch(out[-1]):
@@ -437,13 +451,24 @@ def _deva_skeleton(word: str) -> str:
     return "".join(out)
 
 
+def _deva_frame(form: str) -> str:
+    return "".join(ch for ch in form if _DEVA_CONSONANT.fullmatch(ch) and ch != "ह")
+
+
 def _latin_skeleton(word: str) -> str:
     key = norm_key(word).replace("ph", "f").replace("sh", "s")
-    key = re.sub(r"(?<=[aeiou])w(?![aeiou])", "u", key).replace("w", "v").replace("r", "d")  # paw-n: a vowel
+    key = re.sub(r"(?<=[aeiou])w(?![aeiou])", "u", key).replace("w", "v")  # paw-n: a vowel
+    key = key[:1] + key[1:].replace("r", "d")  # the flap: never word-initial
     key = re.sub(r"(?<=[^aeiouy])h", "", key)  # dh, rh, kh: aspiration
     key = re.sub(r"h$", "", key)
-    key = re.sub(r"[aeiouy]+", "a", key)  # vowels vary freely in romanised Hindi
+    # Vowels vary freely in romanised Hindi, except that i/ee is never the vowel of a fraction
+    # word's first syllable ("sir" is not "sare"); an i elsewhere is one edit from a.
+    key = re.sub(r"[aeiouy]+", lambda m: "i" if m.group() in ("i", "ii", "ee") else "a", key)
     return re.sub(r"(.)\1+", r"\1", key)
+
+
+def _latin_frame(form: str) -> str:
+    return re.sub("[aeiouyh]", "", form)
 
 
 # Edits allowed by the length of the reduced target: a short target must match exactly. A
@@ -453,10 +478,28 @@ _ALLOWED_DEVA = {1: -1, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2}
 _NEAR_UNITS = tuple(
     norm_key(w) for w in ("lakh", "thousand", "hazaar", "crore", "hundred", "million", "लाख", "हज़ार", "करोड़")
 )
-_TARGETS = (
-    (_deva_skeleton, tuple(_deva_skeleton(w) for w in _DEVA_TARGETS)),
-    (_latin_skeleton, tuple(_latin_skeleton(w) for w in _LATIN_TARGETS)),
-)
+
+
+def _reduced(words: tuple[str, ...], skeleton, frame) -> tuple[tuple[str, str], ...]:
+    return tuple((skeleton(w), frame(skeleton(w))) for w in words)
+
+
+_SCRIPTS = {
+    "deva": (_deva_skeleton, _deva_frame, _ALLOWED_DEVA, 2),
+    "latin": (_latin_skeleton, _latin_frame, _ALLOWED_LATIN, 3),
+}
+_TARGETS = {
+    "deva": _reduced(_DEVA_TARGETS, _deva_skeleton, _deva_frame),
+    "latin": _reduced(_LATIN_TARGETS, _latin_skeleton, _latin_frame),
+}
+_UNIT_TARGETS = {
+    "deva": _reduced(("लाख", "हज़ार", "करोड़"), _deva_skeleton, _deva_frame),
+    "latin": _reduced(("lakh", "hazaar", "thousand", "crore", "karod", "hundred"), _latin_skeleton, _latin_frame),
+}
+_COEFFICIENTS = {
+    "deva": _reduced(_DEVA_COEFFICIENTS, _deva_skeleton, _deva_frame),
+    "latin": _reduced(_LATIN_COEFFICIENTS, _latin_skeleton, _latin_frame),
+}
 
 
 def _distance(a: str, b: str) -> int:
@@ -469,23 +512,37 @@ def _distance(a: str, b: str) -> int:
     return row[-1]
 
 
-def near_fraction(word: str) -> bool:
-    """`word` may be a fraction or multiplier word misheard or misspelt: "सारे", "पौना", "sarhe",
-    "pauney", "लख". Compared with the targets of its own script after reduction: a short target
-    must match exactly, a middling one within one edit, a long one within two (`_ALLOWED_*`). The word
-    must be at least three letters after reduction (two in Devanagari) and not in `ORDINARY`."""
+def _near(word: str, targets: dict) -> bool:
     if norm_key(word) in ORDINARY:
         return False
-    latin = word.isascii()
-    skeleton, targets = _TARGETS[1] if latin else _TARGETS[0]
+    script = "latin" if word.isascii() else "deva"
+    skeleton, frame, allowed, shortest = _SCRIPTS[script]
     form = skeleton(word)
-    if len(form) < (3 if latin else 2):
+    if len(form) < shortest:
         return False
-    allowed = _ALLOWED_LATIN if latin else _ALLOWED_DEVA
-    return any(_distance(form, t) <= allowed[min(len(t), 6)] for t in targets)
+    return any(
+        frame(form) == t_frame and _distance(form, t) <= allowed[min(len(t), 6)] for t, t_frame in targets[script]
+    )
+
+
+def near_fraction(word: str) -> bool:
+    """`word` may be सवा, साढ़े, पौने or a unit word misheard or misspelt: "सारे", "पौना", "sarhe",
+    "pauney", "लख". Compared with the targets of its own script after reduction: the consonant
+    frames must be the same, and a short target must match exactly, a middling one within one
+    edit, a long one within two (`_ALLOWED_*`). The word must be at least three letters after
+    reduction (two in Devanagari) and not in `ORDINARY`."""
+    return _near(word, _TARGETS)
+
+
+def near_coefficient(word: str) -> bool:
+    """`word` may be डेढ़, ढाई, अढ़ाई or आधा misspelt ("डेड", "dhaai"), by the same test as
+    `near_fraction`. Ask only before a unit word or digits that are one unit: these words never
+    stand before any other number, so elsewhere a near match is an ordinary word ("arre")."""
+    return _near(word, _COEFFICIENTS)
 
 
 def near_unit(word: str) -> bool:
-    """`word` is one letter (two, for a long word) from a unit word: "लख", "हजर", "lak", "thousnd"."""
+    """`word` is one letter (two, for a long word) from a unit word: "लख", "हजर", "lak", "thousnd",
+    or a unit word by the test of `near_fraction` ("लक": the aspiration of ख lost)."""
     key = norm_key(word)
-    return any(_distance(key, unit) <= (1 if len(unit) <= 5 else 2) for unit in _NEAR_UNITS)
+    return any(_distance(key, unit) <= (1 if len(unit) <= 5 else 2) for unit in _NEAR_UNITS) or _near(word, _UNIT_TARGETS)

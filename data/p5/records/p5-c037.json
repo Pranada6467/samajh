@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Usha, born 1969, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c037",
+  "label": "Synthetic P5 record. Usha: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1969-04-19",
+      "language": "hi",
+      "name": "Usha Kalpanik"
+    },
+    "disbursed_inr": 143250,
+    "disbursed_on": "2026-10-14",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-037",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-14",
+          "method": "signed_form"
+        },
+        "cover_inr": 150000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 6750,
+        "provider": "Kalpanik Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 150000,
+    "tenure_months": 18
+  }
+}

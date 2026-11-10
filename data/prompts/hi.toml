@@ -51,7 +51,7 @@ text = "रुकना हो या किसी इंसान से बा
 
 [lines."verify.before_loan"]
 design = "§5 step 2: how to check the call is genuine, on request before the loan is named; never names the loan"
-text = "यह {lender} कस्टमर केयर की फ़ीडबैक कॉल है; किस बारे में है, यह जन्म का साल मिलने के बाद बताएँगे। शक हो तो फ़ोन रखकर {lender} कस्टमर केयर पर ख़ुद पूछ लीजिए। हम कभी ओ-टी-पी या पिन नहीं माँगते।"
+text = "यह {lender} कस्टमर केयर की फ़ीडबैक कॉल है; किस बारे में है, यह पहचान पक्की होने के बाद बताएँगे। शक हो तो फ़ोन रखकर {lender} कस्टमर केयर पर ख़ुद पूछ लीजिए। हम कभी ओ-टी-पी या पिन नहीं माँगते।"
 
 [lines."verify.after_loan"]
 design = "§5 step 2: how to check the call is genuine, on request after the loan is named"
@@ -91,7 +91,7 @@ text = "ठीक है, उसके बारे में कुछ छो�
 
 [lines."teach_back.intro_nth"]
 design = "§5 step 6, for a record with several products: an ordinal, not a name"
-text = "अब हमारे रिकॉर्ड में लोन के साथ जो {ordinal} चीज़ है, उसके बारे में कुछ छोटे सवाल हैं।"
+text = "अच्छा। लोन के साथ अगर कोई और चीज़ भी ली थी, तो अब उसके बारे में कुछ छोटे सवाल हैं।"
 
 [lines."kind.ask"]
 design = "§5 step 6 'Is this insurance, FD or something else?', asked open so no kind is suggested"
@@ -171,7 +171,7 @@ text = "उसे बंद या कैंसल कराने के बा
 
 [lines."cancel_window.reask"]
 design = "§5 step 6 and the one-re-ask rule; still states no right"
-text = "मतलब, क्या बताया गया था कि उसे कैंसल करा सकते हैं, और कब तक?"
+text = "मतलब, उसे बंद या कैंसल कराने के बारे में किसी ने कुछ बताया था? जो याद हो, बताइए।"
 
 [lines."features.ask"]
 design = "the money-back probe the rule engine needs (W1 report §7 decision 1; award BNG-L-041-1617-0797)"

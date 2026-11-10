@@ -23,7 +23,7 @@ def write(directory: Path, name: str, data: object) -> Path:
 
 
 def test_the_packaged_demo_records_load() -> None:
-    assert BOOK.ids() == ["hero", "informed", "third-party"]
+    assert BOOK.ids() == ["amount-check", "hero", "informed", "third-party"]
     for record_id in BOOK.ids():
         record = BOOK.get(record_id)
         assert record.id == record_id and re.fullmatch(RECORD_ID, record_id)
@@ -41,7 +41,7 @@ def test_the_demo_records_are_plainly_synthetic() -> None:
         # Nothing shaped like a phone, account, Aadhaar or card number, and no PAN.
         text = path.read_text(encoding="utf-8")
         assert not re.search(r"\d{8,}", text) and not re.search(r"\b[A-Z]{5}\d{4}[A-Z]\b", text)
-    assert len({BOOK.get(record_id).record.loan_id for record_id in BOOK.ids()}) == 3
+    assert len({BOOK.get(record_id).record.loan_id for record_id in BOOK.ids()}) == len(BOOK.ids()) == 4
 
 
 def test_the_demo_records_show_what_their_labels_promise() -> None:
@@ -49,13 +49,19 @@ def test_the_demo_records_show_what_their_labels_promise() -> None:
     assert hero.loan_kind == "gold" and hero.products[0].paid_from_loan and hero.products[0].consent is None
     assert informed.products[0].consent is not None and informed.products[0].provider_choice_offered
     assert third.borrower.name != hero.borrower.name
+    # The amount-check record: a premium that skips a place-value group (two thousand and twelve:
+    # no hundreds), the one its persona states; its note says the clip was chosen, not a rate.
+    amount = BOOK.get("amount-check")
+    assert amount.record.products[0].premium_inr == 2012
+    assert "not a rate" in amount.description and "not a rate" in (amount.readings_note or "")
+    assert [r for r in BOOK.ids() if BOOK.get(r).readings_note] == ["amount-check"]
 
 
 def test_the_listing_is_for_the_picker_and_holds_no_tested_value() -> None:
     listing = BOOK.listing()
 
     assert [row["id"] for row in listing] == BOOK.ids()
-    assert listing[0] == {
+    assert listing[1] == {
         "id": "hero",
         "label": BOOK.get("hero").label,
         "description": BOOK.get("hero").description,
@@ -82,7 +88,13 @@ def test_records_from_several_directories_make_one_book(
 ) -> None:
     write(tmp_path, "eval-0001.json", HERO | {"id": "eval-0001"})
 
-    assert load_book(PACKAGED_DIR, tmp_path).ids() == ["eval-0001", "hero", "informed", "third-party"]
+    assert load_book(PACKAGED_DIR, tmp_path).ids() == [
+        "amount-check",
+        "eval-0001",
+        "hero",
+        "informed",
+        "third-party",
+    ]
     monkeypatch.setenv("SAMAJH_RECORDS_DIR", str(tmp_path))
     assert default_book().get("eval-0001").record == BOOK.get("hero").record
     monkeypatch.delenv("SAMAJH_RECORDS_DIR")

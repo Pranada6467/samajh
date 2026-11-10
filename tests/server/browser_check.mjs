@@ -199,6 +199,13 @@ async function main() {
       case_text: await evaluate("document.querySelector('#case-status')?.textContent"),
     },
     turns: await evaluate("window.samajhPhone.log()"),
+    // What the page shows of the two readings and the models, as text.
+    shown: await evaluate(`(() => {
+      const texts = (sel) => [...document.querySelectorAll(sel)].map((n) => n.textContent);
+      return { readings: texts(".bubble .readings"), readings_notes: texts(".bubble .readings-note"),
+        degraded: texts(".bubble .degraded"), case_readings: texts("#case-readings li"),
+        models: document.querySelector("#mon-models")?.textContent, summary: document.querySelector("#summary-text")?.textContent };
+    })()`),
     states,
     status_text: await evaluate("document.querySelector('#status')?.textContent?.trim()"),
     console: consoleLines.slice(0, 20),

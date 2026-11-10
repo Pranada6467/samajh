@@ -1,9 +1,10 @@
 """The random selection of loans to call, built so that anyone can recompute it from the book.
 
 Draw windows do not overlap: a draw takes the sales made since the previous draw that are still
-within 30 days of the sale, and each draw takes the same share of them. Every sale a draw covers
-therefore has the same chance of being sampled (up to rounding, which `Draw.inclusion` shows), and
-a sale no draw covers is "never eligible", which the report counts with the reason.
+within 30 days of the sale, and takes its `rate` of them. A sale's chance of being sampled is its
+draw's drawn / eligible (`Draw.inclusion`): the same for draws at one rate up to rounding, and
+different for draws at different rates, which the report states (`report.sampling`). A sale no draw
+covers is "never eligible", which the report counts with the reason.
 """
 
 import random

@@ -10,18 +10,22 @@
     GET  /api/review/draws                      -> list[Draw]     the selection audit, verbatim
     GET  /api/review/report                     -> ReportView
 
-Every count that is a share of a sample is a `Proportion` (with its interval); a count of reviewer
-decisions is a `Count` (no interval: the decisions are not a sample). No number is shown without its n.
+Every count that is a share of a sample is a `Proportion` (with its interval, unless the report
+withholds intervals because the draws gave sales clearly different chances: `Sampling.intervals_shown`);
+a count of reviewer decisions is a `Count` (no interval: the decisions are not a sample). No number is
+shown without its n.
 """
 
 from datetime import date, datetime
 from pathlib import Path
+from typing import Literal
 
 from samajh.evalkit.score import wilson
 from samajh.ops import wording
 from samajh.ops.batch import Batch, Outside, Sampled, load_batch
 from samajh.ops.model import (
     FINAL_DECISIONS,
+    WINDOW_DAYS,
     AttemptOutcome,
     BatchMeta,
     CallRecord,
@@ -33,6 +37,7 @@ from samajh.ops.model import (
     Note,
     PhoneSession,
     Reviewer,
+    SpeechReading,
     Triage,
 )
 from samajh.ops.store import OpsStore
@@ -54,7 +59,8 @@ from samajh.types import (
 
 
 class Proportion(Frozen):
-    """`count` of `n`, with the Wilson 95% interval. `share` and the bounds are None when n is 0."""
+    """`count` of `n`, with the Wilson 95% interval. `share` and the bounds are None when n is 0; the
+    bounds alone are None when the report withholds intervals (`plain_share`)."""
 
     count: int
     n: int
@@ -84,9 +90,10 @@ class BatchView(Frozen):
     meta: BatchMeta
     simulated: bool  # every call in the batch is simulated
     simulated_notice: str  # the sentence every page shows about what is synthetic or simulated
+    phone_note: str | None  # where the phone calls' customer audio came from, counted; None: no phone call
     access_notice: str  # no sign-in; reviewer names are free text
     sampled: int
-    completed: int  # calls the findings count
+    completed: int  # calls the report counts
     referred: int  # referrals the report counts
     open_cases: int  # of those, with no final decision (the report's "open" uses this definition)
     other_referrals: int  # referred calls outside the sample or the window: reviewed, not counted
@@ -134,11 +141,28 @@ class QueueView(Frozen):
 # --- one case -------------------------------------------------------------------
 
 
+class ReadingPart(Frozen):
+    """One model's reading of the quoted turn: "<model>: <text>"."""
+
+    model: str  # e.g. "Prisma v3.0"
+    text: str  # the model's text byte for byte when `as_written`; else the words for a missing reading
+    as_written: bool  # False: the reading failed or holds no text, and `text` says so
+
+
+class ReadingsView(Frozen):
+    """The line beside an amount quote, finished for the page: the parts joined with " · ", then
+    `closing`. No parts when there is no reading to show; `closing` then says why, as a sentence."""
+
+    parts: tuple[ReadingPart, ...]
+    closing: str
+
+
 class QuoteView(Frozen):
     quote: str
     turn_id: int
     start_s: float | None  # position in the call recording, when the session has one
     end_s: float | None
+    readings: ReadingsView | None = None  # set on a quote of an amount (premium or cover) only
 
 
 class IssueLineView(Frozen):
@@ -227,6 +251,10 @@ class AttemptView(Frozen):
     outcome_label: str
     simulated: bool
     session_id: str | None
+    dialogue_outcome: str | None  # the dialogue's own outcome, as the case file gives it; None when simulated
+    # For a request from a speaker not confirmed as the borrower: what the speaker asked, in words
+    # (wording.UNCONFIRMED_REQUEST_LABEL); None for every other attempt.
+    request: str | None
 
 
 class SampledLoanView(Frozen):
@@ -269,15 +297,33 @@ class OutsideView(Frozen):
     outcome: AttemptOutcome
     outcome_label: str
     dialogue_outcome: str
+    request: str | None  # as on `AttemptView`
     tier: Tier | None
     tier_label: str | None
     case_id: str | None  # set when the call is a referral
+
+
+class SkippedView(Frozen):
+    session_id: str
+    reason: str
+
+
+class ChangedView(Frozen):
+    session_id: str
+    differs: str  # what differs from the version brought in, in words
 
 
 class AttemptLogView(Frozen):
     draws: tuple[DrawView, ...]
     loans: tuple[SampledLoanView, ...]  # in draw order
     outside: tuple[OutsideView, ...]  # phone calls outside the sample: never in the statistics
+    window_note: str  # attempts after day 30 from the sale, in a sentence
+    ingest_note: str  # what the last ingest of phone sessions brought in and left out
+    not_ingested: tuple[SkippedView, ...]  # phone sessions the last ingest left out, with the reason
+    # Sessions brought in (they are in `loans` or `outside`) whose case file changed afterwards: the
+    # version brought in first is kept. Never in `not_ingested`.
+    changed_label: str
+    changed: tuple[ChangedView, ...]
 
 
 # --- the half-yearly report ------------------------------------------------------
@@ -302,7 +348,8 @@ class NeverEligible(Frozen):
 
 
 class Sampling(Frozen):
-    """Which sales could be sampled. Intervals elsewhere describe sampling among eligible sales only."""
+    """Which sales could be sampled, and whether their chances were close enough for unweighted shares
+    to carry intervals. Intervals elsewhere describe sampling among eligible sales only."""
 
     sales_in_period: int  # sales on the book made in the report period
     eligible: int  # of those, covered by a draw
@@ -310,6 +357,9 @@ class Sampling(Frozen):
     never_eligible: tuple[NeverEligible, ...]  # with the reason; they sum to sales_in_period - eligible
     inclusion_low: float | None  # the smallest and largest draw's drawn / eligible
     inclusion_high: float | None
+    inclusion_ratio: float | None  # high / low; None when no sale was eligible or the lowest is 0
+    chances: Literal["none", "narrow", "wide"]  # none: nothing to draw from; narrow: ratio <= NARROW_RATIO
+    intervals_shown: bool  # False when the chances are wide: every share in the report then has no bounds
     statement: str
 
 
@@ -319,7 +369,9 @@ class Timing(Frozen):
     first_attempt_days: tuple[int, int, int] | None  # min, median, max over attempted loans
     attempted: int  # the n of first_attempt_days
     attempts_after_window: Count  # n is every attempt
-    completed_late: int  # calls completed after day 30: shown apart, never in the findings
+    phone_attempts_after_window: int  # of those, phone calls
+    completed_late: int  # calls completed after day 30: shown apart, never counted
+    note: str  # the attempts after day 30, in a sentence
 
 
 class TierRow(Frozen):
@@ -328,7 +380,7 @@ class TierRow(Frozen):
     value: Proportion  # n is analysed calls
 
 
-class RuleFinding(Frozen):
+class RuleRow(Frozen):
     """One rule over the analysed calls. `flagged` counts calls with at least one flag under the
     rule and its n is every analysed call (each rule runs on every call). `undecided` calls had a
     gap under the rule and no flag. `referred` of the flagged calls have a `refer` line for the rule."""
@@ -343,6 +395,9 @@ class RuleFinding(Frozen):
     flagged: Proportion
     undecided: int
     referred: int
+    # counted calls whose outcome is understanding gap and whose summary has an understanding-gap
+    # line naming this rule
+    understanding_gap: int
     previous: Proportion | None  # the previous period's share; None when there is no previous period
 
 
@@ -370,7 +425,7 @@ class Breakdown(Frozen):
 
 
 class PolicyItem(Frozen):
-    """One finding put to the policy review, most serious first, then most common."""
+    """One rule with flagged calls, put to the policy review, most serious first, then most common."""
 
     rule_id: RuleId
     group: str
@@ -380,7 +435,22 @@ class PolicyItem(Frozen):
     highest: str | None  # the branch or channel with the highest share against the rest, as a phrase
 
 
+class ReportTiles(Frozen):
+    """The counts at the top of the report, each the same field a table below shows (see
+    `report.tiles`). Counts only: no share, no interval."""
+
+    synthetic: str  # the batch's notice, as the page's limits show it
+    sold: int  # Sampling.sales_in_period
+    sampled: int  # Sampling.sampled (= Funnel.sampled)
+    completed: int  # the funnel's "completed" stage count
+    referred: int  # the refer tier row's count
+    understanding_gap: int  # the understanding gap tier row's count
+    most_common_gap: Labelled  # the rule row with the most understanding-gap calls; key "none" if none
+    most_common_gap_count: int  # that row's `understanding_gap`; 0 when none
+
+
 class ReportView(Frozen):
+    tiles: ReportTiles
     batch: BatchView
     as_of: date  # the book's clock: the day of the last attempt (synthetic)
     as_of_note: str
@@ -396,15 +466,18 @@ class ReportView(Frozen):
     funnel: Funnel
     timing: Timing
     tiers: tuple[TierRow, ...]
-    groups: tuple[Labelled, ...]  # the finding groups in order, with their headings
+    groups: tuple[Labelled, ...]  # the rule groups in order, with their headings
     risk_note: str
     seriousness_note: str
-    findings: tuple[RuleFinding, ...]  # every rule that returned an outcome, by group then seriousness
+    rules: tuple[RuleRow, ...]  # every rule that returned an outcome, by group then seriousness
     referrals: tuple[DispositionRow, ...]
     open_referrals: Count  # no final decision; the same count as the page header
     supported_of_decided: Count  # n is referrals with a final decision
     other_referrals: int  # referred calls the report does not count
     outside_calls: int  # phone calls outside the sample
+    phone_sessions_not_ingested: int | None  # left out by the last ingest; None when none has run
+    phone_sessions_changed: int | None  # brought in, case file changed since (still counted); None: no ingest
+    ingest_note: str
     breakdowns: tuple[Breakdown, ...]
     policy_review: tuple[PolicyItem, ...]
 
@@ -427,12 +500,19 @@ def proportion(count: int, n: int) -> Proportion:
     return Proportion(count=count, n=n, share=count / n, low=low, high=high)
 
 
+def plain_share(count: int, n: int) -> Proportion:
+    """`count` of `n` and the share, with no interval: for a report whose draws gave sales clearly
+    different chances, where an unweighted interval would describe no population."""
+    return Proportion(count=count, n=n, share=count / n if n else None, low=None, high=None)
+
+
 def batch_view(batch: Batch) -> BatchView:
     referrals = batch.referrals
     return BatchView(
         meta=batch.meta,
         simulated=batch.simulated,
         simulated_notice=wording.SIMULATED_NOTICE if batch.simulated else wording.MIXED_NOTICE,
+        phone_note=wording.phone_note(batch.phone_sessions),
         access_notice=wording.ACCESS_NOTICE,
         sampled=len(batch.sampled),
         completed=len(batch.completed),
@@ -537,12 +617,75 @@ def queue_view(batch: Batch) -> QueueView:
     return QueueView(items=tuple(items))
 
 
-def _line_view(line: IssueLine, turns: dict[int, Turn]) -> IssueLineView:
+AMOUNT_RULES = frozenset({RuleId.premium, RuleId.cover})
+
+
+def _part(reading: SpeechReading) -> ReadingPart:
+    model = wording.model_label(reading.model)
+    if reading.ok and reading.text:
+        return ReadingPart(model=model, text=reading.text, as_written=True)
+    missing = f"{wording.READINGS_NO_TEXT} ({reading.error})" if reading.error else wording.READINGS_NO_TEXT
+    return ReadingPart(model=model, text=missing, as_written=False)
+
+
+# (readings_agreed, followed_by) -> the closing words. A pair not listed ("other", or no followed_by
+# recorded) says only same or differ.
+_CLOSING: dict[tuple[bool, str | None], str] = {
+    (True, "read_back"): wording.READINGS_SAME_READ_BACK,
+    (True, "asked_again"): wording.READINGS_SAME_ASKED_AGAIN,
+    (False, "asked_again"): wording.READINGS_DIFFER_ASKED_AGAIN,
+    (False, "read_back"): wording.READINGS_DIFFER_READ_BACK,
+}
+
+
+def readings_view(call: CallRecord, turn_id: int) -> ReadingsView:
+    """The readings line for a quote from `turn_id`, from the case file's own fields as ingest kept
+    them. The closing words come only from `readings_agreed` and `followed_by`: "same" or "differ"
+    is never worked out here, two readings with no recorded agreement are not called either, and
+    what followed is said only when the case file records it as a read-back or a second asking."""
+    if _simulated(call.source):
+        return ReadingsView(parts=(), closing=wording.READINGS_TEXT_CALL)
+    if call.readings is None:
+        return ReadingsView(parts=(), closing=wording.READINGS_NOT_KEPT)
+    turn = next((t for t in call.readings if t.turn_id == turn_id), None)
+    if turn is None or not turn.readings:
+        return ReadingsView(parts=(), closing=wording.READINGS_NONE_FOR_TURN)
+    primary = next((r for r in turn.readings if r.role == "primary"), None)
+    second = next((r for r in turn.readings if r.role == "second"), None)
+    parts = tuple(_part(r) for r in (primary, second) if r is not None)
+    if second is None or primary is None:
+        closing = wording.READINGS_ONE
+    elif turn.agreed is None:
+        closing = wording.READINGS_NOT_COMPARED
+    else:
+        bare = wording.READINGS_SAME if turn.agreed else wording.READINGS_DIFFER
+        closing = _CLOSING.get((turn.agreed, turn.followed_by), bare)
+    return ReadingsView(parts=parts, closing=closing)
+
+
+def _amount_quotes(call: CallRecord) -> set[tuple[int, str]]:
+    """(turn id, quote) of every premium or cover outcome on the call: the quotes of an amount."""
+    outcomes = (*call.result.all_flags(), *call.result.all_gaps())
+    return {
+        (o.turn_id, o.quote)
+        for o in outcomes
+        if o.rule_id in AMOUNT_RULES and o.quote is not None and o.turn_id is not None
+    }
+
+
+def _line_view(line: IssueLine, turns: dict[int, Turn], call: CallRecord) -> IssueLineView:
     quote = None
     if line.quote is not None and line.turn_id is not None:
         turn = turns.get(line.turn_id)
         start, end = (turn.start_s, turn.end_s) if turn else (None, None)
-        quote = QuoteView(quote=line.quote, turn_id=line.turn_id, start_s=start, end_s=end)
+        amount = (line.turn_id, line.quote) in _amount_quotes(call)
+        quote = QuoteView(
+            quote=line.quote,
+            turn_id=line.turn_id,
+            start_s=start,
+            end_s=end,
+            readings=readings_view(call, line.turn_id) if amount else None,
+        )
     return IssueLineView(
         tier=line.tier,
         tier_label=wording.TIER_LABEL[line.tier],
@@ -564,7 +707,7 @@ def case_view(batch: Batch, case_id: str, sessions: Path | None = None) -> CaseV
         raise NotAReferral(case_id)
     record, call = c.record, c.call
     turns = {turn.id: turn for turn in call.transcript.turns}
-    lines = [_line_view(line, turns) for line in c.triage.lines]
+    lines = [_line_view(line, turns, call) for line in c.triage.lines]
     cited = {line.turn_id for line in c.triage.lines if line.quote is not None}
     undecided = {
         (gap.rule_id, gap.reason): Labelled(
@@ -642,6 +785,13 @@ def record_disposition(
     return case_view(load_batch(store), case_id, sessions)
 
 
+def _request(outcome: AttemptOutcome, dialogue_outcome: str | None) -> str | None:
+    """What an unconfirmed speaker asked, in words, beside a `request_unconfirmed` attempt."""
+    if outcome is not AttemptOutcome.request_unconfirmed or dialogue_outcome is None:
+        return None
+    return wording.UNCONFIRMED_REQUEST_LABEL.get(dialogue_outcome, dialogue_outcome)
+
+
 def attempt_log_view(batch: Batch) -> AttemptLogView:
     def loan_view(s: Sampled) -> SampledLoanView:
         return SampledLoanView(
@@ -661,6 +811,8 @@ def attempt_log_view(batch: Batch) -> AttemptLogView:
                     outcome_label=wording.OUTCOME_LABEL[a.outcome],
                     simulated=_simulated(a.source),
                     session_id=a.source.session_id if isinstance(a.source, PhoneSession) else None,
+                    dialogue_outcome=a.dialogue_outcome,
+                    request=_request(a.outcome, a.dialogue_outcome),
                 )
                 for a in s.attempts
             ),
@@ -682,13 +834,29 @@ def attempt_log_view(batch: Batch) -> AttemptLogView:
             outcome=o.call.outcome,
             outcome_label=wording.OUTCOME_LABEL[o.call.outcome],
             dialogue_outcome=o.call.dialogue_outcome,
+            request=_request(o.call.outcome, o.call.dialogue_outcome),
             tier=o.triage.tier if o.triage else None,
             tier_label=wording.TIER_LABEL[o.triage.tier] if o.triage else None,
             case_id=o.record.call_id if o.triage and o.triage.tier is Tier.refer else None,
         )
 
+    attempts = [a for s in batch.sampled for a in s.attempts]
+    after = [a for a in attempts if a.day_since_sale > WINDOW_DAYS]
     return AttemptLogView(
         draws=draw_views(batch),
         loans=tuple(loan_view(s) for s in batch.sampled),
         outside=tuple(outside_view(o) for o in batch.outside),
+        window_note=wording.window_note(
+            len(after), sum(isinstance(a.source, PhoneSession) for a in after), len(attempts)
+        ),
+        ingest_note=wording.ingest_note(batch.ingest),
+        not_ingested=tuple(
+            SkippedView(session_id=s.session_id, reason=s.reason)
+            for s in (batch.ingest.skipped if batch.ingest else ())
+        ),
+        changed_label=wording.CHANGED_LABEL,
+        changed=tuple(
+            ChangedView(session_id=c.session_id, differs=c.differs)
+            for c in (batch.ingest.changed if batch.ingest else ())
+        ),
     )

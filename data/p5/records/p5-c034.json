@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Rahul, born 1996, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c034",
+  "label": "Synthetic P5 record. Rahul: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1996-06-06",
+      "language": "hi-en",
+      "name": "Rahul Pareekshan"
+    },
+    "disbursed_inr": 190850,
+    "disbursed_on": "2026-10-22",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-034",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-22",
+          "method": "digital_click"
+        },
+        "cover_inr": 180000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 9150,
+        "provider": "Pareekshan Insurance (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 200000,
+    "tenure_months": 24
+  }
+}

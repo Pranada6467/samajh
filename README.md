@@ -1,5 +1,69 @@
 # Samajh
 
+Samajh is a Hindi and Hinglish voice callback for lenders and their compliance reviewers: it asks a borrower, in their own words, what they bought with their loan, and plain code compares the answer with the lender's record, so a human reviewer gets quotes and audio offsets to look at, never a verdict.
+
+Status in one line: it runs end to end on synthetic data with Timbre-voiced customers, **no person has spoken to the phone yet**, and the call and the phone are not independently verified (details under "Status" below).
+
+<img src="references/pilots/p3b-artifacts/phone-case-1280-light.png" alt="Reviewer case page for a synthetic phone call: the lender's record on the left; on the right each place the customer's words differ from the record, with the quote, the turn and a play link at that point in the recording" width="640">
+
+*A case page for one synthetic phone call (synthetic record, Timbre customer voice), rendered during the P3b build. A flag is evidence for a human to review, not a finding. The reviewer pages are still being changed.*
+
+## Three numbers (amounts that skip a place-value group)
+
+All three are on synthetic or public speech, not on real callers, and all use the wording the independent verification allows (`references/reviews/iter2/verify-P6.md`, "Wording for a public submission"; `CLAUDE.md`, "Gnani API facts").
+
+1. **40 of 68, against 0 of 68.** On a held-out synthetic set built to stress amounts that skip a place-value group (TTS audio, simulated 8 kHz phone audio), Prisma v3.0 `transcribe` wrote a different amount for 40 of 68 such amounts (59%, 95% CI 47-70) and for 0 of 68 matched controls. Its `verbatim` output of the same audio had the right number words in all 40, and v2.5 `transcribe` wrote none wrong. 26 of the 40 are wrong under any reading ("one lakh three hundred" written as 1,300; "five crore twenty-six thousand" as 5,26,000); the other 14 are "X lakh Y" phrases that colloquial Hindi may mean differently. The 68 are 24% of the set by design, so this is not a rate of how often amounts go wrong.
+2. **224 of 280.** Accepting an amount only when Prisma v3.0 and v2.5 `transcribe` agree accepted 224 of 280 synthetic clips with no wrong amount accepted. The rule was written into the experiment plan before any audio was voiced (`verify-P6.md`, finding 3); a cheaper variant was chosen on these same sets and is not claimed.
+3. **113 of 124.** The same rule accepted 113 of 124 public Hindi read or extempore recordings (IndicVoices and Kathbath) with no wrong amount accepted. 107 of the 124 are from the datasets' train splits, which Gnani may have trained on, so this may be optimistic; only 4 of the recordings skip a group (v3.0 was wrong on 1: too few for a rate).
+
+Sources: counts in `eval/amounts_v2/tables-tts.md` (phone condition, from line 207) and `eval/amounts_v2/tables-realvoice.md` (phone condition, from line 128), recomputed independently in `verify-P6.md`.
+
+## Gnani models and endpoints used
+
+Base URL `https://api.vachana.ai`, one key in the `X-API-Key-ID` header, held by a backend proxy.
+
+- **Prisma STT v3.0 (`prisma-v3.0`) and v2.5 (`prisma-v2.5`)** through `POST /stt/v3` (REST, clips of 30 s or less): `format=transcribe`, language set per call. v3.0 reads every customer turn; v2.5 gives a second reading when the customer says a figure.
+- **Prisma Batch** (`prisma-v3.0`, `/stt/v3/batch/jobs`, two speakers): the whole call after it ends, for segment times that give each quote its audio offset.
+- **Timbre TTS v3.0** (`timbre-v3.0`, `POST /api/v1/tts/inference`, 8 kHz, voice Shivani): the bot's lines, and the synthetic customers used in testing.
+- Not used: streaming, voice cloning, Agent Builder. Extraction after the call uses `openai/gpt-6-luna` through OpenRouter, and the dialogue's turn classifier uses `mistralai/mistral-small-3.2-24b-instruct` (`DESIGN.md` section 7).
+
+## Why two Prisma models
+
+The difference above is between the two models on one kind of amount: v3.0 `transcribe` wrote a different number for amounts that skip a place-value group, while its `verbatim` output of the same audio had the right words and v2.5 wrote none wrong. Which stage causes it is not established. So Samajh asks both models when the customer says a figure, accepts the amount only when they agree, and otherwise asks again.
+
+What the agreement rule adds depends on the data. **On the held-out synthetic set it adds nothing measured:** v2.5 `transcribe` alone wrote no wrong amount (0 of 280; 268 right, 12 refused), while agreement accepted 224, so there it costs 44 more re-asks (on the 68 skipped-group amounts, 22 accepted against 66 for v2.5 alone). **The case for it rests on the 124 public recordings** (`tables-realvoice.md`, phone condition, lines 197-201): v2.5 alone accepted 119 and wrote a wrong amount on 4 (for example 500 as 100); v3.0 alone accepted 123 and was wrong on 3; agreement accepted 113 with 0 wrong, because the two readings differed on each of the 6 clips where either was wrong. That is 4 and 3 wrong against 0 on one small set, mostly from train splits and with only 6 clips at stake, so it is a reason to keep the check, not a measured gain. v3.0 stays the first reading because it is the newer model and refused fewer of these recordings (1 of 124, against 5 for v2.5).
+
+## What one completed call costs (estimate)
+
+One whole hero call (Hindi, the P1 run on 2026-11-10, session `20261110T103108-9f2e34f8dfdf`: 15 customer turns, a 157.47 s recording, tier `refer`). Gnani credits come from the client's own rates, 0.010 per audio second and 0.002 per TTS character (`samajh/clients/defaults.toml`); no API reports cost, so these are estimates, each possibly 20% off or more, and the dashboard has not been read. The turn and read-back figures are the per-request estimates in the call's session log (`.samajh/sessions/20261110T103108-9f2e34f8dfdf/session.json`); the Batch figure is the `batch.billed` row for 157.47 s in `.samajh/ledger.jsonl`, the file that `uv run python -m samajh.clients.gnani ledger` totals (a local read).
+
+| Part | Quantity | Arithmetic | Credits |
+|---|---|---|---|
+| Turn STT, v3.0 (15 readings) and v2.5 (2 readings) | 26.80 s + 2.64 s = 29.44 s | 29.44 x 0.010 | 0.294 |
+| Prisma Batch, whole recording (assumed to bill like STT) | 157.47 s | 157.47 x 0.010 | 1.575 |
+| Timbre, one read-back made on the call | 54 characters | 54 x 0.002 | 0.108 |
+| **Total** | | | **about 1.98** |
+
+The 24 fixed bot lines in that call came from the cache (1,612 characters, 3.22 credits if voiced fresh); they are made once for all calls (101 lines, about 13 credits). The LLM that reads the transcript after the call cost $0.00171 per transcript on the frozen set (144 transcripts, $0.24589; `DESIGN.md` section 7), and the hero call's own 21 extraction requests cost $0.00134 in the ledger. The turn classifier that runs during the call is not included: its 15 requests across the three calls in that time window cost under $0.0005 together. Caveats: Timbre voices speak short answers, so a person talking longer costs more STT and Batch; the call ran on the dialogue as it was before P2's fix round, whose lines are still changing; and one call is not an average.
+
+## Run it
+
+Needs the setup below (Python 3.11, `uv`, `ffmpeg`, keys in `.env`). The phone spends Gnani credits and needs `GNANI_API_KEY`:
+
+```
+uv run python -m samajh.server --port 8085
+```
+
+Open `http://127.0.0.1:8085/` in Chrome and place a call. To see the dialogue as text, with no audio, no key and no credits (the call is being fixed, so it may change or break):
+
+```
+uv run python -m samajh.dialogue play --record tests/dialogue/fixtures/record_gold_loan.json --lang hi
+```
+
+---
+
+## About this project
+
 Samajh is a post-sale understanding callback for Indian lenders: a teach-back-style comprehension check. The customer explains in their own words, in their own language, what they bought with their loan, and plain code compares that against the bank's records; every mismatch becomes evidence a human can review.
 
 It is built for Gnani AI's Great Indian AI Internship Challenge on Prisma STT and Timbre TTS, and targets the post-sale feedback duty in RBI para 85Y (commercial banks) and 101Y (NBFCs), in force from 1 January 2027. All data is synthetic. The product languages are Hindi and Hinglish; Tamil and Kannada stay in the code as experimental.
@@ -14,7 +78,7 @@ Iteration 1 built the parts and was reviewed by two verifiers and a judge (`refe
 | The call itself, `samajh/dialogue` (P2) | **Fix round in progress.** Built as call v2 (short opening, third-party and refusal handling, a branch for "I took nothing"). An independent verifier on fresh inputs found it not ready for a live line: the loan was named to 16 of 64 third parties, and 25 of 45 refusals got the next question with the word lists alone (16 of 45 with the LLM fallback). The fix makes the classifier the primary judge at the opening and adds safe defaults and new outcomes. Text only; no fluent human has read the lines |
 | The decision chain (P3a) | Built and independently verified (sound with conditions); the conditions are fixed and not yet re-verified. Four tiers: `refer`, `incomplete`, `understanding_gap`, `clear` |
 | Loan book, reviewer queue, half-yearly report (P3b) | Built and independently verified (sound with conditions; every number in its report recounted and matched); the conditions are fixed and not yet re-verified. Over a synthetic 200-loan book with simulated customers, so no share it shows says anything about a real lender. Phone calls enter the queue, but the phone cannot yet call a loan from the loan book |
-| The Gnani amounts finding (P6) | Built and independently verified: every number reproduced and the freeze order confirmed. Result below |
+| The Gnani amounts finding (P6) | Built and independently verified: every number reproduced and the freeze order confirmed. Result at the top and below |
 | Human calls (P4), evaluation of Samajh on customers the builders did not script (P5), demo and submission (P7) | Not started |
 
 What is measured so far, each with what limits it:

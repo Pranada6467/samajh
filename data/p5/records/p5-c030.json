@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Aditya, born 1994, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c030",
+  "label": "Synthetic P5 record. Aditya: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1994-07-07",
+      "language": "hi-en",
+      "name": "Aditya Namoona"
+    },
+    "disbursed_inr": 600000,
+    "disbursed_on": "2026-10-24",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-030",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-24",
+          "method": "digital_click"
+        },
+        "cover_inr": 600000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 33750,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 48
+      }
+    ],
+    "sanctioned_inr": 600000,
+    "tenure_months": 36
+  }
+}

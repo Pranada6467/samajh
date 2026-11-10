@@ -30,11 +30,19 @@ def recorded_outputs() -> dict[Key, dict]:
     }
 
 
+# What an unscripted call returns. The recorded outputs predate the change check, so a reply
+# with no scripted check replays it as "none": no change is read into a reply the model never judged.
+_UNSCRIPTED = {
+    "ScreenReply": {"claims": [], "concerns": []},
+    "ChangeReply": {"change": "none", "first_clauses": [], "final_clauses": []},
+}
+
+
 class FakeLlm:
     """`outputs` maps a call to the JSON the model returns. `replies` overrides by reply text alone.
 
-    A screening call with no recorded output returns no claims and no concerns. Any other call
-    with no output fails the test. `errors` makes one call raise. `sent` keeps every request, so a test can read the prompts.
+    A screening call with no recorded output returns no claims and no concerns, and a change check
+    returns "none". Any other call with no output fails the test. `errors` makes one call raise. `sent` keeps every request, so a test can read the prompts.
     """
 
     def __init__(self, outputs: dict[Key, dict] | None = None) -> None:
@@ -59,9 +67,9 @@ class FakeLlm:
             raise self.errors[(name, reply)]
         output = self.replies.get((name, reply)) or self.outputs.get((name, question, reply))
         if output is None:
-            if name != "ScreenReply":
+            if name not in _UNSCRIPTED:
                 raise AssertionError(f"no output recorded for {name} / {reply!r}")
-            output = {"claims": [], "concerns": []}
+            output = _UNSCRIPTED[name]
         return LlmResult(
             value=schema.model_validate(output), model=model or "fake", prompt_tokens=0, completion_tokens=0,
             usd=0.0, cache_hit=True, attempts=0, generation_id=None,

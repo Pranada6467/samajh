@@ -53,6 +53,11 @@ function h(tag, attrs, ...kids) {
   return el;
 }
 
+// replaceChildren and append write a null kid as the text "null": drop the empty ones first.
+function fill(el, ...kids) {
+  el.replaceChildren(...kids.flat(Infinity).filter((kid) => kid !== null && kid !== undefined && kid !== false));
+}
+
 function facts(pairs) {
   return h("dl", { class: "facts" }, pairs.filter(Boolean).map(([k, v]) => [h("dt", null, k), h("dd", null, v)]));
 }
@@ -125,7 +130,9 @@ function mmss(seconds) {
 const pCount = (p) => `${int(p.count)} of ${int(p.n)}`;
 const pShare = (p) => (p.n === 0 || p.share === null ? DASH : `${Math.round(p.share * 100)}%`);
 const pInterval = (p) => (p.n === 0 || p.low === null || p.high === null ? DASH : `${Math.round(p.low * 100)} to ${Math.round(p.high * 100)}%`);
-const withInterval = (p) => [pBoth(p), h("span", { class: "sub" }, p.n ? `95% interval ${pInterval(p)}` : "no calls")];
+// A report whose draws gave sales clearly different chances withholds every interval (low and high are null).
+const hasInterval = (p) => p.n > 0 && p.low !== null && p.high !== null;
+const withInterval = (p) => (hasInterval(p) ? [pBoth(p), h("span", { class: "sub" }, `95% interval ${pInterval(p)}`)] : p.n ? pBoth(p) : [pBoth(p), h("span", { class: "sub" }, "no calls")]);
 const pBoth = (p) => (p.n === 0 || p.share === null ? pCount(p) : `${pCount(p)} (${pShare(p)})`);
 
 const LANGUAGE_NAMES = { hi: "Hindi", "hi-en": "Hinglish", ta: "Tamil", kn: "Kannada" };
@@ -182,6 +189,7 @@ function renderHeader(batch, page) {
           "div",
           { class: "sim-band", role: "note" },
           h("p", null, h("strong", null, batch.simulated ? "Simulated" : "Synthetic"), batch.simulated_notice),
+          batch.phone_note ? h("p", null, batch.phone_note) : null,
           h("p", { class: "access" }, batch.access_notice),
         )
       : null,
@@ -384,7 +392,15 @@ function quoteFigure(q, ctx) {
           ? h("span", null, `At ${mmss(q.start_s)} in the call`)
           : null,
     ),
+    q.readings ? readingsLine(q.readings, ctx) : null,
   );
+}
+
+// The view hands over finished pieces (samajh.ops.views.readings_view): nothing is parsed or compared here.
+function readingsLine(r, ctx) {
+  if (!r.parts.length) return h("p", { class: "readings small muted" }, r.closing);
+  const parts = r.parts.map((p) => [`${p.model}: `, p.as_written ? h("span", { lang: ctx.lang }, p.text) : h("i", null, p.text)]);
+  return h("p", { class: "readings small" }, parts.flatMap((p, i) => (i ? [" · ", ...p] : p)), ` · ${r.closing}`);
 }
 
 function lineCard(line, ctx) {
@@ -542,7 +558,8 @@ async function pageCase(main) {
   };
 
   const cited = c.transcript.filter((t) => t.cited).length;
-  transcript.append(
+  fill(
+    transcript,
     h("summary", null, `Full transcript (${int(c.transcript.length)} turns, ${int(cited)} cited above)`),
     call.transcript_note ? h("p", { class: "small muted" }, call.transcript_note) : null,
     h(
@@ -569,7 +586,8 @@ async function pageCase(main) {
 
   const source = call.source.kind === "phone_session" ? ["Phone session ", h("span", { class: "id" }, call.source.session_id)] : ["Scripted, no phone involved (", h("code", null, call.source.script), ")"];
 
-  main.replaceChildren(
+  fill(
+    main,
     h("p", { class: "small" }, h("a", { href: "index.html" }, "\u2190 Reviewer queue")),
     h(
       "div",
@@ -590,7 +608,7 @@ async function pageCase(main) {
         ),
       ),
     ),
-    h("p", { class: "notice" }, "This call was referred so that a person can compare what the customer said with the record. Nothing on this page is a finding about the sale. The decision is the reviewer's."),
+    h("p", { class: "notice" }, "This call was referred so that a person can compare what the customer said with the record. Nothing on this page is a conclusion about the sale. The decision is the reviewer's."),
     c.in_report ? null : h("p", { class: "notice warn" }, `The half-yearly report does not count this call: ${c.not_counted_because}. It is here so that a person still looks at it.`),
     h(
       "div",
@@ -684,7 +702,7 @@ function drawsTable(draws, caption) {
 function outsideTable(rows) {
   return table({
     stack: true,
-    caption: "Phone calls whose loan was not drawn in this batch. They are listed so that nothing is lost, and never enter the sampled statistics.",
+    caption: "Phone calls that are not attempts in the sample, each with the reason. They are listed so that nothing is lost, and never enter the sampled statistics.",
     cols: [
       { label: "Session", head: true },
       { label: "Record and loan" },
@@ -700,7 +718,7 @@ function outsideTable(rows) {
         [h("span", { class: "id" }, o.record_id), h("span", { class: "sub id" }, o.loan_id)],
         h("span", { class: "nowrap" }, fmtDateTime(o.at)),
         languageName(o.language),
-        [o.outcome_label, o.tier_label ? h("span", { class: `sub tier tier-${o.tier}` }, o.tier_label) : null],
+        [o.outcome_label, o.request ? h("span", { class: "sub" }, `The speaker ${o.request}`) : null, o.tier_label ? h("span", { class: `sub tier tier-${o.tier}` }, o.tier_label) : null],
         o.reason,
         o.case_id ? h("a", { href: caseHref(o.case_id), class: "nowrap" }, "Open case") : h("span", { class: "muted" }, DASH),
       ],
@@ -715,7 +733,7 @@ async function pageAttempts(main) {
     h(
       "div",
       { class: "page-head" },
-      h("div", null, h("h1", null, "Sample and attempt log"), h("p", { class: "muted lead" }, "Which loans were drawn for a feedback call, how each draw can be repeated, and every attempt made to reach each customer. No attempt is made after day 30 from the sale.")),
+      h("div", null, h("h1", null, "Sample and attempt log"), h("p", { class: "muted lead" }, `Which loans were drawn for a feedback call, how each draw can be repeated, and every attempt made to reach each customer. Simulated calls are never made after day 30 from the sale. ${log.window_note}`)),
     ),
     h(
       "section",
@@ -761,6 +779,7 @@ async function pageAttempts(main) {
                           { class: `chip${a.outcome === "completed" ? " done" : ""}`, title: fmtDateTime(a.at) },
                           h("b", null, a.number),
                           h("span", null, a.outcome_label),
+                          a.request ? h("span", { class: "muted" }, `The speaker ${a.request}`) : null,
                           h("span", { class: "muted" }, `day ${a.day_since_sale} \u00B7 ${a.simulated ? "simulated" : "phone call"}`),
                         ),
                       ),
@@ -780,6 +799,33 @@ async function pageAttempts(main) {
       h("h2", { id: "outside-h" }, `Calls outside the sample (${int(log.outside.length)})`),
       log.outside.length ? outsideTable(log.outside) : h("div", { class: "panel" }, h("p", null, "None. Every call in this batch was made to a sampled loan.")),
     ),
+    h(
+      "section",
+      { "aria-labelledby": "not-ingested-h" },
+      h("h2", { id: "not-ingested-h" }, `Phone sessions not brought in (${int(log.not_ingested.length)})`),
+      h("p", { class: "small muted", style: "margin-bottom:10px" }, log.ingest_note),
+      log.not_ingested.length
+        ? table({
+            stack: true,
+            caption: "Sessions the last ingest left out, with the reason. They are in no count on these pages.",
+            cols: [{ label: "Session", head: true }, { label: "Why it was not brought in" }],
+            rows: log.not_ingested.map((x) => ({ cells: [h("span", { class: "id" }, x.session_id), x.reason] })),
+          })
+        : null,
+    ),
+    ...(log.changed.length
+      ? [h(
+          "section",
+          { "aria-labelledby": "changed-h" },
+          h("h2", { id: "changed-h" }, `${log.changed_label} (${int(log.changed.length)})`),
+          table({
+            stack: true,
+            caption: "Sessions brought in earlier whose case file now differs. Each stays where it was brought in (an attempt above, or a call outside the sample) and is counted as before; none of them is among the sessions not brought in.",
+            cols: [{ label: "Session", head: true }, { label: "What differs" }],
+            rows: log.changed.map((x) => ({ cells: [h("span", { class: "id" }, x.session_id), x.differs] })),
+          }),
+        )]
+      : []),
   );
 }
 
@@ -787,16 +833,22 @@ async function pageAttempts(main) {
 
 const cssString = (s) => `"${String(s).replace(/[\\"]/g, "\\$&").replace(/[\r\n]+/g, " ")}"`;
 
-function proportionTable({ caption, first, rows, bars = false }) {
+function proportionTable({ caption, first, rows, bars = false, intervals = true }) {
   return table({
     caption,
-    cols: [{ label: first, head: true }, { label: "Count", num: true }, { label: "Share", num: true }, { label: "95% interval", num: true, cls: "interval" }, ...(bars ? [{ label: "", cls: "bar-cell" }] : [])],
+    cols: [
+      { label: first, head: true },
+      { label: "Count", num: true },
+      { label: "Share", num: true },
+      ...(intervals ? [{ label: "95% interval", num: true, cls: "interval" }] : []),
+      ...(bars ? [{ label: "", cls: "bar-cell" }] : []),
+    ],
     rows: rows.map((r) => ({
       cells: [
         r.label,
         pCount(r.value),
         pShare(r.value),
-        pInterval(r.value),
+        ...(intervals ? [pInterval(r.value)] : []),
         ...(bars ? [h("span", { class: "bar", "aria-hidden": "true" }, h("span", { style: `width:${r.value.share === null ? 0 : Math.round(r.value.share * 100)}%` }))] : []),
       ],
     })),
@@ -808,6 +860,26 @@ function section(id, title, ...kids) {
 }
 
 const TO_FILL = "To be filled in by the policy review";
+
+// The counts at the top of the report: the same fields as the tables below (samajh.ops.report.tiles).
+function tileStrip(t) {
+  const tile = (label, value, sub, cls) => h("li", { class: cls || null }, h("span", null, label), h("b", null, value), sub ? h("span", null, sub) : null);
+  return h(
+    "section",
+    { class: "tiles", "aria-label": "The counts at a glance" },
+    h("p", { class: "tiles-sim" }, t.synthetic),
+    h(
+      "ol",
+      null,
+      tile("Sold in the period", int(t.sold)),
+      tile("Sampled", int(t.sampled)),
+      tile("Completed within 30 days", int(t.completed)),
+      tile("Referred", int(t.referred)),
+      tile("Understanding gap", int(t.understanding_gap)),
+      tile("Most common gap", t.most_common_gap.label, t.most_common_gap.key === "none" ? null : `${int(t.most_common_gap_count)} calls`, "gap"),
+    ),
+  );
+}
 
 async function pageReport(main) {
   const r = await api("/report");
@@ -830,15 +902,17 @@ async function pageReport(main) {
   const t = r.timing;
   const s = r.sampling;
   const previous = r.previous_period === null ? "No previous period" : r.previous_period;
-  const findingRow = (x) => ({
+  const ci = s.intervals_shown !== false; // false: the chances of being drawn differed too much for intervals
+  const ruleRow = (x) => ({
     cells: [
       [x.statement, h("span", { class: "sub" }, x.rule_label)],
       x.seriousness_label,
       pCount(x.flagged),
       pShare(x.flagged),
-      pInterval(x.flagged),
+      ...(ci ? [pInterval(x.flagged)] : []),
       `${int(x.undecided)} of ${int(x.flagged.n)}`,
       `${int(x.referred)} of ${int(x.flagged.count)}`,
+      int(x.understanding_gap),
       x.previous ? pBoth(x.previous) : h("span", { class: "muted" }, "None"),
       x.may_engage ? h("span", { class: "engage" }, x.may_engage) : h("span", { class: "muted" }, DASH),
     ],
@@ -862,6 +936,7 @@ async function pageReport(main) {
       ),
       h("button", { class: "btn no-print", type: "button", onclick: () => window.print() }, "Print or save as PDF"),
     ),
+    tileStrip(r.tiles),
     h(
       "section",
       { class: "limits", "aria-labelledby": "limits-h" },
@@ -878,6 +953,7 @@ async function pageReport(main) {
         ["Calls read by", r.reading.length ? h("ul", { class: "plain-list" }, r.reading.map((x) => h("li", null, `${x.key}: ${x.label}`))) : "No call was read"],
         ["Previous period", previous],
         ["Phone calls outside the sample", `${int(r.outside_calls)} (listed on the attempt log, not counted here)`],
+        ["Phone sessions not brought in", r.ingest_note],
       ]),
     ),
     section(
@@ -895,14 +971,14 @@ async function pageReport(main) {
     section(
       "reach-h",
       "Reach",
-      h("p", null, `${int(f.attempts)} attempts were made on ${int(f.sampled)} sampled loans, retries included, none after day 30 from the sale. Every share below is of the ${int(f.sampled)} sampled loans.`),
-      proportionTable({ caption: "How far the sampled loans got. Each stage is within the one before.", first: "Stage", rows: f.stages, bars: true }),
-      proportionTable({ caption: "Where the loans without a completed call ended", first: "Final status", rows: f.exits, bars: true }),
+      h("p", null, `${int(f.attempts)} attempts were made on ${int(f.sampled)} sampled loans, retries included. ${t.note} Every share below is of the ${int(f.sampled)} sampled loans.`),
+      proportionTable({ caption: "How far the sampled loans got. Each stage is within the one before.", first: "Stage", rows: f.stages, bars: true, intervals: ci }),
+      proportionTable({ caption: "Where the loans without a completed call ended", first: "Final status", rows: f.exits, bars: true, intervals: ci }),
     ),
     section(
       "timing-h",
       "Timing",
-      h("p", null, "Days are counted from the sale to the attempt, not to the draw."),
+      h("p", null, `Days are counted from the sale to the attempt, not to the draw. ${t.note}`),
       table({
         caption: "Timing against the 30-day window",
         cols: [{ label: "Measure", head: true }, { label: "Value", num: true }],
@@ -914,33 +990,34 @@ async function pageReport(main) {
             ],
           },
           { cells: ["Attempts made after day 30 from the sale", cCount(t.attempts_after_window)] },
-          { cells: ["Calls completed after day 30 (shown apart, not in the findings)", int(t.completed_late)] },
+          { cells: ["Calls completed after day 30 (shown apart, not in the counted calls)", int(t.completed_late)] },
         ],
       }),
     ),
-    section("tiers-h", "Outcome of the counted calls", proportionTable({ caption: "One outcome per call completed within 30 days of the sale", first: "Outcome", rows: r.tiers })),
+    section("tiers-h", "Outcome of the counted calls", proportionTable({ caption: "One outcome per call completed within 30 days of the sale", first: "Outcome", rows: r.tiers, intervals: ci })),
     section(
-      "findings-h",
-      "Findings: features and risks",
-      h("p", null, `${para} asks that the findings be used to review product features and risks. Each rule runs on every counted call. Undecided calls had a gap under the rule and no flag. Referred is the number of the flagged calls that went to a reviewer for that rule.`),
+      "rules-h",
+      "Flags by rule: features and risks",
+      h("p", null, `${para} asks that this feedback be used to review product features and risks. Each rule runs on every counted call. Undecided calls had a gap under the rule and no flag. Referred is the number of the flagged calls that went to a reviewer for that rule. Understanding-gap calls are counted calls whose outcome is an understanding gap, with a gap under the rule; the rule with the most is the most common gap at the top of the page.`),
       h("p", { class: "notice" }, r.risk_note),
       h("p", { class: "small muted" }, r.seriousness_note),
       table({
-        caption: "A paragraph is one that a line may engage. It is not a finding about any sale.",
+        caption: "A paragraph is one that a line may engage. It is not a conclusion about any sale.",
         cols: [
           { label: "Customers who\u2026", head: true },
           { label: "Seriousness" },
           { label: "Count", num: true },
           { label: "Share", num: true },
-          { label: "95% interval", num: true, cls: "interval" },
+          ...(ci ? [{ label: "95% interval", num: true, cls: "interval" }] : []),
           { label: "Undecided", num: true },
           { label: "Referred, of those counted", num: true },
+          { label: "Understanding-gap calls", num: true },
           { label: "Previous period", num: true },
           { label: "Paragraph" },
         ],
         rows: r.groups.flatMap((g) => {
-          const rows = r.findings.filter((x) => x.group === g.key);
-          return rows.length ? [{ group: g.label }, ...rows.map(findingRow)] : [];
+          const rows = r.rules.filter((x) => x.group === g.key);
+          return rows.length ? [{ group: g.label }, ...rows.map(ruleRow)] : [];
         }),
       }),
     ),
@@ -962,8 +1039,14 @@ async function pageReport(main) {
     ),
     section(
       "breakdowns-h",
-      "Findings by loan kind, branch and channel",
-      h("p", null, "Each row's shares are of its own counted calls, set against every other row together. Small rows give wide intervals; overlapping intervals show no clear difference."),
+      "Referrals and understanding gaps by loan kind, branch and channel",
+      h(
+        "p",
+        null,
+        ci
+          ? "Each row's shares are of its own counted calls, set against every other row together. Small rows give wide intervals; overlapping intervals show no clear difference."
+          : "Each row's shares are of its own counted calls, set against every other row together. No interval is shown (see Sampling), so a difference between rows here is not evidence of a difference among all sales.",
+      ),
       r.breakdowns.map((b) =>
         table({
           caption: `By ${b.label.toLowerCase()}, against the rest`,
@@ -991,7 +1074,7 @@ async function pageReport(main) {
     section(
       "policy-h",
       "For policy review",
-      h("p", null, `Under ${para} this report is used to review policies and product features and risks. Each finding is listed most serious first, then most common. The action, owner and review date are left for the policy review to fill in.`),
+      h("p", null, `Under ${para} this report is used to review policies and product features and risks. Each rule with flagged calls is listed most serious first, then most common. The action, owner and review date are left for the policy review to fill in.`),
       r.policy_review.length
         ? h(
             "ol",
@@ -1001,7 +1084,7 @@ async function pageReport(main) {
                 "li",
                 null,
                 h("p", { class: "sentence" }, `${p.seriousness_label}: ${p.sentence}`),
-                h("p", { class: "detail" }, `${pCount(p.value)}, ${pShare(p.value)}; 95% interval ${pInterval(p.value)}`, p.highest ? `; ${p.highest}` : "", "."),
+                h("p", { class: "detail" }, `${pCount(p.value)}, ${pShare(p.value)}`, hasInterval(p.value) ? `; 95% interval ${pInterval(p.value)}` : "", p.highest ? `; ${p.highest}` : "", "."),
                 facts([
                   ["Action", h("span", { class: "fill" }, TO_FILL)],
                   ["Owner", h("span", { class: "fill" }, TO_FILL)],
@@ -1011,7 +1094,7 @@ async function pageReport(main) {
               ),
             ),
           )
-        : h("p", { class: "muted" }, "No finding was counted in this batch."),
+        : h("p", { class: "muted" }, "No counted call was flagged under any rule in this batch."),
     ),
   );
 }

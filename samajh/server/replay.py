@@ -1,12 +1,16 @@
 """Run one whole call from audio files, through the HTTP API, as the phone does, to its case file.
 
     uv run python -m samajh.server.replay DIR [--url http://127.0.0.1:8085] [--out OUT]
-        [--dialogue samajh] [--param k=v ...] [--line-rate 8000] [--no-case]
+        [--dialogue samajh|stub] [--param k=v ...] [--line-rate 8000] [--no-case] [--state DIR]
 
 DIR holds the customer's turns. With a `call.json` in DIR the call is scripted:
 
     {"params": {"record": "hero", "language": "hi"},
      "turns": [{"file": "01.wav", "answers": "right_party.ask", "text": "हाँ जी, बोल रहा हूँ"}, ...]}
+
+For a loan that `samajh.ops` drew from the synthetic loan book the params name the loan instead,
+`{"loan": "SYN-PL-270107-0008", "language": "hi"}` (`prepare --loan` writes this), and the server
+links the session to its draw when it is created (`samajh.server.loanbook`).
 
 `answers` (optional) is the key of the bot line the turn replies to; when the bot asked something
 else the replay stops with `script_drift` instead of answering the wrong question. `text` is
@@ -17,8 +21,14 @@ Without `call.json` the files of DIR are the turns in name order (an empty file 
 With `--out` the run is resumable: `OUT/replay.json` names the session, and a rerun after a crash
 or a stopped server continues that call where it stopped (a turn sent twice is answered once),
 then waits for the case file and writes it to `OUT/case.json`. Without `--url` the app runs in
-this process with the patient client profile. Every Gnani and LLM call is cached, so a rerun of a
+this process with the patient client profile, on the state directory `--state` names (default
+.samajh). Every Gnani and LLM call is cached, so a rerun of a
 finished call costs nothing.
+
+`--dialogue stub` runs the transport's stub dialogue, which asks about a loan with no identity
+check. It works only without `--url`: the replay then builds an app in this process whose one
+dialogue is the stub. A running server has only the Samajh dialogue and refuses a session that
+names any other.
 """
 
 from __future__ import annotations
@@ -320,15 +330,23 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--out", type=Path, help="where replay.json and case.json go; makes the run resumable"
     )
-    parser.add_argument("--dialogue", default=None, help="default: call.json's, else the server's default")
+    parser.add_argument(
+        "--dialogue",
+        choices=("samajh", "stub"),
+        default=None,
+        help="default: call.json's, else the server's default; stub only without --url",
+    )
     parser.add_argument("--line-rate", type=int, default=8000)
     parser.add_argument("--param", type=_param, action="append", default=[], metavar="k=v")
     parser.add_argument("--no-case", action="store_true", help="stop when the call ends; make no case file")
     parser.add_argument("--case-timeout", type=float, default=900.0)
+    parser.add_argument("--state", type=Path, default=None, help="without --url: the app's state directory")
     args = parser.parse_args(argv)
     if not args.dir.is_dir():
         parser.error(f"{args.dir} is not a directory")
     script = load_script(args.dir, params=dict(args.param), dialogue=args.dialogue)
+    if script.dialogue == "stub" and args.url:
+        parser.error("the stub dialogue runs only in this process: drop --url")
 
     session_root: Path | None = None
     if args.url:
@@ -339,8 +357,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         from samajh.clients._runtime import state_dir
         from samajh.server.app import create_app
 
-        session_root = state_dir() / "sessions"
-        http = TestClient(create_app(profile="patient", web_dir=None))
+        root = args.state or state_dir()
+        session_root = root / "sessions"
+        if script.dialogue == "stub":
+            from samajh.server.dialogue import stub_factory
+
+            app = create_app(profile="patient", web_dir=None, state=root, dialogues={"stub": stub_factory})
+        else:
+            app = create_app(profile="patient", web_dir=None, state=root)
+        http = TestClient(app)
     try:
         with http:
             result = replay_call(

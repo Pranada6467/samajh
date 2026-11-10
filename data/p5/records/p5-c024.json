@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Farhan, born 1989, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c024",
+  "label": "Synthetic P5 record. Farhan: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1989-02-02",
+      "language": "hi-en",
+      "name": "Farhan Pareekshan"
+    },
+    "disbursed_inr": 144750,
+    "disbursed_on": "2026-10-16",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-024",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-16",
+          "method": "digital_click"
+        },
+        "cover_inr": 150000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 5250,
+        "provider": "Pareekshan Insurance (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 150000,
+    "tenure_months": 6
+  }
+}

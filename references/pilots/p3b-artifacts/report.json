@@ -1,4 +1,17 @@
 {
+    "tiles": {
+        "synthetic": "Synthetic batch: the loan book and the customers are synthetic. Calls marked Simulated were scripted; calls marked Phone call were made on the browser phone with synthetic records.",
+        "sold": 200,
+        "sampled": 80,
+        "completed": 64,
+        "referred": 7,
+        "understanding_gap": 33,
+        "most_common_gap": {
+            "key": "cover",
+            "label": "Cover amount"
+        },
+        "most_common_gap_count": 20
+    },
     "batch": {
         "meta": {
             "batch_id": "B-2027H1-ec2bdb3e",
@@ -15,17 +28,18 @@
             "period_start": "2027-01-01",
             "period_end": "2027-06-30",
             "simulated": true,
-            "created_at": "2026-11-10T11:04:31.257898Z",
+            "created_at": "2026-11-10T15:49:26.640579Z",
             "unit": "Customer Feedback Unit (synthetic), not associated with sales"
         },
         "simulated": false,
         "simulated_notice": "Synthetic batch: the loan book and the customers are synthetic. Calls marked Simulated were scripted; calls marked Phone call were made on the browser phone with synthetic records.",
+        "phone_note": "Calls marked Phone call were made on the browser phone against synthetic records: 7 phone session(s), 0 with customer audio from the microphone only, 0 from prepared audio files only, 0 from both, 0 with no customer audio, 7 where it is not recorded, or not readable, in the case file. None of them is a call with a real customer of a lender.",
         "access_notice": "Demo limitation: these pages have no sign-in. Anyone who can reach this server can record a decision, and the reviewer's name is free text that nobody checks.",
         "sampled": 80,
         "completed": 64,
-        "referred": 11,
-        "open_cases": 8,
-        "other_referrals": 3
+        "referred": 7,
+        "open_cases": 4,
+        "other_referrals": 4
     },
     "as_of": "2027-03-09",
     "as_of_note": "Synthetic date: the report is dated by the simulated book's clock, the day of the last call attempt.",
@@ -34,20 +48,20 @@
     "unit": "Customer Feedback Unit (synthetic), not associated with sales",
     "reading": [
         {
-            "key": "Simulated (scripted transcript), read by openai/gpt-6-luna",
+            "key": "Simulated (scripted transcript), read by scripted extraction, no model",
             "label": "64 calls"
         }
     ],
     "coverage": "This batch covers 9 draw(s) made between 11 January 2027 and 8 March 2027: 80 of the 200 loans on the book (sold 4 January 2027 to 4 March 2027) were sampled.",
     "limits": [
-        "The loan book, the customers and the calls are synthetic and simulated. No real lender, customer or call is behind any number here.",
-        "Customer replies come from scripted phrase banks. They are text only: no speech was recorded or transcribed.",
-        "The share of each finding follows from the mix of customers the simulation assumes. It says nothing about any real lender.",
+        "The loan book and the customers on it are synthetic. Every phone call was made against a synthetic record, so no real lender and no customer of a lender is behind any number here.",
+        "113 attempt(s) in this batch were simulated: their outcome and any customer reply were scripted from phrase banks, as text only, with no speech recorded or transcribed. 7 call(s) were phone sessions on the browser phone (0 attempt(s) in the sample and 7 call(s) outside it): their customer turns were read by Gnani Prisma speech-to-text (each case file names the model) from the customer audio the next note counts.",
+        "Calls marked Phone call were made on the browser phone against synthetic records: 7 phone session(s), 0 with customer audio from the microphone only, 0 from prepared audio files only, 0 from both, 0 with no customer audio, 7 where it is not recorded, or not readable, in the case file. None of them is a call with a real customer of a lender.",
+        "The share of calls flagged under each rule follows from the mix of customers the simulation assumes and, for phone calls, from what was said on the browser phone against synthetic records. It says nothing about any real lender.",
         "Each interval is a 95% Wilson interval for sampling among eligible sales only (sales a draw covered). It does not cover sales no draw covered, errors in reading the call, or customers who were not reached.",
-        "Findings describe customers who completed the call. Customers who did not answer, declined or ended the call early may differ.",
+        "The flag counts describe customers who completed the call. Customers who did not answer, declined or ended the call early may differ.",
         "A referral is a request for a person to look at one call, and nothing more.",
-        "Reviewer decisions are counted, not estimated: they are one reviewer's view of the file, and no interval is given for them.",
-        "Calls marked Phone call were made on the browser phone against synthetic records, with recorded synthetic voices. They are not real customers either."
+        "Reviewer decisions are counted, not estimated: they are one reviewer's view of the file, and no interval is given for them."
     ],
     "previous_period": null,
     "draws": [
@@ -176,7 +190,10 @@
         "never_eligible": [],
         "inclusion_low": 0.375,
         "inclusion_high": 0.4166666666666667,
-        "statement": "Each draw took 40% of the sales made since the previous draw that were still within 30 days of the sale, so draw windows never overlap and every eligible sale had about the same chance of being sampled (between 37.5% and 41.7%, by rounding). Shares and intervals describe the 200 eligible sales only; the 0 sale(s) no draw covered are not represented. Shares are unweighted because the chances are equal up to rounding."
+        "inclusion_ratio": 1.1111111111111112,
+        "chances": "narrow",
+        "intervals_shown": true,
+        "statement": "Each draw took 40% of the sales made since the previous draw that were still within 30 days of the sale, so draw windows never overlap. Every eligible sale had about the same chance of being sampled: between 37.5% and 41.7% (the highest is 1.11 times the lowest, within the 1.25 this report allows). Shares and intervals describe the 200 eligible sales only. The 0 sale(s) in the period that no draw covered are not represented. Shares are unweighted: with chances this close, weighting would move a share by at most 5.6% of the difference between the groups it mixes and widen an interval by under 1%."
     },
     "funnel": {
         "sampled": 80,
@@ -306,6 +323,17 @@
                 }
             },
             {
+                "key": "request_unconfirmed",
+                "label": "Request from a speaker not confirmed as the borrower (no call after it)",
+                "value": {
+                    "count": 0,
+                    "n": 80,
+                    "share": 0.0,
+                    "low": 0.0,
+                    "high": 0.04581813022522419
+                }
+            },
+            {
                 "key": "not_reached_in_time",
                 "label": "Not reached within 30 days of the sale",
                 "value": {
@@ -328,8 +356,30 @@
                 }
             },
             {
+                "key": "do_not_call",
+                "label": "Asked not to be called again (no further attempt)",
+                "value": {
+                    "count": 0,
+                    "n": 80,
+                    "share": 0.0,
+                    "low": 0.0,
+                    "high": 0.04581813022522419
+                }
+            },
+            {
+                "key": "written_requested",
+                "label": "Asked for this in writing instead (no further attempt)",
+                "value": {
+                    "count": 0,
+                    "n": 80,
+                    "share": 0.0,
+                    "low": 0.0,
+                    "high": 0.04581813022522419
+                }
+            },
+            {
                 "key": "completed_not_analysed",
-                "label": "Completed, but the call could not be analysed (no finding)",
+                "label": "Completed, but the call could not be analysed (no flags raised)",
                 "value": {
                     "count": 0,
                     "n": 80,
@@ -340,7 +390,7 @@
             },
             {
                 "key": "completed_late",
-                "label": "Completed after day 30 from the sale (not in the findings)",
+                "label": "Completed after day 30 from the sale (not in the counted calls)",
                 "value": {
                     "count": 0,
                     "n": 80,
@@ -362,18 +412,20 @@
             "count": 0,
             "n": 113
         },
-        "completed_late": 0
+        "phone_attempts_after_window": 0,
+        "completed_late": 0,
+        "note": "No attempt was made after day 30 from the sale."
     },
     "tiers": [
         {
             "tier": "refer",
             "label": "Referred for review",
             "value": {
-                "count": 11,
+                "count": 7,
                 "n": 64,
-                "share": 0.171875,
-                "low": 0.09877742257874725,
-                "high": 0.28213211721330644
+                "share": 0.109375,
+                "low": 0.05400113314972993,
+                "high": 0.20898641422176267
             }
         },
         {
@@ -391,11 +443,11 @@
             "tier": "understanding_gap",
             "label": "Understanding gap (report only)",
             "value": {
-                "count": 29,
+                "count": 33,
                 "n": 64,
-                "share": 0.453125,
-                "low": 0.3372944769635036,
-                "high": 0.5742640287210753
+                "share": 0.515625,
+                "low": 0.3958160138876424,
+                "high": 0.6336644842174978
             }
         },
         {
@@ -426,7 +478,7 @@
     ],
     "risk_note": "Risk coverage is thin. One question in the call bears directly on risk: whether the customer can get the money back (any time, after a period, or with a return), which shows what they believe happens to the money. Describing the product as a deposit also bears on it. The call asks nothing about exclusions, claim conditions or what happens to the cover if the loan is closed early.",
     "seriousness_note": "Seriousness is the builders' ranking, not a regulatory scale: a belief about what the product is, whether it returns money, or how it was agreed to ranks above forgetting a figure.",
-    "findings": [
+    "rules": [
         {
             "rule_id": "kind",
             "rule_label": "What the product is",
@@ -444,6 +496,7 @@
             },
             "undecided": 0,
             "referred": 1,
+            "understanding_gap": 0,
             "previous": null
         },
         {
@@ -463,6 +516,7 @@
             },
             "undecided": 0,
             "referred": 0,
+            "understanding_gap": 0,
             "previous": null
         },
         {
@@ -482,6 +536,7 @@
             },
             "undecided": 0,
             "referred": 0,
+            "understanding_gap": 17,
             "previous": null
         },
         {
@@ -501,6 +556,7 @@
             },
             "undecided": 0,
             "referred": 0,
+            "understanding_gap": 4,
             "previous": null
         },
         {
@@ -520,6 +576,7 @@
             },
             "undecided": 0,
             "referred": 0,
+            "understanding_gap": 20,
             "previous": null
         },
         {
@@ -539,6 +596,7 @@
             },
             "undecided": 0,
             "referred": 0,
+            "understanding_gap": 14,
             "previous": null
         },
         {
@@ -557,7 +615,8 @@
                 "high": 0.17019537446678323
             },
             "undecided": 0,
-            "referred": 4,
+            "referred": 0,
+            "understanding_gap": 4,
             "previous": null
         },
         {
@@ -577,6 +636,7 @@
             },
             "undecided": 0,
             "referred": 1,
+            "understanding_gap": 0,
             "previous": null
         },
         {
@@ -596,6 +656,7 @@
             },
             "undecided": 0,
             "referred": 3,
+            "understanding_gap": 0,
             "previous": null
         },
         {
@@ -615,6 +676,7 @@
             },
             "undecided": 3,
             "referred": 2,
+            "understanding_gap": 0,
             "previous": null
         },
         {
@@ -634,6 +696,7 @@
             },
             "undecided": 1,
             "referred": 1,
+            "understanding_gap": 0,
             "previous": null
         },
         {
@@ -653,6 +716,7 @@
             },
             "undecided": 0,
             "referred": 1,
+            "understanding_gap": 0,
             "previous": null
         }
     ],
@@ -662,7 +726,7 @@
             "label": "Concern supported by the file (reviewer's view)",
             "value": {
                 "count": 2,
-                "n": 11
+                "n": 7
             }
         },
         {
@@ -670,7 +734,7 @@
             "label": "Concern not supported by the file (reviewer's view)",
             "value": {
                 "count": 1,
-                "n": 11
+                "n": 7
             }
         },
         {
@@ -678,7 +742,7 @@
             "label": "Call the customer",
             "value": {
                 "count": 1,
-                "n": 11
+                "n": 7
             }
         },
         {
@@ -686,28 +750,31 @@
             "label": "Needs more information",
             "value": {
                 "count": 0,
-                "n": 11
+                "n": 7
             }
         },
         {
             "key": "none",
             "label": "No decision recorded yet",
             "value": {
-                "count": 7,
-                "n": 11
+                "count": 3,
+                "n": 7
             }
         }
     ],
     "open_referrals": {
-        "count": 8,
-        "n": 11
+        "count": 4,
+        "n": 7
     },
     "supported_of_decided": {
         "count": 2,
         "n": 3
     },
-    "other_referrals": 3,
-    "outside_calls": 5,
+    "other_referrals": 4,
+    "outside_calls": 7,
+    "phone_sessions_not_ingested": 34,
+    "phone_sessions_changed": 0,
+    "ingest_note": "The last ingest saw 41 phone session(s) and did not bring in 34: they are in no count here, not even the reach figures. 0 came in as attempts and 7 as calls outside the sample. Each session left out is listed on the attempt log with the reason.",
     "breakdowns": [
         {
             "by": "loan_kind",
@@ -719,32 +786,32 @@
                     "sampled": 35,
                     "completed": 29,
                     "referred": {
-                        "count": 5,
+                        "count": 3,
                         "n": 29,
-                        "share": 0.1724137931034483,
-                        "low": 0.07597857204821831,
-                        "high": 0.34548440045021234
+                        "share": 0.10344827586206896,
+                        "low": 0.035814891071239724,
+                        "high": 0.26385081247949216
                     },
                     "rest_referred": {
-                        "count": 6,
+                        "count": 4,
                         "n": 35,
-                        "share": 0.17142857142857143,
-                        "low": 0.08102640006436056,
-                        "high": 0.3268228243870004
+                        "share": 0.11428571428571428,
+                        "low": 0.04535179301555728,
+                        "high": 0.2595146878621273
                     },
                     "understanding_gap": {
-                        "count": 12,
+                        "count": 14,
                         "n": 29,
-                        "share": 0.41379310344827586,
-                        "low": 0.25513177237414897,
-                        "high": 0.5926216414412274
+                        "share": 0.4827586206896552,
+                        "low": 0.3138609003643046,
+                        "high": 0.6556897823987706
                     },
                     "rest_understanding_gap": {
-                        "count": 17,
+                        "count": 19,
                         "n": 35,
-                        "share": 0.4857142857142857,
-                        "low": 0.32994235892786083,
-                        "high": 0.64431195517872
+                        "share": 0.5428571428571428,
+                        "low": 0.3818972495098324,
+                        "high": 0.6953398081704248
                     }
                 },
                 {
@@ -753,32 +820,32 @@
                     "sampled": 45,
                     "completed": 35,
                     "referred": {
-                        "count": 6,
+                        "count": 4,
                         "n": 35,
-                        "share": 0.17142857142857143,
-                        "low": 0.08102640006436056,
-                        "high": 0.3268228243870004
+                        "share": 0.11428571428571428,
+                        "low": 0.04535179301555728,
+                        "high": 0.2595146878621273
                     },
                     "rest_referred": {
-                        "count": 5,
+                        "count": 3,
                         "n": 29,
-                        "share": 0.1724137931034483,
-                        "low": 0.07597857204821831,
-                        "high": 0.34548440045021234
+                        "share": 0.10344827586206896,
+                        "low": 0.035814891071239724,
+                        "high": 0.26385081247949216
                     },
                     "understanding_gap": {
-                        "count": 17,
+                        "count": 19,
                         "n": 35,
-                        "share": 0.4857142857142857,
-                        "low": 0.32994235892786083,
-                        "high": 0.64431195517872
+                        "share": 0.5428571428571428,
+                        "low": 0.3818972495098324,
+                        "high": 0.6953398081704248
                     },
                     "rest_understanding_gap": {
-                        "count": 12,
+                        "count": 14,
                         "n": 29,
-                        "share": 0.41379310344827586,
-                        "low": 0.25513177237414897,
-                        "high": 0.5926216414412274
+                        "share": 0.4827586206896552,
+                        "low": 0.3138609003643046,
+                        "high": 0.6556897823987706
                     }
                 }
             ]
@@ -793,32 +860,32 @@
                     "sampled": 13,
                     "completed": 12,
                     "referred": {
-                        "count": 2,
+                        "count": 1,
                         "n": 12,
-                        "share": 0.16666666666666666,
-                        "low": 0.04696514175692082,
-                        "high": 0.4480308646118111
+                        "share": 0.08333333333333333,
+                        "low": 0.014865094239669363,
+                        "high": 0.35387991372124555
                     },
                     "rest_referred": {
-                        "count": 9,
+                        "count": 6,
                         "n": 52,
-                        "share": 0.17307692307692307,
-                        "low": 0.09382474345965262,
-                        "high": 0.2973086423590291
+                        "share": 0.11538461538461539,
+                        "low": 0.05396969171559292,
+                        "high": 0.22971664454167973
                     },
                     "understanding_gap": {
-                        "count": 5,
+                        "count": 6,
                         "n": 12,
-                        "share": 0.4166666666666667,
-                        "low": 0.1932603124346072,
-                        "high": 0.6804886891575758
+                        "share": 0.5,
+                        "low": 0.25378159616252394,
+                        "high": 0.7462184038374761
                     },
                     "rest_understanding_gap": {
-                        "count": 24,
+                        "count": 27,
                         "n": 52,
-                        "share": 0.46153846153846156,
-                        "low": 0.33340474589543556,
-                        "high": 0.5949638877302917
+                        "share": 0.5192307692307693,
+                        "low": 0.3868568266984257,
+                        "high": 0.6489588564887107
                     }
                 },
                 {
@@ -834,11 +901,11 @@
                         "high": 0.5098375308778678
                     },
                     "rest_referred": {
-                        "count": 9,
+                        "count": 5,
                         "n": 54,
-                        "share": 0.16666666666666666,
-                        "low": 0.09024391599360121,
-                        "high": 0.28736514338575686
+                        "share": 0.09259259259259259,
+                        "low": 0.040201134502611466,
+                        "high": 0.19909882696104841
                     },
                     "understanding_gap": {
                         "count": 4,
@@ -848,11 +915,11 @@
                         "high": 0.6873262320788047
                     },
                     "rest_understanding_gap": {
-                        "count": 25,
+                        "count": 29,
                         "n": 54,
-                        "share": 0.46296296296296297,
-                        "low": 0.33689901026924174,
-                        "high": 0.5939464407729093
+                        "share": 0.5370370370370371,
+                        "low": 0.4060535592270908,
+                        "high": 0.6631009897307583
                     }
                 },
                 {
@@ -868,11 +935,11 @@
                         "high": 0.3773584391082959
                     },
                     "rest_referred": {
-                        "count": 10,
+                        "count": 6,
                         "n": 53,
-                        "share": 0.18867924528301888,
-                        "low": 0.10585325059108783,
-                        "high": 0.3135845919717667
+                        "share": 0.11320754716981132,
+                        "low": 0.05293030916779973,
+                        "high": 0.22576519219817098
                     },
                     "understanding_gap": {
                         "count": 5,
@@ -882,17 +949,51 @@
                         "high": 0.7199084642140241
                     },
                     "rest_understanding_gap": {
-                        "count": 24,
+                        "count": 28,
                         "n": 53,
-                        "share": 0.4528301886792453,
-                        "low": 0.32657579062351566,
-                        "high": 0.585460246128432
+                        "share": 0.5283018867924528,
+                        "low": 0.39660081180415385,
+                        "high": 0.6561775661446775
                     }
                 },
                 {
                     "key": "SYN-BR-04",
                     "label": "SYN-BR-04",
                     "sampled": 14,
+                    "completed": 12,
+                    "referred": {
+                        "count": 0,
+                        "n": 12,
+                        "share": 0.0,
+                        "low": 0.0,
+                        "high": 0.2424940095530979
+                    },
+                    "rest_referred": {
+                        "count": 7,
+                        "n": 52,
+                        "share": 0.1346153846153846,
+                        "low": 0.06676881669032911,
+                        "high": 0.25273320275407984
+                    },
+                    "understanding_gap": {
+                        "count": 9,
+                        "n": 12,
+                        "share": 0.75,
+                        "low": 0.4676946629183366,
+                        "high": 0.9110583323051143
+                    },
+                    "rest_understanding_gap": {
+                        "count": 24,
+                        "n": 52,
+                        "share": 0.46153846153846156,
+                        "low": 0.33340474589543556,
+                        "high": 0.5949638877302917
+                    }
+                },
+                {
+                    "key": "SYN-BR-05",
+                    "label": "SYN-BR-05",
+                    "sampled": 15,
                     "completed": 12,
                     "referred": {
                         "count": 1,
@@ -902,59 +1003,25 @@
                         "high": 0.35387991372124555
                     },
                     "rest_referred": {
-                        "count": 10,
+                        "count": 6,
                         "n": 52,
-                        "share": 0.19230769230769232,
-                        "low": 0.10796045975206996,
-                        "high": 0.31898860925374817
+                        "share": 0.11538461538461539,
+                        "low": 0.05396969171559292,
+                        "high": 0.22971664454167973
                     },
                     "understanding_gap": {
-                        "count": 8,
+                        "count": 5,
                         "n": 12,
-                        "share": 0.6666666666666666,
-                        "low": 0.3906220869404939,
-                        "high": 0.86187990987514
+                        "share": 0.4166666666666667,
+                        "low": 0.1932603124346072,
+                        "high": 0.6804886891575758
                     },
                     "rest_understanding_gap": {
-                        "count": 21,
+                        "count": 28,
                         "n": 52,
-                        "share": 0.40384615384615385,
-                        "low": 0.281597337866733,
-                        "high": 0.5393242461975851
-                    }
-                },
-                {
-                    "key": "SYN-BR-05",
-                    "label": "SYN-BR-05",
-                    "sampled": 15,
-                    "completed": 12,
-                    "referred": {
-                        "count": 2,
-                        "n": 12,
-                        "share": 0.16666666666666666,
-                        "low": 0.04696514175692082,
-                        "high": 0.4480308646118111
-                    },
-                    "rest_referred": {
-                        "count": 9,
-                        "n": 52,
-                        "share": 0.17307692307692307,
-                        "low": 0.09382474345965262,
-                        "high": 0.2973086423590291
-                    },
-                    "understanding_gap": {
-                        "count": 4,
-                        "n": 12,
-                        "share": 0.3333333333333333,
-                        "low": 0.13812009012485987,
-                        "high": 0.6093779130595061
-                    },
-                    "rest_understanding_gap": {
-                        "count": 25,
-                        "n": 52,
-                        "share": 0.4807692307692308,
-                        "low": 0.3510411435112893,
-                        "high": 0.6131431733015742
+                        "share": 0.5384615384615384,
+                        "low": 0.40503611226970826,
+                        "high": 0.6665952541045644
                     }
                 },
                 {
@@ -963,32 +1030,32 @@
                     "sampled": 9,
                     "completed": 7,
                     "referred": {
-                        "count": 3,
+                        "count": 2,
                         "n": 7,
-                        "share": 0.42857142857142855,
-                        "low": 0.15821985399244537,
-                        "high": 0.7495416372469643
+                        "share": 0.2857142857142857,
+                        "low": 0.08221892324928332,
+                        "high": 0.6410655504689458
                     },
                     "rest_referred": {
-                        "count": 8,
+                        "count": 5,
                         "n": 57,
-                        "share": 0.14035087719298245,
-                        "low": 0.07287276105928868,
-                        "high": 0.25324464713776723
+                        "share": 0.08771929824561403,
+                        "low": 0.03805167153710125,
+                        "high": 0.1894487720058653
                     },
                     "understanding_gap": {
-                        "count": 3,
+                        "count": 4,
                         "n": 7,
-                        "share": 0.42857142857142855,
-                        "low": 0.15821985399244537,
-                        "high": 0.7495416372469643
+                        "share": 0.5714285714285714,
+                        "low": 0.25045836275303557,
+                        "high": 0.8417801460075546
                     },
                     "rest_understanding_gap": {
-                        "count": 26,
+                        "count": 29,
                         "n": 57,
-                        "share": 0.45614035087719296,
-                        "low": 0.3337260549463177,
-                        "high": 0.5840931411752744
+                        "share": 0.5087719298245614,
+                        "low": 0.38259898403961834,
+                        "high": 0.6338371767360632
                     }
                 }
             ]
@@ -1003,32 +1070,32 @@
                     "sampled": 20,
                     "completed": 16,
                     "referred": {
-                        "count": 5,
+                        "count": 4,
                         "n": 16,
-                        "share": 0.3125,
-                        "low": 0.14164643765150897,
-                        "high": 0.5559564434725178
+                        "share": 0.25,
+                        "low": 0.10182067420167085,
+                        "high": 0.4949831672970316
                     },
                     "rest_referred": {
-                        "count": 6,
+                        "count": 3,
                         "n": 48,
-                        "share": 0.125,
-                        "low": 0.0585705140436488,
-                        "high": 0.2470045840177115
+                        "share": 0.0625,
+                        "low": 0.02148323274107221,
+                        "high": 0.16835438166384809
                     },
                     "understanding_gap": {
-                        "count": 8,
+                        "count": 9,
                         "n": 16,
-                        "share": 0.5,
-                        "low": 0.27999563470387406,
-                        "high": 0.7200043652961259
+                        "share": 0.5625,
+                        "low": 0.3317855624393811,
+                        "high": 0.7690134771859434
                     },
                     "rest_understanding_gap": {
-                        "count": 21,
+                        "count": 24,
                         "n": 48,
-                        "share": 0.4375,
-                        "low": 0.3070126894862085,
-                        "high": 0.5772498268573516
+                        "share": 0.5,
+                        "low": 0.36389330403275494,
+                        "high": 0.636106695967245
                     }
                 },
                 {
@@ -1037,32 +1104,32 @@
                     "sampled": 10,
                     "completed": 9,
                     "referred": {
-                        "count": 1,
+                        "count": 0,
                         "n": 9,
-                        "share": 0.1111111111111111,
-                        "low": 0.01989088741690992,
-                        "high": 0.4349997083707909
+                        "share": 0.0,
+                        "low": 0.0,
+                        "high": 0.299145051727044
                     },
                     "rest_referred": {
-                        "count": 10,
+                        "count": 7,
                         "n": 55,
-                        "share": 0.18181818181818182,
-                        "low": 0.10187670387666053,
-                        "high": 0.30330459744682714
+                        "share": 0.12727272727272726,
+                        "low": 0.06304210393019456,
+                        "high": 0.24017027762017662
                     },
                     "understanding_gap": {
-                        "count": 2,
+                        "count": 3,
                         "n": 9,
-                        "share": 0.2222222222222222,
-                        "low": 0.06322510654056959,
-                        "high": 0.5474110333077882
+                        "share": 0.3333333333333333,
+                        "low": 0.12058381743407343,
+                        "high": 0.6457978664749412
                     },
                     "rest_understanding_gap": {
-                        "count": 27,
+                        "count": 30,
                         "n": 55,
-                        "share": 0.4909090909090909,
-                        "low": 0.3637677775569864,
-                        "high": 0.6192374024808276
+                        "share": 0.5454545454545454,
+                        "low": 0.4152269014360659,
+                        "high": 0.6697471983748644
                     }
                 },
                 {
@@ -1071,32 +1138,32 @@
                     "sampled": 50,
                     "completed": 39,
                     "referred": {
-                        "count": 5,
+                        "count": 3,
                         "n": 39,
-                        "share": 0.1282051282051282,
-                        "low": 0.05602817501519075,
-                        "high": 0.2670574351095147
+                        "share": 0.07692307692307693,
+                        "low": 0.026507395097205205,
+                        "high": 0.20321071297573554
                     },
                     "rest_referred": {
-                        "count": 6,
+                        "count": 4,
                         "n": 25,
-                        "share": 0.24,
-                        "low": 0.11496313626452448,
-                        "high": 0.4342968351708788
+                        "share": 0.16,
+                        "low": 0.06403451412098321,
+                        "high": 0.3465362177560826
                     },
                     "understanding_gap": {
-                        "count": 19,
+                        "count": 21,
                         "n": 39,
-                        "share": 0.48717948717948717,
-                        "low": 0.3386517522402942,
-                        "high": 0.6380063722467645
+                        "share": 0.5384615384615384,
+                        "low": 0.3856944815828638,
+                        "high": 0.6843311449559597
                     },
                     "rest_understanding_gap": {
-                        "count": 10,
+                        "count": 12,
                         "n": 25,
-                        "share": 0.4,
-                        "low": 0.2340330227270205,
-                        "high": 0.5926054278250577
+                        "share": 0.48,
+                        "low": 0.3003128583305077,
+                        "high": 0.6650148317799079
                     }
                 }
             ]

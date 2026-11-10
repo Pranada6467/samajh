@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Dinesh, born 1968, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c011",
+  "label": "Synthetic P5 record. Dinesh: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1968-05-08",
+      "language": "hi",
+      "name": "Dinesh Udaharan"
+    },
+    "disbursed_inr": 115650,
+    "disbursed_on": "2026-11-04",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-011",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-11-04",
+          "method": "otp"
+        },
+        "cover_inr": 120000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 4350,
+        "provider": "Udaharan Suraksha (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 120000,
+    "tenure_months": 6
+  }
+}

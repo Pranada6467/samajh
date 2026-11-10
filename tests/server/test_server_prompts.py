@@ -17,7 +17,12 @@ from samajh.types import Language
 
 SETTINGS = load_settings()
 BOOK = load_book(PACKAGED_DIR)
-RECORDS = [BOOK.get(record_id) for record_id in BOOK.ids()]
+RECORDS = [BOOK.get(record_id) for record_id in BOOK.ids()]  # one product each
+_HERO = BOOK.get("hero")
+_SECOND = _HERO.record.products[0].model_copy(update={"id": "P2"})
+TWO_PRODUCTS = _HERO.model_copy(
+    update={"record": _HERO.record.model_copy(update={"products": (*_HERO.record.products, _SECOND)})}
+)
 # A line that says the customer's figure back cannot be made before the call.
 ON_DEMAND = {key for key, spec in LINES.items() if spec.slots & {"amount_words", "amount_digits"}}
 
@@ -63,7 +68,7 @@ def no_live_client(monkeypatch: pytest.MonkeyPatch) -> None:
 
 @pytest.mark.parametrize("language", list(Language))
 def test_the_fixed_lines_are_every_line_that_does_not_carry_the_customers_figure(language: Language) -> None:
-    fixed = prompts.fixed_lines(language, RECORDS)
+    fixed = prompts.fixed_lines(language, [*RECORDS, TWO_PRODUCTS])
 
     assert set(fixed.on_demand) == ON_DEMAND
     assert {key for key, _ in fixed.clips} == LINES.keys() - ON_DEMAND
@@ -75,8 +80,15 @@ def test_the_fixed_lines_are_every_line_that_does_not_carry_the_customers_figure
     for record in RECORDS:  # a name or lender line once for each record that differs in it
         assert pack.render("right_party.ask", first_name=record.record.borrower.name.split()[0]) in texts
         assert pack.render("context.loan", lender=record.lender_name) in texts
-    assert pack.render("teach_back.intro_nth", ordinal=pack.ordinals[0]) in texts
-    assert pack.render("teach_back.intro_nth", ordinal=pack.ordinals[1]) not in texts  # one product each
+    # The ordinal line comes before the second and later products only (P2 round 3): made for the
+    # second product of the two-product record, never with the first ordinal. hi and hi-en dropped
+    # the ordinal from the line, so there it is one clip; ta and kn still say it.
+    nth = [text for key, text in fixed.clips if key == "teach_back.intro_nth"]
+    assert nth == [pack.render("teach_back.intro_nth", ordinal=pack.ordinals[1])]
+    if "{ordinal}" in pack.templates["teach_back.intro_nth"]:
+        assert pack.render("teach_back.intro_nth", ordinal=pack.ordinals[0]) not in texts
+    one_product = prompts.fixed_lines(language, RECORDS)
+    assert "teach_back.intro_nth" not in {key for key, _ in one_product.clips}
 
 
 def test_no_record_named_leaves_only_the_lines_without_a_slot() -> None:

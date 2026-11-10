@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Savita, born 1975, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c033",
+  "label": "Synthetic P5 record. Savita: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1975-03-21",
+      "language": "hi",
+      "name": "Savita Banawati"
+    },
+    "disbursed_inr": 287100,
+    "disbursed_on": "2026-10-30",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-033",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-30",
+          "method": "otp"
+        },
+        "cover_inr": 300000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 12900,
+        "provider": "Banawati Life Cover (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 18
+      }
+    ],
+    "sanctioned_inr": 300000,
+    "tenure_months": 12
+  }
+}

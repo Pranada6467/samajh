@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Lakhan, born 1963, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c035",
+  "label": "Synthetic P5 record. Lakhan: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1963-08-26",
+      "language": "hi",
+      "name": "Lakhan Namoona"
+    },
+    "disbursed_inr": 96050,
+    "disbursed_on": "2026-10-23",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-035",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-23",
+          "method": "otp"
+        },
+        "cover_inr": 100000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 3950,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 100000,
+    "tenure_months": 12
+  }
+}

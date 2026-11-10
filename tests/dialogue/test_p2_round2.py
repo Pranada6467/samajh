@@ -34,7 +34,7 @@ def test_someone_describing_the_borrower_is_a_third_party_not_a_call_back(replie
 
 
 @pytest.mark.parametrize(
-    "year_reply", ["हमारे ये तो चौरासी के हैं", "उन्नीस सौ चौरासी, क्यों?", "जी अपना तो 1984 का है"]
+    "year_reply", ["हमारे ये तो चौरासी के हैं", "उन्नीस सौ चौरासी, क्यों?", "हमारे ये तो 1984 के हैं"]
 )
 def test_a_year_among_other_words_never_passes_without_the_classifier(year_reply):
     call = play(record(), HI, [*OPEN[:2], year_reply])
@@ -147,7 +147,8 @@ def test_the_count_shows_only_after_the_customer_named_something_or_the_follow_u
     intro says one, and going straight to consent says none."""
     named = [*OPEN, "एक एफडी ली थी"]
     first = [play(rec, HI, named).utterances[-1].lines[0].key for rec in records()]
-    assert first == ["consent.ask", "teach_back.intro", "teach_back.intro_nth", "teach_back.intro_nth"]
+    # Wave 2: the first product of any record is introduced the same way, so the count no longer shows.
+    assert first == ["consent.ask", "teach_back.intro", "teach_back.intro", "teach_back.intro"]
 
 
 def test_two_products_sound_alike_until_the_first_product_is_done():

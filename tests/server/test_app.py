@@ -196,12 +196,16 @@ def test_a_full_stub_call(phone: TestClient, fake: FakeSpeech) -> None:
 def test_the_turn_response_shape(phone: TestClient) -> None:
     sid = start(phone)["session_id"]
     turn = say(phone, sid, source="mic", query="&eos_wait_ms=412.5&mode=vad&cut_ms=1000&grace_ms=1600")
-    assert set(turn) == {"customer", "bot", "ended"}
+    assert set(turn) == {"customer", "bot", "ended", "outcome", "speaker_confirmed"}
+    assert (turn["outcome"], turn["speaker_confirmed"]) == (None, None)  # the stub says neither
     customer = turn["customer"]
     assert set(customer) == {
-        "seq", "part", "transcript", "readings", "audio_url", "audio_seconds", "latency", "pauses",
+        "seq", "part", "transcript", "acted_on", "literal", "detected_language", "readings",
+        "audio_url", "audio_seconds", "latency", "pauses", "readings_agreed", "followed_by", "degraded",
     }  # fmt: skip
     assert (customer["seq"], customer["part"], customer["transcript"]) == (1, 1, "पचास हज़ार")
+    # The stub dialogue does not say whether the readings agreed, and its lines are no read-back.
+    assert (customer["readings_agreed"], customer["followed_by"]) == (None, "other")
     assert [set(r) for r in customer["readings"]] == [
         {"role", "model", "ok", "error", "text", "cache_hit", "seconds"}
     ] * 2
@@ -1246,6 +1250,12 @@ def test_health_without_a_key(state: Path, monkeypatch: pytest.MonkeyPatch) -> N
         "default_dialogue": "stub",
         "line_rates": [8000, 16000],
         "stt_models": ["prisma-v3.0", "prisma-v2.5"],
+        "models": {
+            "stt_primary": {"model": "prisma-v3.0", "format": "transcribe"},
+            "stt_second": {"model": "prisma-v2.5", "format": "transcribe"},
+            "tts": {"model": "timbre-v3.0"},
+            "batch": {"model": "prisma-v3.0"},
+        },
         "streaming": False,
         "languages": LANGUAGES,
         "turn_taking": {
@@ -1263,6 +1273,27 @@ def test_health_without_a_key(state: Path, monkeypatch: pytest.MonkeyPatch) -> N
     assert error["stage"] == "tts" and ".env" not in error["message"]
 
 
+def test_health_names_the_models_of_the_settings_it_runs_with(fake: FakeSpeech, state: Path) -> None:
+    """The phone's model strip reads these; they follow the settings, not a fixed text."""
+    settings = load_settings()
+    other = settings.model_copy(
+        update={
+            "stt": settings.stt.model_copy(update={"model": "prisma-v2.5", "second_model": "prisma-v3.0"}),
+            "tts": settings.tts.model_copy(update={"model": "timbre-v2.5"}),
+            "batch": settings.batch.model_copy(update={"model": "prisma-v2.5"}),
+        }
+    )
+    phone = TestClient(
+        create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, settings=other, dialogues=STUB)
+    )
+    assert phone.get("/api/health").json()["models"] == {
+        "stt_primary": {"model": "prisma-v2.5", "format": "transcribe"},
+        "stt_second": {"model": "prisma-v3.0", "format": "transcribe"},
+        "tts": {"model": "timbre-v2.5"},
+        "batch": {"model": "prisma-v2.5"},
+    }
+
+
 def test_health_reports_a_key_as_a_bool_and_nothing_else(
     state: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -1277,10 +1308,11 @@ def test_health_reports_a_key_as_a_bool_and_nothing_else(
 def test_the_default_app_runs_the_samajh_dialogue_on_a_listed_record(fake: FakeSpeech, state: Path) -> None:
     phone = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=None))
     health = phone.get("/api/health").json()
-    assert (health["dialogues"], health["default_dialogue"]) == (["samajh", "stub"], "samajh")
+    assert (health["dialogues"], health["default_dialogue"]) == (["samajh"], "samajh")
     listed = phone.get("/api/records").json()
     assert listed["languages"] == LANGUAGES
-    assert all(set(r) == {"id", "label", "description", "first_name", "language"} for r in listed["records"])
+    shown = {"id", "label", "description", "first_name", "language"}
+    assert all(shown <= set(r) <= shown | {"readings_note"} for r in listed["records"])
     created = start(phone, params={"record": listed["records"][0]["id"], "language": "hi"})
     assert created["dialogue"] == "samajh"
     bot = created["bot"]
@@ -1288,6 +1320,17 @@ def test_the_default_app_runs_the_samajh_dialogue_on_a_listed_record(fake: FakeS
     error_of(
         phone.post("/api/sessions", json={"params": {"record": "no-such-record"}}), 422, "invalid_params"
     )
+
+
+@pytest.mark.parametrize("name", ["stub", "scripted", "SAMAJH"])
+def test_the_default_app_refuses_a_session_naming_any_other_dialogue(
+    fake: FakeSpeech, state: Path, name: str
+) -> None:
+    phone = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=None))
+    error_of(phone.post("/api/sessions", json={"dialogue": name}), 422, "unknown_dialogue")
+    error_of(phone.post("/api/sessions", json={"dialogue": name, "params": {"record": "hero", "language": "hi"}}),
+             422, "unknown_dialogue")  # fmt: skip
+    assert not (state / "sessions").exists() and not fake.tts_calls and not fake.stt_calls
 
 
 def test_errors_have_one_shape_on_every_route(phone: TestClient) -> None:

@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Sunaina, born 1976, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c009",
+  "label": "Synthetic P5 record. Sunaina: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1976-02-27",
+      "language": "hi",
+      "name": "Sunaina Pareekshan"
+    },
+    "disbursed_inr": 188800,
+    "disbursed_on": "2026-10-17",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5-LN-009",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-17",
+          "method": "otp"
+        },
+        "cover_inr": 200000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 11200,
+        "provider": "Pareekshan Insurance (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 200000,
+    "tenure_months": 36
+  }
+}

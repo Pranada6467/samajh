@@ -1,0 +1,40 @@
+{
+  "id": "amount-check",
+  "label": "Meena: an amount the two models write differently",
+  "description": "Synthetic demo. Play Meena, born 1991, who can say what she took with the loan and what she paid. A prepared clip, chosen because Prisma v3.0 and Prisma v2.5 are known to write her spoken amount differently on phone-line TTS audio: it shows the bot asking again and reading back. One chosen clip, not a rate.",
+  "readings_note": "Chosen clip: the two models are known to write this spoken amount differently on phone-line TTS audio. One example, not a rate.",
+  "lender_name": "नमूना बैंक",
+  "record": {
+    "loan_id": "LN-DEMO-0004",
+    "lender_type": "bank",
+    "borrower": {
+      "name": "Meena Udaharan",
+      "dob": "1991-02-11",
+      "language": "hi"
+    },
+    "loan_kind": "personal",
+    "sanctioned_inr": 100000,
+    "disbursed_inr": 97988,
+    "disbursed_on": "2026-10-30",
+    "products": [
+      {
+        "id": "P1",
+        "kind": "credit_life",
+        "provider": "Udaharan Suraksha (synthetic)",
+        "premium_inr": 2012,
+        "cover_inr": 100000,
+        "term_months": 12,
+        "paid_from_loan": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "provider_choice_offered": true,
+        "cancel_window_days": 30,
+        "features": ["one_time_payment"],
+        "consent": {
+          "method": "signed_form",
+          "at": "2026-10-30"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,103 @@
+[
+ {
+  "mutant": "baseline (no mutation)",
+  "result": "passes",
+  "summary": "974 passed in 72.63s (0:01:12)"
+ },
+ {
+  "mutant": "opening_default_off: a failed classifier at the first-name question keeps the word lists' yes",
+  "file": "samajh/dialogue/llm_fallback.py",
+  "result": "survived",
+  "summary": "974 passed in 74.22s (0:01:14)",
+  "first_failure": "",
+  "seconds": 74.6
+ },
+ {
+  "mutant": "unjudged_identity_yes_kept: _unjudged no longer downgrades a word-list yes at identity",
+  "file": "samajh/dialogue/llm_fallback.py",
+  "result": "survived",
+  "summary": "974 passed in 72.41s (0:01:12)",
+  "first_failure": "",
+  "seconds": 72.8
+ },
+ {
+  "mutant": "classifier_secondary: consulted only when the word lists say said/unclear/off_topic",
+  "file": "samajh/dialogue/llm_fallback.py",
+  "result": "killed",
+  "summary": "1 failed, 474 passed in 1.31s",
+  "first_failure": "FAILED tests/dialogue/test_llm_fallback.py::test_the_classifier_is_called_on_every_unsettled_reading[\\u0939\\u093e\\u0901 \\u091c\\u0940-go_ahead]",
+  "seconds": 1.7
+ },
+ {
+  "mutant": "first_person_guard_off: confirms_self accepted without a first-person word",
+  "file": "samajh/dialogue/llm_fallback.py",
+  "result": "killed",
+  "summary": "1 failed, 520 passed in 1.33s",
+  "first_failure": "FAILED tests/dialogue/test_llm_fallback.py::test_a_confirms_self_label_without_a_first_person_word_confirms_nobody",
+  "seconds": 2.5
+ },
+ {
+  "mutant": "refusal_falls_through: a plain decline no longer ends the call",
+  "file": "samajh/dialogue/machine.py",
+  "result": "killed",
+  "summary": "1 failed, 44 passed in 0.33s",
+  "first_failure": "FAILED tests/dialogue/test_call_paths.py::test_decline_or_human_request_at_any_stage_ends_at_once[decline-declined-end.declined-0-hi]",
+  "seconds": 0.6
+ },
+ {
+  "mutant": "do_not_call_dropped: do_not_call ends as declined",
+  "file": "samajh/dialogue/machine.py",
+  "result": "killed",
+  "summary": "1 failed, 516 passed in 1.41s",
+  "first_failure": "FAILED tests/dialogue/test_llm_fallback.py::test_a_classifier_label_ends_the_call_with_its_own_outcome[remove_number-do_not_call]",
+  "seconds": 2.3
+ },
+ {
+  "mutant": "written_dropped: written_request ends as declined",
+  "file": "samajh/dialogue/machine.py",
+  "result": "killed",
+  "summary": "1 failed, 517 passed in 1.15s",
+  "first_failure": "FAILED tests/dialogue/test_llm_fallback.py::test_a_classifier_label_ends_the_call_with_its_own_outcome[written_request-written_requested]",
+  "seconds": 2.3
+ },
+ {
+  "mutant": "degraded_check_off: no 'shall I go on?' after a failed classifier",
+  "file": "samajh/dialogue/machine.py",
+  "result": "killed",
+  "summary": "1 failed, 511 passed in 1.16s",
+  "first_failure": "FAILED tests/dialogue/test_llm_fallback.py::test_a_failed_classifier_later_asks_once_whether_to_go_on_then_reads_by_the_word_lists",
+  "seconds": 2.3
+ },
+ {
+  "mutant": "timeout_unbounded: the 2.5 s wall-clock bound is not enforced",
+  "file": "samajh/dialogue/llm_fallback.py",
+  "result": "killed",
+  "summary": "1 failed, 509 passed in 2.03s",
+  "first_failure": "FAILED tests/dialogue/test_llm_fallback.py::test_a_late_classifier_is_cut_off_at_the_timeout",
+  "seconds": 2.3
+ },
+ {
+  "mutant": "weak_signal_guard_off: a weak stop signal is overridden by any classifier label",
+  "file": "samajh/dialogue/llm_fallback.py",
+  "result": "killed",
+  "summary": "1 failed, 521 passed in 1.19s",
+  "first_failure": "FAILED tests/dialogue/test_llm_fallback.py::test_a_weak_stop_signal_stays_a_question_unless_the_classifier_reads_an_answer_or_an_end",
+  "seconds": 2.3
+ },
+ {
+  "mutant": "callback_ask_off: a call-later with no time ends at once instead of asking when",
+  "file": "samajh/dialogue/machine.py",
+  "result": "killed",
+  "summary": "1 failed, 743 passed in 69.08s (0:01:09)",
+  "first_failure": "FAILED tests/dialogue/test_p2_call_v2.py::test_call_later_without_a_time_asks_when_and_keeps_the_answer",
+  "seconds": 69.5
+ },
+ {
+  "mutant": "third_party_midcall_off: a hand-off after the opening no longer ends the call",
+  "file": "samajh/dialogue/machine.py",
+  "result": "killed",
+  "summary": "1 failed, 518 passed in 1.21s",
+  "first_failure": "FAILED tests/dialogue/test_llm_fallback.py::test_a_classifier_label_ends_the_call_with_its_own_outcome[third_party_handoff-wrong_party]",
+  "seconds": 2.4
+ }
+]

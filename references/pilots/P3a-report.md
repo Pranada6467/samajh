@@ -2,6 +2,122 @@
 
 Builder, 2026-11-10. Took over from three cut-off workers; their committed work (types, tiers, checks, summary, extractor) was kept. Not yet independently verified. Synthetic text only, no speech. Tamil and Kannada not human-reviewed.
 
+## Fix round 3 (2026-11-10)
+
+Status: built; independent verification: **sound with conditions** (`references/reviews/iter2/verify-P3a-r3.md`, an Opus-high verifier that wrote none of the code, on its own fresh inputs, 79 replies through the real extraction model). The r2 findings 1 to 3 are fixed on fresh inputs. The verifier found two new false-clear paths. One (the carried premium) was fixed afterwards; the other (a reply of one clause has no retraction protection) is open.
+
+This round answers the findings of `references/reviews/iter2/verify-P3a-r2.md`. The r3 verifier's "May say" and "May not say" lists (below) replace the r2 lists for the items they cover and win over any builder wording here. All results are on typed synthetic text, not speech, and say nothing about real callers. The contract (`P3a-contract.md` §1, §3 to §6) describes the code as it now is.
+
+| r2 finding or addition | state | r3 verifier, on fresh inputs |
+|---|---|---|
+| 1. Informed customers falsely referred by the retraction rule | fixed (phrase list removed; a second model reading, the change check, with code grounding) | kind, payment and required questions: 17 of 17 informed replies with emphasis, filler, an apology or a restatement ended `clear`. Premium: 1 of 3; the 2 holding "sorry"/"सॉरी" ended `incomplete` (the amounts lexicon reads "sorry" as doubt across the whole reply). Open |
+| 1, other direction: a taken-back value must not be stated | holds for replies of two or more clauses; **fails for a reply of one clause** | corrections away from the record value: taken-back value stated in 0 of 19. Punctuated withdrawals: 0 of 6 ended `clear`. Unpunctuated withdrawals (one clause, no check): **4 of 10 ended `clear` with the withdrawn value stated**. Open |
+| D. Correction inside one reply (option A) | built as decided | toward the record value, non-amount questions: 12 of 12 `clear`, earlier words kept in 9 of the 10 punctuated cases. A premium corrected inside one reply ends `incomplete` (two amounts in the reply) |
+| 2. Cover read-back tier | fixed | 21 read-back orders and 12 comparisons: asking a read-back never lowered the tier. Premium orders: 10 of 10 |
+| 3. Denial order | fixed | 8 of 8 (scripted). By the contract, the kind question answered as the kind on record still retracts a denial; a same-reply "took it, no, took nothing" ends `incomplete`, not `refer` |
+| 4. Amounts holes | the listed holes are fixed; new ones found | 65 fresh sentences: 4 confident wrong figures ("पचास हज़ार तक।", "up to 40,000 rupees.", "do baar 20 hazaar kate.", and the arguable "पचास हज़ार हर महीने, बारह महीने।"); plain amounts 20 of 23 parsed. Open |
+| 5. Surviving mutations | covered, `widen()` removed | 11 of 11 of the verifier's own mutations caught, each by exactly one test |
+| A. Carried premium | built; the fault the verifier found was fixed after its run | before the fix: **4 of 4 recall replies that gave the figure and took it back ended `clear`**. After the fix: see "Recheck" below |
+| B. "Maine 50,000 rupees…" | fixed (a regression from ff960f7) | digit figures inside Hindi and Hinglish sentences: 5 of 5 parsed |
+| C. Summary wording | built | 5 cases and 6 labels: strings as specified, tier unchanged in all 5 |
+
+Tests: `uv run pytest tests/core tests/extract -q` gives 2,345 passed (core 1,993, extract 352). At the r2 verification it was 1,959 (core 1,708, extract 251). These are the builders' tests, so they are not evidence that a fix holds.
+
+Frozen set, before and after (`eval/text_path/runs/frozen__openai-gpt-6-luna.md`). It was run three times this round, never to choose anything: at 20:55 IST after the fixes; at 21:13 after the carried-premium fix; at 21:14 on the restored prompt (next paragraph). The first and third runs agree on every row, and every row is the same as before the round; only the run time and the cost section differ.
+
+One thing the second run showed. A builder had corrected the docstring of `ChangeReply` (`samajh/extract/_wire.py`). That docstring is sent to the model as the schema's description, so the edit changed the change check's prompt and all 1,107 checks were asked again. One answered `withdrawn` where it had said `none`: G05-hi-en, the consent reply "Loan और insurance, दोनों के लिए हाँ बोली थी। कैसे... वो अब याद नहीं।". Fields went from 2,166 to 2,165 of 2,180; no verdict or tier moved. The docstring was restored to the exact text the verifier's 79 replies were measured on (the third run is 4,498 of 4,498 cache hits), and a code comment now says it is part of the prompt. What this measures: the change check's reading is sensitive to prompt wording, on 1 of 1,107 frozen replies for one rewording. The table is the first and third runs.
+
+| measure (Hindi and Hinglish unless said) | before round 3 | after round 3 |
+|---|---|---|
+| call verdicts, all four languages | 143 of 144 (B03-ta wrong) | 143 of 144 (B03-ta wrong) |
+| problem customers, misses | 2 of 38 calls (U07-hi, U07-hi-en) | 2 of 38 calls (the same two) |
+| problem customers, tiers | refer 30, incomplete 6, understanding_gap 2 | the same |
+| informed, compliant record: referred | 0 of 18 calls (18 clear) | 0 of 18 calls (18 clear) |
+| informed, fault on the record: referred | 8 of 16 calls (incomplete 2, understanding_gap 6) | the same |
+| extractor errors | 0 | 0 |
+| LLM requests | 3,391 | 4,498 (1,107 change checks added) |
+| cost with nothing cached | 0.211 USD (0.0015 per call) | 0.303 USD (0.0021 per call) |
+
+The change check answered `none` on 1,095 of the 1,107 frozen-set replies it was asked about and was not used on 12 (a recall reply that named nothing). The frozen set holds no reply the check read as corrected or withdrawn, so the set says nothing about how well corrections are read: its unchanged numbers show only that the check did not disturb replies with no correction in them. The first rerun spent 0.031 USD and the second 0.031 USD (the re-asked checks); the rest came from the cache. The carried-premium fix moved nothing on either set.
+
+Development set, before and after (in-sample for the prompt; 20 calls, 5 per language; `eval/text_path/runs/dev__openai-gpt-6-luna.md`). Before is the committed report, which was run at 11:07 IST, before fix rounds 1 and 2.
+
+| measure | before (committed report) | after round 3 |
+|---|---|---|
+| call verdicts | 20 of 20 | 20 of 20 |
+| false clear / false alarm | 0 of 13 / 0 of 7 | 0 of 13 / 0 of 7 |
+| fields | 304 of 304 | 303 of 304 |
+| LLM requests | 403 | 513 (110 change checks added) |
+
+The change check said `corrected` on 5 development replies, `none` on 102, and was not used on 3. The calls with a correction that ended on the record's answer (hi-04 "डिपॉज़िट... अरे नहीं, बीमा है, बीमा।", kn-04) end `clear` with the earlier words kept. The one field that moved is Tamil (experimental): on ta-03 the term reply "ஒரு வருஷம்னு நினைக்கிறேன், சரியா தெரியலை." is now read as 12 months where the gold says unclear; the call's tier is unchanged (`refer`). This round's rules did not move it: the same model output through the committed normaliser gives the same reading, and the answer prompt is unchanged in this round. Which earlier change moved it was not established.
+
+Verifier's wording (from `verify-P3a-r3.md`; it wins over anything else in this report).
+
+May say:
+- "On 17 typed informed replies with emphasis, filler, an apology or a restatement to the kind, payment and required questions, 17 ended `clear`."
+- "On 19 typed corrections away from the record value, the taken-back value was never the stated belief."
+- "On 6 punctuated withdrawals, none ended `clear`."
+- "Across 21 cover read-back orders, asking a read-back never lowered the tier."
+- "11 of 11 targeted mutations were caught."
+
+May not say:
+- "A retraction never yields a stated value." It is not true of the code: one-clause replies are unprotected (and the carried premium was, until the fix after the verifier's run). It is not true of the model either: 4 of 10 unpunctuated withdrawals ended `clear`.
+- "An apology never makes an informed customer incomplete." It does in amount answers.
+- "A correction to the record figure passes" for amounts.
+- "Bounds ('up to', 'तक') and counts are refused."
+- Any claim about speech, real callers, or a pooled rate.
+
+Where the guarantee lives: in two model readings plus code grounding, for replies of two or more clauses, measured on one model and typed text. Code alone guarantees only that every quote is a whole clause of the reply and that the check can take an answer away but never supply one. For a reply of one clause there is no second reading.
+
+Open, in the verifier's order (none fixed in this round except the first):
+1. Fixed after the verifier's run: the carried premium now respects the recall reply's change check.
+2. A reply of one clause has no retraction protection. Speech-to-text output often has no punctuation; how often Prisma's lacks it was not measured.
+3. "सॉरी" and "sorry" count as doubt words across the whole reply, so an informed premium or cover answer with an apology about the line ends `incomplete`.
+4. "तक" and "up to" bounds, and a romanised count before an amount ("do baar"), read as the plain figure.
+5. Each guard is held by one test.
+
+Recheck of the carried-premium fix by the same verifier, on fresh inputs, on the restored prompt (the addendum in `verify-P3a-r3.md`). Verdict unchanged, sound with conditions; finding 1 is fixed on fresh inputs.
+- 13 of 13 recall replies that gave a premium and then took it back or replaced it (9 new, 4 seen by the builder) ended `incomplete`, with nothing carried.
+- 8 of 8 informed recall replies with emphasis, filler or an apology still carried the premium and ended `clear`.
+- The note line appeared exactly when there was a self-correction, with the tier unchanged (2 cases).
+- A reply that corrects only the product and keeps the amount ("बीमा लिया था, नहीं, एफ़डी, इकतालीस हज़ार तीन सौ की।") ends `refer` with the premium not carried: safe, and a little information is lost.
+- Two one-clause recall withdrawals ended `incomplete`, but through the amount parser's refusal, not the check: finding 2 stands.
+- Under the briefly reworded docstring, "बीमा लिया था, इकतालीस हज़ार तीन सौ, अरे नहीं, वो तो लोन की किस्त थी।" got the check answer `none` and ended `clear` with the withdrawn premium; on the restored prompt it gets `withdrawn` and ends `incomplete`. One wording change flipped 1 of the verifier's 24 cases to a false clear.
+
+The verifier adds to "May say": "On 13 typed recall replies that gave a premium and then took it back or replaced it, the premium was not carried and the case was not `clear` (13 of 13, gpt-6-luna, restored prompt)." and "On 8 typed informed recall replies with emphasis, filler or an apology, the premium was carried and the case ended `clear` (8 of 8)." It adds to "May not say": "the carried premium can never carry a withdrawn figure". Its new condition: the carried premium's protection rests on a single change-check reading, so any edit to the change-check prompt, the `ChangeReply` docstring included, must be followed by a rerun of the retraction probes (`references/reviews/iter2/probes/p3a_r3_llm*.py`, `p3a_r3_carry.py --llm`, `p3a_r3_carry2.py`).
+
+**Retractions (r2 fix 1).** The phrase list (`retraction()`, `_RETRACTION` and `kept()` in `samajh/rules/normalise.py`) is removed. The extractor now makes a third request, the change check (`ChangeReply`, `Change` = none / corrected / withdrawn in `samajh/extract/_wire.py`), on every reply of two or more clauses to a checked question, open recall included. It sees the question and the reply, not the answer call's reading, and returns clause numbers only. Code grounds them as whole clauses and decides (`_Assembly.check`; open recall in `_Assembly._recall_check`, which drops the items said in the clauses taken back and lists the reply as unscreened). The protection therefore rests on two model readings plus code grounding, not on code alone. A reply of one clause gets no check, and a `RawExtraction` built by anything other than the extractor gets no retraction protection in `samajh.rules`. Tests: `tests/extract/test_extract_change.py`.
+
+**Correction inside one reply (coordinator decision, option A).** The final answer stands when both model readings agree which clause holds it; the earlier words go into `Stated.also` and into the new additive field `ProductResult.self_corrections` (`samajh/types.py`, built by `samajh.rules.engine.self_corrections`), a note for the reviewer that is not part of the tier. No conflict flag is added. Disagreement on the clause, or a withdrawal with nothing in its place, makes the answer unusable (`incomplete`). Conflicts across two askings stay `refer`. On the scripted check outputs in the tests, 'बीमा... अरे नहीं, एफ़डी है' on an insurance record ends `refer` and 'डिपॉज़िट... अरे नहीं, बीमा है, बीमा' ends `clear`. The summary adds a note line per self-correction on every case, clear ones included; the line has tier `clear` and `note=True` and is never part of the case tier (`samajh/rules/summary.py`, `summarise`). Tests: `tests/extract/test_extract_change.py`, `tests/core/test_rules_summary.py`.
+
+**Cover read-back (r2 fix 2).** In `samajh/rules/checks.py` `cover` and `samajh/rules/normalise.py` `_confirm`: a plain differing cover whose read-back is rejected without a correction, or mismatched, is now `incomplete`, so asking a read-back does not lower the tier against not asking it. A confirmed read-back followed by the same figure restated stays `refer`; hedged or unknown stays `understanding_gap`. A figure given as a correction at the read-back has had no read-back of its own and is judged as if none was asked, because the bot read back the customer's earlier figure, not the record's (stated in the `cover` docstring). The premium now gives a `readback_rejected` or `readback_mismatch` gap for a rejected or mismatched read-back, whatever the figure. Tests: `tests/core/test_core_normalise.py` (for example `test_a_plain_wrong_cover_is_never_lowered_by_its_read_back`, `test_a_cover_corrected_at_the_read_back_is_judged_as_a_figure_never_read_back`) and `test_the_cover_read_back_table` in `tests/core/test_rules_triage.py`.
+
+**Denial order (r2 fix 3).** `recall` in `samajh/rules/checks.py`: a denial is retracted only by naming this product as the kind on record in a turn after the denial. A naming before it or in the same turn, a misdescription, an item with no kind, "don't know" or nothing asked leaves it standing (`refer`). The extractor keeps the last denial. A recall reply that names something and takes it back is handled by `_recall_check`. Tests: `test_a_denial_is_retracted_only_by_naming_the_kind_on_record_after_it` in `tests/core/test_rules_triage.py`; `tests/extract/test_extract_change.py` for the recall check.
+
+**Amounts.** `samajh/amounts/_parse.py` and `_lexicon.py` now refuse by structure, not by a verb list: a comparison or bound anywhere in the amount's clause ("कम से कम", "at least", "minimum"); a number beside the amount that no duration, percent, clock, filler or count-of-the-next-word reading accounts for, including one touching the amount across a clause break; a misheard unit word ("तीन लक") anywhere in the text; and a small number after a thousand-or-larger unit word unless a currency word, a postposition (numbers other than one) or the end of the clause follows. After a hundreds word the number stays part of the amount ("तीन सौ एक दिए" is 301). Tests: `tests/core/test_amounts_structure.py`. Known cost, from rerunning the old probe `references/reviews/iter2/probes/p3a_r2_amounts.py` today: "one" 43 of 45 as the old verifier's gold accepts (two now refused that the gold read as 50,000: 'पचास हज़ार एक पॉलिसी के', 'पचास हज़ार एक बार'), fractions 51 of 51, ranges 29 of 30 ('डेढ़ से दो लाख' refused), 0 confident wrong figures. The builder saw those inputs, so this is a regression check, not evidence. The held-out amounts result (`data/amounts_v2`) stays scored at commit 59c12d9 and was not rescored.
+
+**Why `parse_amount` rejected "Maine 50,000 rupees…" (addition B).** It was a regression, from commit ff960f7 (the structural fraction refusal), not from f79463e. Run against a copy of each commit: the sentence reads 50,000 at ff960f7~1 and is refused (`malformed`) at ff960f7 and at every commit after it. The cause: ff960f7 refuses a number when the word before it is within a small edit distance of a fraction word, and "maine" is that close to "paune" (पौने; the lexicon's own comment names this pair). The fix requires the two words to share their consonant frame as well (a misspelling changes vowels, not consonants), and adds a list of everyday words that are never refused. `test_an_ordinary_word_before_a_number_does_not_block_it` in `tests/core/test_amounts_structure.py` covers 42 such words before three amounts. A word that may be a fraction misspelt ("sare 3 lakh", "pone 2 lakh") stays refused. Separate and unchanged: an amount written in romanised Hindi number words ("maine pachaas hazaar diye") is refused, as it was before ff960f7; digits, Devanagari number words and English number words are read.
+
+**`widen()` and the other surviving mutations (r2 fix 4).** `widen()` is removed from `normalise.py` as redundant: the whole reply must read to the same amount as the span, and the whole reply already holds every word next to the span (comment in `_read_amount`). Of the other four mutations that survived in r2: "सॉरी" and "sorry" removed from the retraction list target code that is gone (there is no phrase list). "A denial is dropped when any recall item exists" is covered by `test_a_denial_is_retracted_only_by_naming_the_kind_on_record_after_it` (`tests/core/test_rules_triage.py`; cases with an item before the denial, a misdescribed item and an item with no kind expect `recall_denied`). "Approximate tolerance ignored in the conflict rule" is covered by `test_two_premium_answers_conflict_only_beyond_their_tolerance` (`tests/extract/test_extract_carry.py`). The r3 verifier ran 11 mutations of its own and all 11 were caught, among them the approximate tolerance, the denial order and the kind-on-record filter; each was caught by exactly one test. The sub-orchestrator also ran six in a scratch copy (the denial dropped when any recall item exists, the tolerance, the order test, the kind filter, "both readings agree" dropped, the cover correction branch): all six failed a test. That second run is not independent.
+
+**Carried premium (addition A).** `carried_premiums` in `normalise.py` and `_Assembly.carry` in the extractor (rule 3a of the `normalise` docstring): when the bot reads back a premium for a product it never asked the premium of, the open-recall reply whose whole text reads to the figure read back is accepted as the premium's quote, and nothing else is. With no such reply the premium is `Unclear(readback_mismatch)` with the read-back reply as evidence, not "not asked". The premium is carried only from a recall reply whose change check said `none`, or a one-clause reply, which gets no check; after a correction, a withdrawal, a failed check or a failed answer call on that reply nothing is carried and the premium is a gap. The independent verifier found this fault (4 of 4 real-model replies that gave the figure and then took it back ended `clear`); the fix (`_carries` in `_extract.py`) was then re-verified by the same verifier on fresh inputs: 13 of 13 such replies ended `incomplete` and 8 of 8 informed replies still carried (see "Recheck" above). The protection rests on one change-check reading. Tests: `tests/extract/test_extract_carry.py`.
+
+**Summary wording** (`samajh/rules/summary.py`; no tier change). Questions never put: "the call did not get to: …", rendered "The call did not get to: …". A flag line with no customer quote: "(from the lender's record; no customer statement)". New `call_ended_label` with its table `CALL_ENDED`, one label per dialogue outcome; a call with no outcome or `in_progress` gives "Stopped before the call finished: the recording ends there (a hang-up or a dropped line)". Tests: `tests/core/test_rules_summary.py`.
+
+**Old probes.** `references/reviews/iter2/probes/p3a_r2_chain.py`, `p3a_r2_llm.py` and `p3a_r2_mutate.py` no longer run as written: their scripted models do not answer the new `ChangeReply` request, and the mutation targets (the phrase list, `widen`) are gone. They were not edited.
+
+Not verified:
+- Anything on speech: every input, the verifier's included, is typed text. No real callers. Tamil and Kannada, and any model other than gpt-6-luna, were not checked.
+- How often Prisma output lacks punctuation, which decides how much of a real call has no change check.
+- Whether the P2 dialogue reads a premium back after a recall reply that withdrew it.
+- The `refer` tier for a required-for-loan correction when the provider-choice question is also asked (the verifier's harness did not ask it).
+- The self-correction note on clear cases and the restored `ChangeReply` docstring were changed after the verifier's main run; see the recheck above for what it covered.
+- How often the change check reads a real correction or withdrawal right beyond the verifier's counts: no rate exists, and its reading moved on 1 of 1,107 frozen replies when the schema description was reworded.
+- No native speaker judged the verifier's gold.
+- Whether the two model readings disagree often on typed or spoken replies, which would turn usable answers `incomplete`.
+- The amount refusals on speech-to-text output, and their cost on held-out text (the probe rerun above uses inputs the builder saw).
+- Any behaviour on speech or with real callers.
+
 ## 1. What changed in this pass
 
 | Path | Change |
@@ -58,7 +174,7 @@ Spend: OpenRouter 0.053 USD in this pass (ledger 0.5763 to 0.6297 USD, all chat 
 ## 4. Left open
 
 - Verifier findings 10 (three silent passes in the engine) and 8 (50,002, 1,00,020): not in this package.
-- `extractor_attacks.py` case 6 ("…, ऐसा तो नहीं था" negating in the next clause) still ends `clear` when the model says stated.
+- `extractor_attacks.py` case 6 ("…, ऐसा तो नहीं था" negating in the next clause) still ends `clear` when the model says stated. (Superseded by fix round 3: a reply of two or more clauses now gets the change check; not rerun.)
 - Finding 1 needs the dialogue to tag a bot turn `asks=payment_frequency`. The extraction field and the rule exist.
 - Trimming: an allow-list of harmless words to the right of a number ("तक", "का", "कटे") would recover U07-hi. Design it on the development set and measure it on a fresh set, not on this one.
 - Concurrent identical requests in one run can get two different live answers (U04-ta). The fix belongs in the LLM client (single-flight per cache key), which is outside these paths.
@@ -81,8 +197,8 @@ Spend: OpenRouter 0.053 USD in this pass (ledger 0.5763 to 0.6297 USD, all chat 
 |---|---|---|
 | 1 | A failed model call on any asking of a question makes its fields `Unclear(extraction_failed)` | `p3a_extractor.py` cases 2 and 3: were `clear`, now `incomplete` |
 | 2 | A conflict is two stated, incompatible answers. "I don't know" before or after an answer, a restatement, an approximate figure and an exact one inside it, and amounts within tolerance (1%, or 10% when either is hedged or a range) are not. The other replies are kept in the new `Stated.also` | tests in `tests/extract/test_extract_answers.py` |
-| 3 | Every open-recall reply counts and a denial in any of them stays; `recall_denied` is refer whatever follows | cases 11 and 12: were `understanding_gap`, now `refer` |
-| 4 | Fraction and multiplier words: an edit distance on a reduced form of the word (`samajh/amounts/_lexicon.py`), not a list of spellings, with a short list of everyday words (`ORDINARY`). Normalisation reads the span with one more word on each side within its clause (`samajh.rules.normalise.widen`). Span, widened span and whole reply must all read the same | sweep `p3a_fraction_sweep.py`: Devanagari 54 wrong, 24 refused, 30 right → 0 wrong, 78 refused, 30 right; Latin 1,095 wrong, 327 refused → 0 wrong, 1,422 refused. Distinct spellings dropped: Devanagari 0 of 36, Latin 0 of 474 |
+| 3 | Every open-recall reply counts and a denial in any of them stays; `recall_denied` is refer whatever follows (superseded by the third pass and fix round 3: retracted by a later naming as the kind on record) | cases 11 and 12: were `understanding_gap`, now `refer` |
+| 4 | Fraction and multiplier words: an edit distance on a reduced form of the word (`samajh/amounts/_lexicon.py`), not a list of spellings, with a short list of everyday words (`ORDINARY`). Normalisation reads the span with one more word on each side within its clause (`samajh.rules.normalise.widen`). Span, widened span and whole reply must all read the same. (Superseded by fix round 3: `widen` is removed; span and whole reply must read the same) | sweep `p3a_fraction_sweep.py`: Devanagari 54 wrong, 24 refused, 30 right → 0 wrong, 78 refused, 30 right; Latin 1,095 wrong, 327 refused → 0 wrong, 1,422 refused. Distinct spellings dropped: Devanagari 0 of 36, Latin 0 of 474 |
 | 5 | "तीन लाख तक", "चौबीस हज़ार रुपये लगे" read again | B02-hi, R01-hi, U07-hi: no gap |
 | 6 | One bound on range width (`samajh.amounts.MAX_RANGE_RATIO = 2`): the parser refuses wider ranges and the rules never pass one (`not_comparable` gap) | tests in `tests/core/test_rules_triage.py` |
 | 7 | Summary: one line per rule for incomplete and understanding-gap lines; "did not know", "gave a different figure" and "left undecided" are separate titles | judge's misled call: 2 refer lines, 4 incomplete, 3 understanding |
@@ -97,8 +213,8 @@ Frozen set, Hindi + Hinglish, from the cache (0 USD, 3,391 requests, all cache h
 
 ## 7. Third pass (2026-11-10)
 
-- **Retraction in a later clause** (`samajh.rules.normalise.retraction`, Hindi, Hinglish, English): the stated value from the earlier clause is dropped (`no_usable_answer` gap); a different answer after the retraction adds an `answers_conflict`. Probe cases 9 and 10 were `clear`, now `incomplete`. A "नहीं" that opens the reply, or that is part of the answer, is not a retraction.
-- **Denial retracted by naming**: `recall_denied` (refer) only while the denial stands; naming the product as the kind on record later makes it `recall_not_named` with both quotes. Probe cases 11 and 12 now end `understanding_gap`: in both the customer names insurance at the kind question, which is the record's kind. A later FD, "don't know" or no question keeps it `refer` (tests in `tests/core/test_rules_triage.py`).
+- **Retraction in a later clause** (superseded by fix round 3: the phrase list and `retraction` are removed; the extractor's change check decides, see above) (`samajh.rules.normalise.retraction`, Hindi, Hinglish, English): the stated value from the earlier clause is dropped (`no_usable_answer` gap); a different answer after the retraction adds an `answers_conflict`. Probe cases 9 and 10 were `clear`, now `incomplete`. A "नहीं" that opens the reply, or that is part of the answer, is not a retraction.
+- **Denial retracted by naming** (fix round 3 adds order: only a naming in a turn after the denial counts, and a misdescribed item no longer does): `recall_denied` (refer) only while the denial stands; naming the product as the kind on record later makes it `recall_not_named` with both quotes. Probe cases 11 and 12 now end `understanding_gap`: in both the customer names insurance at the kind question, which is the record's kind. A later FD, "don't know" or no question keeps it `refer` (tests in `tests/core/test_rules_triage.py`).
 - Frozen set, Hindi + Hinglish, from the cache: problem misses 2 of 38 calls (1 of 19 base cases); informed on a compliant record 0 of 18 referred; informed with a record fault 8 of 16 referred (R01 is back to `understanding_gap`). Verdicts 143 of 144, fields 2,166 of 2,180: the retraction rule changed no frozen call.
 
-- **"तीन सौ एक दिए"** (dialogue verifier): a "one" after a hundreds word is part of the number (301); after a thousand-or-larger unit and before a verb ("पचास हज़ार एक दिए", "50 thousand one paid") the parse is ambiguous, never the smaller figure; before a noun it is still a determiner ("पचास हज़ार एक FD" = 50,000). The frozen numbers do not change.
+- **"तीन सौ एक दिए"** (dialogue verifier): a "one" after a hundreds word is part of the number (301); after a thousand-or-larger unit and before a verb ("पचास हज़ार एक दिए", "50 thousand one paid") the parse is ambiguous, never the smaller figure; before a noun it is still a determiner ("पचास हज़ार एक FD" = 50,000). The frozen numbers do not change. (Partly superseded by fix round 3: after a thousand-or-larger unit, "one" before a noun is now refused too; `parse_amount("पचास हज़ार एक FD")` gives `Ambiguous(malformed)`.)

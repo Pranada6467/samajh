@@ -27,6 +27,7 @@ from samajh.dialogue.machine import (
     Unresolved,
     call_seconds,
     expecting,
+    prefetch,
     start,
     step,
 )
@@ -55,6 +56,7 @@ __all__ = [
     "call_seconds",
     "expecting",
     "load_prompts",
+    "prefetch",
     "start",
     "step",
 ]

@@ -1,0 +1,59 @@
+{
+ "M0_control_unmutated": {
+  "killed": false,
+  "summary": "1782 passed, 1 deselected in 115.86s (0:01:55)",
+  "first_failure": []
+ },
+ "M1_year_off_by_one": {
+  "killed": true,
+  "summary": "1 failed, 1043 passed, 1 deselected in 112.74s (0:01:52)",
+  "first_failure": [
+   "FAILED tests/dialogue/test_p2_round3_wave2.py::test_a_wrong_year_or_two_years_fail_at_once[replies0]"
+  ]
+ },
+ "M2_two_years_accepted": {
+  "killed": false,
+  "summary": "1782 passed, 1 deselected in 117.21s (0:01:57)",
+  "first_failure": []
+ },
+ "M3_takeover_check_off": {
+  "killed": true,
+  "summary": "1 failed, 1068 passed, 1 deselected in 113.17s (0:01:53)",
+  "first_failure": [
+   "FAILED tests/dialogue/test_p2_round3_wave2.py::test_a_possible_takeover_asks_who_is_speaking[\\u092e\\u0948\\u0902 \\u0930\\u092e\\u0947\\u0936 \\u0928\\u0939\\u0940\\u0902 \\u0939\\u0942\\u0901-rules]"
+  ]
+ },
+ "M4_who_check_resumes_on_takeover": {
+  "killed": false,
+  "summary": "1782 passed, 1 deselected in 116.87s (0:01:56)",
+  "first_failure": []
+ },
+ "M5_two_reading_stop_ignored": {
+  "killed": true,
+  "summary": "1 failed, 973 passed, 1 deselected in 112.00s (0:01:51)",
+  "first_failure": [
+   "FAILED tests/dialogue/test_p2_round3.py::test_a_stop_signal_in_either_reading_wins_over_a_figure[figure_first-\\u092e\\u0941\\u091d\\u0947 \\u092c\\u093e\\u0924 \\u0928\\u0939\\u0940\\u0902 \\u0915\\u0930\\u0928\\u0940, \\u0915\\u0949\\u0932 \\u092c\\u0902\\u0926 \\u0915\\u0930\\u094b-premium]"
+  ]
+ },
+ "M6_readback_repeat_not_confirm": {
+  "killed": true,
+  "summary": "1 failed, 952 passed, 1 deselected in 110.77s (0:01:50)",
+  "first_failure": [
+   "FAILED tests/dialogue/test_p2_round3.py::test_repeating_the_figure_confirms_it[52,000 \\u0926\\u093f\\u090f \\u0925\\u0947-hi]"
+  ]
+ },
+ "M7_recall_dontknow_to_nothing": {
+  "killed": true,
+  "summary": "1 failed, 920 passed, 1 deselected in 109.78s (0:01:49)",
+  "first_failure": [
+   "FAILED tests/dialogue/test_p2_round3.py::test_a_reply_that_names_something_starts_the_product_questions[\\u092a\\u0924\\u093e \\u0928\\u0939\\u0940\\u0902 \\u0915\\u094d\\u092f\\u093e \\u0925\\u093e, \\u0915\\u0941\\u091b \\u092c\\u093e\\u0935\\u0928 \\u0939\\u091c\\u093c\\u093e\\u0930 \\u0915\\u091f\\u0947 \\u0925\\u0947-rules]"
+  ]
+ },
+ "M8_now_at_callback_ignored": {
+  "killed": true,
+  "summary": "1 failed, 1037 passed, 1 deselected in 111.23s (0:01:51)",
+  "first_failure": [
+   "FAILED tests/dialogue/test_p2_round3_wave2.py::test_now_at_the_call_back_question_resumes_the_question[\\u0905\\u092d\\u0940 \\u092c\\u094b\\u0932\\u093f\\u090f, \\u0905\\u092d\\u0940 \\u092b\\u093c\\u094d\\u0930\\u0940 \\u0939\\u0942\\u0901]"
+  ]
+ }
+}

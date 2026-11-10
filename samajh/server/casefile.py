@@ -26,16 +26,25 @@ from typing import Any, Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from samajh.amounts import Parsed, parse_amount
 from samajh.clients.gnani import BatchOptions, BatchTranscript
 from samajh.extract import Llm
 from samajh.pipeline import run_text
 from samajh.rules import summarise
+from samajh.server.loanbook import BookLink
 from samajh.server.records import CallRecord
-from samajh.server.samajh_dialogue import call_outcome, call_state, call_transcript
+from samajh.server.samajh_dialogue import (
+    call_outcome,
+    call_speaker_confirmed,
+    call_state,
+    call_transcript,
+    degraded_turns,
+    followed_by,
+    readings_agreed,
+)
 from samajh.server.sessionlog import (
     BotEvent,
     CustomerEvent,
+    FollowedBy,
     PauseStats,
     Recording,
     SessionLog,
@@ -80,12 +89,18 @@ class TurnEvidence(_Model):
     seq: int  # the session log event
     start_s: float | None  # position in call.wav
     end_s: float | None
-    text: str  # the reading the call acted on
-    readings: list[SttReading]
+    source: Literal["mic", "file", "none"]  # where the customer audio came from (the session log's)
+    text: str  # what the call acted on: the turn as the dialogue recorded it
+    acted_on: str | None = None  # the model of the reading `text` is; None when nothing was read
+    readings: list[SttReading]  # each labelled with its role and model
     # A turn read twice in which either reading holds a rupee figure: whether both readings gave
     # the same single amount (`samajh.amounts.cross_check`, as the dialogue recorded it). None:
     # read once, or neither reading holds a figure (a plain yes at a read-back).
     readings_agreed: bool | None = None
+    # What the bot did next, from its reply's last line (`samajh_dialogue.followed_by`):
+    # "read_back", "asked_again" or "other". None only in case files written before this field.
+    followed_by: FollowedBy | None = None
+    degraded: bool = False  # read without the dialogue's classifier (see CaseFile.degraded_turns)
     segments: list[AlignedSegment] = Field(default_factory=list)
     speaker: int | None = None  # the Batch speaker with the most overlap
     latency: TurnLatency | None = None
@@ -126,16 +141,31 @@ class CaseFile(_Model):
     record_id: str
     loan_id: str
     language: str
+    # A loan-book call (samajh.server.loanbook): {batch_id, draw_id, sold_on, call_date,
+    # day_since_sale}, fixed when the session was created; dates in the book's calendar. None for
+    # a packaged record. `loan_id` and `record_id` are then both the book's loan id.
+    book: dict[str, Any] | None = None
     status: Literal["running", "ready", "failed"]
     failed: list[StepName] = Field(default_factory=list)
     steps: list[StepResult] = Field(default_factory=list)
+    # When the call began: the session's creation time, UTC wall clock, for every case file. It
+    # does not change when the case is rebuilt.
     started_at: str
     finished_at: str | None = None
     call_outcome: str  # the dialogue's Outcome, or "in_progress" for a call hung up early
+    # True once the year-of-birth check passed, False on any earlier end; None when the dialogue
+    # does not say (`samajh_dialogue.speaker_confirmed`). A request to stop or call back from an
+    # unconfirmed speaker is not the borrower's own.
+    speaker_confirmed: bool | None = None
     ended_reason: str | None
     recording: Recording | None = None
     models: dict[str, Any] = Field(default_factory=dict)  # every model and parameter used
+    # Transcript turn ids of the customer turns the dialogue read without its LLM classifier (it
+    # failed or ran out of time): [] when none. A call with any may be voided.
+    degraded_turns: list[int] = Field(default_factory=list)
     turns: list[TurnEvidence] = Field(default_factory=list)
+    # The customer turns that count (not superseded), by where their audio came from.
+    customer_audio: dict[str, int] = Field(default_factory=lambda: {"mic": 0, "file": 0, "none": 0})
     # samajh.types.Transcript of the whole call, bot turns included, each turn placed in call.wav.
     # None in case files written before this field (samajh.ops then rebuilds customer turns only).
     transcript: dict[str, Any] | None = None
@@ -218,15 +248,21 @@ def _now() -> str:
 
 
 def new_case(log: SessionLog, record: CallRecord) -> CaseFile:
+    """The case's head, from the session alone: the same on every build of the same call."""
+    customers = [e for e in log.events if isinstance(e, CustomerEvent) and not e.superseded]
+    book = BookLink.from_params(log.params).evidence() if "loan" in log.params else None
     return CaseFile(
         session_id=log.session_id,
         record_id=record.id,
         loan_id=record.record.loan_id,
         language=log.params.get("language", ""),
+        book=book,
         status="running",
-        started_at=_now(),
+        started_at=log.created_at,
         call_outcome=call_outcome(log),
+        speaker_confirmed=call_speaker_confirmed(log),
         ended_reason=log.ended_reason,
+        customer_audio={kind: sum(e.source == kind for e in customers) for kind in ("mic", "file", "none")},
     )
 
 
@@ -255,6 +291,8 @@ def build_case(
             "format": log.stt.second_format,
             "timeout_s": log.stt.second_timeout_s,
         },
+        # samajh.server.samajh_dialogue.readings: on a turn read twice the dialogue gets this first.
+        "dialogue_reads_first": f"{log.stt.second_model} when it has text, else {log.stt.model}",
         "tts": log.tts.model_dump(),
         "line_rate": log.line_rate,
     }
@@ -275,6 +313,7 @@ def build_case(
     def do_transcript() -> None:
         state = call_state(log)
         agreed = {r.turn_id: r.agreed for r in state.second_readings}
+        case.degraded_turns = list(degraded_turns(state))
         customers = [e for e in log.events if isinstance(e, CustomerEvent) and not e.superseded]
         # Customer turns of the transcript in order; `call_transcript` checks they match the events.
         found["transcript"] = transcript = call_transcript(log)
@@ -286,9 +325,13 @@ def build_case(
                 seq=event.seq,
                 start_s=turn.start_s,
                 end_s=turn.end_s,
+                source=event.source,
                 text=event.transcript,
+                acted_on=_acted_model(event),
                 readings=event.readings,
-                readings_agreed=agreed.get(turn.id) if _holds_figure(event.readings) else None,
+                readings_agreed=readings_agreed(event.readings, agreed.get(turn.id)),
+                followed_by=_followed_by(log, event),
+                degraded=turn.id in case.degraded_turns,
                 latency=event.latency,
                 pauses=event.pauses,
             )
@@ -354,8 +397,14 @@ def build_case(
     return case
 
 
-def _holds_figure(readings: list[SttReading]) -> bool:
-    return any(isinstance(parse_amount(r.text), Parsed) for r in readings if r.ok)
+def _acted_model(event: CustomerEvent) -> str | None:
+    by_role = {r.role: r.model for r in event.readings}
+    return by_role.get(event.acted_on) if event.acted_on else None
+
+
+def _followed_by(log: SessionLog, event: CustomerEvent) -> FollowedBy:
+    reply = log.events[event.seq + 1] if event.seq + 1 < len(log.events) else None
+    return followed_by(reply.lines) if isinstance(reply, BotEvent) else "other"
 
 
 def _since(clock: float) -> float:

@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Kavita, born 1988, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c002",
+  "label": "Synthetic P5 record. Kavita: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1988-09-02",
+      "language": "hi-en",
+      "name": "Kavita Udaharan"
+    },
+    "disbursed_inr": 231500,
+    "disbursed_on": "2026-10-21",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-002",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-21",
+          "method": "otp"
+        },
+        "cover_inr": 250000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 18500,
+        "provider": "Udaharan Suraksha (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 250000,
+    "tenure_months": 12
+  }
+}

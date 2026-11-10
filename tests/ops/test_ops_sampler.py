@@ -88,3 +88,29 @@ def test_verify_recomputes_the_draw_and_its_chain(book) -> None:
     )
     forged = first.model_copy(update={"drawn": (swapped, *first.drawn[1:])})
     assert not verify_draw(forged, loans, None)
+
+
+def test_the_store_refuses_a_draw_that_does_not_start_where_the_last_one_ended(book, tmp_path) -> None:
+    """The store's own check, apart from `verify_draw`: a draw is written only when its `after` is
+    the previous draw's day (None for the first), so no window overlaps or skips the one before."""
+    from datetime import UTC, datetime
+
+    from samajh.ops.store import OpsStore
+
+    meta, loans = book
+    store = OpsStore(tmp_path / "ops")
+    store.init(meta, loans, date(2027, 1, 1), date(2027, 6, 30), datetime(2027, 1, 1, tzinfo=UTC))
+    later = AS_OF + timedelta(weeks=1)
+    with pytest.raises(ValueError, match="does not start where the previous draw ended"):
+        store.add_draw(draw(loans, meta, AS_OF, 0.4, 85, after=AS_OF - timedelta(days=3)))  # first: no after
+    assert store.draws() == ()
+    first = draw(loans, meta, AS_OF, 0.4, 85, after=None)
+    store.add_draw(first)
+    for after in (None, AS_OF - timedelta(days=1), AS_OF + timedelta(days=1)):  # overlaps, overlaps, skips
+        with pytest.raises(ValueError, match="does not start where the previous draw ended"):
+            store.add_draw(draw(loans, meta, later, 0.4, 85, after=after))
+    assert store.draws() == (first,)
+    store.add_draw(first)  # the same draw again: no change
+    second = draw(loans, meta, later, 0.4, 85, after=AS_OF)
+    store.add_draw(second)
+    assert store.draws() == (first, second)

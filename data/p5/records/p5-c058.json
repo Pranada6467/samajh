@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Yash, born 1995, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c058",
+  "label": "Synthetic P5 record. Yash: a gold loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1995-09-19",
+      "language": "hi-en",
+      "name": "Yash Banawati"
+    },
+    "disbursed_inr": 363100,
+    "disbursed_on": "2026-10-26",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5-LN-058",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-26",
+          "method": "otp"
+        },
+        "cover_inr": 380000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 16900,
+        "provider": "Banawati Life Cover (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": true,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 380000,
+    "tenure_months": 6
+  }
+}

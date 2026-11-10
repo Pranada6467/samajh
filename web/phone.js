@@ -72,6 +72,8 @@ function newCall() {
     endError: null,
     caseFile: null, // the after-call case file, as the server last reported it
     caseError: null,
+    outcome: null, // the dialogue's outcome, from the turn response that ended the call
+    speakerConfirmed: null, // true, false, or null when the dialogue does not say
     mic: { status: "off", reason: "" }, // off | asking | on | unavailable
   };
 }
@@ -130,7 +132,7 @@ const ENTER = {
         if (!live()) return void (call === mine && closeMic());
         render();
       }
-      const params = call.settings.record ? { record: call.settings.record, language: call.settings.language } : {};
+      const params = sessionParams(call.settings);
       const s = await api.createSession({ line_rate: call.settings.lineRate, params });
       if (!live()) return void api.endSession(s.session_id).catch(() => {});
       call.sessionId = s.session_id;
@@ -219,6 +221,10 @@ const ENTER = {
         audio_url: c.audio_url,
         audio_seconds: c.audio_seconds,
         readings: c.readings,
+        acted_on: c.acted_on,
+        readings_agreed: c.readings_agreed,
+        followed_by: c.followed_by,
+        degraded: c.degraded,
         part: c.part,
         sends: turn.tries,
         botSeq: reply.bot.seq,
@@ -233,6 +239,8 @@ const ENTER = {
         pauses: c.pauses,
       };
       call.turns.push(record);
+      call.outcome = reply.outcome;
+      call.speakerConfirmed = reply.speaker_confirmed;
       addCustomerBubble(record, call.bot.language);
       call.bot = reply.bot;
       call.pending = null;
@@ -582,6 +590,37 @@ function addBotBubble(bot) {
   );
 }
 
+// "prisma-v3.0" -> "Prisma v3.0": the name is the reading's own `model` field, only re-cased.
+function modelName(model) {
+  const [family, ...rest] = String(model).split("-");
+  return [family.charAt(0).toUpperCase() + family.slice(1), ...rest].join(" ");
+}
+
+// Requests that must not read as the borrower's own when the speaker was never confirmed.
+const NEEDS_CONFIRMED_SPEAKER = new Set(["do_not_call", "human_requested", "call_back_later"]);
+
+function outcomeText(outcome, speakerConfirmed) {
+  const unconfirmed = speakerConfirmed === false && NEEDS_CONFIRMED_SPEAKER.has(outcome);
+  return `${outcome.replaceAll("_", " ")}${unconfirmed ? " (from an unconfirmed speaker)" : ""}`;
+}
+
+// The two readings of a figure turn in one line, from the server's fields alone: the readings
+// (each with its model and text), `readings_agreed` as the dialogue recorded it, `followed_by`
+// as the server derived it from the bot's next line, and the model of the reading acted on.
+// Null when the turn was read once or neither reading holds a figure (readings_agreed is null).
+function readingsLine(readings, agreed, followedBy, actedModel) {
+  if (readings.length < 2 || agreed == null) return null;
+  const said = readings.map((r) => `${modelName(r.model)}: ${r.ok ? r.text || "(no text)" : `no reading (${r.error})`}`);
+  const missing = readings.find((r) => !r.ok);
+  let verdict = agreed ? "same amount" : missing ? `${modelName(missing.model)} missing` : "differ";
+  if (followedBy === "asked_again") verdict += ", asked again";
+  else if (followedBy === "read_back") verdict += agreed ? ", read back" : `, ${modelName(actedModel)}'s figure read back`;
+  return [...said, verdict].join(" · ");
+}
+
+const DEGRADED_TEXT = "The classifier did not answer in time; this turn was read by the word lists.";
+const readingsNotes = new Map(); // record id -> the record's `readings_note`, from /api/records
+
 function addCustomerBubble(turn, botLanguage) {
   const li = el("li", { className: "bubble customer" }, el("span", { className: "who", textContent: "Customer" }));
   if (turn.transcript) {
@@ -593,6 +632,15 @@ function addCustomerBubble(turn, botLanguage) {
   if (turn.literal && turn.literal !== turn.transcript) {
     li.append(setLang(el("p", { className: "literal", textContent: `Before number formatting: ${turn.literal}` }), botLanguage));
   }
+  const acted = turn.readings.find((r) => r.role === turn.acted_on);
+  const both = readingsLine(turn.readings, turn.readings_agreed, turn.followed_by, acted?.model);
+  if (both) {
+    li.append(setLang(el("p", { className: "readings", textContent: both }), botLanguage));
+    // A demo record whose clip was chosen for this: said where the readings differ, not as a rate.
+    const chosen = turn.readings_agreed === false ? readingsNotes.get(call.settings.record) : null;
+    if (chosen) li.append(el("p", { className: "readings-note", textContent: chosen }));
+  }
+  if (turn.degraded) li.append(el("p", { className: "degraded", textContent: DEGRADED_TEXT }));
 
   const t = turn.latency;
   const rows = [
@@ -600,11 +648,11 @@ function addCustomerBubble(turn, botLanguage) {
     ["Request (upload, server, reply)", fmtMs(t.post_ms)],
     ["Server total", fmtMs(t.server_ms)],
     turn.audio_url && ["Server: resample to line rate", fmtMs(t.normalise_ms)],
-    turn.readings.length > 0 && ["Server: Prisma, first reading", fmtMs(t.stt_ms)],
-    turn.readings.length > 1 && ["Server: Prisma, second reading", fmtMs(t.second_stt_ms)],
+    turn.readings.length > 0 && [`Server: ${turn.readings[0].model}, first call`, fmtMs(t.stt_ms)],
+    turn.readings.length > 1 && [`Server: ${turn.readings[1].model}, second call`, fmtMs(t.second_stt_ms)],
     ["Server: dialogue", fmtMs(t.dialogue_ms)],
     ...turn.readings.map((r) => [
-      `Reading by ${r.model}`,
+      `Reading by ${r.model}${r.role === turn.acted_on ? " (the call acted on this one)" : ""}`,
       r.ok ? `${r.text || "(no text)"}${r.cache_hit ? " · cached" : ""}` : `missing (${r.error})`,
     ]),
     turn.part > 1 && ["Takes of this answer", `${turn.part} (resumed after a pause)`],
@@ -691,7 +739,8 @@ function summaryText() {
   const s = call.summary;
   if (!s) return "Closing the session on the server.";
   const recording = s.recording_seconds == null ? "no recording yet" : `recording ${s.recording_seconds.toFixed(1)} s`;
-  return `${s.turns} customer turns, ${s.events} events, ${recording}. Ended by: ${s.ended_reason ?? "unknown"}.`;
+  const outcome = call.outcome ? ` Outcome: ${outcomeText(call.outcome, call.speakerConfirmed)}.` : "";
+  return `${s.turns} customer turns, ${s.events} events, ${recording}. Ended by: ${s.ended_reason ?? "unknown"}.${outcome}`;
 }
 
 function render() {
@@ -738,7 +787,7 @@ function render() {
 
   $("mon-session").textContent = call.sessionId ?? "none";
   $("mon-line").textContent = `${call.settings.lineRate / 1000} kHz`;
-  $("mon-record").textContent = call.settings.record ? `${call.settings.record} · ${call.settings.language}` : "none (stub dialogue)";
+  $("mon-record").textContent = call.settings.record ? `${call.settings.record} · ${call.settings.language}` : "none";
   $("mon-listen").textContent = state === "listening" && listen ? `${listen.patience.kind}: cut ${listen.patience.cut_ms} ms, grace ${listen.patience.grace_ms} ms` : "n/a";
   $("mon-mode").textContent = call.settings.mode === "ptt" ? "push to talk" : "hands-free";
   $("mon-mic").textContent = { off: "not requested", asking: "asking", on: "on", unavailable: `file mode (${call.mic.reason})` }[call.mic.status];
@@ -839,16 +888,46 @@ window.samajhPhone = {
   caseFile: () => structuredClone({ file: call.caseFile, error: call.caseError ? { code: call.caseError.code, message: call.caseError.message } : null }),
 };
 
+// A picker value is a packaged record id, or "loan:<loan id>" for a loan drawn from the synthetic loan book.
+const LOAN = "loan:";
+
+function sessionParams(settings) {
+  if (!settings.record) return {};
+  if (settings.record.startsWith(LOAN)) return { loan: settings.record.slice(LOAN.length), language: settings.language };
+  return { record: settings.record, language: settings.language };
+}
+
+function loanNote(l) {
+  return (
+    `From the synthetic loan book of ${l.lender_name}: drawn in ${l.draw_id}, sold on ${l.sold_on}, ` +
+    `call date ${l.call_date} (day ${l.day_since_sale} after the sale, in the book's calendar). ` +
+    `The customer is ${l.first_name}, born in ${l.birth_year}. Synthetic record.`
+  );
+}
+
 async function loadRecords() {
   const select = $("record");
   try {
     const { records } = await api.records();
-    select.replaceChildren(...records.map((r) => new Option(`${r.label} · ${r.first_name}`, r.id)));
-    if (!records.length) select.add(new Option("No records: the stub dialogue runs", ""));
+    readingsNotes.clear();
+    for (const r of records) if (r.readings_note) readingsNotes.set(r.id, r.readings_note);
+    let loans = [];
+    try {
+      loans = (await api.loans()).loans;
+    } catch {
+      // no loan book on this server: the demo records alone
+    }
+    const demo = el("optgroup", { label: "Demo records" }, ...records.map((r) => new Option(`${r.label} · ${r.first_name}`, r.id)));
+    const book = el("optgroup", { label: "Synthetic loan book (drawn loans)" }, ...loans.map((l) => new Option(`${l.loan_id} · ${l.first_name} · ${l.draw_id}`, LOAN + l.loan_id)));
+    select.replaceChildren(demo, ...(loans.length ? [book] : []));
+    if (!records.length && !loans.length) select.replaceChildren(new Option("No records on this server", ""));
     preset(select, params.get("record"));
+    if (params.get("loan")) preset(select, LOAN + params.get("loan"));
     const describe = () => {
       const r = records.find((x) => x.id === select.value);
-      $("record-note").textContent = r ? `${r.description} Synthetic record.` : "";
+      const l = loans.find((x) => LOAN + x.loan_id === select.value);
+      if (l && state === "idle") preset($("language"), l.language);
+      $("record-note").textContent = l ? loanNote(l) : r ? `${r.description} Synthetic record.` : "";
     };
     select.addEventListener("change", describe);
     describe();
@@ -877,6 +956,7 @@ function renderCase() {
   if (call.sessionId) $("case-link").href = api.caseUrl(call.sessionId);
   let status;
   let lines = [];
+  let figures = [];
   if (err && err.code === "no_case_file") status = "This call's dialogue makes no case file.";
   else if (err) status = `The case file could not be made. ${err.code}: ${err.message}`;
   else if (!c) status = "Starting the case file.";
@@ -886,8 +966,12 @@ function renderCase() {
     const failed = c.steps.filter((x) => !x.ok).map((x) => `${x.name} (${x.error})`);
     status = `The case file is not complete. Failed: ${failed.join("; ")}.`;
   } else {
-    status = `${TIER_TEXT[c.tier] ?? c.tier}. Call outcome: ${c.call_outcome.replaceAll("_", " ")}.`;
+    status = `${TIER_TEXT[c.tier] ?? c.tier}. Call outcome: ${outcomeText(c.call_outcome, c.speaker_confirmed)}.`;
+    const degraded = c.degraded_turns?.length ?? 0;
+    if (degraded) status += ` ${degraded} turn${degraded === 1 ? " was" : "s were"} read by the word lists because the classifier did not answer in time.`;
     lines = c.summary?.lines ?? [];
+    // Both readings of every figure turn, from the case file (its `acted_on` is the model's name).
+    figures = (c.turns ?? []).map((t) => readingsLine(t.readings, t.readings_agreed, t.followed_by, t.acted_on)).filter(Boolean);
   }
   box.dataset.status = err ? "failed" : (c?.status ?? "running");
   $("case-status").textContent = status;
@@ -902,6 +986,11 @@ function renderCase() {
       ),
     ),
   );
+  const chosen = figures.length ? readingsNotes.get(call.settings.record) : null;
+  $("case-readings").replaceChildren(
+    ...figures.map((line) => setLang(el("li", { textContent: line }), call.bot?.language)),
+    ...(chosen ? [el("li", { className: "readings-note", textContent: chosen })] : []),
+  );
 }
 
 render();
@@ -910,6 +999,12 @@ loadRecords();
 api.health().then(
   (h) => {
     $("mon-server").textContent = h.gnani_key_configured ? "ok, Gnani key configured" : "ok, no Gnani key configured";
+    const m = h.models;
+    if (m) {
+      $("mon-models").textContent =
+        `${modelName(m.stt_primary.model)} ${m.stt_primary.format} and ${modelName(m.stt_second.model)} ${m.stt_second.format} (figures) · ` +
+        `${modelName(m.tts.model)} voice · ${modelName(m.batch.model)} Batch after the call`;
+    }
     if (!h.gnani_key_configured) {
       $("server-note").textContent = "This server has no Gnani key. Speech steps will fail and show the server's error.";
     }

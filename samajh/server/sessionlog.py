@@ -145,15 +145,33 @@ class BotEvent(_Event):
     synth_ms: float | None = None
 
 
+# What the bot did right after a customer turn, from its next line (`samajh_dialogue.followed_by`):
+# read a figure back, asked for the figure again, or anything else.
+FollowedBy = Literal["read_back", "asked_again", "other"]
+
+
 class CustomerEvent(_Event):
     type: Literal["customer"] = "customer"
     source: Literal["mic", "file", "none"]  # "none": the customer said nothing; no audio, no STT
     reply_to: int | None = None  # seq of the bot event this answers
     part: int = 1  # 1 for the first take of the turn; a later, longer take has a higher number
-    transcript: str  # what the dialogue acted on: the primary reading
-    literal: str | None = None
-    detected_language: str | None = None
-    readings: list[SttReading] = Field(default_factory=list)  # primary first; [] when nothing was said
+    # What the dialogue acted on: the customer turn as it recorded it. On a turn read twice that
+    # is the second reading (v2.5) when it has text, else the primary (samajh_dialogue.readings),
+    # unless only the other reading held a figure. `acted_on` names the reading.
+    transcript: str
+    acted_on: Literal["primary", "second"] | None = None  # None: nothing was read
+    literal: str | None = None  # of the reading acted on (v2.5 only has one)
+    detected_language: str | None = None  # of the primary reading (v3.0 only has one)
+    # In the order they were made: primary, then second. [] when nothing was said.
+    readings: list[SttReading] = Field(default_factory=list)
+    # A turn read twice in which either reading holds a rupee figure: whether the dialogue recorded
+    # the two readings as the same amount (`SecondReading.agreed`). None: read once, no figure in
+    # either reading, a dialogue that does not say, or a log written before this field.
+    readings_agreed: bool | None = None
+    followed_by: FollowedBy | None = None  # None only in logs written before this field
+    # The dialogue's LLM turn classifier failed or ran out of time on this turn, so the word lists
+    # read it (`samajh_dialogue.degraded_turns`). A session with such a turn can be voided.
+    degraded: bool = False
     latency: TurnLatency | None = None
     pauses: PauseStats | None = None
     phone: PhoneTurn | None = None
@@ -215,6 +233,9 @@ class SessionLog(_Model):
     dialogue_undo: str | None = None
     # Set when the after-call job first starts. From then on no take may replace another.
     closed: bool = False
+    # As the dialogue's state says after the last event (`samajh_dialogue.speaker_confirmed`):
+    # True once the year-of-birth check has passed, False before. None: the dialogue does not say.
+    speaker_confirmed: bool | None = None
 
 
 def new_session_id() -> str:

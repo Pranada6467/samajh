@@ -5,7 +5,7 @@
 // For each page (queue, one case, attempt log, report), at phone (390 px) and laptop (1280 px)
 // width, in light and dark: a full-page PNG. Once per page: the rendered HTML. The report is also
 // printed to PDF, and shown as a PNG at A4 width with print styles (report-print.png). Prints one JSON line per render with any horizontal overflow, console errors and
-// banned words found in the page text, and exits 1 if any render has one. Needs Node 22+ and Chrome.
+// banned words or a written-out undefined, NaN or null found in the page text, and exits 1 if any render has one. Needs Node 22+ and Chrome.
 
 import { spawn } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -31,7 +31,7 @@ const browser = spawn(
 );
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
 // Mirrors samajh/ops/wording.py BANNED.
-const BANNED = [/mis[\s-]?s(?:ell|old)/i, /\brefund/i, /\bviolat/i, /\bbreach/i, /\bfraud/i, /\bguilty\b/i, /\bverdict/i, /\bproven\b/i, /\bnon[\s-]?compliant/i];
+const BANNED = [/mis[\s-]?s(?:ell|old)/i, /\brefund/i, /\bviolat/i, /\bbreach/i, /\bfraud/i, /\bguilty\b/i, /\bverdict/i, /\bproven\b/i, /\bnon[\s-]?compliant/i, /\bfinding/i];
 
 async function connect() {
   for (let i = 0; i < 100; i++) {
@@ -96,14 +96,15 @@ for (const [name, path] of pages) {
       const text = await evaluate("document.body.innerText");
       const banned = BANNED.filter((re) => re.test(text)).map(String);
       const simulated = /simulated/i.test(text);
+      const junk = text.match(/\b(?:undefined|NaN|null)\b/g) ?? []; // a missing value written as text
       const shot = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true });
       writeFileSync(join(out, `${name}-${width}-${scheme}.png`), Buffer.from(shot.result.data, "base64"));
       if (width === 1280 && scheme === "light") {
         writeFileSync(join(out, `${name}.html`), await evaluate("'<!doctype html>\\n' + document.documentElement.outerHTML"));
       }
-      const bad = overflow > 0 || errors.length > 0 || banned.length > 0 || !simulated;
+      const bad = overflow > 0 || errors.length > 0 || banned.length > 0 || !simulated || junk.length > 0;
       failed ||= bad;
-      console.log(JSON.stringify({ page: name, width, scheme, overflow, errors, banned, simulated }));
+      console.log(JSON.stringify({ page: name, width, scheme, overflow, errors, banned, simulated, junk }));
     }
   }
 }

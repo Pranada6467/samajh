@@ -26,9 +26,11 @@
       </div>
     </header>
 
+    <!-- Who the caller plays. Outside the views, so it stays on screen through the whole call. -->
+    <p class="persona" id="record-note"></p>
+
     <div class="view" id="view-idle">
       <p class="lead">Receive a short feedback call about a loan you took. The bot asks, you answer by voice or with a prepared clip, and Prisma transcribes each answer. Every record is synthetic.</p>
-      <p class="hint" id="record-note"></p>
       <div class="settings">
         <label for="line-rate">Line</label>
         <select id="line-rate">
@@ -101,6 +103,7 @@
           <h3>Case file</h3>
           <p id="case-status"></p>
           <ol id="case-lines" class="case-lines"></ol>
+          <ul id="case-readings" class="case-readings" aria-label="Both readings of each amount"></ul>
           <a id="case-link" href="#" target="_blank" rel="noopener" hidden>Case file (JSON)</a>
         </div>
         <p class="links">
@@ -126,6 +129,7 @@
       <dt>Turn-taking</dt><dd id="mon-mode"></dd>
       <dt>Microphone</dt><dd id="mon-mic"></dd>
       <dt>Server</dt><dd id="mon-server">checking</dd>
+      <dt>Models</dt><dd id="mon-models">checking</dd>
     </dl>
     <div class="table-wrap">
       <table>

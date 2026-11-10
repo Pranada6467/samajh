@@ -56,7 +56,11 @@ class BotUtterance(_Frozen):
 
 
 class Heard(_Frozen):
-    """The customer's latest turn. `text == ""` means nothing was heard (silence or empty STT)."""
+    """The customer's latest turn. `text == ""` means nothing was heard (silence or empty STT).
+
+    The transport fills it by role, not by preference: `text` is the primary reading and `second`
+    the second one (the models are named in the settings). Which of them a dialogue acts on first
+    is the dialogue's business (`samajh.server.samajh_dialogue.readings`)."""
 
     text: str  # the primary reading
     literal: str | None = None  # prisma-v2.5 transcribe only: the wording before number formatting
@@ -70,6 +74,17 @@ class Heard(_Frozen):
 class Step(_Frozen):
     state: str = Field(max_length=MAX_STATE_BYTES)  # opaque; handed back on the next `step`
     say: BotUtterance
+    # The customer's turn as the dialogue recorded it (the reading it acted on). None: `start`,
+    # or a dialogue that does not say, and the transport then logs the primary reading.
+    heard: str | None = None
+    # On a turn read twice: whether the dialogue took the two readings as the same figure. None:
+    # read once, or a dialogue that does not say.
+    agreed: bool | None = None
+    # The turn was read without the dialogue's classifier (it failed or ran out of time).
+    degraded: bool = False
+    # Whether the person on the line has passed the identity checks, as the dialogue says. None:
+    # the dialogue does not say.
+    speaker_confirmed: bool | None = None
 
 
 class Dialogue(Protocol):
@@ -81,6 +96,12 @@ class Dialogue(Protocol):
 
     def step(self, state: str, heard: Heard) -> Step:
         """The customer answered the last utterance. Raises ValueError if the call had ended."""
+        ...
+
+    def prefetch(self, state: str, text: str) -> None:
+        """The primary transcript of a turn exists: start any slow reading of it now, before the
+        transport waits for the second reading. `step` follows with the same text. Optional: the
+        transport calls it only when the dialogue has it, and a failure never reaches the turn."""
         ...
 
 
@@ -121,6 +142,9 @@ class StubDialogue:
 
     def start(self) -> Step:
         return self._say(0, None)
+
+    def prefetch(self, state: str, text: str) -> None:
+        """Nothing to start: every reply is echoed."""
 
     def step(self, state: str, heard: Heard) -> Step:
         asked = json.loads(state)["asked"]

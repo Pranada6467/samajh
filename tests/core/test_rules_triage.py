@@ -31,6 +31,7 @@ from samajh.types import (
     ClaimEvidence,
     ConcernEvidence,
     ConsentMethod,
+    DontKnow,
     FeatureClaim,
     FlagReason,
     GapReason,
@@ -46,6 +47,7 @@ from samajh.types import (
     Severity,
     Stated,
     Tier,
+    Unclear,
     Verdict,
 )
 
@@ -204,6 +206,73 @@ def test_a_plain_cover_figure_off_the_record_is_incomplete_until_a_read_back_con
     assert confirmed.tier is Tier.refer
 
 
+# The cover read-back table (P3a fix round 3). Record 5,00,000; the customer's figure is said at
+# turn 41 and the read-back reply is turn 50. A correction at the read-back is a figure whose
+# evidence is the read-back reply itself. Asking a read-back never lowers the tier.
+COVER_READBACKS = {
+    "none": NotAsked(),
+    "confirmed": said(True, "haan", 50),
+    "dont_know": DontKnow(evidence=ev("pata nahin", 50)),
+    "unclear": Unclear(evidence=ev("hmm", 50)),
+    "rejected": said(False, "nahin", 50),
+    "mismatched": Unclear(reason=GapReason.readback_mismatch, evidence=ev("haan", 50)),
+}
+COVER_FIGURES = {
+    "exact": said(500_000),
+    "near_approximate": about(480_000),
+    "plain_differs": said(1_000_000),
+    "hedged_differs": Stated(value=1_000_000, evidence=ev(), hedged=True),
+    "approximate_differs": about(100_000),
+}
+# (figure, read-back) -> expected cover outcome; written from the table in the brief.
+PASS, GAP_REJECTED, GAP_MISMATCH = "passed", GapReason.readback_rejected, GapReason.readback_mismatch
+
+
+def _expected_cover(figure: str, readback: str):
+    if figure in ("exact", "near_approximate"):
+        return {"rejected": GAP_REJECTED, "mismatched": GAP_MISMATCH}.get(readback, PASS)
+    if figure in ("hedged_differs", "approximate_differs"):
+        return R.cover_differs
+    return R.cover_differs_confirmed if readback == "confirmed" else R.cover_differs_unconfirmed
+
+
+def _cover_outcome(result):
+    if RuleId.cover in result.products[0].passed:
+        return PASS
+    (outcome,) = [*flags(result, RuleId.cover), *gaps(result, RuleId.cover)]
+    return outcome.reason
+
+
+@pytest.mark.parametrize("readback", list(COVER_READBACKS))
+@pytest.mark.parametrize("figure", list(COVER_FIGURES))
+def test_the_cover_read_back_table(figure, readback):
+    result = run(belief_changes={"cover_inr": COVER_FIGURES[figure], "cover_readback": COVER_READBACKS[readback]})
+    assert _cover_outcome(result) == _expected_cover(figure, readback)
+
+
+@pytest.mark.parametrize("figure", list(COVER_FIGURES))
+def test_asking_the_cover_read_back_never_lowers_the_tier_against_not_asking_it(figure):
+    order = [Tier.understanding_gap, Tier.clear, Tier.incomplete, Tier.refer]  # clear is not "lower" than a report-only gap
+    unasked = run(belief_changes={"cover_inr": COVER_FIGURES[figure]}).tier
+    for readback in ("confirmed", "dont_know", "unclear", "rejected", "mismatched"):
+        asked = run(belief_changes={"cover_inr": COVER_FIGURES[figure], "cover_readback": COVER_READBACKS[readback]})
+        if figure in ("exact", "near_approximate") and readback in ("rejected", "mismatched"):
+            assert asked.tier is Tier.understanding_gap  # the customer said no to their own correct figure
+            continue
+        assert order.index(asked.tier) >= order.index(unasked), (figure, readback)
+
+
+@pytest.mark.parametrize(
+    ("figure", "expected"),
+    [(said(500_000, "nahin, paanch lakh", 50), PASS),
+     (said(1_000_000, "nahin, das lakh", 50), R.cover_differs_unconfirmed),
+     (Stated(value=1_000_000, evidence=ev("nahin, shayad das lakh", 50), hedged=True), R.cover_differs)],
+)  # fmt: skip
+def test_a_cover_corrected_at_the_read_back_is_judged_as_never_read_back(figure, expected):
+    result = run(belief_changes={"cover_inr": figure, "cover_readback": said(False, "nahin, ...", 50)})
+    assert _cover_outcome(result) == expected
+
+
 def test_a_cover_said_as_a_range_wider_than_twice_its_low_end_never_passes():
     result = run(belief_changes={"cover_inr": about(1_000_000, low=300_000)})
     assert RuleId.cover not in result.products[0].passed
@@ -315,11 +384,45 @@ def test_a_denial_is_retracted_when_the_customer_names_the_kind_on_record_at_the
     assert flag.quote == DENIAL.quote and [e.quote for e in flag.also] == ["bima hai"]
 
 
-def test_a_denial_is_retracted_when_a_later_recall_reply_names_the_product():
-    result = run(recall=OpenRecall(asked=True, items=(named(P1),), denial=DENIAL))
-    flag = one_flag(result, RuleId.recall)
-    assert flag.reason is R.recall_not_named
-    assert named(P1).evidence in flag.also  # the recall item (the baseline kind answer may follow)
+def _item(turn: int, kind: KindClaim = KindClaim.insurance, quote: str = "ek bima liya tha"):
+    return named(P1, kind).model_copy(update={"evidence": ev(quote, turn)})
+
+
+# Every order of a denial (turn 5) and a naming of the product, in recall (an item) or at the
+# kind question. Only a naming of the kind on record AFTER the denial retracts it.
+DENIAL_ORDERS = [
+    # (recall items, kind answer, expected recall reason, quotes in `also`)
+    ((_item(7),), NotAsked(), R.recall_not_named, ["ek bima liya tha"]),
+    ((_item(3),), NotAsked(), R.recall_denied, []),
+    ((_item(3),), said(KindClaim.insurance, "bima hai", 9), R.recall_not_named, ["bima hai"]),
+    ((_item(3),), said(KindClaim.insurance, "bima hai", 4), R.recall_denied, []),
+    ((), said(KindClaim.insurance, "bima hai", 4), R.recall_denied, []),
+    ((), said(KindClaim.insurance, "bima hai", 9), R.recall_not_named, ["bima hai"]),
+    ((_item(3), _item(7, quote="haan bima")), NotAsked(), R.recall_not_named, ["haan bima"]),
+    ((_item(7, KindClaim.deposit, "ek FD"),), NotAsked(), R.recall_denied, []),  # misdescribed: no retraction
+    ((_item(7, KindClaim.deposit, "ek FD"),), said(KindClaim.deposit, "FD hai", 9), R.recall_denied, []),
+    ((_item(7, None, "ek policy"),), NotAsked(), R.recall_denied, []),  # no kind said: not "as the kind on record"
+    ((), said(KindClaim.insurance, "bima hai", 5), R.recall_denied, []),  # same turn: not after
+]
+
+
+@pytest.mark.parametrize(("items", "kind", "reason", "also"), DENIAL_ORDERS)
+def test_a_denial_is_retracted_only_by_naming_the_kind_on_record_after_it(items, kind, reason, also):
+    denial = ev("kuch nahin liya", 5)
+    result = run(recall=OpenRecall(asked=True, items=items, denial=denial), belief_changes={"kind": kind})
+    flag = next(f for f in result.all_flags() if f.rule_id is RuleId.recall)
+    assert flag.reason is reason
+    assert (flag.quote, flag.turn_id) == ("kuch nahin liya", 5)
+    assert [e.quote for e in flag.also] == also
+    assert flag.tier is (Tier.understanding_gap if reason is R.recall_not_named else Tier.refer)
+
+
+def test_a_conflict_flag_says_nothing_about_how_often_the_question_was_asked():
+    """A conflict may come from one corrected reply as well as from two askings."""
+    one_reply = AnswerConflict(question=Question.kind, answers=(ev("bima hai", 9), ev("nahin, FD hai", 9)))
+    flag = one_flag(run(belief_changes={"conflicts": (one_reply,)}), RuleId.kind)
+    assert flag.reason is R.answers_conflict
+    assert "more than once" not in flag.heard and "differing answers" in flag.heard
 
 
 @pytest.mark.parametrize(

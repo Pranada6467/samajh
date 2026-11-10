@@ -15,8 +15,8 @@ RULES = RuleInterpreter()
 CASES = [
     # identity
     (HI, E.identity, "हाँ जी, बोल रहा हूँ", Intent.yes),
-    (HI, E.identity, "जी", Intent.said),  # an acknowledgement, not a claim
-    (HI, E.identity, "हाँ बोलिए", Intent.said),
+    (HI, E.identity, "जी", Intent.acknowledges),  # an acknowledgement, not a claim (round 3: ordinary path)
+    (HI, E.identity, "हाँ बोलिए", Intent.acknowledges),
     (HE, E.identity, "haan ji main hi bol raha hoon", Intent.yes),
     (HE, E.identity, "yes speaking", Intent.yes),
     (HI, E.identity, "नहीं, गलत नंबर है", Intent.wrong_person),
@@ -25,9 +25,9 @@ CASES = [
     (HE, E.identity, "woh bahar gaye hain", Intent.wrong_person),
     (HI, E.identity, "हाँ, मैं उनका बेटा हूँ", Intent.wrong_person),
     (HI, E.identity, "मैं उनकी पत्नी बोल रही हूँ", Intent.wrong_person),
-    (HI, E.identity, "हाँ मैं ही बोल रहा हूँ, आप कौन?", Intent.asks_who),
+    (HI, E.identity, "हाँ मैं ही बोल रहा हूँ, आप कौन?", Intent.yes),  # wave 2: the claim wins
     (HI, E.identity, "कौन बोल रहा है?", Intent.asks_who),
-    (HI, E.identity, "हाँ, कौन?", Intent.asks_who),
+    (HI, E.identity, "हाँ, कौन?", Intent.acknowledges),  # wave 2: the acknowledgement wins
     (HI, E.identity, "आप कहाँ से बोल रहे हैं?", Intent.asks_who),
     (HI, E.identity, "क्या? समझा नहीं", Intent.asks_repeat),
     (HI, E.identity, "फिर से बोलिए", Intent.asks_repeat),

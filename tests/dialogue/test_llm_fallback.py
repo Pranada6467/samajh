@@ -62,10 +62,10 @@ def test_the_classifier_is_not_called_when_the_rules_settle_the_turn(text, expec
 @pytest.mark.parametrize(
     "text, expecting",
     [
-        ("हाँ जी", Expecting.go_ahead),  # every go-ahead reply
+        ("हाँ जी, थोड़ा जल्दी", Expecting.go_ahead),  # round 3: a go-ahead reply with more than yes-words
         ("ji main Ramesh", Expecting.identity),  # a name: not tight
         ("हाँ साहब बोलिए", Expecting.identity),  # a title: not tight
-        ("जी अपना तो 1984 का है", Expecting.birth_year),  # a year among other words
+        ("हमारे ये तो 1984 के हैं", Expecting.birth_year),  # a year among other words (wave 5: "जी अपना तो 1984 का है" now passes)
         ("आज बहुत गर्मी है", Expecting.open),  # a free reply later in the call
     ],
 )
@@ -103,13 +103,15 @@ def test_the_classifier_sees_the_stage_the_question_and_the_reply():
         ("answer", Expecting.open, Intent.said),
         ("dont_know", Expecting.amount, Intent.dont_know),
         ("unclear", Expecting.open, Intent.unclear),
-        ("yes", Expecting.go_ahead, Intent.yes),
+        ("yes", Expecting.go_ahead, Intent.asks_repeat),  # wave 2: no yes or go-on word in the reply
         ("no", Expecting.go_ahead, Intent.no),
         ("refuse", Expecting.stop_check, Intent.maybe_decline),
         # labels that make no sense for the question asked leave the rules' reading
         ("yes", Expecting.open, Intent.said),
-        ("yes", Expecting.identity, Intent.said),
-        ("answer", Expecting.identity, Intent.said),
+        # Round 3: "yes" at the first-name question is an ordinary confirmation; "answer" leaves the
+        # word lists' reading, which for "ji main Ramesh" is an ordinary confirmation too.
+        ("yes", Expecting.identity, Intent.acknowledges),
+        ("answer", Expecting.identity, Intent.acknowledges),
     ],
 )
 def test_every_label_becomes_its_intent(label, expecting, intent):
@@ -120,7 +122,7 @@ def test_every_label_becomes_its_intent(label, expecting, intent):
 
 
 def test_a_year_is_confirmed_only_when_the_classifier_reads_it_as_the_speakers_own():
-    text = "जी अपना तो 1984 का है"
+    text = "हमारे ये तो 1984 के हैं"  # wave 5: a year the word lists leave loose
     assert read(FakeLlm("answer"), text, Expecting.birth_year).year == 1984
     assert read(FakeLlm("wrong_person"), text, Expecting.birth_year).intent is Intent.wrong_person
     assert read(FakeLlm("unclear"), text, Expecting.birth_year).year is None
@@ -170,8 +172,12 @@ def test_a_late_classifier_is_cut_off_at_the_timeout():
 
 
 def test_a_failed_classifier_at_the_first_name_confirms_nobody():
+    # Round 3: the word lists' ordinary confirmation stands (birth year next, lender not named); a reply
+    # that is no confirmation at all still ends the call at the second try.
     down = LlmFallbackInterpreter(FakeLlm(error=TransportError("down")))
-    call = play(record(), HI, ["ji main Ramesh", "ji main Ramesh"], interpreter=down)
+    call = play(record(), HI, ["ji main Ramesh"], interpreter=down)
+    assert call.keys[-1] == "second_check.ask" and "disclosure.who" not in call.keys
+    call = play(record(), HI, ["Ramesh?", "Ramesh?"], interpreter=down)
     assert call.end.outcome is Outcome.not_confirmed and "disclosure.who" not in call.keys
 
 

@@ -70,3 +70,56 @@ The remaining third party ("हाँ मैं ही हूँ", "हाँ", 
 - `DESIGN.md` line 104 ("51 lines", now 69), line 124 ("eight outcomes", now thirteen), lines 113-122 (the position table), lines 126-136 (limits, third parties, second reading, "LLM fallback … off by default … never ends a call"), lines 143, 371 and 414 ("671 tests", now 974).
 - `CLAUDE.md` line 59 (the disclosure size; "the LLM fallback client a short timeout"), line 60 ("671", "never ends a call"), line 61 ("51 lines each"; the `verify.*` lines also deny OTP/PIN).
 - `references/pilots/W9-dialogue-report.md` is superseded for behaviour.
+
+## 6. Round 3: what changed (numbers to be added by the coordinator)
+
+- Ordinary confirmations ("हाँ जी", "बोलिए", "हाँ, <name> जी से हो रही है", "yes") no longer end as
+  `not_confirmed`: they go straight to the birth-year question, and the lender is named only after the
+  year passes. The strong first-person path is unchanged. Contract §7 has the order of lines.
+- At open recall and its follow-up, a "don't know" or "nothing" reading that still names a figure, a thing
+  or something done goes to the product questions, not the nothing branch.
+- At a read-back, repeating the same figure confirms it.
+- On a two-reading turn, a stop signal or third party in either reading is acted on.
+- The classifier is asked less (plain go-ahead yes/no; free answers that speak of the sale), and can be
+  started early (`begin`, `prefetch`); the server still has to call `prefetch`.
+- One line changed (coordinator's decision): `verify.before_loan` in hi and hi-en no longer promises the
+  topic "after the birth year" but "after identity is confirmed"; `P2-lines-for-review.md` regenerated.
+- Tests: `tests/dialogue/test_p2_round3.py`, plus the round-2 tests updated to the new behaviour.
+- Wave 2 (verifier conditions): the substance skip needs no risk cue; address forms and a confirmation
+  with a who-question confirm; a go-on word turns a refusal phrase into a question, never an end; "now"
+  at the call-back question resumes the call; the birth year gets one attempt; `speaker_confirmed`;
+  a possible takeover with no classifier judgment gets a "who is speaking?" check; recall denials that
+  name nothing go to the follow-up; `cancel_window.reask` and `teach_back.intro_nth` reworded (hi,
+  hi-en), and the first product is introduced the same way whatever the count.
+  Tests: `tests/dialogue/test_p2_round3_wave2.py`.
+- Wave 3: dates of birth, guesses end the year check, cooperative go-ahead replies and "now, go on" at the
+  call-back question continue, more takeover frames (a classifier cannot clear one), romanised recall
+  evidence, any-length yes at the re-ask. Tests: `tests/dialogue/test_p2_round3_wave3.py`.
+- Wave 4: romanised Hindi number words are read as years ("unnees sau chaurasi"). Contract §7, wave 4.
+  Tests: `tests/dialogue/test_p2_round3_wave4.py`.
+- Wave 5 (after a fresh opening set, `tests/dialogue/probes/p2_round3_openings_fresh2.py`, 36 genuine and
+  36 third-party openings written blind): the right birth year is taken as the speaker's own unless the
+  reply points at someone else, negates, asks or guesses (hi and hi-en; Tamil and Kannada keep the older
+  allow rule). Before: 31 of 36 genuine borrowers passed both checks with the word lists alone and with
+  the classifier failing, 36 of 36 with the classifier live. Refused before, passing now:
+  "उन्नीस सौ चौरासी, और क्या", "अरे उन्नीस सौ चौरासी", "चौरासी वाला साल", "arre yaar, nineteen eighty four",
+  and at the go-ahead "हाँ, पर ज़्यादा लंबा मत करना" (a yes with a keep-it-short request). From the
+  earlier year set (`year2`, 30 genuine and 14 guesses): "Ya, 1984.", "Mera DOB 15-06-1984 hai.",
+  "मेरा जन्म पंद्रह तारीख़ जून चौरासी को हुआ।" and "Nineteen eighty four, main abhi office mein hoon toh
+  jaldi kijiye." now pass, and the guess "अंदाज़े से चौरासी।" now ends the check. A wrong year still gets
+  one attempt. Tests: `tests/dialogue/test_p2_round3_wave5.py`.
+- Builder counts after wave 5 (2026-11-10, text not speech; an independent verifier follows):
+  `uv run pytest tests/dialogue -q` 1,783 passed. Fresh opening set, each of the three arms (word lists
+  alone; classifier live, replayed from the response cache, 57 requests and none new; classifier
+  failing): 36 of 36 genuine borrowers reached the year question and passed both checks; the loan or a
+  product was named to 0 of 33 third parties who did not both claim to be the borrower and give the right
+  year, and to 3 of 3 who did (a false claim with the right year passes: known, section 4). With the
+  classifier live the lender was named, with no loan or product word, to 5 of 5 false claimants who then
+  gave a wrong year or none (the first-person path names the lender before the year).
+- Known after wave 5, not fixed: with the word lists alone and with the classifier failing,
+  "बंद मत कीजिए, बोलिए" and "phone mat kaatna, haan pucho" are asked "shall I go on?" and end as
+  `no_go_ahead` only if the same reply is given again (live they continue), and "Nahi, I'm free, go." ends
+  as `declined` (live it continues); "नहीं नहीं, अभी कर लीजिए।" and "Na, later nahi, abhi karte hain." at the call-back question end
+  as `call_back_later` in every arm; "साल? वो तो याद नहीं अभी" at the year ends as `wrong_party` ("वो");
+  on a two-reading turn "Mera number list se hata do." beside a figure is asked to say the figure again
+  (live it ends as `do_not_call`); "office" is still a relation word outside the year question.

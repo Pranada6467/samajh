@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import shutil
-from datetime import datetime, time, timedelta
+from datetime import timedelta
 from pathlib import Path
 
 import pytest
@@ -12,8 +12,17 @@ from serverkit import FakeSpeech
 from starlette.testclient import TestClient
 
 from samajh.dialogue.machine import Outcome
+from samajh.ops import wording
 from samajh.ops.batch import load_batch
-from samajh.ops.model import FROM_DIALOGUE, AttemptOutcome, FinalStatus
+from samajh.ops.model import (
+    FROM_DIALOGUE,
+    MAX_ATTEMPTS,
+    RETRY_AFTER,
+    UNCONFIRMED_REQUESTS,
+    AttemptOutcome,
+    FinalStatus,
+    attempt_outcome_for,
+)
 from samajh.ops.report import build_report
 from samajh.ops.sessions import IST, PARTIAL_NOTE, ingest, packaged_records
 from samajh.ops.store import OpsStore
@@ -40,16 +49,38 @@ def _counts(store: OpsStore) -> tuple:
     return (
         [(r.key, r.value.count) for r in (*report.funnel.stages, *report.funnel.exits)],
         [(r.tier, r.value.count) for r in report.tiers],
-        [(f.rule_id, f.flagged.count) for f in report.findings],
+        [(f.rule_id, f.flagged.count) for f in report.rules],
     )
 
 
 def test_every_dialogue_outcome_has_an_attempt_outcome() -> None:
+    """The place where a new dialogue outcome fails loudly: map it in FROM_DIALOGUE (and, if it is
+    its own attempt outcome, give it a final status and the labels in samajh.ops.wording)."""
     assert set(FROM_DIALOGUE) == {o.value for o in Outcome} | {"in_progress"}
     assert FROM_DIALOGUE["call_back_later"] is AttemptOutcome.call_back_later
     assert FROM_DIALOGUE["language_switch"] is AttemptOutcome.language_switch
     assert FROM_DIALOGUE["human_requested"] is AttemptOutcome.incomplete
     assert FROM_DIALOGUE["in_progress"] is AttemptOutcome.incomplete
+    assert FROM_DIALOGUE["do_not_call"] is AttemptOutcome.do_not_call
+    assert FROM_DIALOGUE["written_requested"] is AttemptOutcome.written_requested
+    for outcome in (AttemptOutcome.do_not_call, AttemptOutcome.written_requested):
+        assert outcome not in RETRY_AFTER  # terminal: never retried
+        assert FinalStatus(outcome.value) in wording.STATUS_LABEL and outcome in wording.OUTCOME_LABEL
+    # every attempt outcome other than completed is a final status of its own name, or a known merge
+    merged = {AttemptOutcome.no_answer, AttemptOutcome.completed}
+    assert {o.value for o in AttemptOutcome if o not in merged} <= {f.value for f in FinalStatus}
+    # Every dialogue outcome in every state of `speaker_confirmed` (unknown, true, false) maps through
+    # the one function, to an outcome with its words.
+    for dialogue in FROM_DIALOGUE:
+        for confirmed in (None, True, False):
+            outcome = attempt_outcome_for(dialogue, confirmed)
+            assert outcome in wording.OUTCOME_LABEL
+            unconfirmed_request = confirmed is False and dialogue in UNCONFIRMED_REQUESTS
+            expected = AttemptOutcome.request_unconfirmed if unconfirmed_request else FROM_DIALOGUE[dialogue]
+            assert outcome is expected, (dialogue, confirmed)
+    assert UNCONFIRMED_REQUESTS == {"do_not_call", "human_requested", "call_back_later"}
+    assert AttemptOutcome.request_unconfirmed in RETRY_AFTER  # nobody confirmed who spoke: called again
+    assert FinalStatus.request_unconfirmed in wording.STATUS_LABEL
 
 
 def test_the_p1_calls_are_outside_the_sample_listed_and_never_counted(
@@ -73,7 +104,7 @@ def test_the_p1_calls_are_outside_the_sample_listed_and_never_counted(
     hero, informed, run1, third = (by_record[_case(n)["session_id"]] for n in CALLS)
     assert hero.call.reason == "the loan is not on the lender's book for this batch"
     assert (hero.triage.tier, informed.triage.tier, run1.triage.tier) == ("refer", "clear", "refer")
-    # The third-party call's case file says "incomplete", but a wrong party is an attempt, not a finding.
+    # The third-party call's case file says "incomplete", but a wrong party is an attempt, not a flag.
     assert (third.call.outcome, third.call.call_id, third.triage) == (AttemptOutcome.wrong_party, None, None)
     assert all(o.call.source.kind == "phone_session" for o in batch.outside)
 
@@ -89,16 +120,36 @@ def test_the_p1_calls_are_outside_the_sample_listed_and_never_counted(
 
 
 def _linked_hero(store: OpsStore, **changes) -> tuple[dict, str]:
-    """The hero case file, moved onto a sampled loan whose customer was never reached."""
+    """The hero case file, moved onto a sampled loan whose customer was never reached, as the phone
+    writes a loan-book call: a `book` block fixed at creation, `started_at` on the wall clock.
+
+    Every unreachable loan of the demo batch has used its `MAX_ATTEMPTS` attempts, so the target's
+    last simulated attempt is taken out of the log first: the loan then has room for this call."""
     batch = load_batch(store)
-    target = next(s for s in batch.sampled if s.status is FinalStatus.unreachable)
+    target = next(
+        s for s in batch.sampled if s.status is FinalStatus.unreachable and s.attempts[-1].day_since_sale < 30
+    )
+    loan_id = target.loan.record.loan_id
+    if len(target.attempts) >= MAX_ATTEMPTS:
+        log = store.root / "attempts.jsonl"
+        dropped = target.attempts[-1].attempt_id
+        kept = [line for line in log.read_text().splitlines() if json.loads(line)["attempt_id"] != dropped]
+        log.write_text("".join(f"{line}\n" for line in kept))
+        target = next(s for s in load_batch(store).sampled if s.loan.record.loan_id == loan_id)
+    day = target.attempts[-1].day_since_sale + 1
     case = _case("hero")
-    day = target.loan.sold_on + timedelta(days=target.attempts[-1].day_since_sale + 1)
     case |= {
-        "loan_id": target.loan.record.loan_id,
-        "started_at": datetime.combine(day, time(11), IST).isoformat(),
+        "record_id": loan_id,
+        "loan_id": loan_id,
+        "book": {
+            "batch_id": batch.meta.batch_id,
+            "draw_id": target.draw.draw_id,
+            "sold_on": target.loan.sold_on.isoformat(),
+            "call_date": (target.loan.sold_on + timedelta(days=day)).isoformat(),
+            "day_since_sale": day,
+        },
     }
-    return case | changes, target.loan.record.loan_id
+    return case | changes, loan_id
 
 
 def test_a_phone_call_on_a_sampled_loan_enters_the_funnel_queue_and_report_as_a_phone_call(
@@ -128,6 +179,10 @@ def test_a_phone_call_on_a_sampled_loan_enters_the_funnel_queue_and_report_as_a_
     page = CaseView.model_validate(client.get(f"/api/review/cases/{case['session_id']}").json())
     assert page.call.recording_url == f"/api/sessions/{case['session_id']}/recording.wav"
     assert not page.call.simulated and page.call.day_since_sale == linked.attempts[-1].day_since_sale
+    assert (
+        page.call.day_since_sale == case["book"]["day_since_sale"]
+    )  # the book's calendar, not the wall clock
+    assert linked.attempts[-1].at.astimezone(IST).date().isoformat() == case["book"]["call_date"]
     log = AttemptLogView.model_validate(client.get("/api/review/attempts").json())
     logged = next(loan for loan in log.loans if loan.loan_id == loan_id)
     assert (logged.attempts[-1].session_id, logged.attempts[-1].simulated) == (case["session_id"], False)
@@ -144,7 +199,7 @@ def test_a_phone_call_on_a_sampled_loan_enters_the_funnel_queue_and_report_as_a_
         ({"call_outcome": "in_progress"}, FinalStatus.incomplete),
     ],
 )
-def test_a_session_that_did_not_yield_an_analysed_call_is_an_attempt_with_no_finding(
+def test_a_session_that_did_not_yield_an_analysed_call_is_an_attempt_with_no_flag(
     state: Path, store: OpsStore, changes: dict, status: FinalStatus
 ) -> None:
     case, loan_id = _linked_hero(store, **changes)

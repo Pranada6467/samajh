@@ -334,8 +334,11 @@ def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     expected = f"premium of {rupees(p.premium_inr)}"
 
     def stated(a: Stated[int]) -> Outcomes:
-        if isinstance(readback, Stated) and not readback.value:
+        # A rejected or mismatched read-back leaves the premium undecided, whatever the figure.
+        if _rejected(readback):
             return (_gap(rule, p.id, GapReason.readback_rejected, readback.evidence),)
+        if _mismatched(readback):
+            return (_gap(rule, p.id, GapReason.readback_mismatch, readback.evidence),)
         if _too_wide(a):
             return (_gap(rule, p.id, GapReason.not_comparable, a.evidence),)
         confirmed = isinstance(readback, Stated)
@@ -359,6 +362,15 @@ def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     )
 
 
+def _rejected(readback: Answer[bool]) -> bool:
+    return isinstance(readback, Stated) and not readback.value
+
+
+def _mismatched(readback: Answer[bool]) -> bool:
+    """The customer said yes to another figure, or before giving theirs (`samajh.rules.normalise`)."""
+    return isinstance(readback, Unclear) and readback.reason is GapReason.readback_mismatch
+
+
 def cover(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     """One figure within the exact tolerance passes; an answer given as approximate may be near.
 
@@ -366,6 +378,12 @@ def cover(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     understanding gap. A plain figure is a referral once the customer confirmed a read-back of it,
     and incomplete until then: speech recognition may have changed it. A range too wide to compare
     is a gap.
+
+    Asking a read-back never lowers the tier against not asking it: a plain differing figure whose
+    read-back was rejected without a correction, or mismatched, is still incomplete. A figure that
+    matches the record is a gap when its read-back was rejected or mismatched. A figure the customer
+    gave as a correction at the read-back has had no read-back of its own: it is judged as if none
+    was asked (the bot read back the customer's earlier figure, never the record's).
     """
     b = beliefs.for_product(p.id)
     readback = b.cover_readback
@@ -374,7 +392,12 @@ def cover(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     def stated(a: Stated[int]) -> Outcomes:
         if _too_wide(a):
             return (_gap(rule, p.id, GapReason.not_comparable, a.evidence),)
+        corrected = _rejected(readback) and readback.evidence.turn_id == a.evidence.turn_id
         if _exact(a, p.cover_inr) or (a.approximate and _near(a, p.cover_inr)):
+            if _rejected(readback) and not corrected:
+                return (_gap(rule, p.id, GapReason.readback_rejected, readback.evidence),)
+            if _mismatched(readback):
+                return (_gap(rule, p.id, GapReason.readback_mismatch, readback.evidence),)
             return _passed(rule, p.id)
         if a.hedged or a.approximate:
             why = Why.cover_differs
@@ -450,24 +473,28 @@ def cancel_window(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
 def recall(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     """A customer who said they took nothing, while the record holds this product, is a referral
     while the denial stands (coordinator decision 2026-11-10). It is retracted only when the
-    customer then names this product themselves, as the kind on record: in a later recall reply
-    or at the kind question. Then the finding is `recall_not_named`, with the denial as the quote
-    and the naming in `also`. Naming another kind, "I don't know", or nothing asked: it stands."""
+    customer names this product as the kind on record in a turn AFTER the denial: a later recall
+    item of that kind matched to this product, or the kind question answered as that kind. Then
+    the finding is `recall_not_named`, with the denial as the quote and those namings in `also`.
+    A naming before the denial, a misdescription ("an FD" for insurance), "I don't know", or
+    nothing asked: the denial stands. The extractor keeps the last denial."""
     if not beliefs.recall.asked:
         return (_gap(rule, p.id, GapReason.not_asked),)
     expected = "customer names this product when asked what they took with the loan"
     denial = beliefs.recall.denial
-    named = [i.evidence for i in _matched(p, beliefs)]
-    answer = beliefs.for_product(p.id).kind
-    if isinstance(answer, Stated) and answer.value is KIND_ON_RECORD[p.kind]:
-        named.append(answer.evidence)
-    if denial is not None and not named:
-        heard = "customer said they took nothing with the loan"
-        return (_flag(rule, p.id, Why.recall_denied, expected, heard, denial),)
     if denial is not None:
+        on_record = KIND_ON_RECORD[p.kind]
+        named = [i.evidence for i in _matched(p, beliefs) if i.kind is on_record]
+        answer = beliefs.for_product(p.id).kind
+        if isinstance(answer, Stated) and answer.value is on_record:
+            named.append(answer.evidence)
+        later = tuple(ev for ev in named if ev.turn_id > denial.turn_id)
+        if not later:
+            heard = "customer said they took nothing with the loan"
+            return (_flag(rule, p.id, Why.recall_denied, expected, heard, denial),)
         heard = "customer first said they took nothing with the loan, then named this product"
         flag = _flag(rule, p.id, Why.recall_not_named, expected, heard, denial)
-        return (flag.model_copy(update={"also": tuple(named)}),)
+        return (flag.model_copy(update={"also": later}),)
     if _matched(p, beliefs):
         return _passed(rule, p.id)
     heard = "customer did not name this product unprompted"
@@ -729,8 +756,9 @@ def evidence_case(rule: Rule, record: LoanRecord, beliefs: Beliefs) -> Outcomes:
 def conflicts(rules: dict[RuleId, Rule], p: Product, beliefs: Beliefs) -> tuple[Flag, ...]:
     """One flag per question whose answers differed, under the rule that question belongs to.
 
-    The field holds only the last answer, so without this an earlier "FD" followed by
-    "insurance" would leave no trace. The reviewer gets every answer, in call order.
+    The answers may come from separate askings or from one reply the customer corrected. The field
+    holds only the last answer, so without this an earlier "FD" followed by "insurance" would leave
+    no trace. The reviewer gets every answer, in call order.
     """
     found = []
     for conflict in beliefs.for_product(p.id).conflicts:
@@ -744,7 +772,7 @@ def conflicts(rules: dict[RuleId, Rule], p: Product, beliefs: Beliefs) -> tuple[
                 product_id=p.id,
                 severity=Severity.high if rule.id in REFER_RULES else Severity.low,
                 expected="one consistent answer to the question",
-                heard=f"customer gave {len(conflict.answers)} differing answers when asked more than once",
+                heard=f"customer gave {len(conflict.answers)} differing answers to this question",
                 quote=first.quote,
                 turn_id=first.turn_id,
                 also=tuple(others),

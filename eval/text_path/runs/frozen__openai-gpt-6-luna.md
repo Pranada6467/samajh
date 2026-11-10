@@ -1,6 +1,6 @@
 # Text path on the `frozen` set, model `openai/gpt-6-luna`
 
-Run at 2026-11-10T11:19:19+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
+Run at 2026-11-10T15:44:55+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
 
 ## Headline
 
@@ -120,10 +120,18 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 
 ## Cost and latency
 
-- LLM calls: 3391 for 144 calls (3391 served from the cache in this run).
+- LLM calls: 4498 for 144 calls (4498 served from the cache in this run).
+
+| request | LLM calls | cost with nothing cached |
+|---|---|---|
+| answer | 1604 | $0.13418 |
+| screen | 1787 | $0.07719 |
+| check | 1107 | $0.09171 |
+
+- The change check (a second look at a reply of two or more clauses: did the customer change their answer?) said: {'none': 1095, 'not used': 12}. `not used`: a recall reply that named nothing, or a reply whose answer call failed.
 - Spent in this run: $0.00000.
-- Cost of these calls with nothing cached: $0.21137 ($0.00147 per transcript, $0.00006 per LLM call).
-- Latency per LLM call when first made: median 2.08 s, p90 3.93 s (wall time of the client call, retries included, one network).
+- Cost of these calls with nothing cached: $0.30308 ($0.00210 per transcript, $0.00007 per LLM call).
+- Latency per LLM call when first made: median 2.34 s, p90 4.21 s (wall time of the client call, retries included, one network).
 
 ## By base case
 

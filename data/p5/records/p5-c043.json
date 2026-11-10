@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Harish, born 1981, took a gold loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c043",
+  "label": "Synthetic P5 record. Harish: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1981-02-18",
+      "language": "hi",
+      "name": "Harish Banawati"
+    },
+    "disbursed_inr": 248300,
+    "disbursed_on": "2026-10-25",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-043",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-25",
+          "method": "signed_form"
+        },
+        "cover_inr": 260000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 11700,
+        "provider": "Banawati Life Cover (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 260000,
+    "tenure_months": 12
+  }
+}

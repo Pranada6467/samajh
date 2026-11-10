@@ -58,7 +58,7 @@ def test_every_id_and_name_is_marked_synthetic_and_nothing_looks_like_a_real_ide
     assert not re.search(r"\d{8,}", books.jsonl(loans))
 
 
-def test_every_loan_can_be_scripted_and_analysed_and_an_informed_customer_has_no_finding(generated) -> None:
+def test_every_loan_can_be_scripted_and_analysed_and_an_informed_customer_has_no_flag(generated) -> None:
     _, loans, customers = generated
     tiers: Counter = Counter()
     for loan, customer in zip(loans, customers, strict=True):

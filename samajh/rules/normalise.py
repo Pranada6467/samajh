@@ -14,18 +14,31 @@ What the rules can rely on afterwards:
    An amount said with a word of doubt or as a narrow range is read by `parse_approx_amount`
    and marked `approximate` (a range keeps its lower end in `low`). A term said as the loan's
    own ("जब तक लोन चलेगा") is the record's loan tenure, or a `not_comparable` gap without one.
-3. A "yes" to a read-back confirms the premium only when the bot read back that same amount
-   after the customer gave it: for a range, the same two ends. The premium may come from the
-   reply to the premium question or from a correction made in reply to a read-back.
+3. A "yes" to a read-back confirms an amount only when the bot read back that same amount
+   after the customer gave it: for a range, the same two ends. For the cover, a figure the
+   customer restates after a confirmed read-back of it stays confirmed. A rejected read-back is
+   kept as `Stated(False)` and a mismatched one becomes `Unclear(readback_mismatch)`; the
+   customer's figure is kept either way and the rules decide what the read-back changes. The
+   amount may come from the reply to its question or from a correction made in reply to a
+   read-back.
+3a. A premium carried forward from open recall (`carried_premiums`): when the bot reads back a
+   premium for a product it never asked the premium of, the open-recall reply whose whole text
+   reads to the figure read back is accepted as the premium's quote, and nothing else is. When
+   no such reply exists the premium is `Unclear(readback_mismatch)` with the read-back reply as
+   its evidence, never "not asked".
 4. A question the bot asked cannot read as "not asked", and open recall counts only when the
    transcript has the open-recall question.
 5. The consent question is open and names no product: a bot turn tagged `asks=consent` with
    no `product_id` counts as asked for every product on the record.
 6. Conflicting answers, a denial in open recall and unscreened replies are kept only where
-   their quotes are in the call; a quote that is not becomes an evidence gap.
+   their quotes are in the call; a quote that is not becomes an evidence gap. A conflict inside
+   one reply quotes runs of whole clauses of it.
+
+Not done here: whether a later clause of a reply takes its answer back, repeats it or is about
+something else is a language judgement, made by the extractor's change check
+(`samajh.extract`). A RawExtraction made by anything else gets no retraction protection here.
 """
 
-import re
 import unicodedata
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -34,6 +47,7 @@ from samajh.amounts import (
     CLAUSE_END,
     Approximate,
     Parsed,
+    Span,
     is_loan_tenure,
     parse_amount,
     parse_approx_amount,
@@ -146,69 +160,6 @@ def _said(evidence: Evidence, replies: dict[TurnId, _Reply], whole_clauses: bool
     return reply if reply and reply.says(evidence.quote, whole_clauses) else None
 
 
-_TOKEN = re.compile(r"\S+")
-
-
-def widen(reply: str, span: str) -> str:
-    """The span as it stands in the reply, with one more word on each side within its clause.
-
-    What the amount and duration parsers read: a fraction word ("सारहे") or a unit word the model
-    left out of its span is still seen, and makes the parse refuse instead of being dropped. A span
-    that is not a run of whole words of the reply is returned as it is.
-    """
-    ends = [m.start() for m in CLAUSE_END.finditer(reply)]
-    words = [
-        (m.start(), m.end(), w, sum(e < m.start() for e in ends))
-        for m in _TOKEN.finditer(reply)
-        for w in _norm(m.group()).split()
-    ]
-    wanted = _norm(span).split()
-    forms = [w for _, _, w, _ in words]
-    for k in range(len(forms) - len(wanted) + 1):
-        if wanted and forms[k : k + len(wanted)] == wanted:
-            first, last = k, k + len(wanted) - 1
-            if first > 0 and words[first - 1][3] == words[first][3]:
-                first -= 1
-            if last + 1 < len(words) and words[last + 1][3] == words[last][3]:
-                last += 1
-            return reply[words[first][0] : words[last][1]]
-    return span
-
-
-# Words that take back what was said earlier in the same reply. Hindi, Hinglish and English only.
-# Past tense on purpose: "ऐसा नहीं है" ("it is not like that") usually agrees with what came before.
-_L = "[\\w\u0900-\u0963\u0966-\u0dff]"
-_RETRACTION = re.compile(
-    rf"(?<!{_L})(?:"
-    r"ऐसा\s+(?:तो\s+)?नहीं\s+(?:था|थी|हुआ)|नहीं\W+नहीं|मतलब\s+(?:वो|वह)\s+नहीं|(?:वो|वह)\s+नहीं\s+था"
-    r"|ग\u093c?लत\s+(?:बोला|बोल\s+दिया|कहा)|सॉरी"
-    r"|aisa\s+(?:to\s+)?nahi?n?\s+(?:tha|thi|hua)|nahi?n?\W+nahi?n?\b|matlab\s+(?:wo|woh|vo|voh)\s+nahi?n?"
-    r"|galat\s+(?:bola|bol\s+diya|kaha)|actually\s+no|no\s+wait|not\s+that|sorry"
-    rf")(?!{_L})",
-    re.IGNORECASE,
-)
-
-
-def retraction(reply: str) -> tuple[str, str | None] | None:
-    """(what was said before, the correction after) when a later clause takes the answer back.
-
-    "यह बीमा है, ऐसा तो नहीं था" -> ("यह बीमा है", None); "बीमा है, नहीं नहीं, एफ़डी है" ->
-    ("बीमा है", "नहीं नहीं, एफ़डी है"). None when no clause after the first one retracts: a "नहीं"
-    that opens the reply, or one that is part of the answer, is not a retraction. Both parts are
-    whole clauses of the reply.
-    """
-    for match in _RETRACTION.finditer(reply):
-        ends = [m.end() for m in CLAUSE_END.finditer(reply, 0, match.start())]
-        if not ends or not _norm(reply[: ends[-1]]):
-            continue  # nothing said before it in an earlier clause
-        cut = ends[-1]
-        before = reply[:cut].rstrip(" ,.;।!?…").strip()
-        after = reply[cut:].strip(" ,.;।!?…")
-        corrected = _norm(reply[match.end() :])
-        return before, (after if corrected else None)
-    return None
-
-
 def _rupees(text: str, exact: bool) -> int | None:
     result = parse_amount(text, exact=exact)
     return result.rupees if isinstance(result, Parsed) else None
@@ -233,10 +184,10 @@ def _read_amount(answer: Answer[str], replies: dict[TurnId, _Reply]) -> Answer[i
     match answer:
         case Stated(value=span, evidence=ev, hedged=hedged, also=also):
             reply = replies[ev.turn_id].text
-            heard = _ends(reply, False)
-            # The span, the span with its neighbours, and the whole reply must all read the same.
-            said = [_ends(text, False) for text in (span, widen(reply, span))]
-            if heard is None or any(r is None or r[:2] != heard[:2] for r in said):
+            heard, said = _ends(reply, False), _ends(span, False)
+            # The span and the whole reply must read the same. The whole reply already holds every
+            # word next to the span, so a fraction or unit word the model left out is seen there.
+            if heard is None or said is None or said[:2] != heard[:2]:
                 return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
             low, high, approximate = heard
             return Stated[int](
@@ -277,8 +228,10 @@ def _ground(
     was_asked: bool,
     replies: dict[TurnId, _Reply],
     ungrounded: list[Evidence],
+    carried_from: TurnId | None = None,
 ) -> Answer:
-    """Keep an answer only when it quotes whole clauses of a reply to one of the `accepted` questions.
+    """Keep an answer only when it quotes whole clauses of a reply to one of the `accepted` questions,
+    or of the one open-recall reply a premium is carried forward from (`carried_from`).
 
     The other replies a stated answer stands over (`also`) are held to the same test; one that
     fails is dropped from `also` and listed as ungrounded.
@@ -286,7 +239,7 @@ def _ground(
 
     def grounded(ev: Evidence) -> bool:
         reply = _said(ev, replies, whole_clauses=True)
-        return bool(reply and reply.asked & accepted)
+        return bool(reply and (reply.asked & accepted or ev.turn_id == carried_from))
 
     match answer:
         case NotAsked():
@@ -309,38 +262,103 @@ def _read(answer: Answer[str], read: _Reader, replies: dict[TurnId, _Reply]) -> 
         case Stated(value=span, evidence=ev):
             reply = replies[ev.turn_id].text
             heard = read(reply, False)
-            if heard is None or heard != read(span, False) or heard != read(widen(reply, span), False):
+            if heard is None or heard != read(span, False):
                 return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
             return Stated[int](value=heard, evidence=ev, hedged=answer.hedged, also=answer.also)
         case _:
             return answer
 
 
-def _confirm(figure: Answer, readback: Answer, replies: dict[TurnId, _Reply]) -> tuple[Answer, Answer]:
-    """A "yes" confirms an amount only when the bot read back that same amount (for a range, the
-    same two ends) after the customer gave it. A "no" leaves the amount unusable."""
-    if not (isinstance(figure, Stated) and isinstance(readback, Stated)):
-        return figure, readback
-    if not readback.value:
-        return Unclear(reason=GapReason.readback_rejected, evidence=readback.evidence), readback
+def _confirm(
+    figure: Answer, readback: Answer, replies: dict[TurnId, _Reply], restated: bool = False
+) -> Answer:
+    """What the read-back reply says about the figure. The figure itself is never changed.
+
+    A "yes" confirms only when the bot read back that same amount (for a range, the same two ends)
+    after the customer gave it. With `restated`, a figure the customer repeats after a confirmed
+    read-back of it stays confirmed: an earlier reply in `also` read to the same amount, before the
+    read-back. Any other "yes" is `Unclear(readback_mismatch)`. A "no" stays `Stated(False)`.
+    """
+    if not (isinstance(figure, Stated) and isinstance(readback, Stated)) or not readback.value:
+        return readback
     read_back_turn = replies[readback.evidence.turn_id].prompt
+    said = (figure.low or figure.value, figure.value)
     read = _ends(read_back_turn.text, False) if read_back_turn is not None else None
+    before = readback.evidence.turn_id
+    given = [figure.evidence, *(figure.also if restated else ())]
     if (
-        readback.evidence.turn_id <= figure.evidence.turn_id
-        or read is None
-        or read[:2] != (figure.low or figure.value, figure.value)
+        read is not None
+        and read[:2] == said
+        and any(
+            ev.turn_id < before and (ev is figure.evidence or _reads_as(replies[ev.turn_id].text, said))
+            for ev in given
+        )
     ):
-        # The customer confirmed some other amount, or confirmed before giving this one:
-        # neither the amount nor the "yes" can be relied on.
-        mismatch = Unclear(reason=GapReason.readback_mismatch, evidence=readback.evidence)
-        return mismatch, mismatch
-    return figure, readback
+        return readback
+    return Unclear(reason=GapReason.readback_mismatch, evidence=readback.evidence)
+
+
+def _reads_as(text: str, ends: tuple[int, int]) -> bool:
+    heard = _ends(text, False)
+    return heard is not None and heard[:2] == ends
+
+
+@dataclass(frozen=True)
+class CarriedPremium:
+    """A premium read back that the call never asked for: the customer gave it in open recall."""
+
+    read_back: TurnId  # the bot's first premium read-back for the product
+    reply: TurnId | None  # the open-recall reply whose whole text reads to that figure; None: no reply does
+    span: str | None  # the amount as it stands in that reply
+
+
+def carried_premiums(transcript: Transcript) -> dict[ProductId, CarriedPremium]:
+    """Products whose premium the bot read back without ever asking it, from the transcript alone.
+
+    For each, the latest open-recall reply before the read-back whose whole text reads
+    (`parse_approx_amount`) to exactly the figure, or the two ends, that the bot's read-back line
+    reads to. A reply with two amounts, a figure the parser refuses or another figure never
+    qualifies. The extractor and the normaliser both decide by this one function; no model output
+    is used.
+    """
+    asked: set[ProductId] = set()
+    recall_replies: list[Turn] = []
+    found: dict[ProductId, CarriedPremium] = {}
+    prompt: Turn | None = None
+    for turn in transcript.turns:
+        if turn.speaker is not Speaker.bot:
+            if prompt is not None and prompt.step is CallStep.open_recall:
+                recall_replies.append(turn)
+            continue
+        prompt = turn
+        pid = turn.product_id
+        if turn.asks is not Question.premium or pid is None or pid in found:
+            continue
+        if turn.step is not CallStep.read_back:
+            asked.add(pid)
+        elif pid not in asked:
+            found[pid] = _carried(turn, recall_replies)
+    return found
+
+
+def _carried(read_back: Turn, recall_replies: list[Turn]) -> CarriedPremium:
+    read = _ends(read_back.text, False)
+    for reply in reversed(recall_replies) if read is not None else ():
+        result = parse_approx_amount(reply.text)
+        span: Span | None = result.span if isinstance(result, (Parsed, Approximate)) else None
+        if span is not None and _reads_as(reply.text, read[:2]):
+            return CarriedPremium(read_back=read_back.id, reply=reply.id, span=span.text)
+    return CarriedPremium(read_back=read_back.id, reply=None, span=None)
+
+
+def _evidence(answer: Answer) -> Evidence | None:
+    return answer.evidence if isinstance(answer, (Stated, DontKnow, Unclear)) else None
 
 
 def _conflicts(
     raw: RawProductAnswers, ungrounded: list[Evidence], replies: dict[TurnId, _Reply]
 ) -> tuple[AnswerConflict, ...]:
-    """Keep each answer of a conflict that is a whole reply to that question; the rest are ungrounded."""
+    """Keep each answer of a conflict that quotes whole clauses of a reply to that question; the rest are ungrounded."""
     kept = []
     for conflict in raw.conflicts:
         accepted = (raw.product_id, conflict.question, False)
@@ -359,39 +377,29 @@ def _product_beliefs(
     replies: dict[TurnId, _Reply],
     asked: frozenset[_Asks],
     tenure: int | None,
+    carried: CarriedPremium | None,
 ) -> ProductBeliefs:
-    taken_back: dict[Question, AnswerConflict] = {}
-
-    def kept(answer: Answer, question: Question, read_back: bool) -> Answer:
-        """A stated answer whose reply takes it back in a later clause is unusable; with a
-        different answer after the retraction it is also a conflict (code reads the reply, not the
-        model's span)."""
-        if not isinstance(answer, Stated) or answer.evidence.turn_id not in replies:
-            return answer
-        found = retraction(replies[answer.evidence.turn_id].text)
-        if found is None:
-            return answer
-        before, after = found
-        if after is not None and not read_back:
-            turn = answer.evidence.turn_id
-            answers = (Evidence(quote=before, turn_id=turn), Evidence(quote=after, turn_id=turn))
-            taken_back.setdefault(question, AnswerConflict(question=question, answers=answers))
-        return Unclear(reason=GapReason.no_usable_answer, evidence=answer.evidence)
-
     def ground(answer: Answer, question: Question, read_back: bool = False) -> Answer:
         asks = (raw.product_id, question, read_back)
-        return _ground(kept(answer, question, read_back), frozenset({asks}), asks in asked, replies, ungrounded)
+        return _ground(answer, frozenset({asks}), asks in asked, replies, ungrounded)
 
-    def amount(answer: Answer[str], readback: Answer[bool], question: Question) -> tuple[Answer, Answer]:
+    def amount(
+        answer: Answer[str], readback: Answer[bool], question: Question, carried_from: TurnId | None = None
+    ) -> tuple[Answer, Answer]:
         """An amount and the reply to its read-back: the premium, or the cover. The amount may also
-        come from a correction made in reply to the read-back."""
+        come from a correction made in reply to the read-back, or (premium) be carried from recall."""
         own, again = (raw.product_id, question, False), (raw.product_id, question, True)
-        grounded = _ground(kept(answer, question, False), frozenset({own, again}), own in asked, replies, ungrounded)
+        grounded = _ground(answer, frozenset({own, again}), own in asked, replies, ungrounded, carried_from)
         figure = _read_amount(grounded, replies)
         readback = ground(readback, question, read_back=True)
-        return _confirm(figure, readback, replies)
+        return figure, _confirm(figure, readback, replies, restated=question is Question.cover)
 
-    premium, readback = amount(raw.premium, raw.premium_readback, Question.premium)
+    premium, readback = amount(
+        raw.premium, raw.premium_readback, Question.premium, carried.reply if carried else None
+    )
+    if carried is not None and isinstance(premium, NotAsked):
+        # An amount was read back and no figure of the customer's could be tied to it.
+        premium = Unclear(reason=GapReason.readback_mismatch, evidence=_evidence(readback))
     cover, cover_readback = amount(raw.cover, raw.cover_readback, Question.cover)
 
     claims: list[ClaimEvidence] = []
@@ -414,10 +422,7 @@ def _product_beliefs(
         "term_months": _read_term(ground(raw.term, Question.term), tenure, replies),
         "cancel_window_days": _read(ground(raw.cancel_window, Question.cancel_window), _days, replies),
     }
-    # After every answer is grounded: a retraction found on the way adds its conflict here.
-    conflicts = _conflicts(
-        raw.model_copy(update={"conflicts": (*raw.conflicts, *taken_back.values())}), ungrounded, replies
-    )
+    conflicts = _conflicts(raw, ungrounded, replies)
     return ProductBeliefs(
         product_id=raw.product_id,
         premium_readback=readback,
@@ -452,6 +457,7 @@ def to_beliefs(raw: RawExtraction, record: LoanRecord, transcript: Transcript) -
     bot_turns = [t for t in transcript.turns if t.speaker is Speaker.bot]
     asked = frozenset().union(*(_asked_by(t, on_record) for t in bot_turns))
     recall_asked = raw.recall.asked and any(t.step is CallStep.open_recall for t in bot_turns)
+    carried = carried_premiums(transcript)
 
     def in_recall(evidence: Evidence) -> bool:
         reply = _said(evidence, replies)
@@ -506,6 +512,7 @@ def to_beliefs(raw: RawExtraction, record: LoanRecord, transcript: Transcript) -
                 replies,
                 asked,
                 record.tenure_months,
+                carried.get(pid),
             )
             for pid in on_record
         ),

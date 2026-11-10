@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5 record. Nisha, born 1988, took a personal loan with one add-on. For the P5 evaluation only.",
+  "id": "p5-c046",
+  "label": "Synthetic P5 record. Nisha: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1988-10-01",
+      "language": "hi-en",
+      "name": "Nisha Kalpanik"
+    },
+    "disbursed_inr": 379200,
+    "disbursed_on": "2026-11-04",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5-LN-046",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-11-04",
+          "method": "otp"
+        },
+        "cover_inr": 400000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 20800,
+        "provider": "Kalpanik Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 400000,
+    "tenure_months": 24
+  }
+}

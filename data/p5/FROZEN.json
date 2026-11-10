@@ -1,0 +1,69 @@
+{
+  "set": "samajh-p5-customers",
+  "version": 2,
+  "stage_1": {
+    "what": "version 2: topics.json gained the open_defer section and the revised disposition rule; customers, gold, records and the closed script are byte-identical to version 1 (same sha256)",
+    "frozen_at_utc": "2026-11-10T13:04:37Z",
+    "by": "P5-prep sub-orchestrator",
+    "counts": {
+      "customers": 60,
+      "records": 60,
+      "gold_rows": 60
+    }
+  },
+  "inputs": {
+    "customers.jsonl": "a1a061919d9c164afad5282fefa6ce265a71ad483c835bba109d2d7b15f53bb0",
+    "gold.jsonl": "979f6120c3cdb4e914b5267be5dfade426f43420a13d594db522d873cb8ed1cd",
+    "topics.json": "95351109a5d59f59e3eb0c86686abf27345de9dd6326f5d4fd42783fd2a0c2bb",
+    "closed_script.json": "1874be1dd3034eae66bb9e81fa98272e864452f75083e20850a01bb3d870c8a2",
+    "records": "4ff92b0ed3e66e7ec199e4cdfd3873e9f2e76d8a2a235f93e0bc6373fe21d058"
+  },
+  "how_to_recompute": "uv run python eval/p5/write_customers.py inputs-hash ; records = sha256 of the lines '<sha256>  <file name>' for data/p5/records/*.json sorted by name (cd data/p5/records && shasum -a 256 *.json | shasum -a 256) ; words and other: shasum -a 256 <file>",
+  "stage_2": {
+    "what": "version 2 words: the version 1 replies unchanged plus one defer reply per customer for each of the 14 grouped open topics (840), the rendered closed-call lines, and all 217 requests sent to a writer model: frozen before any audio",
+    "frozen_at_utc": "2026-11-10T13:11:36Z",
+    "by": "P5-prep sub-orchestrator"
+  },
+  "words": {
+    "replies.jsonl": "cb44eecbcd1165c958c68103bd737f6cd80944337c678f6a4a5657a3e7ddc83c",
+    "closed_statements.jsonl": "79e6fae74593d83557134d86b0ff3cd6a6ceaf701544e2522f52d0559be54765",
+    "writer_requests.jsonl": "b8d4b7631ff8c2826f19b8647872259acf91ceebd286e88a1563be69261b8bae"
+  },
+  "other": {
+    "build_customers.py": "6f0891e58a6b291cce16827fdbedd07c4dd3596646f0bee17d8bc9be59aa0127",
+    "eval/p5/write_customers.py": "d5bd731585011496cae7daddb9c4a1e4cc7ebcad0f210257cbfe8d11e0ea2ce9",
+    "eval/p5/gold-rules.md": "e6d78c6c72da58585ad34dfa4bb40f8347db3e544cbc3c4a2493fe2b82fcaa9a"
+  },
+  "history": [
+    {
+      "version": 1,
+      "inputs": {
+        "customers.jsonl": "a1a061919d9c164afad5282fefa6ce265a71ad483c835bba109d2d7b15f53bb0",
+        "gold.jsonl": "979f6120c3cdb4e914b5267be5dfade426f43420a13d594db522d873cb8ed1cd",
+        "topics.json": "a2fbb50c9323f46a342592eeea34800c2c537672f106fc9e115f47c5c50761da",
+        "closed_script.json": "1874be1dd3034eae66bb9e81fa98272e864452f75083e20850a01bb3d870c8a2",
+        "records": "4ff92b0ed3e66e7ec199e4cdfd3873e9f2e76d8a2a235f93e0bc6373fe21d058"
+      },
+      "words": {
+        "replies.jsonl": "ba71c73e9e8fbc8f94bda382f33dfdcc66b1adabb5322a4d4bcc80a7305ef218",
+        "closed_statements.jsonl": "79e6fae74593d83557134d86b0ff3cd6a6ceaf701544e2522f52d0559be54765",
+        "writer_requests.jsonl": "7a002d5730f3c2f01ff110646fa24897c143a3ddfbc4a5a295a08526524b01c4"
+      },
+      "stage_1": {
+        "what": "fact sheets, records, gold, topics and the closed script: frozen before any customer words existed",
+        "frozen_at_utc": "2026-11-10T12:14:20Z",
+        "by": "P5-prep sub-orchestrator",
+        "counts": {
+          "customers": 60,
+          "records": 60,
+          "gold_rows": 60
+        }
+      },
+      "stage_2": {
+        "what": "the customers' words (written by two outside models from the fact sheets), the rendered closed-call lines and every request sent to a writer model: frozen before any audio",
+        "frozen_at_utc": "2026-11-10T12:30:38Z",
+        "by": "P5-prep sub-orchestrator"
+      }
+    }
+  ]
+}

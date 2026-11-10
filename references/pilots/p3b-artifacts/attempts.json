@@ -135,7 +135,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -160,7 +162,9 @@
                     "outcome": "wrong_party",
                     "outcome_label": "Someone else answered",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "wrong_party",
@@ -185,7 +189,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -194,7 +200,9 @@
                     "outcome": "incomplete",
                     "outcome_label": "Call ended early",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "incomplete",
@@ -219,7 +227,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -228,7 +238,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -253,7 +265,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -262,7 +276,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 3,
@@ -271,7 +287,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "unreachable",
@@ -296,7 +314,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -321,7 +341,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -330,7 +352,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -355,7 +379,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -364,7 +390,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -389,7 +417,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -398,7 +428,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -423,7 +455,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -448,7 +482,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -457,7 +493,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -482,7 +520,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -507,7 +547,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -532,7 +574,9 @@
                     "outcome": "incomplete",
                     "outcome_label": "Call ended early",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "incomplete",
@@ -557,7 +601,9 @@
                     "outcome": "call_back_later",
                     "outcome_label": "Asked to be called later",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -566,7 +612,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -591,7 +639,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -600,7 +650,9 @@
                     "outcome": "wrong_party",
                     "outcome_label": "Someone else answered",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "wrong_party",
@@ -625,7 +677,9 @@
                     "outcome": "call_back_later",
                     "outcome_label": "Asked to be called later",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -634,7 +688,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -659,7 +715,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -668,7 +726,9 @@
                     "outcome": "incomplete",
                     "outcome_label": "Call ended early",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "incomplete",
@@ -693,7 +753,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -702,7 +764,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -727,7 +791,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -752,7 +818,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -777,7 +845,9 @@
                     "outcome": "wrong_party",
                     "outcome_label": "Someone else answered",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "wrong_party",
@@ -802,14 +872,16 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
             "status_label": "Completed within 30 days of the sale",
-            "tier": "refer",
-            "tier_label": "Referred for review",
-            "case_id": "TEST-CALL-SYN-PL-270120-0058-tb"
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
         },
         {
             "loan_id": "SYN-GL-270119-0055",
@@ -827,7 +899,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -852,7 +926,9 @@
                     "outcome": "declined",
                     "outcome_label": "Declined the call",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "declined",
@@ -877,7 +953,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -886,7 +964,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -911,7 +991,9 @@
                     "outcome": "call_back_later",
                     "outcome_label": "Asked to be called later",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -920,7 +1002,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -945,7 +1029,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -970,7 +1056,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -995,14 +1083,16 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
             "status_label": "Completed within 30 days of the sale",
-            "tier": "refer",
-            "tier_label": "Referred for review",
-            "case_id": "TEST-CALL-SYN-PL-270122-0064-tb"
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
         },
         {
             "loan_id": "SYN-PL-270131-0090",
@@ -1020,7 +1110,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1029,7 +1121,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1054,7 +1148,9 @@
                     "outcome": "declined",
                     "outcome_label": "Declined the call",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "declined",
@@ -1079,7 +1175,9 @@
                     "outcome": "call_back_later",
                     "outcome_label": "Asked to be called later",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1088,7 +1186,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 3,
@@ -1097,7 +1197,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1122,7 +1224,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1131,7 +1235,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1156,7 +1262,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1165,7 +1273,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 3,
@@ -1174,7 +1284,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1199,7 +1311,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1224,7 +1338,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1249,7 +1365,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1274,7 +1392,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1299,7 +1419,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1324,7 +1446,9 @@
                     "outcome": "wrong_party",
                     "outcome_label": "Someone else answered",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "wrong_party",
@@ -1349,7 +1473,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1374,7 +1500,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1399,7 +1527,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1424,7 +1554,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1433,7 +1565,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1458,14 +1592,16 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
             "status_label": "Completed within 30 days of the sale",
-            "tier": "refer",
-            "tier_label": "Referred for review",
-            "case_id": "TEST-CALL-SYN-GL-270203-0099-tb"
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
         },
         {
             "loan_id": "SYN-GL-270206-0112",
@@ -1483,7 +1619,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1508,7 +1646,9 @@
                     "outcome": "declined",
                     "outcome_label": "Declined the call",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "declined",
@@ -1533,7 +1673,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1542,7 +1684,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1567,7 +1711,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1592,7 +1738,9 @@
                     "outcome": "not_confirmed",
                     "outcome_label": "Identity not confirmed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "not_confirmed",
@@ -1617,7 +1765,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1642,7 +1792,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1667,7 +1819,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1692,7 +1846,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1701,7 +1857,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1726,7 +1884,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1751,7 +1911,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1760,7 +1922,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 3,
@@ -1769,7 +1933,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1794,14 +1960,16 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
             "status_label": "Completed within 30 days of the sale",
-            "tier": "refer",
-            "tier_label": "Referred for review",
-            "case_id": "TEST-CALL-SYN-GL-270209-0123-tb"
+            "tier": "understanding_gap",
+            "tier_label": "Understanding gap (report only)",
+            "case_id": null
         },
         {
             "loan_id": "SYN-GL-270212-0137",
@@ -1819,7 +1987,9 @@
                     "outcome": "wrong_party",
                     "outcome_label": "Someone else answered",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "wrong_party",
@@ -1844,7 +2014,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1853,7 +2025,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1878,7 +2052,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1903,7 +2079,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1928,7 +2106,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1953,7 +2133,9 @@
                     "outcome": "call_back_later",
                     "outcome_label": "Asked to be called later",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -1962,7 +2144,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -1987,7 +2171,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2012,7 +2198,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2037,7 +2225,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2062,7 +2252,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2087,7 +2279,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2112,7 +2306,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2137,7 +2333,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2162,7 +2360,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -2171,7 +2371,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 3,
@@ -2180,7 +2382,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "unreachable",
@@ -2205,7 +2409,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -2214,7 +2420,9 @@
                     "outcome": "declined",
                     "outcome_label": "Declined the call",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "declined",
@@ -2239,7 +2447,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2264,7 +2474,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2289,7 +2501,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -2298,7 +2512,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2323,7 +2539,9 @@
                     "outcome": "declined",
                     "outcome_label": "Declined the call",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "declined",
@@ -2348,7 +2566,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2373,7 +2593,9 @@
                     "outcome": "no_answer",
                     "outcome_label": "No answer",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 },
                 {
                     "number": 2,
@@ -2382,7 +2604,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2407,7 +2631,9 @@
                     "outcome": "completed",
                     "outcome_label": "Completed",
                     "simulated": true,
-                    "session_id": null
+                    "session_id": null,
+                    "dialogue_outcome": null,
+                    "request": null
                 }
             ],
             "status": "completed",
@@ -2428,6 +2654,7 @@
             "outcome": "wrong_party",
             "outcome_label": "Someone else answered",
             "dialogue_outcome": "wrong_party",
+            "request": null,
             "tier": null,
             "tier_label": null,
             "case_id": null
@@ -2442,6 +2669,7 @@
             "outcome": "completed",
             "outcome_label": "Completed",
             "dialogue_outcome": "completed",
+            "request": null,
             "tier": "refer",
             "tier_label": "Referred for review",
             "case_id": "20261110T103108-9f2e34f8dfdf"
@@ -2456,6 +2684,7 @@
             "outcome": "completed",
             "outcome_label": "Completed",
             "dialogue_outcome": "completed",
+            "request": null,
             "tier": "refer",
             "tier_label": "Referred for review",
             "case_id": "20261110T103149-31a023316d9e"
@@ -2470,6 +2699,7 @@
             "outcome": "completed",
             "outcome_label": "Completed",
             "dialogue_outcome": "completed",
+            "request": null,
             "tier": "clear",
             "tier_label": "Nothing to refer",
             "case_id": null
@@ -2484,9 +2714,182 @@
             "outcome": "completed",
             "outcome_label": "Completed",
             "dialogue_outcome": "completed",
+            "request": null,
             "tier": "refer",
             "tier_label": "Referred for review",
             "case_id": "20261110T103439-10efda4cc6ab"
+        },
+        {
+            "session_id": "20261110T111501-cfb03ade882d",
+            "record_id": "hero",
+            "loan_id": "LN-DEMO-0001",
+            "reason": "the loan is not on the lender's book for this batch",
+            "at": "2026-11-10T11:16:01.805000Z",
+            "language": "hi-en",
+            "outcome": "incomplete",
+            "outcome_label": "Call ended early",
+            "dialogue_outcome": "in_progress",
+            "request": null,
+            "tier": null,
+            "tier_label": null,
+            "case_id": null
+        },
+        {
+            "session_id": "20261110T112446-f7770ec63c07",
+            "record_id": "hero",
+            "loan_id": "LN-DEMO-0001",
+            "reason": "the loan is not on the lender's book for this batch",
+            "at": "2026-11-10T11:28:16.435000Z",
+            "language": "hi-en",
+            "outcome": "completed",
+            "outcome_label": "Completed",
+            "dialogue_outcome": "completed",
+            "request": null,
+            "tier": "refer",
+            "tier_label": "Referred for review",
+            "case_id": "20261110T112446-f7770ec63c07"
         }
-    ]
+    ],
+    "window_note": "No attempt was made after day 30 from the sale.",
+    "ingest_note": "The last ingest saw 41 phone session(s) and did not bring in 34: they are in no count here, not even the reach figures. 0 came in as attempts and 7 as calls outside the sample. Each session left out is listed on the attempt log with the reason.",
+    "not_ingested": [
+        {
+            "session_id": "20261110T032339-b41b3f41b032",
+            "reason": "no case file (case.json): the call ended (dialogue) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032419-0a788be9b70e",
+            "reason": "no case file (case.json): the session log says the call never ended (still active); it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032436-57f1aa1a45ae",
+            "reason": "no case file (case.json): the session log says the call never ended (still active); it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032436-93ffc55765ae",
+            "reason": "no case file (case.json): the session log says the call never ended (still active); it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032503-01195c782593",
+            "reason": "no case file (case.json): the call ended (dialogue) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032552-411bfb027bf3",
+            "reason": "no case file (case.json): the call ended (dialogue) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032637-fd823d9dcf6f",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032700-8e6cfdcc960b",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032723-02c9357bf364",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032749-d2411bff5e18",
+            "reason": "no case file (case.json): the session log says the call never ended (still active); it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032809-b1cce852ac1d",
+            "reason": "no case file (case.json): the session log says the call never ended (still active); it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032830-80adef4e00f6",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032854-ab804c011161",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032915-5f45dc40b306",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T032940-b15507289e5a",
+            "reason": "no case file (case.json): the session log says the call never ended (still active); it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T033001-acb87cf315ca",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T033025-69518e8e746a",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T035815-ac6ebe5490ea",
+            "reason": "no case file (case.json): the call ended (dialogue) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T035818-b7f46568716e",
+            "reason": "no case file (case.json): the call ended (dialogue) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T035905-7b90a9a62f2d",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T035925-8eb6a1708e92",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T035947-a69e51b837bd",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040009-b7ac4e83b900",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040032-fc39055f9e35",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040053-eab1426cdb54",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040114-9510c7c75fe0",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040134-1c2d71586bf9",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040155-17e18c3d31ca",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040217-b6e8bb153d4b",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040238-46fea436d581",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T040259-25902c459e06",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it; it used the test dialogue (stub), not the Samajh call"
+        },
+        {
+            "session_id": "20261110T103734-261d0a69f2ed",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it"
+        },
+        {
+            "session_id": "20261110T103831-e894eb7f05e6",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it"
+        },
+        {
+            "session_id": "20261110T103928-b8c5a9725dce",
+            "reason": "no case file (case.json): the call ended (hangup) but no case was built for it"
+        }
+    ],
+    "changed_label": "Case file changed after it was brought in: the version brought in first is kept",
+    "changed": []
 }

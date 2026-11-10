@@ -752,9 +752,11 @@ def test_a_correction_that_was_never_read_back_is_not_confirmed():
         }
     )
     beliefs = to_beliefs(extraction, record(premium_inr=55000), call)
-    assert beliefs.for_product("P1").premium_inr == Unclear(
-        reason=GapReason.readback_mismatch, evidence=Evidence(quote="नहीं, पचपन हज़ार", turn_id=8)
-    )
+    mismatch = Unclear(reason=GapReason.readback_mismatch, evidence=Evidence(quote="नहीं, पचपन हज़ार", turn_id=8))
+    assert beliefs.for_product("P1").premium_readback == mismatch  # the figure is kept; the "yes" is not
+    result = evaluate(record(premium_inr=55000), beliefs)
+    assert {r for rule, r in product_gaps(result) if rule is RuleId.premium} == {GapReason.readback_mismatch}
+    assert not [f for f in result.products[0].flags if f.rule_id is RuleId.premium]
 
 
 def test_a_recall_amount_the_customer_did_not_say_is_dropped():
@@ -997,8 +999,9 @@ def test_a_cover_read_back_of_another_figure_confirms_nothing():
     call = cover_read_back_call("10,00,000 का कवर है।", "पाँच लाख, यानी 5,00,000, सही है?")
     extraction = raw(cover=stated("10,00,000", "10,00,000 का कवर है।", 14), cover_readback=stated(True, "हाँ, सही है।", 26))
     result = judge(extraction, call)
-    assert (RuleId.cover, GapReason.readback_mismatch) in product_gaps(result)
-    assert result.tier.value != "refer"
+    # Fix round 3: the customer's plain figure is kept, unconfirmed (it was understanding_gap).
+    assert [f.reason.value for f in result.all_flags()] == ["cover_differs_unconfirmed"]
+    assert result.tier.value == "incomplete"
 
 
 @pytest.mark.parametrize(
@@ -1028,37 +1031,315 @@ def test_an_earlier_reply_kept_with_an_answer_must_be_in_the_call():
     assert Evidence(quote="पता नहीं", turn_id=4) in beliefs.for_product("P1").ungrounded
 
 
-# --- a later clause that takes the answer back (verifier iter2 cases 9 and 10) -----------
-
-
-@pytest.mark.parametrize(
-    ("turn", "field", "reply", "value", "rule"),
-    [
-        (4, "kind", "यह बीमा है, ऐसा तो नहीं था।", "insurance", RuleId.kind),
-        (6, "premium", "बावन हज़ार रुपये, ऐसा तो नहीं था।", "बावन हज़ार", RuleId.premium),
-        (10, "payment_source", "लोन की रकम से कटे थे, मतलब वो नहीं।", "from_loan", RuleId.loan_funded),
-        (4, "kind", "bima hai, galat bola.", "insurance", RuleId.kind),
-        (4, "kind", "यह बीमा है, पक्का, आपने पूछा तो, actually no.", "insurance", RuleId.kind),  # two clauses later
-        (6, "premium", "बावन हज़ार रुपये, उतना ही था, ऐसा नहीं था।", "बावन हज़ार", RuleId.premium),
-    ],
-)
-def test_an_answer_taken_back_in_a_later_clause_is_a_gap_never_a_pass(turn, field, reply, value, rule):
-    result = judge(raw(**{field: stated(value, reply, turn)}), swap({turn: reply}))
-    assert (rule, GapReason.no_usable_answer) in product_gaps(result)
-    assert result.verdict is not CLEAR
-
-
-def test_a_retraction_followed_by_another_answer_is_a_conflict():
-    reply = "यह बीमा है, नहीं नहीं, एफ़डी है।"
-    result = judge(raw(kind=stated("deposit", reply, 4)), swap({4: reply}))
-    conflict = [f for f in result.all_flags() if f.reason.value == "answers_conflict"]
-    assert conflict and conflict[0].rule_id is RuleId.kind
-    assert result.tier.value == "refer"
+# --- a later clause of the same reply: the rules read no retraction from text --------------
+# Whether a later clause takes an answer back is judged by the extractor's change check
+# (tests/extract/test_extract_change.py). The rules keep only the structure: a conflict inside
+# one reply survives when each of its answers is a run of whole clauses of that reply.
 
 
 @pytest.mark.parametrize(
     "reply",
-    ["नहीं नहीं, यह बीमा है।", "यह बीमा है, एफ़डी नहीं है।", "यह बीमा है, पैसा वापस नहीं मिलता।"],
+    [
+        "नहीं नहीं, यह बीमा है।",
+        "यह बीमा है, एफ़डी नहीं है।",
+        "यह बीमा है, पैसा वापस नहीं मिलता।",
+        "यह बीमा है, सॉरी, आवाज़ टूट रही है।",  # once a listed phrase: the rules now leave it alone
+        "यह बीमा है, नहीं नहीं, बीमा ही है।",
+    ],
 )
-def test_a_negation_that_is_part_of_the_answer_is_not_a_retraction(reply):
+def test_the_rules_take_no_answer_away_for_words_in_a_later_clause(reply):
     assert judge(raw(kind=stated("insurance", reply, 4)), swap({4: reply})).verdict is CLEAR
+
+
+def test_a_conflict_inside_one_reply_survives_when_both_answers_are_whole_clauses():
+    reply = "यह बीमा है, नहीं नहीं, एफ़डी है।"
+    conflict = {"question": "kind", "answers": [{"quote": "यह बीमा है", "turn_id": 4},
+                                               {"quote": "एफ़डी है", "turn_id": 4}]}  # fmt: skip
+    extraction = raw(kind={"status": "unclear", "evidence": {"quote": reply, "turn_id": 4}}, conflicts=[conflict])
+    result = judge(extraction, swap({4: reply}))
+    flags = [f for f in result.all_flags() if f.reason.value == "answers_conflict"]
+    assert [(f.rule_id, f.quote, [e.quote for e in f.also]) for f in flags] == [(RuleId.kind, "यह बीमा है", ["एफ़डी है"])]
+    assert result.tier.value == "refer"
+
+
+def test_a_conflict_answer_that_stops_inside_a_clause_is_ungrounded():
+    reply = "यह बीमा है, नहीं नहीं, एफ़डी है।"
+    conflict = {"question": "kind", "answers": [{"quote": "बीमा", "turn_id": 4}, {"quote": "एफ़डी है", "turn_id": 4}]}
+    extraction = raw(kind={"status": "unclear", "evidence": {"quote": reply, "turn_id": 4}}, conflicts=[conflict])
+    beliefs = to_beliefs(extraction, record(), swap({4: reply}))
+    assert beliefs.for_product("P1").conflicts == ()
+    assert Evidence(quote="बीमा", turn_id=4) in beliefs.for_product("P1").ungrounded
+
+
+# --- fix round 3: cover read-back tiers (record cover 5,00,000) ------------------------------
+
+
+def cover_call(*extra) -> Transcript:
+    """The compliant call with "दस लाख का कवर है।" at turn 14, then `extra` turns from 25 on."""
+    turns = [(i, w, st, "दस लाख का कवर है।" if i == 14 else t, a) for i, w, st, t, a in TURNS]
+    return transcript([*turns, *((25 + k, *row) for k, row in enumerate(extra))])
+
+
+TEN = stated("दस लाख", "दस लाख का कवर है।", 14)
+RB_TEN = (BOT, "read_back", "दस लाख, यानी 10,00,000 रुपये का कवर, सही है?", "cover")
+AGAIN = (BOT, "teach_back", "कवर फिर से बताइए?", "cover")
+
+
+def cover_flags_and_gaps(result: CaseResult) -> list[str]:
+    outcomes = [*result.products[0].flags, *result.products[0].gaps]
+    return sorted(o.reason.value for o in outcomes if o.rule_id is RuleId.cover)
+
+
+@pytest.mark.parametrize(
+    ("read_back", "reply", "confirms", "expected"),
+    [
+        (RB_TEN, "नहीं।", False, ["cover_differs_unconfirmed"]),  # rejected, no correction (was understanding_gap)
+        ((BOT, "read_back", "बीस लाख, यानी 20,00,000 रुपये, सही है?", "cover"), "हाँ।", True,
+         ["cover_differs_unconfirmed"]),  # the bot read another figure (was understanding_gap)
+        (RB_TEN, "हाँ, सही है।", True, ["cover_differs_confirmed"]),
+    ],
+)  # fmt: skip
+def test_a_plain_wrong_cover_is_never_lowered_by_its_read_back(read_back, reply, confirms, expected):
+    call = cover_call(read_back, (CUSTOMER, "read_back", reply, None))
+    result = judge(raw(cover=TEN, cover_readback=stated(confirms, reply, 26)), call)
+    assert cover_flags_and_gaps(result) == expected
+    flag = result.products[0].flags[0]
+    assert (flag.quote, flag.turn_id) == ("दस लाख का कवर है।", 14)  # the customer's figure, not the read-back
+    assert result.tier.value == ("refer" if confirms and "दस" in read_back[2] else "incomplete")
+
+
+def test_a_confirmed_cover_restated_when_asked_again_stays_a_referral():
+    call = cover_call(RB_TEN, (CUSTOMER, "read_back", "हाँ, सही है।", None), AGAIN,
+                      (CUSTOMER, "teach_back", "दस लाख ही है।", None))  # fmt: skip
+    restated = {**stated("दस लाख", "दस लाख ही है।", 28), "also": [{"quote": "दस लाख का कवर है।", "turn_id": 14}]}
+    result = judge(raw(cover=restated, cover_readback=stated(True, "हाँ, सही है।", 26)), call)
+    assert cover_flags_and_gaps(result) == ["cover_differs_confirmed"]
+    assert result.tier.value == "refer"
+
+
+def test_a_yes_to_one_figure_does_not_confirm_a_different_figure_said_after_it():
+    call = cover_call(RB_TEN, (CUSTOMER, "read_back", "हाँ, सही है।", None), AGAIN,
+                      (CUSTOMER, "teach_back", "बीस लाख।", None))  # fmt: skip
+    later = {**stated("बीस लाख", "बीस लाख।", 28), "also": [{"quote": "दस लाख का कवर है।", "turn_id": 14}]}
+    result = judge(raw(cover=later, cover_readback=stated(True, "हाँ, सही है।", 26)), call)
+    assert cover_flags_and_gaps(result) == ["cover_differs_unconfirmed"]
+    assert result.tier.value == "incomplete"
+
+
+def test_the_premium_is_not_confirmed_by_a_restatement_after_its_read_back():
+    """The restatement rule is the cover's only: the premium keeps its old tiers."""
+    call = transcript([*TURNS, (25, BOT, "teach_back", "कीमत फिर से बताइए?", "premium"),
+                       (26, CUSTOMER, "teach_back", "बावन हज़ार ही है।", None)])  # fmt: skip
+    restated = {**stated("बावन हज़ार", "बावन हज़ार ही है।", 26), "also": [{"quote": "बावन हज़ार रुपये", "turn_id": 6}]}
+    result = judge(raw(premium=restated), call)
+    assert product_gaps(result) == {(RuleId.premium, GapReason.readback_mismatch)}
+
+
+@pytest.mark.parametrize(
+    ("correction", "span", "expected", "tier"),
+    [
+        ("नहीं, पाँच लाख।", "पाँच लाख", [], "clear"),  # equal to the record: passes, as if never read back
+        ("नहीं, बीस लाख।", "बीस लाख", ["cover_differs_unconfirmed"], "incomplete"),
+        ("नहीं, शायद बीस लाख।", "बीस लाख", ["cover_differs"], "understanding_gap"),
+    ],
+)
+def test_a_cover_corrected_at_the_read_back_is_judged_as_a_figure_never_read_back(correction, span, expected, tier):
+    call = cover_call(RB_TEN, (CUSTOMER, "read_back", correction, None))
+    corrected = {**stated(span, correction, 26), "hedged": "शायद" in correction}
+    result = judge(raw(cover=corrected, cover_readback=stated(False, correction, 26)), call)
+    assert cover_flags_and_gaps(result) == expected
+    assert result.tier.value == tier
+
+
+@pytest.mark.parametrize(("second", "expected"), [("बीस", ["cover_differs_confirmed"]), ("पाँच", [])])
+def test_a_second_read_back_after_a_cover_correction_is_judged_as_usual(second, expected):
+    figure = {"बीस": "20,00,000", "पाँच": "5,00,000"}[second]
+    call = cover_call(RB_TEN, (CUSTOMER, "read_back", f"नहीं, {second} लाख।", None),
+                      (BOT, "read_back", f"{second} लाख, यानी {figure} रुपये, सही है?", "cover"),
+                      (CUSTOMER, "read_back", "हाँ।", None))  # fmt: skip
+    corrected = stated(f"{second} लाख", f"नहीं, {second} लाख।", 26)
+    result = judge(raw(cover=corrected, cover_readback=stated(True, "हाँ।", 28)), call)
+    assert cover_flags_and_gaps(result) == expected
+
+
+def test_an_exact_cover_whose_read_back_is_rejected_is_still_a_gap():
+    call = transcript([*TURNS, (25, BOT, "read_back", "पाँच लाख, यानी 5,00,000, सही है?", "cover"),
+                       (26, CUSTOMER, "read_back", "नहीं।", None)])  # fmt: skip
+    result = judge(raw(cover_readback=stated(False, "नहीं।", 26)), call)
+    assert product_gaps(result) == {(RuleId.cover, GapReason.readback_rejected)}
+
+
+# --- fix round 3: premium tiers are unchanged by keeping the figure (record 52,000) -------------
+
+
+def premium_read_back_call(read_back: str, reply: str) -> Transcript:
+    return swap({7: read_back, 8: reply})
+
+
+@pytest.mark.parametrize(
+    ("figure", "read_back", "reply", "confirms", "expected", "tier"),
+    [
+        # rejected, no correction: a read-back gap whatever the figure
+        ("बावन हज़ार", "बावन हज़ार, यानी 52,000, सही है?", "नहीं।", False, ("gap", "readback_rejected"), "incomplete"),
+        ("साठ हज़ार", "साठ हज़ार, यानी 60,000, सही है?", "नहीं।", False, ("gap", "readback_rejected"), "incomplete"),
+        # mismatched: the bot read another figure
+        ("बावन हज़ार", "पचपन हज़ार, यानी 55,000, सही है?", "हाँ।", True, ("gap", "readback_mismatch"), "incomplete"),
+        ("साठ हज़ार", "पचपन हज़ार, यानी 55,000, सही है?", "हाँ।", True, ("gap", "readback_mismatch"), "incomplete"),
+        # confirmed
+        ("बावन हज़ार", "बावन हज़ार, यानी 52,000, सही है?", "हाँ।", True, None, "clear"),
+        ("साठ हज़ार", "साठ हज़ार, यानी 60,000, सही है?", "हाँ।", True, ("flag", "premium_differs_confirmed"), "refer"),
+    ],
+)  # fmt: skip
+def test_every_premium_read_back_outcome_keeps_its_tier(figure, read_back, reply, confirms, expected, tier):
+    call = swap({6: f"{figure} रुपये।", 7: read_back, 8: reply})
+    result = judge(raw(premium=stated(figure, f"{figure} रुपये।", 6), premium_readback=stated(confirms, reply, 8)), call)
+    premium = [(("flag" if o.outcome == "flag" else "gap"), o.reason.value)
+               for o in (*result.products[0].flags, *result.products[0].gaps) if o.rule_id is RuleId.premium]  # fmt: skip
+    assert premium == ([expected] if expected else [])
+    assert result.tier.value == tier
+
+
+@pytest.mark.parametrize("on_record", [52000, 55000])
+def test_a_premium_corrected_at_the_read_back_and_not_read_back_again_stays_a_gap(on_record):
+    call = swap({8: "नहीं, पचपन हज़ार।"})
+    extraction = raw(premium=stated("पचपन हज़ार", "नहीं, पचपन हज़ार", 8), premium_readback=stated(False, "नहीं", 8))
+    result = judge(extraction, call, record(premium_inr=on_record))
+    assert product_gaps(result) == {(RuleId.premium, GapReason.readback_rejected)}
+    assert result.tier.value == "incomplete"
+
+
+# --- fix round 3: a premium carried forward from open recall -----------------------------------
+# The dialogue does not ask a premium the customer gave in open recall: it reads it back after the
+# kind question. A bot utterance may be several bot turns in a row.
+
+CARRY_RECALL = "लोन के साथ हाँ, एक बीमा भी लिया था 52,000 रुपये का।"
+CARRY = [
+    (1, BOT, "open_recall", "लोन के साथ आपने कुछ और भी लिया था क्या? अगर हाँ, तो क्या, और कितने का?", None),
+    (2, CUSTOMER, "open_recall", CARRY_RECALL, None),
+    (3, BOT, "teach_back", "ठीक है, उसके बारे में कुछ छोटे सवाल हैं।", None),
+    (4, BOT, "teach_back", "वो क्या है? अपने शब्दों में बताइए।", "kind"),
+    (5, CUSTOMER, "teach_back", "बीमा ही है insurance।", None),
+    (6, BOT, "read_back", "तो आपने उसके लिए बावन हज़ार रुपये दिए। सही है?", "premium"),
+    (7, CUSTOMER, "read_back", "हाँ, सही है", None),
+    *[t for t in TURNS if t[0] > 8],
+]
+CARRIED = stated("52,000", CARRY_RECALL, 2)
+
+
+def carry_raw(**changes) -> RawExtraction:
+    recall = RECALL | {"answer": {"quote": CARRY_RECALL, "turn_id": 2},
+                       "items": [RECALL["items"][0] | {"evidence": {"quote": "एक बीमा भी लिया था 52,000 रुपये का", "turn_id": 2},
+                                                       "amount_text": "52,000"}]}  # fmt: skip
+    base = {"kind": stated("insurance", "बीमा ही है insurance", 5), "premium": CARRIED,
+            "premium_readback": stated(True, "हाँ, सही है", 7)}  # fmt: skip
+    return raw(recall=recall, **(base | changes))
+
+
+def test_a_premium_given_in_recall_and_confirmed_at_its_read_back_passes():
+    result = judge(carry_raw(), transcript(CARRY))
+    assert result.verdict is CLEAR, (result.all_flags(), result.all_gaps())
+    assert to_beliefs(carry_raw(), record(), transcript(CARRY)).for_product("P1").premium_inr.value == 52000
+
+
+def test_a_carried_premium_that_differs_from_the_record_is_a_confirmed_difference():
+    result = judge(carry_raw(), transcript(CARRY), record(premium_inr=25000))
+    assert [f.reason.value for f in result.all_flags()] == ["premium_differs_confirmed"]
+    assert result.tier.value == "refer"
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {7: "हाँ, सही है"} | {3: "उसके लिए आपने कितने रुपये दिए?"},  # the premium WAS asked (turn 3 tagged below)
+        {6: "तो आपने उसके लिए पच्चीस हज़ार रुपये दिए। सही है?"},  # the bot read back another figure
+    ],
+    ids=["premium_question_asked", "read_back_of_another_figure"],
+)
+def test_a_recall_reply_is_the_premium_quote_under_the_carried_condition_only(changes):
+    turns = [(i, w, st, changes.get(i, t), "premium" if (i == 3 and 3 in changes) else a) for i, w, st, t, a in CARRY]
+    beliefs = to_beliefs(carry_raw(), record(), transcript(turns))
+    premium = beliefs.for_product("P1").premium_inr
+    assert isinstance(premium, Unclear) and premium.reason is GapReason.quote_not_grounded
+
+
+def test_a_recall_amount_never_read_back_is_never_the_premium():
+    turns = [t for t in CARRY if t[0] not in (6, 7)]
+    beliefs = to_beliefs(carry_raw(premium_readback=None), record(), transcript(turns))
+    premium = beliefs.for_product("P1").premium_inr
+    assert isinstance(premium, Unclear) and premium.reason is GapReason.quote_not_grounded
+    unsaid = to_beliefs(carry_raw(premium=None, premium_readback=None), record(), transcript(turns))
+    assert isinstance(unsaid.for_product("P1").premium_inr, NotAsked)
+
+
+def test_a_read_back_with_no_customer_figure_behind_it_is_not_a_question_never_asked():
+    """Nothing tied to the read-back: a read-back gap quoting the read-back reply, not "not asked"."""
+    turns = [(i, w, st, "लोन के साथ हाँ, एक बीमा लिया था, 25,000 और 27,000 का।" if i == 2 else t, a)
+             for i, w, st, t, a in CARRY]  # fmt: skip
+    result = judge(carry_raw(premium=None), transcript(turns))
+    (gap,) = [g for g in result.products[0].gaps if g.rule_id is RuleId.premium]
+    assert (gap.reason, gap.quote, gap.turn_id) == (GapReason.readback_mismatch, "हाँ, सही है", 7)
+
+
+def test_the_cover_is_never_carried_from_recall():
+    turns = [(i, w, st, "लोन के साथ एक बीमा लिया था, 5,00,000 का कवर है।" if i == 2 else t, a) for i, w, st, t, a in CARRY]
+    turns += [(25, BOT, "read_back", "पाँच लाख, यानी 5,00,000, सही है?", "cover"), (26, CUSTOMER, "read_back", "हाँ।", None)]
+    extraction = carry_raw(cover=stated("5,00,000", "लोन के साथ एक बीमा लिया था, 5,00,000 का कवर है।", 2),
+                           premium=None)  # fmt: skip
+    beliefs = to_beliefs(extraction, record(), transcript([t for t in turns if t[0] not in (13, 14)]))
+    cover = beliefs.for_product("P1").cover_inr
+    assert isinstance(cover, Unclear) and cover.reason is GapReason.quote_not_grounded
+
+
+# --- fix round 3: no span widening ------------------------------------------------------------
+# `widen()` read the span with one more word on each side. A search over 134,552 generated
+# (reply, span) pairs found 963 where it changed the outcome while the span and the whole reply
+# agreed; every one cut a number phrase in half ("एक बार" read as +1, "चार सौ" as a stray number)
+# and refused a value read correctly. The whole reply already holds every neighbouring word.
+
+
+@pytest.mark.parametrize(
+    ("turn", "reply", "field", "span", "value"),
+    [
+        (16, "पाँच साल चार सौ रुपये महीना।", "term", "पाँच साल", 60),
+        (6, "इकतालीस हज़ार तीन सौ एक बार।", "premium", "इकतालीस हज़ार तीन सौ", 41300),  # was read as 41,301
+    ],
+)
+def test_a_number_phrase_next_to_the_span_is_not_cut_in_half(turn, reply, field, span, value):
+    extraction = raw(**{field: stated(span, reply, turn)})
+    beliefs = to_beliefs(extraction, record(), swap({turn: reply}))
+    product = beliefs.for_product("P1")
+    assert (product.term_months if field == "term" else product.premium_inr).value == value
+
+
+def test_each_product_is_carried_from_the_recall_reply_that_said_its_figure():
+    from samajh.rules.normalise import carried_premiums
+
+    turns = [
+        {"id": 1, "speaker": "bot", "step": "open_recall", "text": "लोन के साथ और क्या लिया?"},
+        {"id": 2, "speaker": "customer", "step": "open_recall", "text": "एक बीमा लिया था 25,000 का।"},
+        {"id": 3, "speaker": "bot", "step": "open_recall", "text": "और कुछ?"},
+        {"id": 4, "speaker": "customer", "step": "open_recall", "text": "हाँ, एक FD भी बनी थी 10,000 की।"},
+        {"id": 5, "speaker": "bot", "step": "read_back", "text": "पच्चीस हज़ार दिए, सही है?", "asks": "premium", "product_id": "P1"},
+        {"id": 6, "speaker": "customer", "step": "read_back", "text": "हाँ।"},
+        {"id": 7, "speaker": "bot", "step": "teach_back", "text": "उसके लिए कितने दिए?", "asks": "premium", "product_id": "P2"},
+        {"id": 8, "speaker": "customer", "step": "teach_back", "text": "दस हज़ार।"},
+        {"id": 9, "speaker": "bot", "step": "read_back", "text": "दस हज़ार, सही है?", "asks": "premium", "product_id": "P2"},
+        {"id": 10, "speaker": "customer", "step": "read_back", "text": "हाँ।"},
+    ]  # fmt: skip
+    call = Transcript.model_validate({"call_id": "c1", "loan_id": "L", "language": "hi", "turns": turns})
+    carried = carried_premiums(call)
+    assert set(carried) == {"P1"}  # P2's premium was asked before its read-back: nothing is carried
+    assert (carried["P1"].reply, carried["P1"].span) == (2, "25,000")
+
+
+def test_a_restated_cover_is_confirmed_only_if_the_customer_had_said_it_before_the_read_back():
+    """The bot read back ten lakh, which the customer had not said (they said twenty), and the
+    customer said yes and then ten lakh: the earlier reply does not read as ten lakh, so no
+    confirmation."""
+    call = transcript([*[(i, w, st, "बीस लाख का कवर है।" if i == 14 else t, a) for i, w, st, t, a in TURNS],
+                       (25, *RB_TEN), (26, CUSTOMER, "read_back", "हाँ, सही है।", None), (27, *AGAIN),
+                       (28, CUSTOMER, "teach_back", "दस लाख ही है।", None)])  # fmt: skip
+    later = {**stated("दस लाख", "दस लाख ही है।", 28), "also": [{"quote": "बीस लाख का कवर है।", "turn_id": 14}]}
+    result = judge(raw(cover=later, cover_readback=stated(True, "हाँ, सही है।", 26)), call)
+    assert "cover_differs_confirmed" not in cover_flags_and_gaps(result)
+    assert "cover_differs_unconfirmed" in cover_flags_and_gaps(result)

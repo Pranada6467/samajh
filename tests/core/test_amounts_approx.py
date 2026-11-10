@@ -97,7 +97,7 @@ def test_parse_amount_still_refuses_what_only_the_approximate_reader_reads(text)
 
 @pytest.mark.parametrize(
     "text",
-    ["एक लाख बीस हज़ार", "बावन हज़ार रुपये", "₹52,000", "मैंने तीन लाख दिए", "पचास हज़ार एक बार", "5,00,000 दो सौ"],
+    ["एक लाख बीस हज़ार", "बावन हज़ार रुपये", "₹52,000", "मैंने तीन लाख दिए", "पचास हज़ार रुपये एक बार", "5,00,000 दो सौ"],
 )
 def test_a_plain_amount_is_exactly_what_parse_amount_returns(text):
     plain = parse_amount(text)

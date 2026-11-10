@@ -1,13 +1,14 @@
 """Every word a review page shows for a rule, tier, outcome, status or decision.
 
-A flag is a request for a person to look. Nothing here names a finding about a sale, and
+A flag is a request for a person to look. Nothing here states a conclusion about a sale, and
 `banned_in` is the check that keeps it so: the tests run it over this module and over every
 generated view.
 """
 
 import re
+from collections.abc import Sequence
 
-from samajh.ops.model import AttemptOutcome, Channel, Decision, FinalStatus
+from samajh.ops.model import AttemptOutcome, Channel, Decision, FinalStatus, IngestSummary, PhoneSession
 from samajh.rules.clauses import INTERNAL
 from samajh.types import GapReason, LoanKind, RuleId, Tier
 
@@ -21,6 +22,7 @@ BANNED: tuple[str, ...] = (
     r"\bverdict",
     r"\bproven\b",
     r"\bnon[\s-]?compliant",
+    r"\bfinding",  # a flag is evidence for review; the word reads as a conclusion about the sale
 )
 
 
@@ -92,8 +94,19 @@ OUTCOME_LABEL: dict[AttemptOutcome, str] = {
     AttemptOutcome.call_back_later: "Asked to be called later",
     AttemptOutcome.language_switch: "Asked for another language",
     AttemptOutcome.incomplete: "Call ended early",
+    AttemptOutcome.do_not_call: "Asked not to be called again",
+    AttemptOutcome.written_requested: "Asked for this in writing instead",
     AttemptOutcome.completed_not_analysed: "Completed, but the call could not be analysed",
     AttemptOutcome.completed: "Completed",
+    AttemptOutcome.request_unconfirmed: "Request from a speaker not confirmed as the borrower",
+}
+
+# What the dialogue itself recorded, beside a `request_unconfirmed` attempt: the request the
+# unconfirmed speaker made (samajh.ops.model.UNCONFIRMED_REQUESTS).
+UNCONFIRMED_REQUEST_LABEL: dict[str, str] = {
+    "do_not_call": "asked not to be called again",
+    "human_requested": "asked to speak to a person",
+    "call_back_later": "asked to be called later",
 }
 
 STATUS_LABEL: dict[FinalStatus, str] = {
@@ -104,10 +117,14 @@ STATUS_LABEL: dict[FinalStatus, str] = {
     FinalStatus.declined: "Declined the call",
     FinalStatus.call_back_later: "Asked to be called later, not yet called",
     FinalStatus.language_switch: "Asked for another language, not yet called in it",
+    # No promise of a later call: the loan may be at its attempt limit.
+    FinalStatus.request_unconfirmed: "Request from a speaker not confirmed as the borrower (no call after it)",
     FinalStatus.not_reached_in_time: "Not reached within 30 days of the sale",
     FinalStatus.incomplete: "Call ended early",
-    FinalStatus.completed_not_analysed: "Completed, but the call could not be analysed (no finding)",
-    FinalStatus.completed_late: "Completed after day 30 from the sale (not in the findings)",
+    FinalStatus.do_not_call: "Asked not to be called again (no further attempt)",
+    FinalStatus.written_requested: "Asked for this in writing instead (no further attempt)",
+    FinalStatus.completed_not_analysed: "Completed, but the call could not be analysed (no flags raised)",
+    FinalStatus.completed_late: "Completed after day 30 from the sale (not in the counted calls)",
     FinalStatus.completed: "Completed within 30 days of the sale",
 }
 
@@ -147,7 +164,18 @@ ACCESS_NOTICE = (
     "and the reviewer's name is free text that nobody checks."
 )
 
-LIMITS: tuple[str, ...] = (
+INTERVAL_LIMIT = (
+    "Each interval is a 95% Wilson interval for sampling among eligible sales only (sales a draw "
+    "covered). It does not cover sales no draw covered, errors in reading the call, or customers who "
+    "were not reached."
+)
+# Replaces INTERVAL_LIMIT when the draws gave sales clearly different chances (report.NARROW_RATIO).
+NO_INTERVAL_LIMIT = (
+    "No interval is given on any share in this report, because the draws gave eligible sales different "
+    "chances of being sampled; the Sampling section says why."
+)
+
+SIMULATED_ONLY_LIMITS: tuple[str, str, str] = (
     (
         "The loan book, the customers and the calls are synthetic and simulated. No real lender, customer "
         "or call is behind any number here."
@@ -157,17 +185,15 @@ LIMITS: tuple[str, ...] = (
         "transcribed."
     ),
     (
-        "The share of each finding follows from the mix of customers the simulation assumes. It says "
-        "nothing about any real lender."
+        "The share of calls flagged under each rule follows from the mix of customers the simulation "
+        "assumes. It says nothing about any real lender."
     ),
+)
+COMMON_LIMITS: tuple[str, ...] = (
+    INTERVAL_LIMIT,
     (
-        "Each interval is a 95% Wilson interval for sampling among eligible sales only (sales a draw "
-        "covered). It does not cover sales no draw covered, errors in reading the call, or customers who "
-        "were not reached."
-    ),
-    (
-        "Findings describe customers who completed the call. Customers who did not answer, declined or "
-        "ended the call early may differ."
+        "The flag counts describe customers who completed the call. Customers who did not answer, "
+        "declined or ended the call early may differ."
     ),
     "A referral is a request for a person to look at one call, and nothing more.",
     (
@@ -175,10 +201,159 @@ LIMITS: tuple[str, ...] = (
         "interval is given for them."
     ),
 )
-PHONE_LIMIT = (
-    "Calls marked Phone call were made on the browser phone against synthetic records, with recorded "
-    "synthetic voices. They are not real customers either."
-)
+LIMITS: tuple[str, ...] = (*SIMULATED_ONLY_LIMITS, *COMMON_LIMITS)  # a batch with no phone call
+
+
+def _mixed_limits(simulated: int, phone_attempts: int, phone_outside: int) -> tuple[str, str, str]:
+    """The first three limits for a batch with phone calls, from its counts."""
+    phone = phone_attempts + phone_outside
+    scripted = (
+        f"{simulated} attempt(s) in this batch were simulated: their outcome and any customer reply were "
+        "scripted from phrase banks, as text only, with no speech recorded or transcribed."
+        if simulated
+        else "No attempt in this batch was simulated."
+    )
+    return (
+        (
+            "The loan book and the customers on it are synthetic. Every phone call was made against a "
+            "synthetic record, so no real lender and no customer of a lender is behind any number here."
+        ),
+        (
+            f"{scripted} {phone} call(s) were phone sessions on the browser phone ({phone_attempts} "
+            f"attempt(s) in the sample and {phone_outside} call(s) outside it): their customer turns were "
+            "read by Gnani Prisma speech-to-text (each case file names the model) from the customer audio "
+            "the next note counts."
+        ),
+        (
+            "The share of calls flagged under each rule follows from the mix of customers the simulation "
+            "assumes and, for phone calls, from what was said on the browser phone against synthetic "
+            "records. It says nothing about any real lender."
+            if simulated
+            else "The share of calls flagged under each rule follows only from what was said on the browser "
+            "phone against synthetic records, by whoever made the calls: they are not a sample of any "
+            "lender's customers. It says nothing about any real lender."
+        ),
+    )
+
+
+def limits(
+    intervals_shown: bool,
+    simulated: int = 0,
+    phone_attempts: int = 0,
+    phone_outside: int = 0,
+    phone_note: str | None = None,
+) -> tuple[str, ...]:
+    """The report's limits, from what the batch holds: `simulated` simulated attempts,
+    `phone_attempts` phone attempts in the sample and `phone_outside` phone calls outside it. With no
+    phone call, every call is simulated text and the limits say so; with phone calls they say which
+    calls are which, with their counts, and `phone_note` (where the customer audio came from) follows
+    them. Without intervals, the interval sentence says why there are none."""
+    common = COMMON_LIMITS if intervals_shown else (NO_INTERVAL_LIMIT, *COMMON_LIMITS[1:])
+    if not phone_attempts and not phone_outside:
+        return (*SIMULATED_ONLY_LIMITS, *common)
+    first = _mixed_limits(simulated, phone_attempts, phone_outside)
+    note = (phone_note,) if phone_note else ()
+    return (*first[:2], *note, first[2], *common)
+
+
+def phone_note(sessions: Sequence[PhoneSession]) -> str | None:
+    """What the phone calls' case files say about where the customer audio came from. None when the
+    batch has no phone call. Counted from each session's `customer_audio`, never assumed."""
+    if not sessions:
+        return None
+    known = [s.customer_audio for s in sessions if s.customer_audio is not None]
+    mic = sum(a.mic > 0 and a.file == 0 for a in known)
+    file = sum(a.file > 0 and a.mic == 0 for a in known)
+    both = sum(a.mic > 0 and a.file > 0 for a in known)
+    silent = sum(a.mic == 0 and a.file == 0 for a in known)
+    unknown = len(sessions) - len(known)
+    parts = [
+        f"{mic} with customer audio from the microphone only",
+        f"{file} from prepared audio files only",
+        f"{both} from both",
+        f"{silent} with no customer audio",
+    ]
+    if unknown:
+        parts.append(f"{unknown} where it is not recorded, or not readable, in the case file")
+    return (
+        f"Calls marked Phone call were made on the browser phone against synthetic records: "
+        f"{len(sessions)} phone session(s), {', '.join(parts)}. None of them is a call with a real "
+        "customer of a lender."
+    )
+
+
+def window_note(after: int, phone_after: int, attempts: int) -> str:
+    """The sentence on attempts after day 30 from the sale."""
+    if not after:
+        return "No attempt was made after day 30 from the sale."
+    simulated = after - phone_after
+    who = (
+        "all of them phone calls"
+        if not simulated
+        else f"{phone_after} phone call(s) and {simulated} simulated (which should not happen)"
+    )
+    return (
+        f"{after} of {attempts} attempts were made after day 30 from the sale, {who}. They are logged and "
+        "shown, and no call made after day 30 is counted in the outcome shares."
+    )
+
+
+CHANGED_LABEL = "Case file changed after it was brought in: the version brought in first is kept"
+
+
+def ingest_note(summary: IngestSummary | None) -> str:
+    """The sentences on phone sessions the last ingest did not bring in, and on those whose case file
+    changed after they were brought in (they stay where they were, and are not among the left out)."""
+    if summary is None:
+        return "No phone sessions have been brought in."
+    skipped = len(summary.skipped)
+    if not skipped:
+        note = (
+            f"The last ingest saw {summary.sessions} phone session(s) and brought in every one "
+            f"({len(summary.linked)} as attempts, {len(summary.outside)} outside the sample)."
+        )
+    else:
+        note = (
+            f"The last ingest saw {summary.sessions} phone session(s) and did not bring in {skipped}: they are "
+            f"in no count here, not even the reach figures. {len(summary.linked)} came in as attempts and "
+            f"{len(summary.outside)} as calls outside the sample. Each session left out is listed on the "
+            "attempt log with the reason."
+        )
+    if summary.changed:
+        note += (
+            f" {len(summary.changed)} of the sessions brought in have a case file that changed after it was "
+            "brought in: the version brought in first is kept and counted as before, and each is listed on "
+            "the attempt log with what differs."
+        )
+    return note
+
+
+# --- the speech readings beside an amount quote on the case page (views.readings_view) ------------
+# The closing words of the line, from the case file's `readings_agreed` (never recomputed in
+# samajh/ops) and `followed_by` (what the bot did next). Without a known `followed_by`, or with
+# "other", the closing says only same or differ, nothing about what followed (views.readings_view).
+READINGS_SAME = "same amount"
+READINGS_DIFFER = "differ"
+READINGS_SAME_READ_BACK = "same amount, read back"
+READINGS_SAME_ASKED_AGAIN = "same amount, asked again"
+READINGS_DIFFER_ASKED_AGAIN = "differ, asked again"
+# Provisional wording; the final one comes from the server side.
+READINGS_DIFFER_READ_BACK = "differ, read back"
+READINGS_ONE = "one reading"
+READINGS_NOT_COMPARED = "two readings, not compared as amounts in the case file"
+READINGS_NO_TEXT = "no text"
+READINGS_NONE_FOR_TURN = "No speech reading is listed for this turn in the case file."
+READINGS_NOT_KEPT = "This case file was written before case files kept the speech readings."
+READINGS_TEXT_CALL = "Text call, no speech reading."
+
+
+def model_label(model: str) -> str:
+    """The model as the page names it: "prisma-v3.0" is "Prisma v3.0"; any other name as written."""
+    return f"Prisma {model.removeprefix('prisma-')}" if model.startswith("prisma-") else model
+
+
+NO_GAP = "none"  # the most common gap tile when no counted call has an understanding gap
+
 AS_OF_NOTE = (
     "Synthetic date: the report is dated by the simulated book's clock, the day of the last call attempt."
 )

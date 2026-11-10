@@ -1,19 +1,24 @@
 """The half-yearly report: counts over one batch, each with its n, and a Wilson 95% interval where
-the count is a share of a random sample.
+the count is a share of a random sample whose eligible sales had about the same chance of being drawn
+(`NARROW_RATIO`). When the draws gave them clearly different chances, every share is shown with no
+interval and the sampling statement says why (`sampling`).
 
 Every count comes from the store's own files (book, draws, attempts, calls, dispositions, calls
 outside the sample) through `load_batch`, never from the simulation's hidden truth. The
 definitions are in the docstrings below so that a reader can recount them from the raw files.
 """
 
+import math
 import statistics
 from collections import Counter
 from collections.abc import Callable, Sequence
 from datetime import date, datetime, timedelta, timezone
+from fractions import Fraction
+from typing import Literal
 
 from samajh.ops import wording
 from samajh.ops.batch import Batch, Sampled, load_batch
-from samajh.ops.model import WINDOW_DAYS, AttemptOutcome, Decision, FinalStatus, PhoneSession
+from samajh.ops.model import WINDOW_DAYS, AttemptOutcome, Decision, Draw, FinalStatus, PhoneSession
 from samajh.ops.store import OpsStore
 from samajh.ops.views import (
     Breakdown,
@@ -26,13 +31,15 @@ from samajh.ops.views import (
     NeverEligible,
     PolicyItem,
     Proportion,
+    ReportTiles,
     ReportView,
-    RuleFinding,
+    RuleRow,
     Sampling,
     TierRow,
     Timing,
     batch_view,
     draw_views,
+    plain_share,
     proportion,
 )
 from samajh.rules import CLAUSES
@@ -41,6 +48,18 @@ from samajh.types import RuleId, Tier
 MIN_GROUP = 5  # a branch or channel is named as "highest" only with at least this many completed calls
 GROUP_ORDER = ("features", "risks", "sale")
 IST = timezone(timedelta(hours=5, minutes=30))
+
+# The chances of being drawn count as "about the same" when the highest is at most this many times the
+# lowest; only then do unweighted shares carry intervals. Why 1.25: at a ratio r, the unweighted share
+# of a mix of two groups is off by at most (sqrt(r) - 1) / (sqrt(r) + 1) of the difference between the
+# groups' shares (5.6% of that difference at r = 1.25), and the Kish design effect of weighting is at
+# most (1 + r)^2 / (4r) = 1.0125, so an unweighted interval is under 1% too narrow. Exact: narrow or wide
+# is decided on the draws' counts as fractions (`_chances`), never on floats, which put 5/12 over 1/3
+# at 1.2500000000000002.
+NARROW_RATIO = Fraction(5, 4)
+_BIAS_BOUND = (math.sqrt(NARROW_RATIO) - 1) / (math.sqrt(NARROW_RATIO) + 1)  # 0.0557
+
+Share = Callable[[int, int], Proportion]  # `proportion` (with an interval) or `plain_share` (without)
 
 
 def _day(d: date) -> str:
@@ -51,7 +70,7 @@ def _flagged(s: Sampled) -> set[RuleId]:
     return {flag.rule_id for flag in s.call.result.all_flags()}
 
 
-def funnel(batch: Batch) -> Funnel:
+def funnel(batch: Batch, share: Share = proportion) -> Funnel:
     """Sampled: every drawn loan of every draw. Each stage is a share of sampled.
 
     attempted: at least one attempt. reached: any attempt whose outcome is not no_answer.
@@ -77,11 +96,11 @@ def funnel(batch: Batch) -> Funnel:
         sampled=n,
         attempts=sum(len(s.attempts) for s in sampled),
         stages=tuple(
-            FunnelRow(key=key, label=wording.STAGE_LABEL[key], value=proportion(count, n))
+            FunnelRow(key=key, label=wording.STAGE_LABEL[key], value=share(count, n))
             for key, count in stages.items()
         ),
         exits=tuple(
-            FunnelRow(key=status.value, label=wording.STATUS_LABEL[status], value=proportion(count, n))
+            FunnelRow(key=status.value, label=wording.STATUS_LABEL[status], value=share(count, n))
             for status, count in exits.items()
         ),
     )
@@ -90,7 +109,10 @@ def funnel(batch: Batch) -> Funnel:
 def sampling(batch: Batch) -> Sampling:
     """Sales in the period: book loans sold from period start to period end. Eligible: in some
     draw's eligible list. Each never-eligible sale gets one reason: sold before the first draw's
-    window, sold after the last draw, or sold in a gap of more than 30 days between two draws."""
+    window, sold after the last draw, or sold in a gap of more than 30 days between two draws.
+
+    The chance of being drawn is each draw's drawn / eligible (`Draw.inclusion`); the range is over
+    draws with an eligible sale. `intervals_shown` is False when the range is wide (`_chances`)."""
     meta, draws = batch.meta, batch.draws
     in_period = [
         (loan.record.loan_id, loan.sold_on)
@@ -110,27 +132,83 @@ def sampling(batch: Batch) -> Sampling:
             reasons["sold after the last draw"] += 1
         else:
             reasons["sold in a gap of more than 30 days between two draws"] += 1
-    rates = [d.inclusion for d in draws if d.inclusion is not None]
-    shares = sorted({d.rate for d in draws})
+    rates = [Fraction(len(d.drawn), len(d.eligible)) for d in draws if d.eligible]
     n_eligible = sum(loan_id in eligible for loan_id, _ in in_period)
-    sampled = len(batch.sampled)
-    never = len(in_period) - n_eligible
-    statement = (
-        f"Each draw took {' or '.join(f'{r:.0%}' for r in shares) or 'a share'} of the sales made since the "
-        "previous draw that were still within 30 days of the sale, so draw windows never overlap and every "
-        "eligible sale had about the same chance of being sampled"
-        + (f" (between {min(rates):.1%} and {max(rates):.1%}, by rounding)" if rates else "")
-        + f". Shares and intervals describe the {n_eligible} eligible sales only; the {never} sale(s) no draw "
-        "covered are not represented. Shares are unweighted because the chances are equal up to rounding."
-    )
+    exact_low, exact_high = (min(rates), max(rates)) if rates else (None, None)
+    chances = _chances(exact_low, exact_high)
+    # floats from here on, for display only
+    low = float(exact_low) if exact_low is not None else None
+    high = float(exact_high) if exact_high is not None else None
+    ratio = float(exact_high / exact_low) if exact_low and exact_high is not None else None
     return Sampling(
         sales_in_period=len(in_period),
         eligible=n_eligible,
-        sampled=sampled,
+        sampled=len(batch.sampled),
         never_eligible=tuple(NeverEligible(reason=r, count=c) for r, c in reasons.most_common()),
-        inclusion_low=min(rates) if rates else None,
-        inclusion_high=max(rates) if rates else None,
-        statement=statement,
+        inclusion_low=low,
+        inclusion_high=high,
+        inclusion_ratio=ratio,
+        chances=chances,
+        intervals_shown=chances != "wide",
+        statement=_sampling_statement(
+            draws, chances, low, high, ratio, n_eligible, len(in_period) - n_eligible
+        ),
+    )
+
+
+def _chances(low: Fraction | None, high: Fraction | None) -> Literal["none", "narrow", "wide"]:
+    """From the lowest and highest chance of being drawn, each a draw's drawn over eligible as an
+    exact fraction. none: no sale could be drawn (no draw, no eligible sale, or none drawn); narrow:
+    the highest is at most `NARROW_RATIO` times the lowest; wide: otherwise, including a lowest of 0."""
+    if low is None or high is None or high == 0:
+        return "none"
+    return "narrow" if low > 0 and high <= NARROW_RATIO * low else "wide"
+
+
+def _sampling_statement(
+    draws: Sequence[Draw],
+    chances: str,
+    low: float | None,
+    high: float | None,
+    ratio: float | None,
+    n_eligible: int,
+    never: int,
+) -> str:
+    """The sampling statement. It says "about the same chance" only when the chances are narrow, and
+    always gives the range of chances when there is one."""
+    if not draws:
+        return "No draw has been made yet, so no sale has been sampled and no share describes a sample."
+    shares = " or ".join(f"{r:.0%}" for r in sorted({d.rate for d in draws}))
+    how = (
+        f"Each draw took {shares} of the sales made since the previous draw that were still within 30 days "
+        "of the sale, so draw windows never overlap."
+    )
+    uncovered = f"The {never} sale(s) in the period that no draw covered are not represented."
+    if chances == "none":
+        return (
+            f"{how} No eligible sale was drawn ({n_eligible} sale(s) were eligible), so no share describes a "
+            f"sample. {uncovered}"
+        )
+    assert low is not None and high is not None
+    span = f"{low:.1%}" if low == high else f"between {low:.1%} and {high:.1%}"
+    if chances == "narrow":
+        assert ratio is not None
+        return (
+            f"{how} Every eligible sale had about the same chance of being sampled: {span} (the highest is "
+            f"{ratio:.2f} times the lowest, within the {float(NARROW_RATIO):.2f} this report allows). Shares and "
+            f"intervals describe the {n_eligible} eligible sales only. {uncovered} Shares are unweighted: "
+            f"with chances this close, weighting would move a share by at most {_BIAS_BOUND:.1%} of the "
+            "difference between the groups it mixes and widen an interval by under 1%."
+        )
+    times = (
+        f"the highest is {ratio:.2f} times the lowest" if ratio else "some eligible sales could not be drawn"
+    )
+    return (
+        f"{how} The chance of being sampled differed between eligible sales: {span} ({times}; this report "
+        f"shows intervals only when the highest is at most {float(NARROW_RATIO):.2f} times the lowest). The shares "
+        "in this report are unweighted counts of the calls analysed. Sales with a higher chance of being "
+        "drawn are over-represented in them, so they do not estimate the share among all sales in the "
+        f"period. For that reason no interval is shown on any share. {uncovered}"
     )
 
 
@@ -139,34 +217,38 @@ def timing(batch: Batch) -> Timing:
 
     first_attempt_days: minimum, median (the lower middle value of an even count) and maximum of
     the first attempt's day, over attempted loans. attempts_after_window: attempts on day 31 or
-    later, of every attempt (none by design). completed_late: loans whose call completed after day 30.
+    later, of every attempt; the simulator makes none, so they are phone calls
+    (phone_attempts_after_window), logged and never counted. completed_late: loans whose call
+    completed after day 30.
     """
     first = sorted(s.attempts[0].day_since_sale for s in batch.sampled if s.attempts)
     attempts = [a for s in batch.sampled for a in s.attempts]
+    after = [a for a in attempts if a.day_since_sale > WINDOW_DAYS]
+    phone = sum(isinstance(a.source, PhoneSession) for a in after)
     return Timing(
         first_attempt_days=(first[0], statistics.median_low(first), first[-1]) if first else None,
         attempted=len(first),
-        attempts_after_window=Count(
-            count=sum(a.day_since_sale > WINDOW_DAYS for a in attempts), n=len(attempts)
-        ),
+        attempts_after_window=Count(count=len(after), n=len(attempts)),
+        phone_attempts_after_window=phone,
         completed_late=len(batch.late),
+        note=wording.window_note(len(after), phone, len(attempts)),
     )
 
 
-def tiers(batch: Batch) -> tuple[TierRow, ...]:
+def tiers(batch: Batch, share: Share = proportion) -> tuple[TierRow, ...]:
     """The tier of each counted call (completed within 30 days of the sale and analysed)."""
     completed = batch.completed
     return tuple(
         TierRow(
             tier=tier,
             label=wording.TIER_LABEL[tier],
-            value=proportion(sum(s.triage.tier is tier for s in completed), len(completed)),
+            value=share(sum(s.triage.tier is tier for s in completed), len(completed)),
         )
         for tier in Tier
     )
 
 
-def findings(batch: Batch) -> tuple[RuleFinding, ...]:
+def rule_rows(batch: Batch, share: Share = proportion) -> tuple[RuleRow, ...]:
     """One row per rule, over the counted calls.
 
     flagged: calls with at least one flag under the rule; n is every counted call. undecided:
@@ -176,7 +258,7 @@ def findings(batch: Batch) -> tuple[RuleFinding, ...]:
     """
     completed = batch.completed
     clauses = CLAUSES[batch.meta.book.lender_type]
-    rows: list[RuleFinding] = []
+    rows: list[RuleRow] = []
     for rule in RuleId:
         flagged = [s for s in completed if rule in _flagged(s)]
         undecided = sum(
@@ -186,7 +268,7 @@ def findings(batch: Batch) -> tuple[RuleFinding, ...]:
         if rule is RuleId.evidence and not flagged and not undecided:
             continue
         rows.append(
-            RuleFinding(
+            RuleRow(
                 rule_id=rule,
                 rule_label=wording.RULE_LABEL[rule],
                 may_engage=wording.may_engage(clauses[rule]),
@@ -194,11 +276,19 @@ def findings(batch: Batch) -> tuple[RuleFinding, ...]:
                 group=wording.GROUP[rule],
                 seriousness=wording.SERIOUSNESS[rule],
                 seriousness_label=wording.SERIOUSNESS_LABEL[wording.SERIOUSNESS[rule]],
-                flagged=proportion(len(flagged), len(completed)),
+                flagged=share(len(flagged), len(completed)),
                 undecided=undecided,
                 referred=sum(
                     any(rule in line.rule_ids and line.tier is Tier.refer for line in s.triage.lines)
                     for s in flagged
+                ),
+                understanding_gap=sum(
+                    s.triage.tier is Tier.understanding_gap
+                    and any(
+                        rule in line.rule_ids and line.tier is Tier.understanding_gap
+                        for line in s.triage.lines
+                    )
+                    for s in completed
                 ),
                 previous=None,
             )
@@ -248,13 +338,13 @@ def _grouped(members: Sequence[Sampled], key_of: Callable[[Sampled], str]) -> di
     return dict(sorted(groups.items()))
 
 
-def breakdowns(batch: Batch) -> tuple[Breakdown, ...]:
+def breakdowns(batch: Batch, share: Share = proportion) -> tuple[Breakdown, ...]:
     """By loan type, branch and sales channel. Each row's shares are of its own counted calls, set
     against the same share over every other row together."""
     counted = batch.completed
 
-    def share(members: Sequence[Sampled], tier: Tier) -> Proportion:
-        return proportion(sum(s.triage.tier is tier for s in members), len(members))
+    def tier_share(members: Sequence[Sampled], tier: Tier) -> Proportion:
+        return share(sum(s.triage.tier is tier for s in members), len(members))
 
     def row(key: str, label: str, members: list[Sampled], key_of: Callable[[Sampled], str]) -> BreakdownRow:
         mine = [s for s in members if s.counted]
@@ -264,10 +354,10 @@ def breakdowns(batch: Batch) -> tuple[Breakdown, ...]:
             label=label,
             sampled=len(members),
             completed=len(mine),
-            referred=share(mine, Tier.refer),
-            rest_referred=share(rest, Tier.refer),
-            understanding_gap=share(mine, Tier.understanding_gap),
-            rest_understanding_gap=share(rest, Tier.understanding_gap),
+            referred=tier_share(mine, Tier.refer),
+            rest_referred=tier_share(rest, Tier.refer),
+            understanding_gap=tier_share(mine, Tier.understanding_gap),
+            rest_understanding_gap=tier_share(rest, Tier.understanding_gap),
         )
 
     return tuple(
@@ -283,7 +373,7 @@ def breakdowns(batch: Batch) -> tuple[Breakdown, ...]:
     )
 
 
-def _highest(completed: Sequence[Sampled], rule: RuleId) -> str | None:
+def _highest(completed: Sequence[Sampled], rule: RuleId, share: Share = proportion) -> str | None:
     """The branch or channel with the highest share of calls flagged under `rule`, among those
     with at least `MIN_GROUP` counted calls, set against all the others. None when none qualifies."""
     places = {
@@ -302,8 +392,8 @@ def _highest(completed: Sequence[Sampled], rule: RuleId) -> str | None:
             count = sum(rule in _flagged(s) for s in members)
             rest = [s for s in completed if key_of(s) != key]
             if len(members) >= MIN_GROUP and count and (best is None or count / len(members) > best[0]):
-                mine_p = proportion(count, len(members))
-                rest_p = proportion(sum(rule in _flagged(s) for s in rest), len(rest))
+                mine_p = share(count, len(members))
+                rest_p = share(sum(rule in _flagged(s) for s in rest), len(rest))
                 best = (count / len(members), name(key), mine_p, rest_p, others)
     if best is None:
         return None
@@ -315,10 +405,15 @@ def _highest(completed: Sequence[Sampled], rule: RuleId) -> str | None:
 
 
 def _pct(p: Proportion) -> str:
-    return f"95% interval {p.low:.0%} to {p.high:.0%}" if p.n else "no calls"
+    """The interval in words, or the plain share when the report withholds intervals."""
+    if not p.n or p.share is None:
+        return "no calls"
+    if p.low is None or p.high is None:
+        return f"{p.share:.0%}"
+    return f"95% interval {p.low:.0%} to {p.high:.0%}"
 
 
-def policy_review(batch: Batch, rows: Sequence[RuleFinding]) -> tuple[PolicyItem, ...]:
+def policy_review(batch: Batch, rows: Sequence[RuleRow], share: Share = proportion) -> tuple[PolicyItem, ...]:
     """Every rule with at least one flagged call: the most serious first, then the most common."""
     completed = batch.completed
     flagged = sorted((r for r in rows if r.flagged.count), key=lambda r: (r.seriousness, -r.flagged.count))
@@ -329,9 +424,33 @@ def policy_review(batch: Batch, rows: Sequence[RuleFinding]) -> tuple[PolicyItem
             seriousness_label=r.seriousness_label,
             sentence=f"{r.flagged.count} of {r.flagged.n} customers who completed the call {r.statement}",
             value=r.flagged,
-            highest=_highest(completed, r.rule_id),
+            highest=_highest(completed, r.rule_id, share),
         )
         for r in flagged
+    )
+
+
+def tiles(
+    notice: str, chosen: Sampling, reach: Funnel, outcomes: Sequence[TierRow], rules: Sequence[RuleRow]
+) -> ReportTiles:
+    """The counts at the top of the page, taken from the same fields the tables below show, so they
+    agree by construction. The most common gap is the rule row with the most understanding-gap
+    calls; on a tie, the one higher in the rules table. "none" when no counted call has one."""
+    tier = {row.tier: row.value.count for row in outcomes}
+    top = max(rules, key=lambda r: r.understanding_gap, default=None)  # max keeps the first of a tie
+    if top is None or top.understanding_gap == 0:
+        gap, count = Labelled(key="none", label=wording.NO_GAP), 0
+    else:
+        gap, count = Labelled(key=top.rule_id.value, label=top.rule_label), top.understanding_gap
+    return ReportTiles(
+        synthetic=notice,
+        sold=chosen.sales_in_period,
+        sampled=chosen.sampled,
+        completed=next(row.value.count for row in reach.stages if row.key == "completed"),
+        referred=tier[Tier.refer],
+        understanding_gap=tier[Tier.understanding_gap],
+        most_common_gap=gap,
+        most_common_gap_count=count,
     )
 
 
@@ -368,11 +487,25 @@ def build_report(store: OpsStore, now: datetime | None = None) -> ReportView:
     """The report for the batch in `store`. It is dated by the book's clock, not by `now`."""
     batch = load_batch(store)
     meta = batch.meta
-    rule_rows = findings(batch)
+    chosen = sampling(batch)
+    share: Share = proportion if chosen.intervals_shown else plain_share
+    rules = rule_rows(batch, share)
     referral_rows, open_referrals, supported = referrals(batch)
-    limits = wording.LIMITS if batch.simulated else (*wording.LIMITS, wording.PHONE_LIMIT)
+    attempts = [a for s in batch.sampled for a in s.attempts]
+    phone_attempts = sum(isinstance(a.source, PhoneSession) for a in attempts)
+    limits = wording.limits(
+        chosen.intervals_shown,
+        simulated=len(attempts) - phone_attempts,
+        phone_attempts=phone_attempts,
+        phone_outside=len(batch.outside),
+        phone_note=wording.phone_note(batch.phone_sessions),
+    )
+    header = batch_view(batch)
+    reach = funnel(batch, share)
+    outcomes = tiers(batch, share)
     return ReportView(
-        batch=batch_view(batch),
+        tiles=tiles(header.simulated_notice, chosen, reach, outcomes, rules),
+        batch=header,
         as_of=_as_of(batch),
         as_of_note=wording.AS_OF_NOTE,
         paragraph=CLAUSES[meta.book.lender_type][RuleId.kind],
@@ -383,19 +516,22 @@ def build_report(store: OpsStore, now: datetime | None = None) -> ReportView:
         limits=limits,
         previous_period=None,
         draws=draw_views(batch),
-        sampling=sampling(batch),
-        funnel=funnel(batch),
+        sampling=chosen,
+        funnel=reach,
         timing=timing(batch),
-        tiers=tiers(batch),
+        tiers=outcomes,
         groups=tuple(Labelled(key=g, label=wording.GROUP_LABEL[g]) for g in GROUP_ORDER),
         risk_note=wording.RISK_NOTE,
         seriousness_note=wording.SERIOUSNESS_NOTE,
-        findings=rule_rows,
+        rules=rules,
         referrals=referral_rows,
         open_referrals=open_referrals,
         supported_of_decided=supported,
         other_referrals=len(batch.other_referrals),
         outside_calls=len(batch.outside),
-        breakdowns=breakdowns(batch),
-        policy_review=policy_review(batch, rule_rows),
+        phone_sessions_not_ingested=len(batch.ingest.skipped) if batch.ingest else None,
+        phone_sessions_changed=len(batch.ingest.changed) if batch.ingest else None,
+        ingest_note=wording.ingest_note(batch.ingest),
+        breakdowns=breakdowns(batch, share),
+        policy_review=policy_review(batch, rules, share),
     )

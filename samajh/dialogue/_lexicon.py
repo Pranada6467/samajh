@@ -196,6 +196,44 @@ class Lexicon:
         frozenset()
     )  # words a first-person birth-year reply may hold besides the year
     written: frozenset[Phrase] = frozenset()  # "send it in writing"
+    # --- round 3. Empty by default: Tamil and Kannada behave as before.
+    # Go-on words heard as an affirmative at the first-name question ("tell me", "बताओ"); with the yes-words.
+    go_on: frozenset[Phrase] = frozenset()
+    # Words that may ride along with an acknowledgement and change nothing ("से बात हो रही है", "speaking to").
+    ack_ok: frozenset[Phrase] = frozenset()
+    # Third-person pronouns: an acknowledgement that holds one may be about someone else, so it is not one.
+    third_person: frozenset[Phrase] = frozenset()
+    # Vocabulary of an account of the sale (loans, add-ons, payment, paperwork, durations, what staff
+    # said): a free answer that holds one is taken as an answer without asking the classifier.
+    substance: frozenset[Phrase] = frozenset()
+    # Evidence that a reply at open recall names something beyond the loan: a thing bought or opened, or
+    # an act of taking, getting done, deducting, paying, signing or being told it was required.
+    names_thing: frozenset[Phrase] = frozenset()
+    the_loan: frozenset[Phrase] = frozenset()  # with the loan in the clause, "took" is the loan itself
+    take: frozenset[Phrase] = frozenset()  # "लिया", "took": evidence only when the clause is not about the loan
+    # Words that may stand beside a repeated figure at a read-back and leave it a confirmation ("दिए थे").
+    restates: frozenset[Phrase] = frozenset()
+    clause_break: frozenset[Phrase] = frozenset()
+    # --- round 3, wave 2 (Hindi and Hinglish only)
+    # With a substance word, a sign the reply may be a refusal or a hand-off, not an account: talking,
+    # calling, the phone, the branch, a manager, feedback, email, a number; or a command to the caller.
+    risk_cue: frozenset[Phrase] = frozenset()
+    # Forms of address that are also relation words ("हाँ भाई बोलो", "yes sir"): beside a yes or go-on word
+    # and with no possessive or "I am" frame, they are address, not a relation.
+    address: frozenset[Phrase] = frozenset()
+    relation_frame: frozenset[Phrase] = frozenset()  # "हूं", "बोल रहा", "am": straight after a relation word
+    now_words: frozenset[Phrase] = frozenset()  # "अभी", "now": at "when shall we call?", means now
+    denial: frozenset[Phrase] = frozenset()  # "नहीं लगता", "dont think so": a denial with no no-word
+    loan_money: frozenset[Phrase] = frozenset()  # "पैसे": with the loan or the pledge, the loan itself
+    months: frozenset[Phrase] = frozenset()  # month names: a reply holding one is a date of birth
+    hedge: frozenset[Phrase] = frozenset()  # a guess at the year: "शायद", "maybe", "है ना", "या", "no ..."
+    do_now: frozenset[Phrase] = frozenset()  # with a now-word at "when shall we call?": go on now
+    absent_frame: frozenset[Phrase] = frozenset()  # third-person object pronouns: "उनको", "unko"
+    # Mid-call, a sign that someone else has the phone: the borrower is away or the phone is theirs.
+    absent: frozenset[Phrase] = frozenset()
+    # Wave 5: a request to keep the call short ("ज़्यादा लंबा मत करना"): after a yes, still a go-ahead.
+    keep_short: frozenset[Phrase] = frozenset()
+    not_me: frozenset[Phrase] = frozenset()  # "नहीं हूं", "not him": with "मैं", the speaker is not the borrower  # "पर", "लेकिन", "but": a denial before one does not reach past it
 
     def __or__(self, other: Lexicon) -> Lexicon:
         return Lexicon(*(getattr(self, name) | getattr(other, name) for name in self.__dataclass_fields__))
@@ -299,7 +337,9 @@ _HI = Lexicon(
     yes=_phrases("हां", "जी", "हांजी", "बिल्कुल", "सही", "ठीक", "यस", "ओके", "करेक्ट", "राइट", "बोलिए", "बताइए",
                  "कहिए", "बोल रहा हूं", "बोल रही हूं", "मैं ही", "चलिए", "चलो", "पूछिए", "पूछो", "बढ़िए", "जरूर",
                  "वही", "यही"),
-    yes_despite_no=_phrases("क्यों नहीं", "कोई दिक्कत नहीं", "कोई प्रॉब्लम नहीं"),
+    yes_despite_no=_phrases("क्यों नहीं", "कोई दिक्कत नहीं", "कोई प्रॉब्लम नहीं", "कोई परेशानी नहीं", "कोई बात नहीं",
+                            "कोई dikkat नहीं", "कोई problem नहीं", "कोई issue नहीं", "no issue", "no issues",
+                            "no problem", "not a problem"),
     no=_phrases("नहीं", "गलत", "रॉन्ग", "मत"),
     no_at_start=_phrases("ना", "न"),
     wrong_person=_phrases("रॉन्ग नंबर", "गलत नंबर", "गलत लग*", "उनका", "उनकी", "उनके", "बाहर गए", "बाहर गई", "घर पर नहीं",
@@ -355,6 +395,75 @@ _HI = Lexicon(
                  "उनसे", "उनको", "उन्हें", "वो नहा", "वो सो", "वो बाहर", "वो तो", "गए हैं", "गई हैं", "गया है", "गए है",
                  "बुला*", "फोन देत*", "फोन दे रह*", "डेस्क", "ऑफिस से", "घर से बोल*", "घर पर ही हैं", "घर पर हैं"),
     possessive=_phrases("का", "की", "के"),
+    # Round 3: Hindi and Hinglish only (English words included here, not in _EN, so Tamil and Kannada,
+    # which also hear _EN, get none of these and behave as before).
+    go_on=_phrases("बोलो", "बताओ", "कहो", "बोलिए", "कहिए", "पूछो", "पूछिए", "पूछ लीजिए", "pucho", "puchho", "tell me",
+                   "चलिए", "शुरू कीजिए", "शुरू करिए", "शुरू करो", "शुरू कर*", "बोलते रहिए", "बोलते रहो", "जारी रखिए",
+                   "start karo", "start kariye", "start", "continue", "आगे बढ़िए", "आगे बढ़ो", "कर लेते हैं", "kar lo",
+                   "कर लो", "पूछ लो", "go on", "carry on", "go ahead", "please continue"),
+    ack_ok=_phrases("से बात हो रही है", "से हो रही है", "बात हो रही है", "से बात कर रहे हैं", "बात कर रहे हैं",
+                    "से ही", "जी", "ही बोल रहा है", "ही बोल रही है", "बोल रहा है", "बोल रही है", "speaking to", "talking to", "you are", "here", "please", "this side"),
+    third_person=_phrases("वो", "वे", "उन्होंने", "इनका", "इनकी", "इनके", "इन्हें", "इनसे", "he", "she", "they",
+                          "him", "her", "his", "them", "hes", "shes"),
+    substance=_phrases("लोन", "बीमा", "इंश्योरेंस", "इंशोरेंस", "पॉलिसी", "पालिसी", "प्रीमियम", "कवर", "एफडी",
+                       "डिपॉजिट", "किस्त", "ईएमआई", "कार्ड", "साइन", "फॉर्म", "कागज*", "पेपर*", "दस्तखत", "अंगूठा",
+                       "कट गया", "कट गए", "कटा", "कटे", "काटा", "काटे", "खाते से", "अकाउंट", "कैश", "नकद", "पैसे",
+                       "पैसा", "दिए", "दिया", "भरा", "भरे", "साल", "महीने", "महीना", "जरूरी", "मर्जी", "चॉइस",
+                       "एजेंट", "स्टाफ", "मैनेजर", "बैंक वाले", "बताया", "बोला था", "बोले थे", "कहा था", "कहा गया",
+                       "समझाया", "ओटीपी", "loan", "insurance", "bima", "beema", "policy", "premium", "cover", "fd",
+                       "deposit", "emi", "kist", "kisht", "instalment", "installment", "card", "sign*", "form*",
+                       "paper*", "kagaz*", "kaagaz*", "document*", "cash", "account", "khata", "khate", "deducted",
+                       "kata", "kat gaya", "cut", "paid", "pay", "charged", "saal", "year*", "mahine", "month*",
+                       "compulsory", "mandatory", "required", "choice", "agent", "staff", "manager", "told", "said",
+                       "explained", "consent", "otp"),
+    names_thing=_phrases("बीमा", "इंश्योरेंस", "इंशोरेंस", "पॉलिसी", "पालिसी", "प्रीमियम", "कवर", "एफडी", "डिपॉजिट",
+                         "कार्ड", "स्कीम", "प्लान", "सिक्योरिटी", "साइन", "फॉर्म", "दस्तखत", "अंगूठा", "कट*", "काट*",
+                         "खाते से", "पैसे", "पैसा", "दिए", "दिया", "भरा", "भरे", "भरना", "करवाया", "करवाई", "करवाना",
+                         "करवाने", "कराया", "कराई", "कराना", "खुलवाया", "खुलवाई", "खुलवाना", "खोला", "बनवाया",
+                         "पड़ेगा", "पड़ेगी", "पड़ा", "पड़ी", "जरूरी", "कंपलसरी", "बोला था", "बोले थे", "कहा था",
+                         "बताया था", "चीज", "कुछ तो", "insurance", "bima", "beema", "policy", "premium", "cover",
+                         "fd", "deposit", "card", "scheme", "plan", "security", "sign*", "form*", "deducted",
+                         "kata", "kate", "kat", "paid", "charged", "karwaya", "karwana", "karaya", "khulwaya",
+                         "opened", "padega", "pada", "compulsory", "mandatory", "required", "something",
+                         "deduct*", "charge*", "fee", "fees", "lage", "laga", "lagaya", "extra", "protection",
+                         "type का", "कुछ तो", "कुछ toh", "स्टाफ", "एजेंट", "ने कहा", "ने बोला", "ne bola", "ne kaha",
+                         "फायदा", "fayda", "faayda", "benefit", "हां कर दी", "हां कर दिया", "हां बोल दिया", "हां कह दिया",
+                         "हां bol diya", "हां kar di", "हां kar diya", "agreed", "said yes", "कटौती", "चार्ज*", "फीस",
+                         "लगा", "लगे", "लगाया"),
+    restates=_phrases("दिए", "दिया", "दी", "था", "थे", "थी", "ही", "भरे", "भरा", "किए", "किया", "कटे", "कटा", "का",
+                      "pay", "paid", "diye", "diya", "kiye", "the", "tha", "bhare", "kate", "only"),
+    the_loan=_phrases("लोन", "ऋण", "कर्ज", "karz", "गिरवी", "सोना", "gold", "गोल्ड", "girvi"),
+    risk_cue=_phrases("बात", "कॉल", "फोन", "ब्रांच", "शाखा", "मैनेजर", "फीडबैक", "ईमेल", "नंबर", "लिस्ट",
+                      "phone", "branch", "manager", "feedback", "email", "number", "list", "talk", "speak",
+                      "करो", "करिए", "कीजिए", "कराइए", "करवाइए", "करवाओ", "कराओ", "रखिए", "रखो", "भेजो", "भेजिए",
+                      "भेज दो", "भेज दीजिए", "रहने दो", "रहने दीजिए", "रहने do", "छोड़िए", "छोड़ो", "karo", "kijiye",
+                      "karwaiye", "rakhiye", "rakho", "bhejo", "bhej do", "chhodo", "chodo"),
+    address=_phrases("भाई", "भैया", "यार", "सर", "मैडम", "दीदी", "बहन", "बेटा", "अंकल", "आंटी", "साहब", "yaar",
+                     "sir", "madam", "boss", "dear"),
+    relation_frame=_phrases("हूं", "हूं उनका", "बोल रहा", "बोल रही", "am", "speaking", "here"),
+    absent=_phrases("वो बाहर", "बाहर गए", "बाहर गई", "घर पर नहीं", "का फोन है", "की फोन है", "फोन दे*", "फोन देत*",
+                    "is out", "not here", "not at home", "his phone", "her phone", "phone hai unka", "रॉन्ग नंबर",
+                    "गलत नंबर", "wrong person", "फोन दिया", "फोन पकड़ा", "ने फोन", "उठ के गए", "उठकर गए", "उठ कर गए",
+                    "निकल गए", "चले गए", "step out", "stepped out", "had to step", "कॉल pe नहीं", "कॉल पे नहीं",
+                    "कॉल पर नहीं", "लाइन पर नहीं"),
+    not_me=_phrases("नहीं हूं", "not him", "not her", "not ramesh", "nahi hoon"),
+    months=_phrases("जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "सितम्बर", "अक्टूबर",
+                    "नवंबर", "नवम्बर", "दिसंबर", "दिसम्बर", "january", "february", "march", "april", "may", "june",
+                    "july", "august", "september", "october", "november", "december", "jan", "feb", "aug", "sept",
+                    "oct", "nov", "dec"),
+    hedge=_phrases("शायद", "होगा", "होगी", "लगभग", "करीब", "पक्का नहीं", "याद नहीं", "पता नहीं", "है ना", "सही है",
+                   "ना", "या", "नहीं", "shayad", "hoga", "lagbhag", "kareeb", "maybe", "probably", "i think",
+                   "not sure", "around", "right", "or", "no", "ya",
+                   # Wave 5 fix 2: "अंदाज़े से चौरासी" is a guess (hedge is read only at the birth year).
+                   "अंदाजे से", "अंदाज से", "अंदाजन", "andaze se", "andaaz se", "andaz se", "andazan", "andaazan"),
+    do_now=_phrases("ठीक है", "is fine", "fine", "continue", "पूछिए", "पूछ लो", "पूछ लीजिए", "आगे बढ़िए", "कर लेते हैं",
+                    "kar lo", "कर लो", "बोलिए", "बताइए", "go ahead", "carry on"),
+    absent_frame=_phrases("उनको", "उन्हें", "unko", "unhe", "unhen", "inko"),
+    now_words=_phrases("अभी", "अब", "now", "right now", "abhi", "ab"),
+    denial=_phrases("नहीं लगता", "dont think", "dont think so", "not really", "nope", "nahi lagta"),
+    loan_money=_phrases("पैसे", "पैसा", "पैसे लिए", "money", "रकम", "दिए", "दिया"),
+    take=_phrases("लिया", "लिए", "ली", "लिया था", "took", "taken", "bought", "got"),
+    clause_break=_phrases("पर", "लेकिन", "मगर", "बस", "वरना", "सिर्फ", "but", "only", "warna", "otherwise"),
     asks_who=_phrases("कौन बोल रहा", "कौन बोल रहे", "कौन बोल रही", "कौन हो", "कौन हैं", "आप कौन", "कहां से बोल*",
                       "कहां से हो", "कहां से हैं", "किधर से", "किस बैंक", "किस कंपनी", "बैंक से हो", "बैंक से हैं",
                       "फ्रॉड कॉल", "फ्रॉड तो नहीं", "फ्राड", "असली कॉल", "असली है", "नकली", "फर्जी", "स्कैम", "कैसे पता",
@@ -363,8 +472,10 @@ _HI = Lexicon(
     do_not_call=_phrases("कॉल मत", "फोन मत", "कॉल नहीं चाहिए", "नंबर हटा*", "कॉल ना करें", "कॉल न करें",
                          "फोन ना करें", "फोन न करें", "दोबारा मत"),
     written=_phrases("लिखकर भेज*", "लिख कर भेज*", "लिखित में", "चिट्ठी भेज*", "लेटर भेज*", "ईमेल पर भेज*"),
-    year_ok=_phrases("मेरा", "मेरी", "जन्म", "साल", "सन", "में", "हुआ", "था", "थी", "पैदा", "बर्थ", "ईयर", "है", "जी", "हां",
-                     "हूं", "का", "मैं"),
+    year_ok=_phrases("मेरा", "मेरी", "जन्म", "साल", "सन", "सन्", "में", "हुआ", "था", "थी", "पैदा", "बर्थ", "ईयर", "है", "जी",
+                     "हां", "हूं", "का", "मैं", "सर", "मैडम", "साहब", "mera", "meri", "janam", "janm", "hua", "paida",
+                     "पैदाइश", "हुई", "की", "के", "born", "ki", "ka", "hai", "hui", "huyi", "paidaish", "was", "i",
+                     "year", "birth", "saal", "san"),
     call_later=_phrases("बाद में कॉल", "बाद में फोन", "बाद में बात", "बाद में करना", "बाद में करिए", "बाद में कीजिए",
                         "बाद में करो", "बाद में कर लेना", "बाद में कर लीजिए", "फिर कभी", "किसी और दिन", "दूसरे दिन",
                         "किसी और टाइम", "किसी और समय"),
@@ -378,6 +489,10 @@ _HI = Lexicon(
                       "खाना खा रही", "मेहमान", "ट्रेन में", "बस में हूं", "रास्ते में", "हॉस्पिटल में", "अस्पताल में",
                       "बिजी हूं", "व्यस्त हूं", "अभी बिजी", "बिजी है", "थोड़ा बिजी", "दूसरी कॉल पर", "नहा रहा",
                       "पूजा कर रहा", "पूजा कर रही"),
+    keep_short=_phrases("लंबा मत", "लम्बा मत", "लंबा नहीं", "लम्बा नहीं", "लंबी मत", "लंबी नहीं", "ज्यादा टाइम मत",
+                        "ज्यादा समय मत", "ज्यादा देर मत", "देर मत", "टाइम मत", "time mat", "zyada time mat",
+                        "jyada time mat", "der mat", "lamba mat", "lamba nahi", "lambi mat", "zyada lamba mat",
+                        "jyada lamba mat"),
     hurry=_phrases("जल्दी", "फटाफट", "शॉर्ट में", "पूछ लो", "पूछ लीजिए", "पूछिए", "पूछो", "बोल सकता", "बोल सकती", "बताइए"),
     narrative=_phrases("वो लोग", "वे लोग", "बैंक वाले", "ब्रांच वाले", "वाले", "एजेंट ने", "एजेंट बोल*", "एजेंट कह*",
                        "मैनेजर ने", "उन्होंने", "उन्होने", "उसने", "बोलते", "कहते", "देते", "सुनता", "सुनते",
@@ -513,6 +628,53 @@ _KN = Lexicon(
     took_nothing=_phrases("ಏನೂ ತಗೊಂಡಿಲ್ಲ", "ಸಾಲ ಮಾತ್ರ", "ಲೋನ್ ಮಾತ್ರ"),
     nothing=_phrases("ಏನೂ ಇಲ್ಲ", "ಇಲ್ಲ", "ಇಲ್ಲಾ"),
 )  # fmt: skip
+
+# --- Romanised Hindi number words (wave 4), read at the birth-year question only ---------------
+# `samajh.amounts` refuses romanised Hindi number words, so the year question writes them in Devanagari
+# first ("unnees sau chaurasi" -> "उन्नीस सौ चौरासी") and reads the year exactly as it reads Devanagari.
+# One cell per value 0 to 99, spelling variants split by "|"; `roman_key` folds the rest (doubled
+# letters, ee/i, aa/a, w/v, z/j, a final "ah"). Not a general fold: "do", "sath" and "tera" are everyday
+# words, so the table is used for the year and nowhere else.
+_ROMAN_HI = """
+shunya|shoonya ek do teen|tin chaar paanch|paach chhah|chhe saat aath nau|nao
+das|dus gyarah|gyaarah barah|baarah terah chaudah|choudah pandrah|pandharah solah satrah|sattrah atharah|attharah|athaarah unnees|unis|unnish
+bees ikkees|ekkis baees|baais|baaees teis|teyis|teees chaubees|choubees pachchees|pachees|pacchis chhabbees sattaees|satais atthaees|athaees|attais untees|unatees
+tees ikattees|iktees battees taintees|tetis|tentis|taitis chauntees|chautis|chontis paintees|pentis|paitis chhattees saintees|sentis|saitis adtees|artees|adatis untaalees|unchaalees
+chaalees iktaalees|ekchalis bayaalees|byalis|beyalis taintaalees|tetalis|tentalis|tiralis chavaalees|chauvalis paintaalees|pentalis chhiyaalees|chhayalis saintaalees|sentalis adtaalees|artalis unchaas|unanchas
+pachaas ikyaavan|ikkyavan|ekyavan|ikkavan baavan tirpan|tirepan|trepan chauvan|chouvan pachpan chhappan sattaavan atthaavan unsath|unsatth
+saath iksath baasath|baasatth tirsath|tiresath chausath|chaunsath|chonsath painsath|paisath|pensath chhiyasath|chhiyaasath sadsath|sarsath adsath|arsath|athsath unhattar
+sattar ikhattar|ikahattar bahattar|behattar tihattar chauhattar|chohattar pachhattar|pichhattar|pachattar|pichattar chhihattar|chhiyattar satattar|sathattar|satahattar athhattar|athattar|athahattar unaasi|unyaasi
+assi ikyaasi|ekyasi bayaasi|byasi tiraasi chauraasi|chourasi pachaasi|pichaasi chhiyaasi|chhiyassi sattaasi|sataasi atthaasi|athaasi navaasi
+nabbe|nabe ikyaanave|ikyanve|ikyanbe baanave|banve|baanbe tiraanave|tiranve|tiranbe chauraanave|chauranve|chouranve|chauranbe pachaanave|pachanve|pachanbe|panchanve chhiyaanave|chhiyanve|chhiyanbe sattaanave|sattanve|sattanbe atthaanave|atthanve|athanve|athanbe ninyaanave|ninyanve|ninyanbe|ninnanve
+"""
+_ROMAN_UNITS = {"sau|sao": "सौ", "hazaar|hajaar": "हज़ार"}
+
+
+def roman_key(word: str) -> str:
+    """Lookup form of a romanised Hindi word: "Chourasee", "chaurasi" and "chaurassi" -> "chaurasi"."""
+    key = word.casefold()
+    for spelled, said in (("ee", "i"), ("oo", "u"), ("ou", "au"), ("aa", "a"), ("w", "v"), ("z", "j"),
+                          ("chh", "ch")):  # fmt: skip
+        key = key.replace(spelled, said)
+    key = "".join(ch for k, ch in enumerate(key) if k == 0 or ch != key[k - 1])
+    return key[:-1] if key.endswith("ah") else key
+
+
+def _roman_numbers() -> dict[str, str]:
+    from samajh.amounts._lexicon import HI_NUM  # the canonical Devanagari word for 0 to 99
+
+    cells = _ROMAN_HI.split()
+    assert len(cells) == 100
+    table: dict[str, str] = {}
+    spelled = [(variants, HI_NUM[value]) for value, variants in enumerate(cells)] + list(_ROMAN_UNITS.items())
+    for variants, devanagari in spelled:
+        for variant in variants.split("|"):
+            if table.setdefault(roman_key(variant), devanagari) != devanagari:
+                raise ValueError(f"romanised number collision on {variant!r}")
+    return table
+
+
+ROMAN_NUMBERS: dict[str, str] = _roman_numbers()
 
 LEXICONS: dict[Language, Lexicon] = {
     Language.hi: _HI | _EN,

@@ -9,11 +9,11 @@ from pathlib import Path
 import pytest
 from serverkit import FakeSpeech, make_wav
 from starlette.testclient import TestClient
-from test_samajh_dialogue import answer
+from test_samajh_dialogue import answer, waits_for_a_figure
 
 from samajh.clients.errors import BadResponse, ConfigError, ServerError
 from samajh.server import create_app
-from samajh.server.dialogue import Heard
+from samajh.server.dialogue import Heard, Step, stub_factory
 from samajh.server.records import PACKAGED_DIR, load_book
 from samajh.server.samajh_dialogue import samajh_factory
 from samajh.server.settings import load_settings
@@ -52,10 +52,17 @@ def phone_for(fake: FakeSpeech, state: Path, llm=None) -> TestClient:
 
 
 def run_call(
-    phone: TestClient, fake: FakeSpeech, record: str = "hero", language: str = "hi", hang_up_after=None
+    phone: TestClient,
+    fake: FakeSpeech,
+    record: str = "hero",
+    language: str = "hi",
+    hang_up_after=None,
+    asked: list[Step] | None = None,
+    **instead: str,
 ):
-    """Answer every prompt as the scripted informed customer does, with a distinct clip per turn,
-    until the bot ends the call. A text twin of the dialogue picks each reply."""
+    """Answer every prompt as the scripted informed customer does (`instead` as in `answer`), with
+    a distinct clip per turn, until the bot ends the call. A text twin of the dialogue picks each
+    reply; `asked` collects the twin's step for each prompt that was answered."""
     created = phone.post("/api/sessions", json={"params": {"record": record, "language": language}})
     assert created.status_code == 201, created.text
     sid, bot = created.json()["session_id"], created.json()["bot"]
@@ -67,7 +74,9 @@ def run_call(
         if hang_up_after is not None and turns == hang_up_after:
             assert phone.post(f"/api/sessions/{sid}/end", json={}).status_code == 200
             return sid
-        reply = answer(language, step.say)
+        reply = answer(language, step.say, **instead)
+        if asked is not None:
+            asked.append(step)
         fake.transcripts.append(reply)
         clip = make_wav(0.5 + turns / 100, tone=200 + turns)
         turn = phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to={bot['seq']}", content=clip)
@@ -91,7 +100,9 @@ def wait_case(phone: TestClient, sid: str, seconds: float = 20.0) -> dict:
 
 def test_a_whole_call_reaches_a_case_file_with_every_turn_placed(fake: FakeSpeech, state: Path) -> None:
     phone = phone_for(fake, state)
-    sid = run_call(phone, fake)
+    asked: list[Step] = []
+    sid = run_call(phone, fake, asked=asked)
+    figure_prompts = [waits_for_a_figure(step) for step in asked]
     started = phone.post(f"/api/sessions/{sid}/case")
     assert started.status_code == 200 and started.json()["status"] == "running"
 
@@ -124,8 +135,15 @@ def test_a_whole_call_reaches_a_case_file_with_every_turn_placed(fake: FakeSpeec
     assert spoken == {t["turn_id"]: (t["start_s"], t["end_s"]) for t in turns}
     twice = [t for t in turns if len(t["readings"]) == 2]
     assert {r["model"] for t in twice for r in t["readings"]} == {"prisma-v3.0", "prisma-v2.5"}
-    # The premium answer holds a figure both readings agree on; the yes at the read-back holds none.
-    assert [t["readings_agreed"] for t in twice] == [True, None], [t["text"] for t in twice]
+    # Read twice: exactly the answers to prompts at which the dialogue waits for a figure.
+    assert [len(t["readings"]) == 2 for t in turns] == figure_prompts
+    # The premium answer holds a figure both readings agree on, and is read back; the yes at the
+    # read-back and the informed customer's cover answer (no figure in it) hold none.
+    assert [(t["readings_agreed"], t["followed_by"]) for t in twice] == [
+        (True, "read_back"),
+        (None, "other"),
+        (None, "other"),
+    ], [t["text"] for t in twice]
     assert all(t["readings_agreed"] is None for t in turns if len(t["readings"]) == 1)
     assert len(case["latency"]) == len(turns) and all(row["tts_ms"] is not None for row in case["latency"])
     quoted = [e for e in case["evidence"] if e["turn_id"] is not None]
@@ -239,7 +257,9 @@ def test_a_case_before_the_call_ends_or_for_the_stub_is_refused(fake: FakeSpeech
     assert phone.post(f"/api/sessions/{sid}/case").json()["error"]["code"] == "session_active"
     assert phone.get(f"/api/sessions/{sid}/case").json()["error"]["code"] == "case_not_started"
 
-    stub = TestClient(create_app(gnani=fake, state=state, web_dir=None, clips_dir=None))
+    stub = TestClient(
+        create_app(gnani=fake, state=state, web_dir=None, clips_dir=None, dialogues={"stub": stub_factory})
+    )
     other = stub.post("/api/sessions", json={"dialogue": "stub"}).json()["session_id"]
     stub.post(f"/api/sessions/{other}/end", json={})
     assert stub.post(f"/api/sessions/{other}/case").json()["error"]["code"] == "no_case_file"
@@ -259,3 +279,47 @@ def test_a_job_left_running_by_a_stopped_server_is_rerun_by_the_next_request(
 
     assert wait_case(restarted, sid)["status"] == "ready"
     assert len(fake.batch_calls) == 2  # the fake has no cache; the real client would answer from it
+
+
+def test_customer_audio_counts_the_take_that_replaced_another_and_not_the_one_replaced(
+    fake: FakeSpeech, state: Path
+) -> None:
+    """A take sent from the file picker, replaced by a longer take from the microphone: the case
+    counts the microphone take only (the verifier's surviving mutant e)."""
+    phone = phone_for(fake, state)
+    created = phone.post("/api/sessions", json={"params": {"record": "hero", "language": "hi"}}).json()
+    sid, bot = created["session_id"], created["bot"]
+    twin = samajh_factory(BOOK, SETTINGS)({"record": "hero", "language": "hi"})
+    step, turns = twin.start(), 0
+    while not bot["end_call"]:
+        phone.get(bot["audio_url"])
+        reply = answer("hi", step.say)
+        if turns == 0:  # the first answer: a short file take, then the whole answer from the mic
+            fake.transcripts += ["हाँ", reply]
+            first = phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to={bot['seq']}&part=1",
+                               content=make_wav(0.3, tone=150))  # fmt: skip
+            assert first.status_code == 200, first.text
+            turn = phone.post(f"/api/sessions/{sid}/turns?source=mic&reply_to={bot['seq']}&part=2",
+                              content=make_wav(0.9, tone=160))  # fmt: skip
+        else:
+            fake.transcripts.append(reply)
+            turn = phone.post(f"/api/sessions/{sid}/turns?source=file&reply_to={bot['seq']}",
+                              content=make_wav(0.5 + turns / 100, tone=200 + turns))  # fmt: skip
+        assert turn.status_code == 200, turn.text
+        step = twin.step(step.state, Heard(text=reply, second=reply if step.say.second_reading else None))
+        bot, turns = turn.json()["bot"], turns + 1
+    phone.get(bot["audio_url"])
+    log = phone.get(f"/api/sessions/{sid}").json()
+    assert [e["superseded"] for e in log["events"] if e["type"] == "customer"].count(True) == 1
+
+    case = case_of_call(phone, sid)
+
+    assert case["customer_audio"] == {"mic": 1, "file": turns - 1, "none": 0}
+    assert len(case["turns"]) == turns and case["turns"][0]["source"] == "mic"
+
+
+def case_of_call(phone: TestClient, sid: str) -> dict:
+    phone.post(f"/api/sessions/{sid}/case")
+    case = wait_case(phone, sid)
+    assert case["status"] == "ready", case["steps"]
+    return case

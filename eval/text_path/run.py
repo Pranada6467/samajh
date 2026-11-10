@@ -15,7 +15,7 @@ import statistics
 import sys
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -199,7 +199,11 @@ def _failures(runs: list[CaseRun]) -> str:
 
 
 def _call_name(trace: SlotTrace) -> str:
-    return f"{trace.kind.value}/screen" if trace.screen else trace.kind.value
+    return f"{trace.kind.value}/{_call_type(trace)}" if trace.screen or trace.check else trace.kind.value
+
+
+def _call_type(trace: SlotTrace) -> str:
+    return "screen" if trace.screen else "check" if trace.check else "answer"
 
 
 def _share(part: int, whole: int) -> str:
@@ -421,6 +425,9 @@ class Cost:
     median_s: float | None
     p90_s: float | None
     cases: int
+    # Per call type ("answer", "screen", "check"): (calls, cost with nothing cached or None when unknown)
+    by_type: dict[str, tuple[int, float | None]] = field(default_factory=dict)
+    changes: dict[str, int] = field(default_factory=dict)  # the change check's labels, and "failed"
 
     @property
     def per_case(self) -> float | None:
@@ -436,6 +443,12 @@ def cost_of(runs: list[CaseRun]) -> Cost:
     calls = _record_calls(traces)
     seconds = sorted(c.seconds for c in calls if c.seconds is not None)
     known = all(c.usd is not None for c in calls)
+    by_type: dict[str, tuple[int, float | None]] = {}
+    for name in ("answer", "screen", "check"):
+        mine = [c for t, c in zip(traces, calls, strict=True) if _call_type(t) == name]
+        usd = sum(c.usd for c in mine) if all(c.usd is not None for c in mine) else None
+        by_type[name] = (len(mine), usd)
+    changes = Counter(t.change or ("failed" if t.failed else "not used") for t in traces if t.check)
     return Cost(
         calls=len(calls),
         cached=sum(c.cache_hit for c in calls),
@@ -444,6 +457,8 @@ def cost_of(runs: list[CaseRun]) -> Cost:
         median_s=statistics.median(seconds) if seconds else None,
         p90_s=seconds[int(0.9 * (len(seconds) - 1))] if seconds else None,
         cases=sum(r.run is not None for r in runs),
+        by_type=by_type,
+        changes=dict(changes),
     )
 
 
@@ -553,6 +568,17 @@ def report(set_name: str, note: str, model: str, runs: list[CaseRun], cost: Cost
         "## Cost and latency",
         "",
         f"- LLM calls: {cost.calls} for {cost.cases} calls ({cost.cached} served from the cache in this run).",
+        "",
+        _table(
+            ["request", "LLM calls", "cost with nothing cached"],
+            [[name, str(n), _usd(usd)] for name, (n, usd) in cost.by_type.items()],
+        ),
+        "",
+        (
+            "- The change check (a second look at a reply of two or more clauses: did the customer change "
+            f"their answer?) said: {cost.changes or 'no check was made'}. `not used`: a recall reply that "
+            "named nothing, or a reply whose answer call failed."
+        ),
         f"- Spent in this run: {_usd(cost.spent_now)}.",
         (
             f"- Cost of these calls with nothing cached: {_usd(cost.first_usd)} "
