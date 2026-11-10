@@ -1,0 +1,103 @@
+# E3 / E5 for spoken amounts. Run: uv run python -m samajh.evalkit run eval/amounts/experiment.toml
+name = "amounts-v1"
+manifest = "../../data/amounts/amounts-v1.jsonl"
+manifest_sha256 = "62b0dd71085907386ffa173397cbb79fb06dd1cce10618f65581d7feed5e0d76"
+scorer = "amount"
+budget_credits = 120
+tts_sample_rate = 16000
+voice_seed = 20261110
+balance_by = "stratum"
+
+# One voice per item, rotated within each (language, stratum). Gender and preferred language of a
+# voice are from the docs only ([unverified]); timbre-v3.0 voices are documented as multilingual.
+[voices]
+hi = [
+  { model = "timbre-v3.0", voice = "Shivani" },
+  { model = "timbre-v3.0", voice = "Avinash" },
+  { model = "timbre-v2.5", voice = "Nalini" },
+  { model = "timbre-v2.5", voice = "Deepak" },
+]
+hi-en = [
+  { model = "timbre-v3.0", voice = "Riyaa" },
+  { model = "timbre-v3.0", voice = "Shubham" },
+  { model = "timbre-v2.5", voice = "Poorvi" },
+  { model = "timbre-v3.0", voice = "Yashraj" },
+]
+ta = [
+  { model = "timbre-v3.0", voice = "Lakshmi" },
+  { model = "timbre-v3.0", voice = "Prakash" },
+  { model = "timbre-v2.5", voice = "Asmita" },
+  { model = "timbre-v2.5", voice = "Trisha" },
+]
+kn = [
+  { model = "timbre-v3.0", voice = "Chetana" },
+  { model = "timbre-v3.0", voice = "Harshad" },
+  { model = "timbre-v2.5", voice = "Saanvi" },
+  { model = "timbre-v2.5", voice = "Kavin" },
+]
+
+# Noise is added to the 16 kHz clip (where the SNR is defined), then the phone channel is applied.
+[conditions]
+clean16k = []
+phone = [{ kind = "mulaw" }]
+babble10 = [{ kind = "noise", noise = "babble", snr_db = 10 }, { kind = "mulaw" }]
+babble5 = [{ kind = "noise", noise = "babble", snr_db = 5 }, { kind = "mulaw" }]
+street10 = [{ kind = "noise", noise = "street", snr_db = 10 }, { kind = "mulaw" }]
+street5 = [{ kind = "noise", noise = "street", snr_db = 5 }, { kind = "mulaw" }]
+narrowband = [{ kind = "resample", rate = 8000 }, { kind = "bandlimit" }, { kind = "mulaw" }]
+
+# Every item, both models, the format the design uses, clean and phone audio.
+[[arm]]
+name = "core"
+conditions = ["clean16k", "phone"]
+stt = [
+  { model = "prisma-v2.5", format = "transcribe" },
+  { model = "prisma-v3.0", format = "transcribe" },
+]
+
+# Two noisy conditions per item: the folds swap noise type and level, so each of the four
+# noise cells is heard on half of the items of every stratum.
+[[arm]]
+name = "noise-fold0"
+where = { fold = "0" }
+conditions = ["babble10", "street5"]
+stt = [
+  { model = "prisma-v2.5", format = "transcribe" },
+  { model = "prisma-v3.0", format = "transcribe" },
+]
+
+[[arm]]
+name = "noise-fold1"
+where = { fold = "1" }
+conditions = ["street10", "babble5"]
+stt = [
+  { model = "prisma-v2.5", format = "transcribe" },
+  { model = "prisma-v3.0", format = "transcribe" },
+]
+
+# Formats and language detection on v3.0, phone audio, fold 0.
+[[arm]]
+name = "formats"
+where = { fold = "0" }
+conditions = ["phone"]
+stt = [
+  { model = "prisma-v3.0", format = "verbatim" },
+  { model = "prisma-v3.0", format = "codemix" },
+  { model = "prisma-v3.0", format = "transcribe", language = "indic-auto" },
+]
+
+# Is v2.5's `literal` the same as asking v2.5 for verbatim? And the GSM-like band-limit. Fold 1.
+[[arm]]
+name = "checks"
+where = { fold = "1" }
+conditions = ["phone"]
+stt = [{ model = "prisma-v2.5", format = "verbatim" }]
+
+[[arm]]
+name = "narrowband"
+where = { fold = "1" }
+conditions = ["narrowband"]
+stt = [
+  { model = "prisma-v2.5", format = "transcribe" },
+  { model = "prisma-v3.0", format = "transcribe" },
+]

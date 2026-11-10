@@ -1,0 +1,163 @@
+item_id	transcript	label	comment
+amt-hi-en-frac-01	मेरी ई एम आई वन एंड अ हाफ क्रोर रुपये है।	parser_gap	English in Devanagari, 'X एंड अ हाफ UNIT': parser reads only 'हाफ UNIT' and returns half a unit
+amt-hi-en-frac-01	मेरी ई एम आई वन एंड अ हाफ क्रोर रूपीज़ है।	parser_gap	English in Devanagari, 'X एंड अ हाफ UNIT': parser reads only 'हाफ UNIT' and returns half a unit
+amt-hi-en-frac-01	मेरी ई एम आई वन एंड अ हाफ क्रोर रुपीज़ है।	parser_gap	English in Devanagari, 'X एंड अ हाफ UNIT': parser reads only 'हाफ UNIT' and returns half a unit
+amt-kn-plain-01	ಪ್ರೀಮಿಯಂ ಎಂದು ನಾನ್ನೂರು ರೂಪಾಯಿ ತೆಗೆದುಕೊಂಡರು	parser_gap	ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon
+amt-kn-plain-01	ಪ್ರೀಮಿಯಂ ಎಂದು ನಾನ್ನೂರು ರೂಪಾಯಿ ತೆಗೆದುಕೊಂಡೆ	parser_gap	ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon
+amt-kn-plain-01	1400 ರೂಪಾಯಿ ತೆಗೆದುಕೊಂಡೆ.	recognition	right on phone audio, wrong under this noise
+amt-kn-lc-01	ಇಎಂಐ ಅರುವತ್ತು ಲಕ್ಷ ಕಟ್ಟುತ್ತಿದ್ದೇನೆ	parser_gap	ಅರುವತ್ತು, a spelling of ಅರವತ್ತು (60), is not in the lexicon
+amt-kn-lc-01	ಇ ಎಂ ಐ ಅರುವತ್ತು ಲಕ್ಷ ಕಟ್ಟುತ್ತಿದ್ದೇನೆ	parser_gap	ಅರುವತ್ತು, a spelling of ಅರವತ್ತು (60), is not in the lexicon
+amt-kn-frac-01	ಅರ್ಧ 50,00,000 ರೂಪಾಯಿ ಸಾಲ ತೆಗೆದುಕೊಂಡೆ.	prisma_formatting	v3.0 applied the half and kept the word (ಅರ್ಧ 50,00,000); parser refuses
+amt-ta-frac-02	இஎம்ஐ 5,50,000 கட்டுகிறேன்.	prisma_formatting	v3.0 wrote half a lakh as 5,00,000 or 5,50,000; its verbatim output is right
+amt-ta-frac-02	இஎம்ஐ 5,00,000 கட்டுகிறேன்.	prisma_formatting	v3.0 wrote half a lakh as 5,00,000 or 5,50,000; its verbatim output is right
+amt-ta-frac-02	EMI 5,00,000 கட்டுகிறேன்.	prisma_formatting	v3.0 wrote half a lakh as 5,00,000 or 5,50,000; its verbatim output is right
+amt-ta-frac-02	EMI 5,00,000 கட்டுகிறேன்	prisma_formatting	v3.0 wrote half a lakh as 5,00,000 or 5,50,000; its verbatim output is right
+amt-kn-irr-02	ನನಗೆ 79,300 ರೂಪಾಯಿ ಸಾಲ ಸಿಕ್ಕಿತು.	recognition	right on phone audio, wrong under this noise (79,100 became 79,300)
+amt-hi-en-frac-02	लोन के साथ टू एंड अ हाफ लाख रुपये का इंश्योरेंस दिया।	parser_gap	English in Devanagari, 'X एंड अ हाफ UNIT': parser reads only 'हाफ UNIT' and returns half a unit
+amt-hi-en-frac-02	लोन के साथ टू एंड अ हाफ लैक रूपीज़ का इंश्योरेंस दिया।	parser_gap	English in Devanagari, 'X एंड अ हाफ UNIT': parser reads only 'हाफ UNIT' and returns half a unit
+amt-ta-lc-02	பதினோரு ₹1,00,00,000 கடன் வாங்கினேன்	partial_itn	count word left in front of the digits of one unit: count x unit
+amt-kn-frac-02	ನನಗೆ 5,00,000 ರೂಪಾಯಿ ಸಾಲ ಸಿಕ್ಕಿತು.	prisma_formatting	v3.0 wrote half a lakh as 5,00,000; its verbatim output is right
+amt-ta-frac-03	எம்மா, 3/4 லட்சம் கட்டுறேன்.	parser_gap	fraction written as 3/4 before the unit is not read
+amt-hi-en-frac-03	इंश्योरेंस का प्रीमियम सिक्स एंड अ हाफ क्रोर रुपये है।	parser_gap	English in Devanagari, 'X एंड अ हाफ UNIT': parser reads only 'हाफ UNIT' and returns half a unit
+amt-hi-en-frac-03	इंश्योरेंस का प्रीमियम सिक्स एंड अ हाफ क्रोर रूपीज़ है।	parser_gap	English in Devanagari, 'X एंड अ हाफ UNIT': parser reads only 'हाफ UNIT' and returns half a unit
+amt-hi-en-lc-04	हर महीने ईएमआई 10 क्लोज की	recognition	crore heard as क्लोज
+amt-hi-en-lc-04	हर महीने ईएमआई टेन क्लोज की	recognition	crore heard as क्लोज
+amt-ta-irr-04	என் பிரீமியம் 45,00,000.	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (45 lakh 1 thousand written 45,00,000)
+amt-ta-irr-04	என் premium 45,00,000.	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (45 lakh 1 thousand written 45,00,000)
+amt-ta-irr-04	என் பிரீமியம் 45,00,000	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (45 lakh 1 thousand written 45,00,000)
+amt-hi-frac-04	08:30 100 का कवर बताया था।	partial_itn	v2.5 wrote N-and-a-half / N-and-three-quarters as a clock time before the unit (08:30, 01:45)
+amt-hi-frac-04	08:30 100 का कवर बताया था	partial_itn	v2.5 wrote N-and-a-half / N-and-three-quarters as a clock time before the unit (08:30, 01:45)
+amt-hi-frac-04	800 का cover।	recognition	right on phone audio, wrong under this noise (साढ़े lost)
+amt-hi-en-irr-04	मेरी ई एम आई नाइंटी ₹4,13,000 है	partial_itn	v2.5 split 'ninety four lakh ...' into नाइंटी + 4,13,000: tens word + digits
+amt-ta-plain-04	கணக்கிலிருந்து ஆயிரம் ரூபாய் எடுத்தார்கள்	parser_gap	a bare ஆயிரம் (one thousand, no count word) after an ordinary word is refused
+amt-ta-plain-04	கணக்கில் இருந்து ஆயிரம் ரூபாய் எடுத்தார்கள்	parser_gap	a bare ஆயிரம் (one thousand, no count word) after an ordinary word is refused
+amt-ta-plain-04	கணக்கில் இருந்து ஆயிரம் ரூபாய் எடுத்தார்கள்.	parser_gap	a bare ஆயிரம் (one thousand, no count word) after an ordinary word is refused
+amt-kn-frac-04	ನನಗೆ 75,00,00,000 ರೂಪಾಯಿ ಸಾಲ ಸಿಕ್ಕಿತು.	unresolved	v3.0 wrote a wrong number for the fraction; no v3.0 word output for this sentence (three quarters of a crore written 75 crore)
+amt-hi-en-frac-05	लोन के साथ टू प्वाइंट ₹25,00,00,000 का इंश्योरेंस दिया	prisma_formatting	v2.5 wrote 'two point two five crore' as टू प्वाइंट + 25 crore; literal is right
+amt-kn-frac-05	ಇಎಂಐ ಒಂದು ಕಾಲು ಕೋಟಿ ಕಟ್ಟುತ್ತಿದ್ದೇನೆ.	parser_gap	ಒಂದು ಕಾಲು (1.25) written as two words is not read
+amt-kn-frac-05	EMI ಒಂದು ಕಾಲು ಕೋಟಿ ಕಟ್ಟುತ್ತಿದ್ದೇನೆ.	parser_gap	ಒಂದು ಕಾಲು (1.25) written as two words is not read
+amt-hi-plain-06	मुझे लोन मिला 20,000 रुपये का।	recognition	right on phone audio, wrong under this noise (छह सौ lost)
+amt-hi-en-lc-06	नाइंटी ₹1,80,000 का लोन मिला था	partial_itn	v2.5 wrote 'ninety lakh eighty thousand' as नाइंटी + 1,80,000: count word left in front of the digits of one unit: count x unit
+amt-ta-frac-06	என் மாத தவணை 2,50,000 ரூபாய்.	unresolved	v3.0 wrote a wrong number for the fraction; no v3.0 word output for this sentence (2.25 lakh written 2,50,000)
+amt-ta-frac-06	என் மாத தவணை இரண்டே தான்	recognition	the amount words were lost
+amt-ta-frac-06	என் மாத தவணை எந்த தேதி அன்று முடியும்?	recognition	the amount words were lost
+amt-kn-irr-06	ಅರವತ್ತ್ನಾಲ್ಕು 1,000 ನಾನ್ನೂರು ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ ಕಟ್ಟಿದೆ	partial_itn	count word left in front of the digits of one unit: count x unit, plus ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon
+amt-kn-irr-06	ಅರವತ್ತ್ನಾಲ್ಕು ಸಾವಿರದ ನಾನ್ನೂರು ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ ಕಟ್ಟಿದೆ	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon; ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon
+amt-kn-irr-06	64,000 ನಾನ್ನೂರು ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ ಕಟ್ಟಿದೆ	partial_itn	higher groups as digits, lower groups left as words: add them; ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon, so the parser drops it and returns 64,000
+amt-kn-irr-06	ಅರವತ್ತನಾಲ್ಕು ಸಾವಿರದ ನಾನ್ನೂರು ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ ಕಟ್ಟಿದೆ	parser_gap	ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon: the parser drops the word and returns 64,000
+amt-hi-lc-06	6,40,000 का cover बता दें।	recognition	right on phone audio, wrong under this noise
+amt-hi-en-frac-06	अकाउंट से कटे थ्री प्वाइंट ₹5,00,000	prisma_formatting	v2.5 wrote 'three point five lakh' as थ्री प्वाइंट + 5 lakh; literal is right
+amt-ta-irr-06	தொண்ணூற்றியாயிரத்து 600 காப்பீடு என்று சொன்னார்கள்	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-ta-irr-06	தொண்ணூற்றியாயிரத்து அறுநூறு காப்பீடு என்று சொன்னார்கள்	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-ta-irr-06	90600 காப்பீடு என்று சொன்னார்கள்.	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-ta-irr-06	தொண்ணூற்றாயிரத்து 600 காப்பீடு என்று சொன்னார்கள்	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-ta-irr-06	தொண்ணூற்றாயிரத்து அறுநூறு காப்பீடு என்று சொன்னார்கள்	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-ta-irr-06	தொண்ணூற்றாயிரத்து 600 காப்பீடு என்று சொன்ன	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-ta-irr-06	தொண்ணூற்றாயிரத்து அறுநூறு காப்பீடு என்று சொன்ன	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-ta-irr-06	90600 காப்பீடு என்று சொன்னது.	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-ta-irr-06	தொன்னூற்றி ஆயிரத்து அறுநூறு காப்பீடு என்று சொன்னார்கள்.	source_or_voice	the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful: every configuration heard 90 thousand for 95 thousand
+amt-hi-irr-06	मुझे लोन मिला 45,800।	recognition	right on phone audio, wrong under this noise (सैंतालीस became 45)
+amt-kn-frac-06	2,00,000 ರೂಪಾಯಿ ಸಾಲ ತೆಗೆದುಕೊಂಡೆ.	unresolved	v3.0 wrote a wrong number for the fraction; no v3.0 word output for this sentence (2.25 lakh written 2,00,000)
+amt-kn-irr-07	ಖಾತೆಯಿಂದ ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ₹1,00,000 ಕಡಿತವಾಯಿತು	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-irr-07	ಖಾತೆಯಿಂದ ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ಲಕ್ಷ ರೂಪಾಯಿ ಕಡಿತವಾಯಿತು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-kn-irr-07	ಖಾತೆಯಿಂದ ಎಪ್ಪತ್ತ್ ₹4,00,000 ಕಡಿತವಾಯಿತು	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-irr-07	ಖಾತೆಯಿಂದ ಎಪ್ಪತ್ತ್ ನಾಲ್ಕು ಲಕ್ಷ ರೂಪಾಯಿ ಕಡಿತವಾಯಿತು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-hi-en-frac-07	लोन के साथ 7.50000000 रुपये का इंश्योरेंस दिया	prisma_formatting	v2.5 wrote 7.5 crore as 7.50000000; literal is right; parser refuses
+amt-kn-plain-07	21,000 ನಾನ್ನೂರ ₹50 ಸಾಲ ತೆಗೆದುಕೊಂಡೆ	partial_itn	higher groups as digits, lower groups left as words: add them, plus ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon
+amt-kn-plain-07	ಇಪ್ಪತ್ತೊಂದು ಸಾವಿರದ ನಾನ್ನೂರ ಐವತ್ತು ರೂಪಾಯಿ ಸಾಲ ತೆಗೆದುಕೊಂಡೆ	parser_gap	ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon
+amt-kn-plain-07	31,450 ರೂಪಾಯಿ ಸಾಲ ತೆಗೆದುಕೊಂಡೆ.	recognition	right on phone audio, wrong under this noise (21 became 31)
+amt-kn-plain-07	ಇಪ್ಪತ್ತೊಂದು ಸಾವಿರದ ನಾನ್ನೂರ ಐವತ್ತು ರೂಪಾಯಿ ಸಾಲ ತೆಗೆದುಕೊಂಡೆ.	parser_gap	ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon
+amt-kn-frac-07	ಸಾಲದಿಂದ 1,00,000 ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿದರು.	unresolved	v3.0 wrote a wrong number for the fraction; no v3.0 word output for this sentence (1.25 lakh written 1,00,000)
+amt-kn-frac-07	ಸಾಲದಿಂದ 1,00,000 ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿ.	unresolved	v3.0 wrote a wrong number for the fraction; no v3.0 word output for this sentence (1.25 lakh written 1,00,000)
+amt-hi-en-lc-08	इंस्योरेंस कवर 3,02,000 rupees का है।	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (3 lakh 200 written 3,02,000)
+amt-hi-en-lc-08	Insurance cover 3,02,000 rupees guy.	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (3 lakh 200 written 3,02,000)
+amt-hi-en-lc-08	इन्श्योरेंस कवर 3,02,000 rupees का है।	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (3 lakh 200 written 3,02,000)
+amt-kn-irr-08	ಅರವತ್ತ್ 9,06,000 ವಿಮೆ ಎಂದು ಹೇಳಿದರು	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-irr-08	ಅರವತ್ತ್ ಒಂಬತ್ತು ಲಕ್ಷದ ಆರು ಸಾವಿರ ವಿಮೆ ಎಂದು ಹೇಳಿದರು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-kn-irr-08	9,06,000 ವಿಮೆ ಎಂದು ಹೇಳಿದರು.	recognition	right on phone audio, wrong under this noise (the tens word was lost or changed)
+amt-kn-irr-08	"""39,06,000"" ಎಂದು ಹೇಳಿದರು."	recognition	right on phone audio, wrong under this noise (the tens word was lost or changed)
+amt-hi-lc-08	उन्होंने बीमा के 5,00,000 रुपये लिए।	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (5 lakh 200 written 5,00,000 or 5,200)
+amt-hi-lc-08	उन्होंने बीमा के 5,00,000 दो सौ रुपये लिए।	partial_itn	higher groups as digits, lower groups left as words: add them
+amt-hi-lc-08	उन्होंने बीमा के 5,00,000 200 रुपये लिए।	partial_itn	higher groups as digits, lower groups left as words: add them
+amt-hi-lc-08	उन्होंने बीमा के 5,200 रुपये दिए।	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (5 lakh 200 written 5,00,000 or 5,200)
+amt-hi-lc-08	उन्होंने बीमा के 5,200 रुपये लिए।	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (5 lakh 200 written 5,00,000 or 5,200)
+amt-ta-irr-08	என் ப்ரீமியம் 53,00,000 எட்டா	recognition	the last word was cut (எட்டாயிரம் became எட்டா)
+amt-ta-irr-08	என் ப்ரீமியம் ஐம்பத்து மூன்று லட்சத்து எட்டா	recognition	the last word was cut (எட்டாயிரம் became எட்டா)
+amt-kn-lc-08	70,00,000 ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ ಕಟ್ಟಿದೆ.	prisma_formatting	v3.0 number formatting on an amount with an empty middle group; its verbatim output is right (70 lakh 800 written 70,00,000)
+amt-ta-lc-08	கணக்கிலிருந்து 16,700 ரூபாய் எடுத்தார்கள்.	prisma_formatting	v3.0 number formatting on an amount with an empty middle group; its verbatim output is right (16 lakh 700 written 16,700)
+amt-kn-frac-08	ನನಗೆ 01:45 ₹1,00,000 ಸಾಲ ಸಿಕ್ಕಿತು	partial_itn	v2.5 wrote N-and-a-half / N-and-three-quarters as a clock time before the unit (08:30, 01:45)
+amt-kn-frac-08	ನನಗೆ ಒಂದು ಮುಕ್ಕಾಲು ಲಕ್ಷ ರೂಪಾಯಿ ಸಾಲ ಸಿಕ್ಕಿತು	parser_gap	ಒಂದು ಮುಕ್ಕಾಲು (1.75) written as two words is not read
+amt-kn-frac-08	ನನಗೆ 1,25,000 ರೂಪಾಯಿ ಸಾಲ ಸಿಕ್ಕಿತು.	prisma_formatting	v3.0 formatted the fraction to the wrong number; its verbatim output has the right words (1.75 lakh written 1,25,000)
+amt-kn-frac-08	ನನಗೆ ಒಂದು ಮುಕ್ಕಾಲು ಲಕ್ಷ ರೂಪಾಯಿ ಸಾಲ ಸಿಕ್ಕಿತು.	parser_gap	ಒಂದು ಮುಕ್ಕಾಲು (1.75) written as two words is not read
+amt-hi-en-lc-09	मेरा लोन 6,13,00,020 थाउज़ंड रुपये	prisma_formatting	v2.5 wrote 6,13,00,020 थाउज़ंड; literal is right; parser multiplies it out to a wrong amount
+amt-kn-plain-09	ವಿಮೆ ಮೊತ್ತ 49,000 ನಾನ್ನೂರು ರೂಪಾಯಿ ಎಂದು ಹೇಳಿದರು	partial_itn	higher groups as digits, lower groups left as words: add them; ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon, so the parser drops it and returns 49,000
+amt-kn-plain-09	ವಿಮೆ ಮೊತ್ತ ನಲವತ್ತೊಂಬತ್ತು ಸಾವಿರದ ನಾನ್ನೂರು ರೂಪಾಯಿ ಎಂದು ಹೇಳಿದರು	parser_gap	ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon: the parser drops the word and returns 49,000
+amt-kn-plain-09	ವಿಮೆ ಮೊತ್ತ ನಲವತ್ತ ಒಂಬತ್ತು ಸಾವಿರದ ನಾನ್ನೂರು ರೂಪಾಯಿ ಎಂದು ಹೇಳಿದರು	parser_gap	ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon: the parser drops the word and returns 49,000
+amt-kn-plain-09	ವಿಮೆ ಮೊತ್ತ 49,000 ನಾನ್ನೂರು ರೂಪಾಯಿ ಎಂದು ಹೇಳಿದ್ರು	partial_itn	higher groups as digits, lower groups left as words: add them; ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon, so the parser drops it and returns 49,000
+amt-kn-plain-09	ವಿಮೆ ಮೊತ್ತ ನಲವತ್ತ ಒಂಬತ್ತು ಸಾವಿರದ ನಾನ್ನೂರು ರೂಪಾಯಿ ಎಂದು ಹೇಳಿದ್ರು	parser_gap	ನಾನ್ನೂರು / ನಾನ್ನೂರ, a spelling of ನಾನೂರು (400), is not in the lexicon: the parser drops the word and returns 49,000
+amt-hi-frac-09	मेरा लोन 350 रुपये का है।	unresolved	v3.0 wrote a wrong number for the fraction; no v3.0 word output for this sentence (पौने चार सौ = 375 written 350)
+amt-hi-frac-09	मेरा लोन 450 रुपये का है।	recognition	right on phone audio, wrong under this noise
+amt-ta-lc-09	ப்ரீமியமாக 4 கோடியே 8,00,000 ஐம்பத்தையாயிரம் ரூபாய் பிடித்தார்கள்	partial_itn	higher groups as digits, lower groups left as words: add them
+amt-ta-lc-09	ப்ரீமியமாக 4,08,50,000 ரூபாய் பிடித்தார்கள்.	prisma_formatting	v3.0 wrote ஐம்பத்தையாயிரம் (55 thousand) as 50,000; its verbatim output is right. the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful
+amt-ta-lc-09	ஆக 4,08,50,000 ரூபாய் பிடித்தார்கள்.	prisma_formatting	v3.0 wrote ஐம்பத்தையாயிரம் (55 thousand) as 50,000; its verbatim output is right. the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful
+amt-kn-frac-09	ನನ್ನ ಪ್ರೀಮಿಯಂ 01:45 1,00,00,000	partial_itn	v2.5 wrote N-and-a-half / N-and-three-quarters as a clock time before the unit (08:30, 01:45)
+amt-kn-frac-09	ನನ್ನ ಪ್ರೀಮಿಯಂ ಒಂದು ಮುಕ್ಕಾಲು ಕೋಟಿ	parser_gap	ಒಂದು ಮುಕ್ಕಾಲು (1.75) written as two words is not read
+amt-kn-frac-09	ನನ್ನ ಪ್ರೀಮಿಯಂ 1,25,00,000.	unresolved	v3.0 wrote a wrong number for the fraction; no v3.0 word output for this sentence (1.75 crore written 1.25 crore or 125 crore)
+amt-kn-frac-09	ನನ್ನ ಪ್ರೀಮಿಯಂ 1,25,00,00,000.	unresolved	v3.0 wrote a wrong number for the fraction; no v3.0 word output for this sentence (1.75 crore written 1.25 crore or 125 crore)
+amt-kn-frac-09	ನನ್ನ ಪ್ರೀಮಿಯಂ 01:45 ಹೋಗಿ	recognition	ಕೋಟಿ heard as ಹೋಗಿ
+amt-kn-frac-09	ನನ್ನ ಪ್ರೀಮಿಯಂ ಒಂದು ಮುಕ್ಕಾಲು ಹೋಗಿ	recognition	ಕೋಟಿ heard as ಹೋಗಿ
+amt-hi-plain-10	बीमा कवर 6,250 रुपये का है।	prisma_formatting	v3.0 number formatting on an amount with an empty middle group; its verbatim output is right (6 thousand 25 written 6,250)
+amt-kn-irr-10	ನನ್ನ ಪ್ರೀಮಿಯಂ 37,000 ನೇ	recognition	ನೂರು (hundred) lost at the end of the sentence
+amt-kn-irr-10	ನನ್ನ ಪ್ರೀಮಿಯಂ ಮೂವತ್ತೇಳು ಸಾವಿರದ ನೇ	recognition	ನೂರು (hundred) lost at the end of the sentence
+amt-kn-irr-10	ನನ್ನ premium 37,000.	recognition	ನೂರು (hundred) lost at the end of the sentence
+amt-ta-irr-10	இருபத்தேறாயிரத்து 700 காப்பீடு என்று சொன்னார்கள்	recognition	the number word was misspelt (இருபத்தேறாயிரத்து for இருபத்தேழாயிரத்து)
+amt-ta-irr-10	இருபத்தேறாயிரத்து எழுநூறு காப்பீடு என்று சொன்னார்கள்	recognition	the number word was misspelt (இருபத்தேறாயிரத்து for இருபத்தேழாயிரத்து)
+amt-kn-plain-10	ನನ್ನ ತಿಂಗಳ ಕಂತು 20,20 ರೂಪಾಯಿ.	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (20 thousand 20 written 20,20 or 20,200)
+amt-kn-plain-10	ನನ್ನ ತಿಂಗಳ ಕಂತು 20,200 ರೂಪಾಯಿ ಆಗಿದೆ.	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (20 thousand 20 written 20,20 or 20,200)
+amt-hi-frac-10	मेरी ईएमआई डेट नहीं	recognition	right on phone audio, wrong under this noise
+amt-ta-lc-10	எனக்கு 8,00,000 ஐயாயிரத்து ₹500 கடன் கிடைத்தது	partial_itn	higher groups as digits, lower groups left as words: add them
+amt-ta-lc-10	எனக்கு 8,00,000 ஐயாயிரத்து ₹500 கடன் கிடைக்கும்	partial_itn	higher groups as digits, lower groups left as words: add them
+amt-kn-irr-11	ಇಪ್ಪತ್ತ್ 8,00,000 ವಿಮೆ ಎಂದು ಹೇಳಿದರು	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-irr-11	ಇಪ್ಪತ್ತ್ ಎಂಟು ಲಕ್ಷ ವಿಮೆ ಎಂದು ಹೇಳಿದರು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-kn-lc-11	ನನ್ನ ಪ್ರೀಮಿಯಂ ಅರುವತ್ತು ಲಕ್ಷದ ನಲವತ್ತು ಸಾವಿರ	parser_gap	ಅರುವತ್ತು, a spelling of ಅರವತ್ತು (60), is not in the lexicon
+amt-ta-lc-11	காப்பீட்டுத் தொகை 10,00,000 இருபத்தையாயிரம் ரூபாய் என்றார்கள்	partial_itn	higher groups as digits, lower groups left as words: add them
+amt-ta-lc-11	காப்பீட்டுத் தொகை 10,00,000 இருபத்தையாரம் ரூபாய் என்றார்கள்	recognition	the number word was shortened (இருபத்தையாரம்). the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful
+amt-ta-lc-11	காப்பீட்டுத் தொகை பத்து லட்சத்து இருபத்தையாரம் ரூபாய் என்றார்கள்	recognition	the number word was shortened (இருபத்தையாரம்). the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful
+amt-ta-lc-11	காப்பீட்டுத் தொகை 10,20,000 ரூபாய் என்றார்கள்.	recognition	right on phone audio, wrong under this noise (25 thousand became 20 thousand). the fused form -த்தையாயிரம் (count ending in 5, times thousand) from spoken_amount is doubtful
+amt-kn-plain-12	ಅರವತ್ತ್ 6,750 ವಿಮೆ ಎಂದು ಹೇಳಿದರು	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-plain-12	ಅರವತ್ತ್ ಆರು ಸಾವಿರದ ಏಳುನೂರ ಐವತ್ತು ವಿಮೆ ಎಂದು ಹೇಳಿದರು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-kn-plain-12	ಅರವತ್ತ್ 6,000 ಏಳ್ನೂರ 50 ವಿಮೆ ಎಂದು ಹೇಳಿದರು	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-plain-12	ಅರವತ್ತ್ ಆರು ಸಾವಿರದ ಏಳ್ನೂರ ಐವತ್ತು ವಿಮೆ ಎಂದು ಹೇಳಿದರು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-kn-lc-12	ನಾಲ್ಕು ಕೋಟಿ ಅರುವತ್ತು ಲಕ್ಷ ಸಾಲ ತೆಗೆದುಕೊಂಡೆ	parser_gap	ಅರುವತ್ತು, a spelling of ಅರವತ್ತು (60), is not in the lexicon
+amt-kn-frac-12	ಪ್ರೀಮಿಯಂ ಎಂದು 03:30 ₹1,00,000 ತೆಗೆದುಕೊಂಡರು	partial_itn	v2.5 wrote N-and-a-half / N-and-three-quarters as a clock time before the unit (08:30, 01:45)
+amt-kn-frac-12	ಪ್ರೀಮಿಯಂ 1 03:30 ₹1,00,000 ತೆಗೆದುಕೊಂಡರು	recognition	ಎಂದು heard as ಒಂದು (one) in front of the amount
+amt-kn-frac-12	ಪ್ರೀಮಿಯಂ ಒಂದು ಮೂರುವರೆ ಲಕ್ಷ ರೂಪಾಯಿ ತೆಗೆದುಕೊಂಡರು	recognition	ಎಂದು heard as ಒಂದು (one) in front of the amount
+amt-kn-frac-12	Printing.	recognition	right on phone audio, wrong under this noise
+amt-hi-en-lc-13	अकाउंट से कटे 3,07,000 rupees।	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (3 lakh 700 written 3,07,000)
+amt-hi-en-frac-13	मुझे लोन मिला 2,500।	recognition	right on phone audio, wrong under this noise (सवा दो thousand became 2,500)
+amt-kn-plain-13	ಮುನ್ನೂರ ಅರುವತ್ತು ರೂಪಾಯಿ ಪ್ರೀಮಿಯಂ ಕಟ್ಟಿದೆ	parser_gap	ಅರುವತ್ತು, a spelling of ಅರವತ್ತು (60), is not in the lexicon: the parser drops the word and returns 300
+amt-kn-lc-13	ಸಾಲದಿಂದ 60,00,000 ಮುನ್ನೂರು ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿದರು	partial_itn	higher groups as digits, lower groups left as words: add them
+amt-kn-lc-13	ಸಾಲದಿಂದ ಅರುವತ್ತು ಲಕ್ಷದ ಮುನ್ನೂರು ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿದರು	partial_itn	higher groups as digits, lower groups left as words: add them
+amt-kn-lc-13	ಸಾಲದಿಂದ 60,00,000 ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿದರು.	prisma_formatting	v3.0 number formatting on an amount with an empty middle group; its verbatim output is right (60 lakh 300 written 60,00,000 or 60,300)
+amt-kn-lc-13	ಸಾಲದಿಂದ 60,300 ರೂಪಾಯಿ ಕಡಿತ ಮಾಡಿದರು.	prisma_formatting	v3.0 number formatting on an amount with an empty middle group; its verbatim output is right (60 lakh 300 written 60,00,000 or 60,300)
+amt-ta-lc-13	3,200 ரூபாய் பிரீமியம் கட்டினேன்.	prisma_formatting	v3.0 number formatting on an amount with an empty middle group; its verbatim output is right (3 lakh 200 written 3,200 or 3,02,000)
+amt-ta-lc-13	3,02,000 ரூபாய் பிரீமியம் கட்டினேன்.	prisma_formatting	v3.0 number formatting on an amount with an empty middle group; its verbatim output is right (3 lakh 200 written 3,200 or 3,02,000)
+amt-kn-frac-13	08:30 ₹1,000 ಪ್ರೀಮಿಯಂ ಕಟ್ಟಿದೆ	partial_itn	v2.5 wrote N-and-a-half / N-and-three-quarters as a clock time before the unit (08:30, 01:45)
+amt-kn-irr-14	ನನ್ನ ಪ್ರೀಮಿಯಂ ಐವತ್ತ್ಮೂರು 1,700	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-irr-14	ನನ್ನ ಪ್ರೀಮಿಯಂ ಐವತ್ತ್ಮೂರು ಸಾವಿರದ ಏಳು ನೂರು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-hi-en-frac-14	लोन के साथ पौने पाँच हज़ार हज़ार रुपीज़ का इंश्योरेंस दिया।	recognition	v3.0 verbatim doubled the unit word (हज़ार हज़ार); parser refuses
+amt-kn-frac-14	ನನ್ನ ಪ್ರೀಮಿಯಮ್ ಐದುವರೆಗೂ	recognition	the amount words were lost
+amt-kn-frac-14	ನನ್ನ ಪ್ರೀಮಿಯಂ ID ಬರತ್ತೆ.	recognition	the amount words were lost
+amt-hi-plain-15	हर महीने किस्त 19,800 की है।	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (19 thousand 80 written 19,800)
+amt-hi-plain-15	हर महीने किस्त 19,000 रखती थी	recognition	right on phone audio, wrong under this noise (अस्सी की है heard as रखती थी)
+amt-hi-plain-15	हर महीने किस्त उन्नीस हजार रखती थी	recognition	right on phone audio, wrong under this noise (अस्सी की है heard as रखती थी)
+amt-hi-plain-15	हर महीने किस्त 19,800 है।	unresolved	same shape as the v3.0 skipped-group formatting error; no v3.0 word output for this sentence (19 thousand 80 written 19,800)
+amt-hi-en-lc-15	मेरे लोन से 9,00,014 थाउज़ंड ₹100 कटे।	prisma_formatting	v2.5 wrote 9,00,014 थाउज़ंड ₹100; literal is right; parser multiplies it out to a wrong amount
+amt-ta-frac-15	எழரை 1,00,00,000 காப்பீடு என்று சொன்னார்கள்	partial_itn	fraction word + unit digits, but எழரை (short vowel) is not in the lexicon: parser returns 1 crore
+amt-ta-frac-15	எழரை கோடி காப்பீடு என்று சொன்னார்கள்	parser_gap	எழரை, a short-vowel spelling of ஏழரை (7.5), is not in the lexicon
+amt-kn-irr-15	ಐವತ್ತ್ನಾಲ್ಕು 1,00,000 ವಿಮೆ ಎಂದು ಹೇಳಿದರು	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-irr-15	ಐವತ್ತ್ನಾಲ್ಕು ಲಕ್ಷ ವಿಮೆ ಎಂದು ಹೇಳಿದರು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-kn-irr-15	ಐವತ್ತ್ 4,00,000 ವಿಮೆ ಎಂದು ಹೇಳಿದರು	partial_itn	v2.5 left the tens word and formatted the rest: tens word + digits compose to gold
+amt-kn-irr-15	ಐವತ್ತ್ ನಾಲ್ಕು ಲಕ್ಷ ವಿಮೆ ಎಂದು ಹೇಳಿದರು	parser_gap	tens word written with a virama (ಅರವತ್ತ್, ಎಪ್ಪತ್ತ್ನಾಲ್ಕು ...) is not in the lexicon
+amt-ta-plain-15	பதிமூன்று 1,050 கடன் வாங்க	partial_itn	v2.5 wrote 13 thousand 50 as பதிமூன்று + 1,050: count word left in front of the digits of one unit: count x unit
+amt-hi-en-plain-15	अकाउंट से कटे सेवेनटीन थाउज़ंड सेवेंटी रूपीस	parser_gap	English in Devanagari: सेवेनटीन / सेवेंटी spellings are not in the lexicon
