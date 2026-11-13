@@ -1,0 +1,73 @@
+{
+ "session_id": "20261113T043128-58d53765b337",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "Hello, क्या आप Amit जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "नहीं, वो बाहर गए हैं। Phone charge पे था, मैंने उठा लिया। क्या बात है?",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "नहीं, वो बाहर गए हैं, phone charge पे था मैंने उठा लिया, क्या बात है",
+     "expecting": "identity",
+     "intent": "wrong_person",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 83
+    }
+   ],
+   "degraded": false,
+   "seq": 1,
+   "reply_to": 0,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "नहीं, वो बाहर गए हैं, phone charge पे था मैंने उठा लिया, क्या बात है",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "नहीं, वो बाहर गए हैं, phone charge पे था मैंने उठा लिया, क्या बात है",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 4.88
+   }
+  }
+ ],
+ "unmapped": [],
+ "ledger_before": 325.5976293749988,
+ "resumed": 0
+}

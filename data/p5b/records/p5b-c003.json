@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Naresh, born 1967, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c003",
+  "label": "Synthetic P5b record. Naresh: a personal loan and one add-on",
+  "lender_name": "नमूना भारत बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1967-11-02",
+      "language": "hi",
+      "name": "Naresh Abhyasi"
+    },
+    "disbursed_inr": 403550,
+    "disbursed_on": "2026-10-19",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5B-LN-003",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-19",
+          "method": "recorded_call"
+        },
+        "cover_inr": 425000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 21450,
+        "provider": "Abhyasi Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 425000,
+    "tenure_months": 24
+  }
+}

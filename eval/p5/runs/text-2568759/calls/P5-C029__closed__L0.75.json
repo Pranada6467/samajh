@@ -1,0 +1,375 @@
+{
+ "customer_id": "P5-C029",
+ "arm": "closed",
+ "condition": "disposition",
+ "level": 0.75,
+ "language": "hi",
+ "kind": "well_informed",
+ "gold_class": "no_problem",
+ "record_id": "p5-c029",
+ "writer_model": "google/gemini-3.7-flash",
+ "second_reading": null,
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "नमस्ते, क्या आप Meena जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "हाँ, मैं मीना बोल रही हूँ।",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "confirms_self",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना बैंक कस्टमर केयर से कंप्यूटर से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह सेल्स नहीं, फ़ीडबैक कॉल है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत रिकॉर्ड हो रही है; जानकारी नमूना बैंक के लिखित नोटिस में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी ओ-टी-पी, पिन, पासवर्ड या खाता नंबर नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "शक हो तो फ़ोन रखकर नमूना बैंक कस्टमर केयर पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन मिनट बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "can_we_talk",
+    "variant": "own",
+    "text": "हाँ, बोलिए, बात कर सकते हैं।",
+    "line_key": "disclosure.go_ahead",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "go_ahead",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "yes",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "closed": [
+  {
+   "statement_id": "c_kind",
+   "bot": "अब मैं आपको बताऊँगी कि आपने लोन के साथ क्या लिया था, एक-एक बात करके। हर बात के बाद बताइए कि वह सही है या नहीं। आपने लोन के साथ Pareekshan Insurance का एक जीवन बीमा लिया है, जो आपके लोन पर बीमा कवर है। क्या यह सही है?",
+   "reply": {
+    "topic": "c_kind",
+    "variant": "own",
+    "text": "हाँ, बिल्कुल सही है, मैंने लोन के लिए जीवन बीमा लिया है।",
+    "line_key": "c_kind",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_premium",
+   "bot": "इस बीमा का प्रीमियम छब्बीस हज़ार रुपये था। क्या यह सही है?",
+   "reply": {
+    "topic": "c_premium",
+    "variant": "own",
+    "text": "जी हाँ, छब्बीस हज़ार रुपये ही था प्रीमियम।",
+    "line_key": "c_premium",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": 26000,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_source",
+   "bot": "यह प्रीमियम आपके लोन की रकम में से काटा गया था। क्या यह सही है?",
+   "reply": {
+    "topic": "c_source",
+    "variant": "own",
+    "text": "हाँ, यह रकम मेरे लोन के पैसों में से ही कटी थी।",
+    "line_key": "c_source",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_frequency",
+   "bot": "यह प्रीमियम एक ही बार भरा गया था, इसे बार-बार नहीं भरना है। क्या यह सही है?",
+   "reply": {
+    "topic": "c_frequency",
+    "variant": "go_along",
+    "text": "हाँ, बिल्कुल।",
+    "line_key": "c_frequency",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_voluntary",
+   "bot": "यह बीमा लेना आपकी अपनी मर्ज़ी थी, लोन के लिए ज़रूरी नहीं था, और आप इसे किसी भी कंपनी से ले सकते थे। क्या यह सही है?",
+   "reply": {
+    "topic": "c_voluntary",
+    "variant": "go_along",
+    "text": "जी हाँ।",
+    "line_key": "c_voluntary",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_cover",
+   "bot": "अगर आपकी मृत्यु हो जाए, तो यह बीमा आपका लोन चुकाने के लिए पाँच लाख रुपये तक देता है। क्या यह सही है?",
+   "reply": {
+    "topic": "c_cover",
+    "variant": "own",
+    "text": "हाँ, यह पाँच लाख का कवर है लोन चुकाने के लिए।",
+    "line_key": "c_cover",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": 500000,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_term",
+   "bot": "यह बीमा दो साल तक चलता है। क्या यह सही है?",
+   "reply": {
+    "topic": "c_term",
+    "variant": "go_along",
+    "text": "हाँ, ठीक।",
+    "line_key": "c_term",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_cancel",
+   "bot": "आप यह बीमा तीस दिन के अंदर रद्द करवा सकते थे। क्या यह सही है?",
+   "reply": {
+    "topic": "c_cancel",
+    "variant": "go_along",
+    "text": "जी, सही है।",
+    "line_key": "c_cancel",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_not_savings",
+   "bot": "यह बीमा कोई जमा या बचत नहीं है, और जो प्रीमियम भरा गया वह आख़िर में वापस नहीं मिलता। क्या यह सही है?",
+   "reply": {
+    "topic": "c_not_savings",
+    "variant": "go_along",
+    "text": "हाँ, पता है।",
+    "line_key": "c_not_savings",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_consent",
+   "bot": "आपने इस बीमा के लिए एक फ़ॉर्म पर दस्तख़त करके हाँ कहा था। क्या यह सही है?",
+   "reply": {
+    "topic": "c_consent",
+    "variant": "go_along",
+    "text": "हाँ, किए थे।",
+    "line_key": "c_consent",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  }
+ ],
+ "degraded_turns": 0,
+ "outcome": "closed_confirmed",
+ "speaker_confirmed": true,
+ "finished_utc": "2026-11-13T04:36:27+00:00"
+}

@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Nirmala, born 1985, took a gold loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c018",
+  "label": "Synthetic P5b record. Nirmala: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1985-12-01",
+      "language": "hi-en",
+      "name": "Nirmala Pratiroop"
+    },
+    "disbursed_inr": 315480,
+    "disbursed_on": "2026-10-28",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-018",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-28",
+          "method": "signed_form"
+        },
+        "cover_inr": 330000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 14520,
+        "provider": "Pratiroop Insurance (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 330000,
+    "tenure_months": 12
+  }
+}

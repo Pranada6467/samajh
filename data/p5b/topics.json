@@ -1,0 +1,342 @@
+{
+  "about": "The topics a P5 customer answers. Written by the P5 sub-orchestrator as plain descriptions of what the caller asks; no wording of the bot's lines, no word list and no rule is in this file. It is everything the customer-writing model is told about the call, apart from its own fact sheet.",
+  "variants": {
+    "own": "what this person says when they answer for themselves",
+    "again": "what they say when the caller asks the same thing a second time in other words: the same content, worded differently",
+    "go_along": "the short thing they say when they are not really thinking and are just going along with the caller"
+  },
+  "open_call": [
+    {
+      "id": "is_this_you",
+      "variants": [
+        "own"
+      ],
+      "caller": "The phone rings and a caller asks: am I speaking with <the borrower's first name>?"
+    },
+    {
+      "id": "is_this_you_again",
+      "variants": [
+        "own"
+      ],
+      "caller": "The caller asks once more: are you <the borrower's first name> yourself?"
+    },
+    {
+      "id": "can_we_talk",
+      "variants": [
+        "own"
+      ],
+      "caller": "The caller says it is an automated assistant from the lender's customer care, that this is a feedback call and not a sales call, that the call is recorded, and asks: can we talk for two or three minutes?"
+    },
+    {
+      "id": "can_we_talk_after_check",
+      "variants": [
+        "own"
+      ],
+      "caller": "(Only if you asked who is calling or whether the call is genuine.) The caller says you can hang up and call the number printed on your papers from the lender to check, and asks again: can we talk now?"
+    },
+    {
+      "id": "when_to_call",
+      "variants": [
+        "own"
+      ],
+      "caller": "(Only if you asked to be called later.) The caller asks: when should we call?"
+    },
+    {
+      "id": "carry_on",
+      "variants": [
+        "own"
+      ],
+      "caller": "(Only if you sounded unwilling in the middle of the call.) The caller asks: shall we carry on?"
+    },
+    {
+      "id": "want_a_person",
+      "variants": [
+        "own"
+      ],
+      "caller": "(Only if you sounded as if you wanted a person and not a machine.) The caller asks: would you like to speak to a person from the team instead?"
+    },
+    {
+      "id": "year_of_birth",
+      "variants": [
+        "own",
+        "again"
+      ],
+      "caller": "The caller says it will never ask for an OTP, PIN, password or account number, and asks for your year of birth."
+    },
+    {
+      "id": "what_did_you_take",
+      "group": "recall",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller mentions the loan you took recently and asks: did you take anything else along with the loan, and if so, what and for how much?"
+    },
+    {
+      "id": "anything_else",
+      "group": "recall",
+      "variants": [
+        "own"
+      ],
+      "caller": "(Only if you said you took nothing.) The caller asks once more whether anything at all was added to the loan or any amount was taken for something."
+    },
+    {
+      "id": "what_is_it",
+      "group": "kind",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: in your own words, what is that thing you took with the loan?"
+    },
+    {
+      "id": "how_much",
+      "group": "premium",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: how much did you pay for it?"
+    },
+    {
+      "id": "say_amount_again",
+      "group": "premium",
+      "variants": [
+        "own"
+      ],
+      "caller": "The caller did not catch the amount and asks you to say it once more."
+    },
+    {
+      "id": "figure_read_back_right",
+      "variants": [
+        "own"
+      ],
+      "caller": "The caller repeats the figure you just said, correctly, and asks: is that right?"
+    },
+    {
+      "id": "figure_read_back_wrong",
+      "variants": [
+        "own"
+      ],
+      "caller": "The caller repeats a figure that is NOT what you said and asks: is that right? (You answer for the amount you paid; your reply must say your own figure again.)"
+    },
+    {
+      "id": "what_is_right_amount",
+      "variants": [
+        "own"
+      ],
+      "caller": "(Only after you said the repeated figure was wrong.) The caller asks: so what is the right amount? (About the amount you paid.)"
+    },
+    {
+      "id": "how_paid",
+      "group": "source",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: where did the money for it come from, and how was it paid?"
+    },
+    {
+      "id": "how_often",
+      "group": "frequency",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: was it one payment, or do you pay again and again?"
+    },
+    {
+      "id": "needed_or_choice",
+      "group": "required",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: was it needed to get the loan, or was it your own choice?"
+    },
+    {
+      "id": "where_to_take_it_from",
+      "group": "required",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: what were you told about where, or from whom, you could take it?"
+    },
+    {
+      "id": "what_it_gives",
+      "group": "cover",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: what does it give you, and up to what amount?"
+    },
+    {
+      "id": "benefit_read_back_wrong",
+      "variants": [
+        "own"
+      ],
+      "caller": "(Only if you named an amount for what it gives.) The caller repeats a figure that is NOT what you said and asks: is that right? (Your reply must say your own figure again.)"
+    },
+    {
+      "id": "how_long",
+      "group": "term",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: how long does it run?"
+    },
+    {
+      "id": "can_cancel",
+      "group": "cancel",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: can it be cancelled, and until when?"
+    },
+    {
+      "id": "money_back",
+      "group": "money_back",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: if you wanted this money back, what would happen?"
+    },
+    {
+      "id": "what_you_agreed_to",
+      "group": "consent",
+      "variants": [
+        "own",
+        "again",
+        "go_along"
+      ],
+      "caller": "The caller asks: when you took the loan, what did you say yes to, and how did you say yes?"
+    },
+    {
+      "id": "not_understood",
+      "variants": [
+        "own"
+      ],
+      "caller": "The caller asks something you do not follow, or something that is not on this list."
+    },
+    {
+      "id": "silence_prompt",
+      "variants": [
+        "own"
+      ],
+      "caller": "The caller says it could not hear you and asks you to say it again. (A short, general reply that fits any question.)"
+    }
+  ],
+  "closed_call": {
+    "about": "The matched closed (confirmation) call. After the same first three steps as the open call (is_this_you, can_we_talk, year_of_birth) the caller reads one statement at a time from the lender's record and asks whether it is correct. The statement ids, in order, with the open-call group each one is matched to:",
+    "statements": [
+      {
+        "id": "c_kind",
+        "group": "kind",
+        "states": "what the product is (an insurance cover on the loan) and who provides it"
+      },
+      {
+        "id": "c_premium",
+        "group": "premium",
+        "states": "the amount paid for it"
+      },
+      {
+        "id": "c_source",
+        "group": "source",
+        "states": "whether that amount was taken out of the loan money or paid separately"
+      },
+      {
+        "id": "c_frequency",
+        "group": "frequency",
+        "states": "that it was paid once"
+      },
+      {
+        "id": "c_voluntary",
+        "group": "required",
+        "states": "whether it was the customer's own choice or required for the loan, and that the customer could take it from any provider"
+      },
+      {
+        "id": "c_cover",
+        "group": "cover",
+        "states": "what it pays and up to what amount"
+      },
+      {
+        "id": "c_term",
+        "group": "term",
+        "states": "how long it runs"
+      },
+      {
+        "id": "c_cancel",
+        "group": "cancel",
+        "states": "that it can be cancelled within the number of days on the record"
+      },
+      {
+        "id": "c_not_savings",
+        "group": "money_back",
+        "states": "that it is not a deposit or savings and the amount paid does not come back at the end"
+      },
+      {
+        "id": "c_consent",
+        "group": "consent",
+        "states": "that the customer agreed to it, and how (the method on the record)"
+      }
+    ],
+    "variants": [
+      "own",
+      "go_along"
+    ]
+  },
+  "disposition": {
+    "seed": "samajh-p5b-2026-11-13",
+    "rule": "u = int(sha256(seed + '|' + customer_id + '|' + group).hexdigest()[:8], 16) / 2**32. On a topic or statement with a group, when u < a the customer does not answer for themselves: in the closed call they give the go_along variant, and in the open call the defer variant (open_defer). Otherwise they give the own variant. The same u serves both calls, so a customer gives way on the same matters in the open and the closed call. Topics without a group always use own. On a second asking of the same matter, a customer who gave way repeats that reply, and a customer who answered for themselves gives the again variant (own if there is none). The open call's go_along variant (a short answer that still carries the content) is not used by the disposition rule; it is a separate 'terse customer' condition on the text path.",
+    "levels_text": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "levels_voice": [
+      0.0,
+      0.5,
+      1.0
+    ]
+  },
+  "open_defer": {
+    "about": "Added 2026-11-10 after the independent verification, before any audio (CHANGELOG, version 2). On an open question there is nothing to say yes to, and the writers made the open call's go_along reply a shortened own reply that still states the belief. The disposition rule needs a reply that carries no content, so the open call's counterpart of a closed-call yes is this variant. It is asked for in a separate request; the earlier requests and replies are unchanged.",
+    "variant": {
+      "defer": "what this person says when they do not want to think about it or commit to anything and only want the caller to move on: a few words that give no information about the matter itself (no fact, no figure, no name of anything, and not that they do not know)"
+    },
+    "topics": [
+      "what_did_you_take",
+      "anything_else",
+      "what_is_it",
+      "how_much",
+      "say_amount_again",
+      "how_paid",
+      "how_often",
+      "needed_or_choice",
+      "where_to_take_it_from",
+      "what_it_gives",
+      "how_long",
+      "can_cancel",
+      "money_back",
+      "what_you_agreed_to"
+    ]
+  }
+}

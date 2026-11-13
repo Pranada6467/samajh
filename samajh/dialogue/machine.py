@@ -41,13 +41,21 @@ from samajh.dialogue.interpret import (
     Interpretation,
     RuleInterpreter,
     TurnInterpreter,
-    affirms_self,
+    asks_something,
+    claim_with_tail,
+    claims_self,
+    doubts_claim,
+    hedges_or_asks,
     means_now,
+    names_another_speaker,
     points_elsewhere,
-    speaks_in_first_person,
+    short_delay_or_echo,
+    speaks_of_borrower,
     starts_with_yes,
+    who_check_claim,
 )
 from samajh.dialogue.prompts import LINES, PRODUCT_QUESTIONS, load_prompts
+from samajh.identity import CheckKind, IdentityPolicy, IdentityRecord, expected_answer, identity_sentence
 from samajh.types import (
     CallStep,
     Frozen,
@@ -96,7 +104,9 @@ class CallPlan(Frozen):
 
     loan_id: str
     first_name: str
-    birth_year: int
+    # The expected answer of the year-of-birth check (`samajh.identity.expected_answer`); None when the
+    # policy has no second check, so the call keeps nothing of the record it does not use.
+    birth_year: int | None = None
     product_ids: tuple[ProductId, ...]
 
 
@@ -126,6 +136,10 @@ class BotUtterance(Frozen):
 
 
 class AtIdentity(Frozen):
+    """The name question (`right_party.ask`), or its re-ask (`right_party.reask`: "are you <name> yourself?").
+
+    With no second check (P8) the re-ask is also the direct question asked after a yes to the name."""
+
     at: Literal["identity"] = "identity"
     reasked: bool = False
 
@@ -133,7 +147,8 @@ class AtIdentity(Frozen):
 class AtGoAhead(Frozen):
     at: Literal["go_ahead"] = "go_ahead"
     reasked: bool = False
-    # The ordinary path (round 3): the birth year has already passed, so a yes goes on to the loan.
+    # The right-party check has passed (round 3: the birth year; P8 with no second check: the direct
+    # question), so a yes goes on to the loan. The name is kept for saved states.
     year_passed: bool = False
 
 
@@ -143,6 +158,9 @@ class AtBirthYear(Frozen):
     # The ordinary path (round 3): asked straight after an acknowledgement, before the lender is named.
     # Until the year passes nothing may name the lender, the loan or a product.
     early: bool = False
+    # P8, two attempts: a wrong year used the first attempt and the year is asked once more
+    # (`second_check.reask`). Separate from `reasked`, the single re-ask for a reply with no year.
+    retry: bool = False
 
 
 class AtRecall(Frozen):
@@ -238,6 +256,9 @@ class AtStopCheck(Frozen):
     wish: Literal["decline", "human", "disengaged", "who"]
     resume: Annotated[_Waiting, Field(discriminator="at")]
     then: Intent = Intent.asks_repeat  # what the pending question is taken to have heard, on going on
+    # Iteration 3 fix round: on going on, put `resume`'s question as new (the who-check came before a line that
+    # would have named the lender, the loan or a figure, not after an answer to it). False in older states.
+    fresh: bool = False
 
 
 Position = Annotated[_Waiting | AtStopCheck | Ended, Field(discriminator="at")]
@@ -307,6 +328,20 @@ class CallState(Frozen):
     # Round 4: a turn showed a sign of another speaker that a classifier label let pass, and no who-check
     # has passed since: a later turn nobody can judge gets the who-check.
     speaker_doubt: bool = False
+    # P8: the right-party check in force. A state saved before P8 has no such field and loads with the
+    # check it ran then, the year of birth with one attempt; `start` always sets it (default: no check).
+    identity: IdentityPolicy = Field(
+        default_factory=lambda: IdentityPolicy(second_check=CheckKind.year_of_birth, attempts=1)
+    )
+    check_attempts: int = 0  # P8: answers the second check judged (a wrong year, a guess, the right year)
+    # P8: True once the right-party check passed, False when the call ended at the opening because the
+    # speaker was not accepted, None before either (and in states saved before P8).
+    check_passed: bool | None = None
+    # P8 (product review gain 8): the open-recall reply named something, so the kind question refers to it.
+    recall_named: bool = False
+    # Iteration 3, round 2: the go-ahead was asked again once because the reply only echoed the bot's time phrase
+    # or named a short delay ("15 minute baad", "थोड़ी देर"); a second such reply is read as before.
+    delay_reasked: bool = False
 
     def transcript(self) -> Transcript:
         """The call so far, in the shape the extractor and the rules consume."""
@@ -341,6 +376,8 @@ _TOLD = frozenset({Question.provider_choice, Question.cancel_window})
 _EITHER_OR = frozenset({Question.required_for_loan, Question.payment_frequency})
 _FIGURE = frozenset({Expecting.amount, Expecting.confirmation})  # replies that may carry a rupee figure
 _BEFORE_LOAN = (AtIdentity, AtGoAhead, AtBirthYear)
+# P8: outcomes that mean the speaker was not accepted as the borrower.
+_NOT_ACCEPTED = frozenset({Outcome.wrong_party, Outcome.not_confirmed, Outcome.second_check_failed})
 _END_LINES: dict[Outcome, tuple[str, ...]] = {
     Outcome.wrong_party: ("end.third_party",),
     Outcome.not_confirmed: ("end.third_party",),
@@ -447,11 +484,17 @@ def _lines_for(state: CallState, position: Position, *, again: bool = False) -> 
             return (_line(state, "right_party.reask" if reasked else "right_party.ask"),)
         case AtGoAhead(reasked=True):
             return (_line(state, "disclosure.reask"),)
+        case AtGoAhead() if state.identity.second_check is None:
+            # P8, no second check: the never-ask line (said with the year question when there is one) and the
+            # call-back line come with the disclosure, after the right-party check has passed.
+            keys = ("who", "not_sales", "recording", "never_ask", *_call_back_line(state), "go_ahead")
+            return tuple(_line(state, key if "." in key else f"disclosure.{key}", step=CallStep.disclosure)
+                         for key in keys)  # fmt: skip
         case AtGoAhead():
             return tuple(
                 _line(state, f"disclosure.{key}") for key in ("who", "not_sales", "recording", "go_ahead")
             )
-        case AtBirthYear(reasked=True):
+        case AtBirthYear(reasked=True) | AtBirthYear(retry=True):
             return (_line(state, "second_check.reask"),)
         case AtBirthYear(early=True):
             said = {turn.text for turn in state.turns if turn.speaker is Speaker.bot}
@@ -465,7 +508,7 @@ def _lines_for(state: CallState, position: Position, *, again: bool = False) -> 
         case AtBirthYear():
             return (
                 _line(state, "disclosure.never_ask", step=CallStep.second_check),
-                _line(state, "verify.short", step=CallStep.second_check),
+                *(_line(state, key, step=CallStep.second_check) for key in _call_back_line(state)),
                 _line(state, "second_check.ask"),
             )
         case AtRecall(reasked=True):
@@ -479,9 +522,11 @@ def _lines_for(state: CallState, position: Position, *, again: bool = False) -> 
         case AtRecallFollowUp():
             return (_line(state, "open_recall.nothing"),)
         case AtTeachBack(product=product, question=question, reasked=reasked):
-            ask = _line(state, f"{question.value}.{'reask' if reasked else 'ask'}", product=product)
+            named = question is Question.kind and not reasked and product == 0 and state.recall_named
+            key = "kind.ask_named" if named else f"{question.value}.{'reask' if reasked else 'ask'}"
+            ask = _line(state, key, product=product)
             if question is not PRODUCT_QUESTIONS[0] or reasked:
-                return (ask,)
+                return (*_ack(state, position), ask)
             if product > 0:  # the first product is introduced as in a one-product record
                 ordinal = load_prompts(state.language).ordinal(product)
                 return (_line(state, "teach_back.intro_nth", ordinal=ordinal), ask)
@@ -497,11 +542,33 @@ def _lines_for(state: CallState, position: Position, *, again: bool = False) -> 
         case AtCallbackTime():
             return (_line(state, "callback.when"),)
         case AtStopCheck(wish="who", resume=resume):
-            return (_line(state, "right_party.reask", step=_unresolved_at(state, resume).step),)
+            # Iteration 3: a choice question ("you yourself, or someone else in their place?"), asked only after
+            # a sign of another speaker; a bare yes does not answer it (`_on_who_check`).
+            return (_line(state, "right_party.who_check", step=_unresolved_at(state, resume).step),)
         case AtStopCheck(wish=wish, resume=resume):
             return (_line(state, f"stop_check.{wish}", step=_unresolved_at(state, resume).step),)
         case Ended():
             raise ValueError("the call has ended")
+
+
+def _call_back_line(state: CallState) -> tuple[str, ...]:
+    """`verify.short` ("if in doubt, hang up and ask customer care yourself"), unless the lender turned it off."""
+    return ("verify.short",) if state.identity.call_back_line else ()
+
+
+# Languages with the neutral acknowledgement (product review gain 8): Hindi and Hinglish only.
+_ACK_LANGUAGES = frozenset({Language.hi, Language.hi_en})
+
+
+def _ack(state: CallState, position: AtTeachBack) -> tuple[Line, ...]:
+    """`ack.neutral` ("जी।") before every second teach-back question: chosen by the question's place in
+    `PRODUCT_QUESTIONS` alone, never by what the customer said. Never on a re-ask; `_say` drops it before a
+    bridge or a verification answer, and it is never put before a stop check, a who-check, a read-back or
+    an end, which are other positions."""
+    odd = PRODUCT_QUESTIONS.index(position.question) % 2 == 1
+    if state.language in _ACK_LANGUAGES and odd and not position.reasked:
+        return (_line(state, "ack.neutral", product=position.product),)
+    return ()
 
 
 def _say(
@@ -523,7 +590,12 @@ def _say(
     if before:
         lines = (*(_line(state, key, step=lines[-1].step) for key in before), lines[-1])
     if bridge:
+        lines = tuple(line for line in lines if line.key != "ack.neutral")
         lines = (_line(state, "bridge.moving_on", step=lines[0].step), *lines)
+    if state.speaker_doubt and _watching(state, position) and any(_names_something(line) for line in lines):
+        # Iteration 3 fix round: while a sign of another speaker is unsettled, no line that names the lender, the
+        # loan or a figure plays; the who-check comes first and, once it passes, this question is put as new.
+        return _who_check(state, position, fresh=True)
     return _speak(state.model_copy(update={"position": position}), lines)
 
 
@@ -547,6 +619,8 @@ def _end(
     elif keys is None:
         keys = _END_LINES[outcome]
     update: dict = {"position": Ended(outcome=outcome)}
+    if state.check_passed is None and outcome in _NOT_ACCEPTED:  # P8: ended at the opening, not accepted
+        update["check_passed"] = False
     if outcome is Outcome.wrong_party:  # round 4: someone else had the phone, whatever passed before
         update["speaker_confirmed"] = False
     ended = state.model_copy(update=update)
@@ -721,6 +795,25 @@ def _carry_forward(state: CallState, position: Position) -> tuple[CallState, Pos
 # repeat): after a sign of another speaker they count as no label, so the who-check comes first (round 4).
 _SILENT_ON_SPEAKER = frozenset({None, "asks_repeat", "who_or_why", "off_topic", "unclear"})
 
+# Classifier labels that judge the speaker to be someone else (`llm_fallback`).
+_SPEAKER_LABELS = frozenset({"wrong_person", "third_party_handoff"})
+
+
+def _watching(state: CallState, position: Position) -> bool:
+    """Is the call past the right-party pass, where every turn is read for signs of another speaker? Every position
+    after the loan is named, and the go-ahead once the speaker is confirmed (iteration 3 fix round)."""
+    return not isinstance(position, _BEFORE_LOAN) or state.speaker_confirmed
+
+
+# Words of a line that name the loan (Hindi, Hinglish; Tamil and Kannada `not human-reviewed`).
+_LOAN_WORDS = ("लोन", "loan", "கடன்", "ಸಾಲ")
+
+
+def _names_something(line: Line) -> bool:
+    """Does a line name the lender, the loan or a figure? Read from the line itself: its slots and its words."""
+    return bool({"lender", "amount_words"} & line.slots.keys()) or any(w in line.text.casefold() for w in _LOAN_WORDS)
+
+
 _QUESTION_POSITIONS = (AtRecall, AtRecallFollowUp, AtTeachBack, AtSayAgain, AtConsent, AtReadBack, AtRestate)
 
 
@@ -734,11 +827,13 @@ def start(
     lender_name: str,
     call_id: str | None = None,
     limits: Limits | None = None,
+    identity: IdentityPolicy = IdentityPolicy(),  # noqa: B008 - frozen, so one shared default is safe
 ) -> tuple[CallState, BotUtterance]:
     """Open a call: the bot asks for the borrower by first name and says nothing else.
 
-    `lender_name` is spoken in the disclosure; `LoanRecord` does not carry it. Raises ValueError
-    when the record cannot be called (no name, or more products than the language has ordinals).
+    `lender_name` is spoken in the disclosure; `LoanRecord` does not carry it. `identity` is the lender's
+    right-party setting (P8); the default is no second check. Raises ValueError when the record cannot be
+    called (no name, or more products than the language has ordinals).
     """
     names = record.borrower.name.split()
     if not names:
@@ -753,7 +848,7 @@ def start(
     plan = CallPlan(
         loan_id=record.loan_id,
         first_name=names[0],
-        birth_year=record.borrower.dob.year,
+        birth_year=expected_answer(identity.second_check, record) if identity.second_check else None,
         product_ids=tuple(p.id for p in record.products),
     )
     state = CallState(
@@ -763,6 +858,7 @@ def start(
         plan=plan,
         limits=limits,
         position=AtIdentity(),
+        identity=identity,
     )
     return _speak(state, _lines_for(state, state.position))
 
@@ -841,23 +937,41 @@ def step(
         )
     if heard.intent is Intent.wants_human:
         return _end(state, Outcome.human_requested)
+    if isinstance(position, _BEFORE_LOAN) and not state.speaker_confirmed \
+            and heard.intent in (Intent.decline, Intent.do_not_call, Intent.call_later) \
+            and speaks_of_borrower(customer_text, state.language, state.plan.first_name):  # fmt: skip
+        return _end(state, Outcome.wrong_party)  # iteration 3: "रमेश जी नहीं हैं, ..." is not the borrower refusing
     if heard.intent is Intent.decline:
         return _end(state, Outcome.declined)
     if heard.intent is Intent.do_not_call:
         return _end(state, Outcome.do_not_call)
     if heard.intent is Intent.written_request:
         return _end(state, Outcome.written_requested)
-    if heard.intent is Intent.wrong_person and not isinstance(position, _BEFORE_LOAN):
+    watching = _watching(state, position)
+    if heard.intent is Intent.wrong_person and watching:
+        if heard.classifier_label in _SPEAKER_LABELS and heard.other_speaker and not heard.possible_takeover:
+            # Iteration 3 fix round: a weak sign ("मेरी वाइफ़ ने भरे थे पैसे") that a classifier read as someone else
+            # gets the who-check, which names nothing, instead of the end. A strong sign keeps the end.
+            return _who_check(state, position)
         return _end(state, Outcome.wrong_party)  # "talk to my son, he handles it"
-    if not isinstance(position, _BEFORE_LOAN):
+    if watching:
         # Round 4: a sign of another speaker that no classifier label judged, or a turn nobody can judge
-        # after such a sign, gets the who-check before anything else is said or taken as an answer.
+        # after such a sign, gets the who-check before anything else is said or taken as an answer. Iteration 3
+        # fix round: also at the go-ahead after the pass, and a speaker naming themself as someone else.
         unjudged = heard.classifier_label in _SILENT_ON_SPEAKER
         doubt = state.speaker_doubt and unjudged and not heard.settled
-        if heard.possible_takeover or (heard.other_speaker and unjudged) or doubt:
+        other_name = names_another_speaker(customer_text, state.language, state.plan.first_name)
+        if heard.possible_takeover or other_name or (heard.other_speaker and unjudged) or doubt:
             return _who_check(state, position)
         if heard.other_speaker:
             state = state.model_copy(update={"speaker_doubt": True})
+    if isinstance(position, AtGoAhead) and not state.delay_reasked and heard.intent in _DELAY_MAY_BE \
+            and short_delay_or_echo(customer_text, state.language):  # fmt: skip
+        # Iteration 3, round 2: "दो-तीन मिनट?", "15 minute baad" (speech heard the bot's own "दो-तीन मिनट" back), "थोड़ी
+        # देर": no refusal and no clear later. The go-ahead is asked again once ("अभी … बात करें? बस हाँ या ना"),
+        # even when a classifier read it as a call-back; a real later after that still ends as a call-back.
+        state = state.model_copy(update={"delay_reasked": True})
+        return _say(state, position.model_copy(update={"reasked": True}))
     if isinstance(position, AtCallbackTime):
         if position.resume is not None and means_now(customer_text, state.language):
             return _say(state, position.resume)  # "अभी बोलिए, अभी फ़्री हूँ": back to the pending question
@@ -875,6 +989,13 @@ def step(
             return _end(state, Outcome.declined if wish == "decline" else Outcome.human_requested)
         state = state.model_copy(update={"stop_checks": state.stop_checks + 1})
         return _say(state, AtStopCheck(wish=wish, resume=position))
+    if isinstance(position, AtIdentity) and state.identity.second_check is None \
+            and heard.classifier_label not in _SPEAKER_LABELS \
+            and claim_with_tail(customer_text, state.language, state.plan.first_name):  # fmt: skip
+        # Iteration 3, round 2: an explicit claim passes whatever follows it ("मैं ही समीर हूँ, क्या issue है?"); the
+        # question then gets the disclosure, which comes only after the pass. A classifier label that the speaker
+        # is someone else still ends the call (`_on_identity_direct`).
+        return _say(_passed(state), AtGoAhead(year_passed=True))
     if heard.intent is Intent.asks_who:
         if state.side_answers < state.limits.max_side_answers:
             state = state.model_copy(update={"side_answers": state.side_answers + 1})
@@ -903,6 +1024,14 @@ def step(
     if isinstance(position, AtRecall) and heard.amount_inr is not None and heard.intent not in UNCLEAR:
         state = state.model_copy(update={"recall_figure": (heard.amount_inr, turn_id)})
     return _on_reply(state, position, heard, other)
+
+
+# Readings at the go-ahead that a short delay or an echo of the bot's time phrase may carry: never a yes, a refusal
+# or a third party (iteration 3, round 2).
+_DELAY_MAY_BE = frozenset({
+    Intent.call_later, Intent.said, Intent.unclear, Intent.asks_repeat, Intent.filler, Intent.off_topic,
+    Intent.maybe_decline,
+})  # fmt: skip
 
 
 # Stop intents, most protective first: when two readings of one turn differ, the earlier one wins.
@@ -968,6 +1097,8 @@ def _call_back(state: CallState, when: str | None) -> tuple[CallState, EndOfCall
 
 def _on_reply(state: CallState, position: _Waiting, heard: Interpretation, other: Interpretation | None):
     match position:
+        case AtIdentity() if state.identity.second_check is None:
+            return _on_identity_direct(state, position, heard)
         case AtIdentity():
             return _on_identity(state, position, heard)
         case AtGoAhead():
@@ -990,14 +1121,21 @@ def _on_reply(state: CallState, position: _Waiting, heard: Interpretation, other
             return _say(state, position)
 
 
-def _who_check(state: CallState, position: Position) -> tuple[CallState, BotUtterance | EndOfCall]:
-    """Ask who is speaking (`right_party.reask`, which names neither the lender nor the loan), then go back to
-    the pending question. Past `Limits.max_who_checks` the call ends as `wrong_party` instead."""
+def _who_check(
+    state: CallState, position: Position, *, fresh: bool = False
+) -> tuple[CallState, BotUtterance | EndOfCall]:
+    """Ask who is speaking (`right_party.who_check`, which names neither the lender nor the loan), then go back to
+    the pending question. Past `Limits.max_who_checks` the call ends as `wrong_party` instead.
+
+    From the go-ahead the call goes back to the go-ahead's re-ask, put as new (iteration 3 fix round), so a
+    go-ahead asked twice before does not end as `no_go_ahead` on the way back."""
     resume = position.resume if isinstance(position, AtStopCheck) else position
     if state.who_checks >= state.limits.max_who_checks:
         return _end(state, Outcome.wrong_party)
+    if isinstance(resume, AtGoAhead):
+        resume, fresh = resume.model_copy(update={"reasked": True}), True
     state = state.model_copy(update={"who_checks": state.who_checks + 1})
-    return _say(state, AtStopCheck(wish="who", resume=resume))
+    return _say(state, AtStopCheck(wish="who", resume=resume, fresh=fresh))
 
 
 _WHO_CHECK_ENDS = {
@@ -1007,6 +1145,9 @@ _WHO_CHECK_ENDS = {
 }  # fmt: skip
 
 
+_WHO_CHECK_STOPS = frozenset({*_WHO_CHECK_ENDS, Intent.call_later, Intent.other_language})
+
+
 def _on_who_check(state: CallState, position: AtStopCheck, heard: Interpretation, text: str):
     """ "Is it you speaking?" (round 4), the same in every arm.
 
@@ -1014,16 +1155,40 @@ def _on_who_check(state: CallState, position: AtStopCheck, heard: Interpretation
     as `wrong_party`, whatever the classifier says. The call goes back to the question only on an
     affirmation: every word explained by the closed vocabulary (`affirms_self`), or the classifier's
     `confirms_self` on a reply with a first-person word. A stop request ends as asked; anything else ends as
-    `wrong_party`. Known and accepted: a false "हाँ" or "हाँ मैं ही हूँ" passes; no text rule can catch it.
+    `wrong_party`.
+
+    Iteration 3: the who-check is a choice question ("you yourself, or someone else?") asked only after a sign
+    of another speaker, so it resumes only on an explicit first-person self-claim (`claims_self`: "मैं ही",
+    "मैं ख़ुद", "मैं Ramesh", "Ramesh बोल रहा हूँ", "speaking"), in every arm; the classifier's `confirms_self`
+    needs such a claim too. A bare yes ("हाँ", "जी", "ठीक है") does not answer a choice question and ends the
+    call, with no re-ask (a re-ask gives a third party a second try with the answer in hand). Resuming wrongly
+    names the loan to a third party; ending wrongly costs a genuine borrower one call that ops retries.
+    Known and accepted: a third party who says outright "मैं ही रमेश हूँ" passes; no text rule can catch it.
+
+    Fix round: a classifier label that the speaker is someone else ends the call; otherwise the claim is read by
+    `who_check_claim` before any sign: interjections and fillers may stand beside
+    it, and a clause explaining that a relative or a child had the phone is set aside. Anything else that points
+    elsewhere ends the call as before.
     """
-    language = state.language
-    if heard.possible_takeover or heard.other_speaker or heard.intent is Intent.wrong_person \
-            or points_elsewhere(text, language):  # fmt: skip
-        return _end(state, Outcome.wrong_party)
-    claimed = heard.classifier_label == "confirms_self" and speaks_in_first_person(text, language)
-    if affirms_self(text, language, state.plan.first_name) or claimed:
+    language, name = state.language, state.plan.first_name
+    if heard.classifier_label in _SPEAKER_LABELS:  # a label may end the call, never clear a sign
+        return _end(state.model_copy(update={"speaker_confirmed": False}), Outcome.wrong_party)
+    claimed = heard.classifier_label == "confirms_self" and who_check_claim(text, language, name, closed=False)
+    # Iteration 3, round 2: an explicit claim with any tail that puts nobody else in the speaker's place
+    # (`claim_with_tail`), unless the reply also asks to stop: a stop is read as before, with the speaker unconfirmed.
+    tail = heard.intent not in _WHO_CHECK_STOPS and claim_with_tail(text, language, name)
+    if (who_check_claim(text, language, name) or claimed or tail) and not doubts_claim(text, language, name):
         state = state.model_copy(update={"speaker_doubt": False})
+        if position.fresh:
+            return _say(state, position.resume)
         return _on_reply(state, position.resume, Interpretation(intent=position.then), None)
+    someone_else = heard.possible_takeover or heard.other_speaker or heard.intent is Intent.wrong_person
+    if someone_else or points_elsewhere(text, language, count_denial=False):
+        return _end(state, Outcome.wrong_party)
+    # Nobody claimed to be the borrower: whatever ends the call ends it with the speaker unconfirmed. A stop
+    # request ends as asked (iteration 3: before a plain no-word is read as "not me"); anything else is a
+    # wrong party, with no re-ask.
+    state = state.model_copy(update={"speaker_confirmed": False})
     if heard.intent is Intent.other_language:
         state = state.model_copy(update={"requested_language": heard.language_name})
         return _end(state, Outcome.language_switch)
@@ -1060,6 +1225,47 @@ def _on_identity(state: CallState, position: AtIdentity, heard: Interpretation):
     return _say(state, AtIdentity(reasked=True))
 
 
+# Classifier labels that confirm a yes at the direct question when the word lists alone are not sure.
+_YES_LABELS = frozenset({"yes", "confirms_self"})
+
+
+def _passed(state: CallState) -> CallState:
+    return state.model_copy(update={"speaker_confirmed": True, "check_passed": True})
+
+
+def _on_identity_direct(state: CallState, position: AtIdentity, heard: Interpretation):
+    """No second check (P8). The name question, then the direct question "are you <name> yourself?"
+    (`right_party.reask`); a yes to that passes. An explicit first-person claim at the name question already
+    answers it. A relation, another name, a denial ends as `wrong_party` (read before this, as in round 4); a
+    hedge or a question is never a pass. An ordinary yes the word lists are not sure of passes only on a
+    classifier label that says yes: with the classifier failing nothing protects the loan after the pass."""
+    if heard.intent in (Intent.no, Intent.wrong_person):
+        return _end(state, Outcome.wrong_party)
+    text = state.turns[-1].text if state.turns and state.turns[-1].speaker is Speaker.customer else ""
+    # Iteration 3, round 2: a reply that puts someone else in the speaker's place, hedges, or asks whom the caller wants
+    # is never plain, whatever a classifier labelled it ("हाँ मैं ही हूँ, मेरा बेटा बात करेगा").
+    plain = not hedges_or_asks(text, state.language) and not doubts_claim(text, state.language, state.plan.first_name)
+    if plain and heard.intent in (Intent.yes, Intent.acknowledges, Intent.said) \
+            and claims_self(text, state.language, state.plan.first_name):  # fmt: skip
+        # Iteration 3 fix round: an explicit first-person claim in the closed vocabulary ("जी, मैं ही रमेश हूँ",
+        # "haan main Ramesh bol raha hoon") passes in every arm, at the name question and the direct question;
+        # the interpreter cannot see the first name, so the call reads it here.
+        return _say(_passed(state), AtGoAhead(year_passed=True))
+    if heard.intent is Intent.yes and plain:
+        return _say(_passed(state), AtGoAhead(year_passed=True))
+    if not position.reasked:  # a yes, or anything not yet a yes: the direct question, once
+        return _say(state, AtIdentity(reasked=True))
+    sure = heard.settled or heard.classifier_label in _YES_LABELS
+    if heard.intent is Intent.acknowledges and sure and plain:
+        return _say(_passed(state), AtGoAhead(year_passed=True))
+    if asks_something(text, state.language) and state.side_answers < state.limits.max_side_answers:
+        # "हाँ, क्या बात है?": not a pass; the question is answered without the lender or the loan, and the
+        # direct question is put again (within the "who is this?" answers allowed).
+        state = state.model_copy(update={"side_answers": state.side_answers + 1})
+        return _say(state, position, before=("purpose.before_confirm",))
+    return _end(state, Outcome.not_confirmed)
+
+
 def _on_go_ahead(state: CallState, position: AtGoAhead, heard: Interpretation):
     if heard.intent is Intent.yes:
         return _say(state, AtRecall() if position.year_passed else AtBirthYear())
@@ -1084,19 +1290,28 @@ def _on_birth_year(state: CallState, position: AtBirthYear, heard: Interpretatio
         return year is not None and (year == known or (short >= 10 and year == short))
 
     if not heard.two_years and matches(heard.year):
-        state = state.model_copy(update={"speaker_confirmed": True})
+        state = _passed(state).model_copy(update={"check_attempts": state.check_attempts + 1})
         return _say(state, AtGoAhead(year_passed=True) if position.early else AtRecall())
-    # One attempt (wave 2): a year that does not match, or two years, ends the call at once. Only a reply
-    # with no year, or the right year said in a way the call could not take as the speaker's own, is
-    # asked again.
+    # A year that does not match, or a guess or two years, uses an attempt (P8: one by default, two when the
+    # lender sets it); past the last one the call ends. A reply with no year, or the right year said in a way
+    # the call could not take as the speaker's own, is asked again once, whatever the attempts.
     heard_year = heard.year if heard.year is not None else heard.loose_year
     wrong = heard.two_years or (heard_year is not None and not matches(heard_year))
-    if wrong or position.reasked:  # on the ordinary path the closing line must not name the lender
-        return _end(state, Outcome.second_check_failed, keys=("end.third_party",) if position.early else None)
+    failed = keys = None
+    if wrong:
+        state = state.model_copy(update={"check_attempts": state.check_attempts + 1})
+        failed = state.check_attempts >= state.identity.attempts
+    if failed or (not wrong and position.reasked):
+        keys = ("end.third_party",) if position.early else None  # the ordinary path must not name the lender
+        return _end(state, Outcome.second_check_failed, keys=keys)
+    if wrong:
+        return _say(state, position.model_copy(update={"retry": True}))
     return _say(state, position.model_copy(update={"reasked": True}))
 
 
-def _start_products(state: CallState):
+def _start_products(state: CallState, heard: Interpretation | None = None):
+    if heard is not None and heard.names_something:  # gain 8: the kind question refers to what was named
+        state = state.model_copy(update={"recall_named": True})
     return _say(state, _first_teach_back(state, 0))
 
 
@@ -1110,7 +1325,7 @@ def _on_recall(state: CallState, position: AtRecall, heard: Interpretation):
         if not position.reasked:
             return _say(state, AtRecall(reasked=True))
         return _say(_mark_unresolved(state, position), AtRecallFollowUp())
-    return _start_products(state)
+    return _start_products(state, heard)
 
 
 def _on_follow_up(state: CallState, position: AtRecallFollowUp, heard: Interpretation):
@@ -1121,7 +1336,7 @@ def _on_follow_up(state: CallState, position: AtRecallFollowUp, heard: Interpret
         return _say(state, AtConsent())
     if heard.intent in UNCLEAR and not heard.names_something:
         return _say(_mark_unresolved(state, position), AtConsent())
-    return _start_products(state)
+    return _start_products(state, heard)
 
 
 def _on_question(state: CallState, position: AtTeachBack | AtConsent, heard: Interpretation, other):
@@ -1161,6 +1376,9 @@ def _on_amount(state: CallState, position: AtTeachBack | AtSayAgain, heard: Inte
     if cover:  # a cover range is not read back; only one plain figure is
         first = first if first is not None and not first.about else None
         second = second if second is not None and not second.about else None
+    else:  # a premium said as a bound ("पचास हज़ार तक") is no figure: the premium is asked again
+        first = None if heard.bound else first
+        second = None if other is not None and other.bound else second
     done = state.said_again_cover if cover else state.said_again
     product_id = state.plan.product_ids[product]
     differ = other is not None and (first is not None or second is not None) and not _same(first, second)
@@ -1244,6 +1462,27 @@ def _on_restate(state: CallState, position: AtRestate, heard: Interpretation, ot
         return _say(state, _read_back_at(position.product, figure, position.read_backs + 1, position.item))
     state = _mark_unresolved(state, position)
     return _go(state, _after(state, position), bridge=True)
+
+
+def identity_record(state: CallState) -> IdentityRecord:
+    """What the case file keeps of the right-party check (P8). Pure. It holds the policy, the check used, the
+    attempts, whether it passed and one fixed sentence; nothing of the expected answer or of any reply."""
+    policy = state.identity
+    passed = state.check_passed
+    if passed is None and state.speaker_confirmed:  # a state saved before P8 that passed the year
+        passed = True
+    used = min(state.check_attempts, policy.attempts) if policy.second_check else 0
+    # Fix round: the check passed, and later in the call someone else had the phone (a who-check or a takeover).
+    later = passed is True and state.position == Ended(outcome=Outcome.wrong_party)
+    return IdentityRecord(
+        policy=policy,
+        check_used=policy.second_check,
+        attempts_allowed=policy.attempts if policy.second_check else 0,
+        attempts_used=used,
+        passed=passed,
+        prior_notice_shown=policy.prior_notice,
+        sentence=identity_sentence(policy, attempts_used=used, passed=passed, later_wrong_party=later),
+    )
 
 
 def call_seconds(transcript: Transcript, *, words_per_second: float = 2.5) -> float:

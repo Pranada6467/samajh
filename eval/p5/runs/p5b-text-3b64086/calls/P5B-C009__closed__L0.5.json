@@ -1,0 +1,93 @@
+{
+ "customer_id": "P5B-C009",
+ "arm": "closed",
+ "condition": "disposition",
+ "level": 0.5,
+ "language": "hi",
+ "kind": "ordinary_informed",
+ "gold_class": "knowledge_gap_only",
+ "record_id": "p5b-c009",
+ "writer_model": "google/gemini-3.7-flash",
+ "second_reading": null,
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "नमस्ते, क्या आप Mamta जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "हाँ, मैं ममता बोल रही हूँ।",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "confirms_self",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  },
+  {
+   "bot": [
+    {
+     "key": "right_party.reask",
+     "text": "यह Mamta जी के लिए एक ऑटोमेटेड कस्टमर केयर कॉल है। क्या आप ख़ुद Mamta जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you_again",
+    "variant": "own",
+    "text": "जी हाँ, मैं ही ममता हूँ, बताइए।",
+    "line_key": "right_party.reask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "confirms_self",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "final_bot": [
+  {
+   "key": "end.third_party",
+   "text": "हम Mamta जी से बाद में बात कर लेंगे। धन्यवाद।",
+   "step": "close",
+   "asks": null
+  }
+ ],
+ "outcome": "not_confirmed",
+ "speaker_confirmed": false,
+ "degraded_turns": 0,
+ "unresolved": [],
+ "closed": [],
+ "finished_utc": "2026-11-13T07:03:46+00:00"
+}

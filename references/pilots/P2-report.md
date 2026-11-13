@@ -212,3 +212,76 @@ and no near-spelling rule. A genuine borrower who mentions a relative's act ("�
 one who-check when no classifier label decides it.
 
 **Round 4 follow-up (item 4).** At the first-name question and its re-ask, an address form inside a structural refusal ("नहीं भाई, बात नहीं करनी", "sir nahi chahiye, phone rakho") is address when there is no possessive, no third-person word and no "हूं / बोल रहा / am" after it: the call ends `declined`. At the who-check, a leading no-word before a first-person claim ("नहीं भाई, मैं ही हूँ") is read as "no, it is me". Rerun of the blind probe (contaminated): opening refusals declined 11 of 11, do_not_call 4 of 4, wrong_party 7 of 7, later stages 3 of 3, in rules and in failing; the other groups did not change.
+
+## 8. Iteration 3 (2026-11-13; independent verification: `references/reviews/iter3/verify-call.md`)
+
+Typed text, not speech. Builders: Opus medium; verifier: a separate Opus high on new inputs (151 in part 1, 78 in
+the recheck), classifier live and failing. Contract: `P2-contract.md` §9. Identity setting: `P8-report.md`.
+
+**What changed.** The identity check is a lender setting, default none (P8). The who-check after a takeover sign is a
+choice question that needs an explicit self-claim; a bare yes ends the call (decided; reasons in §9). Takeover signs
+are read at the go-ahead and after a "whom do you want?" question, and no line naming the lender, loan or a figure
+plays while a sign is unsettled. Opening refusals end `declined`; the borrower away plus a stop ends `wrong_party`.
+New lines `ack.neutral`, `kind.ask_named`, `right_party.who_check`; `right_party.reask` made gender-neutral.
+
+**Degraded turns (the 7 of 48 in round 4).** Two causes, found by a builder's live logs over 8 harness runs:
+(1) a bug: at the first-name and birth-year questions a valid label missing from that question's table (`dont_know`,
+`no`) was marked degraded (3 of the 7; fixed; degraded turns on the same 48 inputs went from 3 to 6 per run in 5 runs
+to 0 in 3 runs, builder figures); (2) provider latency over the 2.5 s limit (3.4 to 4.1 s seen), degraded by design
+(probably the other 3; 1 not reproduced). The verifier saw 2 degraded turns in 151 live calls (both `unclear`, by
+design) and 0 in 78 in the recheck. Open decision: whether `unclear` at the opening and a slow reply should void a
+whole session.
+
+**A request in a voided session** (ops, with the coordinator's permission): a do-not-call, human, call-back or written
+request said in a session voided for degraded turns is now logged; a confirmed do-not-call stops the loan (the
+phone server refuses the next call); the funnel counts it as an attempt with its mapped exit, never in a tier,
+referral or the queue.
+
+**Verified (verifier's wording).**
+- "On 78 new verifier-written typed inputs, every takeover sign after the pass (17 of 17, each arm) got the who-check
+  or an end with no lender, loan or figure spoken after it."
+- "A bare yes or a relative's answer at the who-check ended the call in 4 of 4, each arm."
+- "26 of 26 opening refusals ended as asked with the classifier live (25 of 26 failing)."
+- "With the classifier failing, 1 of 4 natural self-claims at the who-check resumed." (Live: 3 of 4.)
+
+**Costs to genuine borrowers (not fixed; the judge's stop rule applies).** A natural self-claim that mentions a
+relative at the who-check can end the call ("हाँ भाई मैं ही हूँ, बेटे के हाथ में फ़ोन था…"); a genuine "हेलो… कौन?" at
+the go-ahead followed by a bare "हाँ" ends it; "mera no. hata do bhai" ends `wrong_party` ("bhai" read as a relation).
+Every one of these ends the call; none names anything to a third party.
+
+**Live replays** (port 8086, after the fix round; every line and reading from the cache): hero (none) completed,
+refer; informed (none) completed, clear; third-party (none) wrong_party, incomplete; amount-check (year of birth)
+completed, clear; loan SYN-PL-270107-0008 (none) completed, refer. Bot lines 120 of 120 cache hits, STT 72 of 72.
+Server-side latency median 3 to 5 ms, max 36 ms: a cached path, not live Gnani latency. No persona speaks the direct
+question or the who-check, so these replays do not exercise the new rules.
+
+**Tests.** `tests/dialogue` 3,045 passed; `tests/server` 459 passed; `tests/ops` 330 passed. Whole suite (verifier):
+1 failed, 7,690 passed; the failure is `tests/p5/test_p5_player.py` (the three new line keys are not mapped in
+`eval/p5/player.py`, another lane).
+
+**Not checked.** Speech; the demo page in a browser; women borrowers' calls end to end (the who-check and reask are now
+gender-neutral, seven other lines address the customer in the masculine and are listed for the wording review);
+Tamil and Kannada behaviour; `close.verify` while a sign is unsettled.
+
+### 8a. Iteration 3, round 2 (2026-11-13; verification: `references/reviews/iter3/verify-call-r2.md`)
+
+Three fixes from the coordinator, typed text, one Opus-medium builder and one narrow Opus-high check (145 new inputs,
+two borrowers, one a woman; no further round). Contract: `P2-contract.md` §9a. No bot line changed (`git diff
+data/prompts` empty), so nothing was re-voiced; 0 Gnani credits; LLM about US$0.004.
+- **Self-claims with chatter** ("हां भाई, मैं ही समीर हूँ. क्या issue है?" ended `not_confirmed` on a voiced call): now
+  pass. Verifier: "With no second check, 11 of 12 genuine self-claims followed by a question or chatter passed at the
+  opening, and 24 of 24 resumed at the who-check, in each arm"; "no third party dressed as the borrower passed the
+  opening or the who-check (26 of 26 at the opening and 24 of 24 at the who-check, each arm)". The one failing pattern:
+  a Devanagari address form plus a question word ("हाँ भैया, मैं मीना हूँ, किस लिए फ़ोन किया?") costs a question at the
+  opening and ends the call at the who-check.
+- **"mera no. hata do bhai":** "16 of 16 removal requests at the opening ended as do-not-call with the speaker
+  unconfirmed; 8 of 8 removals of a relative's number ended as a wrong party."
+- **The go-ahead and a misheard time phrase** (v3.0 heard "do-teen minute baat kar sakte hain" as "15 minute baad"):
+  "At the go-ahead, 8 of 8 echoes or short delays got exactly one re-ask." Live, a second delay ("पाँच मिनट बाद") was
+  read by the classifier as a later and got "कब कॉल करें?" (1 of 2).
+- **Year-of-birth setting, left open:** natural claims that mention a relative end `wrong_party` there (the new opening
+  rule runs only with no second check; 2 cases); a third party saying "मैं ही हूँ, आप किससे बात करना चाहते हैं?" heard
+  the lender's name before the year question (1 live case); C-y08 unchanged.
+- Tests: `tests/dialogue` 3,726 passed. The whole suite at the verifier's run had 5 failed and 36 errors outside
+  `tests/dialogue` (`tests/ops`, `tests/p5/test_p5_data_dir.py`, `tests/server/test_readings_fields.py`), with
+  `KeyError: 'consent.insurance.phone_call'` in `samajh/scenarios/script.py` from other workers' uncommitted edits.

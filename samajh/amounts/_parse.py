@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
 from itertools import pairwise
-from typing import Literal
+from typing import ClassVar, Literal
 
 from samajh.amounts._grammar import Value, evaluate
 from samajh.amounts._lexicon import (
@@ -58,6 +58,10 @@ class Parsed(Frozen):
     status: Literal["parsed"] = "parsed"
     rupees: int
     span: Span
+    # The customer named a ceiling, not a figure: "पचास हज़ार तक", "up to 50,000", "चालीस हज़ार के
+    # अंदर". `rupees` is that ceiling. A cover is a maximum by nature; a premium bound is no premium.
+    bound: bool = False
+    added_later: ClassVar[frozenset[str]] = frozenset({"bound"})
 
 
 class AmbiguityReason(StrEnum):
@@ -103,6 +107,7 @@ class _Run:
     stem: bool = False  # a word that only looks like a number (ಐವತ್ತರಿಂದ): counts only next to an amount
     corrects: bool = False  # a negator stands directly before it: "बावन हज़ार था, नहीं पचपन"
     modifier: bool = False  # it counts the next word, not rupees: "एक बार", "दो बार", "one policy"
+    bounded: bool = False  # a ceiling: "पचास हज़ार तक", "up to 50,000" (see `Parsed.bound`)
 
 
 _ONE_UNIT = {Decimal(u) for u in (HUNDRED, THOUSAND, LAKH, CRORE)}
@@ -127,6 +132,48 @@ def _hedged(kind, first: int, last: int) -> bool:
         after += 1
     step = kind(after, after - 1)
     return step in ("neg", "negpre", "cmpdirect") or (step == "conn" and kind(after + 1, after) == "cmp")
+
+
+_UP_TO = {"upto", "till", "until", "within"}
+_TAK = {norm_key(w) for w in ("तक", "tak", "takk")}
+_INSIDE = {norm_key(w) for w in ("अंदर", "andar", "under")}
+_OF = {norm_key(w) for w in ("के", "ke")}
+
+
+def _bounded(text: str, toks: list[Tok], first: int, last: int) -> bool:
+    """A bound beside the run toks[first..last], looking past a currency word: "पचास हज़ार तक",
+    "50 hazaar rupaye tak", "पाँच लाख तक का कवर", "चालीस हज़ार के अंदर", "up to 40,000", "upto",
+    "till", "within 40,000". The figure is still read, and `Parsed.bound` says the customer named
+    a ceiling: the caller decides (a cover is a maximum by nature, a premium is not)."""
+
+    def word(k: int) -> str:
+        return norm_key(text[toks[k].start : toks[k].end]) if 0 <= k < len(toks) else ""
+
+    def touching(a: int, b: int) -> bool:
+        return 0 <= a and b < len(toks) and _GAP.fullmatch(text, toks[a].end, toks[b].start) is not None
+
+    after = last + 1
+    if touching(last, after) and toks[after].kind in _CURRENCY:
+        after += 1
+    if touching(after - 1, after) and (
+        word(after) in _TAK or (word(after) in _OF and touching(after, after + 1) and word(after + 1) in _INSIDE)
+    ):
+        return True
+    before = first - 1
+    if touching(before, first) and toks[before].kind in _CURRENCY:
+        before -= 1
+    if not touching(before, before + 1):
+        return False
+    up_to = word(before) == "to" and touching(before - 1, before) and word(before - 1) == "up"
+    return word(before) in _UP_TO or up_to
+
+
+def _sorry_counts(toks: list[Tok], k: int) -> bool:
+    """An apology at toks[k] refuses the text only when a number follows it: a correction ("पचपन
+    हज़ार, सॉरी बावन", "41300 sorry 42300"). Otherwise it is about the line ("41300 रुपये सॉरी नेटवर्क
+    चला गया था") and the parser ignores it; whether a bare "X sorry" takes X back is the extractor's
+    change check, not the parser."""
+    return any(t.kind in ("num", "bad", "count") for t in toks[k + 1 :])
 
 
 def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
@@ -167,6 +214,12 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
                     tok.start, tok.end, Value(None), tok.strong, None, False, False, i, i, stem=not tok.strong
                 )
             )
+        if tok.kind == "sorry" and _sorry_counts(toks, i):
+            runs.append(_Run(tok.start, tok.end, Value(None), True, None, False, False, i, i))
+        if tok.kind == "count":
+            # "twice 50,000": a count of deductions, never explained by the amount beside it.
+            count = Value(tok.atoms[0].value)
+            runs.append(_Run(tok.start, tok.end, count, False, None, False, False, i, i, modifier=True))
         if tok.kind != "num":
             i += 1
             continue
@@ -314,6 +367,7 @@ def _runs(text: str) -> tuple[list[Tok], list[_Run]]:
                 first_tok=i,
                 last_tok=j,
                 hedged=_hedged(kind, i, j + 1 if after == "dur" else j),
+                bounded=_bounded(text, toks, i, j),
                 big_unit=any(a.kind == "m" and a.value >= THOUSAND for a in atoms),
                 corrects=kind(i - 1, i) in ("neg", "negpre"),
                 modifier=modifier,
@@ -415,9 +469,14 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
     ("पचास हज़ार नहीं था"), "not"/"no" precedes it, or it is compared ("पचास हज़ार से कम",
     "less than 50,000"). For a counted candidate this holds anywhere in the same clause
     ("बावन हज़ार तो नहीं था", "it was never 52,000"), and so does a comparison or bound before it
-    ("कम से कम पचास हज़ार", "at least 50,000", "minimum 50,000"); a clause ends at punctuation. A text with
-    a word of doubt or correction ("शायद", "सॉरी", "maybe") or a romanised Hindi number or
-    fraction word ("saadhe", "paanch", "sau") is `Ambiguous(malformed)`. A unit word with no number ("हज़ार रुपये") is one unit at the start,
+    ("कम से कम पचास हज़ार", "at least 50,000", "minimum 50,000"); a clause ends at punctuation. "तक",
+    "tak", "up to", "upto" or "till" beside an amount is a bound: `Ambiguous(malformed)` ("पचास
+    हज़ार तक", "up to 40,000"), except "X तक का/की/के …", how a cover is stated. A count word
+    beside the amount ("twice", "do baar") makes it `multiple_amounts`. A text with a word of
+    doubt ("शायद", "maybe") or a romanised Hindi fraction word ("saadhe") is
+    `Ambiguous(malformed)`; so is one with "सॉरी"/"sorry" before a number or in the amount's
+    clause, but not an apology after every number in a clause of its own ("…रुपये, सॉरी, नेटवर्क
+    चला गया था"). A unit word with no number ("हज़ार रुपये") is one unit at the start,
     after punctuation, a currency marker or a word the lexicon knows; directly after an
     unknown word ("साथ हज़ार", "कई लाख", "bavan hazaar") it is `Ambiguous(malformed)`,
     because that word may be the number. A bare plural unit ("lakhs of rupees") is too.
@@ -439,9 +498,8 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
     amount as the one candidate. In the default mode an unknown word in front of a complete
     number ("पक्का दो लाख") is not noticed; `exact=True` is what catches it.
 
-    Not handled: romanised Hindi number words are out of scope. The common ones are refused
-    wherever they stand; one that is not in the lexicon is refused only directly before a
-    unit word. A bare number after a lakh or crore is read literally ("एक लाख बीस" is
+    Romanised Hindi number words are read from a table of common spellings; one that is not in
+    the table is refused only directly before a unit word. A bare number after a lakh or crore is read literally ("एक लाख बीस" is
     1,00,020), though in speech it often means 1,20,000: the read-back is the check. Tamil and Kannada numbers carrying a
     case ending are reported `Ambiguous(malformed)`, not read. Refused on purpose, because the
     text alone does not decide them: a number word directly before digits ("नाइंटी ₹1,80,000"
@@ -464,6 +522,7 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
     strong_ok: list[Parsed] = []
     weak_ok: list[Parsed] = []
     strong_bad: list[AmbiguityReason] = []
+    bounded: set[int] = set()
     weak_bad: list[AmbiguityReason] = []
     for run in runs:
         strong = id(run) in counted
@@ -487,6 +546,8 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
             (strong_bad if strong else weak_bad).append(reason)
         else:
             (strong_ok if strong else weak_ok).append(parsed)
+            if strong and run.bounded:
+                bounded.add(parsed.rupees)
 
     listed = tuple(candidates)
     if strong_bad:
@@ -504,7 +565,7 @@ def parse_amount(text: str, *, exact: bool = False) -> AmountResult:
         outside = [t for t in toks if not (found.span.start <= t.start and t.end <= found.span.end)]
         if exact and any(t.kind not in _CURRENCY for t in outside):
             return Ambiguous(reason=AmbiguityReason.malformed, candidates=(found,))
-        return found
+        return found.model_copy(update={"bound": True}) if found.rupees in bounded else found
     if weak_bad:
         return Ambiguous(reason=weak_bad[0], candidates=listed)
     if weak_ok:

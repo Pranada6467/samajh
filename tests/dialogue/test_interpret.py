@@ -156,7 +156,9 @@ def test_intent(language, expecting, text, intent):
         (HI, "शायद बावन हज़ार", None),  # hedged: not a figure to read back
         (HI, "पचास या बावन हज़ार", None),
         (HI, "पाँच लाख का लोन था, उसमें से बावन हज़ार कटे", None),  # two amounts
-        (HE, "bavan hazaar", None),  # romanised Hindi numbers are refused by samajh.amounts
+        (HE, "bavan hazaar", 52000),  # samajh.amounts reads romanised Hindi number words (behind a collision gate)
+        (HE, "pachpan hazaar diye the", 55000),
+        (HI, "ठीक ठाक पैसे थे", None),  # no figure at all
         (HI, "पता नहीं", None),
         # outside what a read-back can say and parse back: treated as no figure
         (HI, "0 रुपये", None),

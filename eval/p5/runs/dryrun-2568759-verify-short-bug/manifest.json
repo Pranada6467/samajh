@@ -1,0 +1,57 @@
+[
+ {
+  "started_utc": "2026-11-13T04:19:32+00:00",
+  "git_commit": "25687594189883d246df1ce98072f3e812b982df",
+  "git_status_samajh_prompts": "",
+  "frozen_digests": {
+   "inputs": {
+    "customers.jsonl": "a1a061919d9c164afad5282fefa6ce265a71ad483c835bba109d2d7b15f53bb0",
+    "gold.jsonl": "979f6120c3cdb4e914b5267be5dfade426f43420a13d594db522d873cb8ed1cd",
+    "topics.json": "95351109a5d59f59e3eb0c86686abf27345de9dd6326f5d4fd42783fd2a0c2bb",
+    "closed_script.json": "1874be1dd3034eae66bb9e81fa98272e864452f75083e20850a01bb3d870c8a2",
+    "records": "4ff92b0ed3e66e7ec199e4cdfd3873e9f2e76d8a2a235f93e0bc6373fe21d058"
+   },
+   "words": {
+    "replies.jsonl": "cb44eecbcd1165c958c68103bd737f6cd80944337c678f6a4a5657a3e7ddc83c",
+    "closed_statements.jsonl": "79e6fae74593d83557134d86b0ff3cd6a6ceaf701544e2522f52d0559be54765",
+    "writer_requests.jsonl": "b8d4b7631ff8c2826f19b8647872259acf91ceebd286e88a1563be69261b8bae"
+   },
+   "other": {
+    "build_customers.py": "6f0891e58a6b291cce16827fdbedd07c4dd3596646f0bee17d8bc9be59aa0127",
+    "eval/p5/write_customers.py": "d5bd731585011496cae7daddb9c4a1e4cc7ebcad0f210257cbfe8d11e0ea2ce9",
+    "eval/p5/gold-rules.md": "e6d78c6c72da58585ad34dfa4bb40f8347db3e544cbc3c4a2493fe2b82fcaa9a"
+   }
+  },
+  "interpreter": {
+   "class": "LlmFallbackInterpreter",
+   "model": "mistralai/mistral-small-3.2-24b-instruct",
+   "timeout_s": null
+  },
+  "extraction_model": "openai/gpt-6-luna",
+  "second_reading": null,
+  "second_reading_note": "text path: no second speech model; step(..., second_reading=None)",
+  "arms": [
+   "open",
+   "closed"
+  ],
+  "levels": [
+   0.0
+  ],
+  "customers": [
+   "P5-C002",
+   "P5-C029",
+   "P5-C048",
+   "P5-C053"
+  ],
+  "planned_calls": 6,
+  "usd_budget": 0.15,
+  "client_usd_cap": 0.4,
+  "finished_utc": "2026-11-13T04:19:43+00:00",
+  "usd_spent_this_process": 0.003848,
+  "budget_reached": false,
+  "done": 6,
+  "skipped": 0,
+  "no_result": 0,
+  "not_started": 0
+ }
+]

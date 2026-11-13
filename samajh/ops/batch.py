@@ -63,6 +63,13 @@ class Sampled:
         return FinalStatus(last.outcome.value)
 
     @property
+    def ended_by_uncounted_call(self) -> bool:
+        """The final status comes from a request said in a call that was not counted (the last
+        attempt's `Attempt.not_counted`): the loan was reached and the request is recorded, but the
+        call is no completed or analysed call and enters no tier, referral count or queue."""
+        return bool(self.attempts) and self.attempts[-1].not_counted is not None
+
+    @property
     def counted(self) -> bool:
         """The call is one the report counts: completed within 30 days of the sale and analysed."""
         return self.call is not None and self.status is FinalStatus.completed

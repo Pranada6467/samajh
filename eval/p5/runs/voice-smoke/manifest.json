@@ -1,0 +1,290 @@
+[
+ {
+  "started_utc": "2026-11-13T04:26:16+00:00",
+  "path": "voice",
+  "arm": "open",
+  "level": 0.0,
+  "condition": "disposition",
+  "git_commit": "25687594189883d246df1ce98072f3e812b982df",
+  "git_status_samajh_prompts": " M samajh/ops/model.py\n M samajh/ops/report.py\n M samajh/ops/sessions.py",
+  "frozen_digests": {
+   "inputs": {
+    "customers.jsonl": "a1a061919d9c164afad5282fefa6ce265a71ad483c835bba109d2d7b15f53bb0",
+    "gold.jsonl": "979f6120c3cdb4e914b5267be5dfade426f43420a13d594db522d873cb8ed1cd",
+    "topics.json": "95351109a5d59f59e3eb0c86686abf27345de9dd6326f5d4fd42783fd2a0c2bb",
+    "closed_script.json": "1874be1dd3034eae66bb9e81fa98272e864452f75083e20850a01bb3d870c8a2",
+    "records": "4ff92b0ed3e66e7ec199e4cdfd3873e9f2e76d8a2a235f93e0bc6373fe21d058"
+   },
+   "words": {
+    "replies.jsonl": "cb44eecbcd1165c958c68103bd737f6cd80944337c678f6a4a5657a3e7ddc83c",
+    "closed_statements.jsonl": "79e6fae74593d83557134d86b0ff3cd6a6ceaf701544e2522f52d0559be54765",
+    "writer_requests.jsonl": "b8d4b7631ff8c2826f19b8647872259acf91ceebd286e88a1563be69261b8bae"
+   },
+   "other": {
+    "build_customers.py": "6f0891e58a6b291cce16827fdbedd07c4dd3596646f0bee17d8bc9be59aa0127",
+    "eval/p5/write_customers.py": "d5bd731585011496cae7daddb9c4a1e4cc7ebcad0f210257cbfe8d11e0ea2ce9",
+    "eval/p5/gold-rules.md": "e6d78c6c72da58585ad34dfa4bb40f8347db3e544cbc3c4a2493fe2b82fcaa9a"
+   }
+  },
+  "url": "http://127.0.0.1:8095",
+  "server_models": {
+   "stt_primary": {
+    "model": "prisma-v3.0",
+    "format": "transcribe"
+   },
+   "stt_second": {
+    "model": "prisma-v2.5",
+    "format": "transcribe"
+   },
+   "tts": {
+    "model": "timbre-v3.0"
+   },
+   "batch": {
+    "model": "prisma-v3.0"
+   }
+  },
+  "customers": [
+   "P5-C007",
+   "P5-C006",
+   "P5-C001",
+   "P5-C048"
+  ],
+  "order_seed": null,
+  "smoke": true,
+  "voices": {
+   "P5-C007": "Chetana",
+   "P5-C006": "Harshad",
+   "P5-C001": "Shubham",
+   "P5-C048": "Tarika"
+  },
+  "voice_rule": "voices.py (RUNNER-PLAN Part 1 'Voices')",
+  "tts_model": "timbre-v3.0",
+  "ledger_before": 320.610829,
+  "run_baseline": 320.610829,
+  "credit_ceiling": 30.0,
+  "client_credit_cap": 350.6108,
+  "batch": "off (null client in serve.py)",
+  "ledger_after": 320.610829,
+  "ledger_delta_this_invocation": 0.0,
+  "ledger_delta_run": 0.0,
+  "finished_utc": "2026-11-13T04:26:17+00:00",
+  "models": {
+   "dialogue_reads_first": null,
+   "case_models": null
+  }
+ },
+ {
+  "started_utc": "2026-11-13T04:27:14+00:00",
+  "path": "voice",
+  "arm": "open",
+  "level": 0.0,
+  "condition": "disposition",
+  "git_commit": "25687594189883d246df1ce98072f3e812b982df",
+  "git_status_samajh_prompts": " M samajh/ops/model.py\n M samajh/ops/report.py\n M samajh/ops/sessions.py",
+  "frozen_digests": {
+   "inputs": {
+    "customers.jsonl": "a1a061919d9c164afad5282fefa6ce265a71ad483c835bba109d2d7b15f53bb0",
+    "gold.jsonl": "979f6120c3cdb4e914b5267be5dfade426f43420a13d594db522d873cb8ed1cd",
+    "topics.json": "95351109a5d59f59e3eb0c86686abf27345de9dd6326f5d4fd42783fd2a0c2bb",
+    "closed_script.json": "1874be1dd3034eae66bb9e81fa98272e864452f75083e20850a01bb3d870c8a2",
+    "records": "4ff92b0ed3e66e7ec199e4cdfd3873e9f2e76d8a2a235f93e0bc6373fe21d058"
+   },
+   "words": {
+    "replies.jsonl": "cb44eecbcd1165c958c68103bd737f6cd80944337c678f6a4a5657a3e7ddc83c",
+    "closed_statements.jsonl": "79e6fae74593d83557134d86b0ff3cd6a6ceaf701544e2522f52d0559be54765",
+    "writer_requests.jsonl": "b8d4b7631ff8c2826f19b8647872259acf91ceebd286e88a1563be69261b8bae"
+   },
+   "other": {
+    "build_customers.py": "6f0891e58a6b291cce16827fdbedd07c4dd3596646f0bee17d8bc9be59aa0127",
+    "eval/p5/write_customers.py": "d5bd731585011496cae7daddb9c4a1e4cc7ebcad0f210257cbfe8d11e0ea2ce9",
+    "eval/p5/gold-rules.md": "e6d78c6c72da58585ad34dfa4bb40f8347db3e544cbc3c4a2493fe2b82fcaa9a"
+   }
+  },
+  "url": "http://127.0.0.1:8095",
+  "server_models": {
+   "stt_primary": {
+    "model": "prisma-v3.0",
+    "format": "transcribe"
+   },
+   "stt_second": {
+    "model": "prisma-v2.5",
+    "format": "transcribe"
+   },
+   "tts": {
+    "model": "timbre-v3.0"
+   },
+   "batch": {
+    "model": "prisma-v3.0"
+   }
+  },
+  "customers": [
+   "P5-C007",
+   "P5-C006",
+   "P5-C001",
+   "P5-C048"
+  ],
+  "order_seed": null,
+  "smoke": true,
+  "voices": {
+   "P5-C007": "Chetana",
+   "P5-C006": "Harshad",
+   "P5-C001": "Shubham",
+   "P5-C048": "Tarika"
+  },
+  "voice_rule": "voices.py (RUNNER-PLAN Part 1 'Voices')",
+  "tts_model": "timbre-v3.0",
+  "ledger_before": 320.610829,
+  "run_baseline": 320.610829,
+  "credit_ceiling": 30.0,
+  "client_credit_cap": 350.6108,
+  "batch": "off (null client in serve.py)",
+  "ledger_after": 325.597629,
+  "ledger_delta_this_invocation": 4.9868,
+  "ledger_delta_run": 4.9868,
+  "finished_utc": "2026-11-13T04:29:32+00:00",
+  "models": {
+   "dialogue_reads_first": "prisma-v2.5 when it has text, else prisma-v3.0",
+   "case_models": {
+    "stt_primary": {
+     "model": "prisma-v3.0",
+     "format": "transcribe"
+    },
+    "stt_second": {
+     "model": "prisma-v2.5",
+     "format": "transcribe",
+     "timeout_s": 2.5
+    },
+    "dialogue_reads_first": "prisma-v2.5 when it has text, else prisma-v3.0",
+    "tts": {
+     "model": "timbre-v3.0",
+     "voice": "Shivani"
+    },
+    "line_rate": 8000,
+    "batch": {
+     "model": "prisma-v3.0",
+     "language": "hi-IN",
+     "format": "transcribe",
+     "diarize": true,
+     "num_speakers": 2,
+     "denoise": false,
+     "keyterms": []
+    },
+    "extraction": {
+     "model": "openai/gpt-6-luna"
+    }
+   }
+  },
+  "done": 4,
+  "skipped": 0,
+  "no_result": 0,
+  "not_started": 0,
+  "stopped": null
+ },
+ {
+  "started_utc": "2026-11-13T04:30:38+00:00",
+  "path": "voice",
+  "arm": "open",
+  "level": 0.0,
+  "condition": "disposition",
+  "git_commit": "25687594189883d246df1ce98072f3e812b982df",
+  "git_status_samajh_prompts": " M samajh/ops/model.py\n M samajh/ops/report.py\n M samajh/ops/sessions.py",
+  "frozen_digests": {
+   "inputs": {
+    "customers.jsonl": "a1a061919d9c164afad5282fefa6ce265a71ad483c835bba109d2d7b15f53bb0",
+    "gold.jsonl": "979f6120c3cdb4e914b5267be5dfade426f43420a13d594db522d873cb8ed1cd",
+    "topics.json": "95351109a5d59f59e3eb0c86686abf27345de9dd6326f5d4fd42783fd2a0c2bb",
+    "closed_script.json": "1874be1dd3034eae66bb9e81fa98272e864452f75083e20850a01bb3d870c8a2",
+    "records": "4ff92b0ed3e66e7ec199e4cdfd3873e9f2e76d8a2a235f93e0bc6373fe21d058"
+   },
+   "words": {
+    "replies.jsonl": "cb44eecbcd1165c958c68103bd737f6cd80944337c678f6a4a5657a3e7ddc83c",
+    "closed_statements.jsonl": "79e6fae74593d83557134d86b0ff3cd6a6ceaf701544e2522f52d0559be54765",
+    "writer_requests.jsonl": "b8d4b7631ff8c2826f19b8647872259acf91ceebd286e88a1563be69261b8bae"
+   },
+   "other": {
+    "build_customers.py": "6f0891e58a6b291cce16827fdbedd07c4dd3596646f0bee17d8bc9be59aa0127",
+    "eval/p5/write_customers.py": "d5bd731585011496cae7daddb9c4a1e4cc7ebcad0f210257cbfe8d11e0ea2ce9",
+    "eval/p5/gold-rules.md": "e6d78c6c72da58585ad34dfa4bb40f8347db3e544cbc3c4a2493fe2b82fcaa9a"
+   }
+  },
+  "url": "http://127.0.0.1:8095",
+  "server_models": {
+   "stt_primary": {
+    "model": "prisma-v3.0",
+    "format": "transcribe"
+   },
+   "stt_second": {
+    "model": "prisma-v2.5",
+    "format": "transcribe"
+   },
+   "tts": {
+    "model": "timbre-v3.0"
+   },
+   "batch": {
+    "model": "prisma-v3.0"
+   }
+  },
+  "customers": [
+   "P5-C007",
+   "P5-C006",
+   "P5-C001",
+   "P5-C048"
+  ],
+  "order_seed": null,
+  "smoke": true,
+  "voices": {
+   "P5-C007": "Chetana",
+   "P5-C006": "Harshad",
+   "P5-C001": "Shubham",
+   "P5-C048": "Tarika"
+  },
+  "voice_rule": "voices.py (RUNNER-PLAN Part 1 'Voices')",
+  "tts_model": "timbre-v3.0",
+  "ledger_before": 325.597629,
+  "run_baseline": 320.610829,
+  "credit_ceiling": 30.0,
+  "client_credit_cap": 350.6108,
+  "batch": "off (null client in serve.py)",
+  "ledger_after": 325.597629,
+  "ledger_delta_this_invocation": 0.0,
+  "ledger_delta_run": 4.9868,
+  "finished_utc": "2026-11-13T04:30:39+00:00",
+  "models": {
+   "dialogue_reads_first": "prisma-v2.5 when it has text, else prisma-v3.0",
+   "case_models": {
+    "stt_primary": {
+     "model": "prisma-v3.0",
+     "format": "transcribe"
+    },
+    "stt_second": {
+     "model": "prisma-v2.5",
+     "format": "transcribe",
+     "timeout_s": 2.5
+    },
+    "dialogue_reads_first": "prisma-v2.5 when it has text, else prisma-v3.0",
+    "tts": {
+     "model": "timbre-v3.0",
+     "voice": "Shivani"
+    },
+    "line_rate": 8000,
+    "batch": {
+     "model": "prisma-v3.0",
+     "language": "hi-IN",
+     "format": "transcribe",
+     "diarize": true,
+     "num_speakers": 2,
+     "denoise": false,
+     "keyterms": []
+    },
+    "extraction": {
+     "model": "openai/gpt-6-luna"
+    }
+   }
+  },
+  "done": 0,
+  "skipped": 4,
+  "no_result": 0,
+  "not_started": 0,
+  "stopped": null
+ }
+]

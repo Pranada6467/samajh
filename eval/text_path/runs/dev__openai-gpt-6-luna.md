@@ -1,6 +1,6 @@
 # Text path on the `dev` set, model `openai/gpt-6-luna`
 
-Run at 2026-11-10T15:44:56+00:00. Development set: 20 hand-written calls (5 each hi, hi-en, ta, kn), typed text, one author for replies, gold and prompt. Tamil and Kannada not human-reviewed. Gold verdicts and flags are the rule engine run on the hand-labelled extraction. Used for prompt iteration, so these numbers are in-sample.
+Run at 2026-11-13T02:45:39+00:00. Development set: 20 hand-written calls (5 each hi, hi-en, ta, kn), typed text, one author for replies, gold and prompt. Tamil and Kannada not human-reviewed. Gold verdicts and flags are the rule engine run on the hand-labelled extraction. Used for prompt iteration, so these numbers are in-sample.
 
 ## Headline
 
@@ -17,24 +17,24 @@ False clear: gold is flag_for_review or unclear_needs_human and the pipeline say
 
 ## Triage: where each kind of customer ended up
 
-| group | languages | calls (base cases) | tiers | misses, calls | misses, base cases | referrals, calls | referrals, base cases | misses on the set's own extraction, calls |
-|---|---|---|---|---|---|---|---|---|
-| gold_not_clear | hi + hi-en | 7 (0) | refer 6, understanding_gap 1 | 14 per 100 (1/7; 95% 3 to 51) | n/a (no base cases) | 86 per 100 (6/7; 95% 49 to 97) | n/a (no base cases) | 14 per 100 (1/7; 95% 3 to 51) |
-| gold_not_clear | hi | 3 (0) | refer 3 | 0 per 100 (0/3; 95% 0 to 56) | n/a (no base cases) | 100 per 100 (3/3; 95% 44 to 100) | n/a (no base cases) | 0 per 100 (0/3; 95% 0 to 56) |
-| gold_not_clear | hi-en | 4 (0) | refer 3, understanding_gap 1 | 25 per 100 (1/4; 95% 5 to 70) | n/a (no base cases) | 75 per 100 (3/4; 95% 30 to 95) | n/a (no base cases) | 25 per 100 (1/4; 95% 5 to 70) |
-| gold_not_clear | ta (experimental) | 3 (0) | refer 3 | 0 per 100 (0/3; 95% 0 to 56) | n/a (no base cases) | 100 per 100 (3/3; 95% 44 to 100) | n/a (no base cases) | 0 per 100 (0/3; 95% 0 to 56) |
-| gold_not_clear | kn (experimental) | 3 (0) | refer 3 | 0 per 100 (0/3; 95% 0 to 56) | n/a (no base cases) | 100 per 100 (3/3; 95% 44 to 100) | n/a (no base cases) | 0 per 100 (0/3; 95% 0 to 56) |
-| gold_clear | hi + hi-en | 3 (0) | clear 3 | 100 per 100 (3/3; 95% 44 to 100) | n/a (no base cases) | 0 per 100 (0/3; 95% 0 to 56) | n/a (no base cases) | 100 per 100 (3/3; 95% 44 to 100) |
-| gold_clear | hi | 2 (0) | clear 2 | 100 per 100 (2/2; 95% 34 to 100) | n/a (no base cases) | 0 per 100 (0/2; 95% 0 to 66) | n/a (no base cases) | 100 per 100 (2/2; 95% 34 to 100) |
-| gold_clear | hi-en | 1 (0) | clear 1 | 100 per 100 (1/1; 95% 21 to 100) | n/a (no base cases) | 0 per 100 (0/1; 95% 0 to 79) | n/a (no base cases) | 100 per 100 (1/1; 95% 21 to 100) |
-| gold_clear | ta (experimental) | 2 (0) | clear 2 | 100 per 100 (2/2; 95% 34 to 100) | n/a (no base cases) | 0 per 100 (0/2; 95% 0 to 66) | n/a (no base cases) | 100 per 100 (2/2; 95% 34 to 100) |
-| gold_clear | kn (experimental) | 2 (0) | clear 2 | 100 per 100 (2/2; 95% 34 to 100) | n/a (no base cases) | 0 per 100 (0/2; 95% 0 to 66) | n/a (no base cases) | 100 per 100 (2/2; 95% 34 to 100) |
+| group | languages | calls (base cases) | tiers | misses, calls | misses, base cases | referrals, calls | referrals, base cases | referred on what the customer said, calls | referred on the record alone, calls | misses on the set's own extraction, calls |
+|---|---|---|---|---|---|---|---|---|---|---|
+| gold_not_clear | hi + hi-en | 7 (0) | refer 6, understanding_gap 1 | 14 per 100 (1/7; 95% 3 to 51) | n/a (no base cases) | 86 per 100 (6/7; 95% 49 to 97) | n/a (no base cases) | 6/7 | 0/7 | 14 per 100 (1/7; 95% 3 to 51) |
+| gold_not_clear | hi | 3 (0) | refer 3 | 0 per 100 (0/3; 95% 0 to 56) | n/a (no base cases) | 100 per 100 (3/3; 95% 44 to 100) | n/a (no base cases) | 3/3 | 0/3 | 0 per 100 (0/3; 95% 0 to 56) |
+| gold_not_clear | hi-en | 4 (0) | refer 3, understanding_gap 1 | 25 per 100 (1/4; 95% 5 to 70) | n/a (no base cases) | 75 per 100 (3/4; 95% 30 to 95) | n/a (no base cases) | 3/4 | 0/4 | 25 per 100 (1/4; 95% 5 to 70) |
+| gold_not_clear | ta (experimental) | 3 (0) | refer 3 | 0 per 100 (0/3; 95% 0 to 56) | n/a (no base cases) | 100 per 100 (3/3; 95% 44 to 100) | n/a (no base cases) | 3/3 | 0/3 | 0 per 100 (0/3; 95% 0 to 56) |
+| gold_not_clear | kn (experimental) | 3 (0) | refer 3 | 0 per 100 (0/3; 95% 0 to 56) | n/a (no base cases) | 100 per 100 (3/3; 95% 44 to 100) | n/a (no base cases) | 3/3 | 0/3 | 0 per 100 (0/3; 95% 0 to 56) |
+| gold_clear | hi + hi-en | 3 (0) | clear 3 | 100 per 100 (3/3; 95% 44 to 100) | n/a (no base cases) | 0 per 100 (0/3; 95% 0 to 56) | n/a (no base cases) | 0/3 | 0/3 | 100 per 100 (3/3; 95% 44 to 100) |
+| gold_clear | hi | 2 (0) | clear 2 | 100 per 100 (2/2; 95% 34 to 100) | n/a (no base cases) | 0 per 100 (0/2; 95% 0 to 66) | n/a (no base cases) | 0/2 | 0/2 | 100 per 100 (2/2; 95% 34 to 100) |
+| gold_clear | hi-en | 1 (0) | clear 1 | 100 per 100 (1/1; 95% 21 to 100) | n/a (no base cases) | 0 per 100 (0/1; 95% 0 to 79) | n/a (no base cases) | 0/1 | 0/1 | 100 per 100 (1/1; 95% 21 to 100) |
+| gold_clear | ta (experimental) | 2 (0) | clear 2 | 100 per 100 (2/2; 95% 34 to 100) | n/a (no base cases) | 0 per 100 (0/2; 95% 0 to 66) | n/a (no base cases) | 0/2 | 0/2 | 100 per 100 (2/2; 95% 34 to 100) |
+| gold_clear | kn (experimental) | 2 (0) | clear 2 | 100 per 100 (2/2; 95% 34 to 100) | n/a (no base cases) | 0 per 100 (0/2; 95% 0 to 66) | n/a (no base cases) | 0/2 | 0/2 | 100 per 100 (2/2; 95% 34 to 100) |
 
 Misses (a customer with a problem ends `clear` or `understanding_gap`): 0.
 
 False referrals (an informed customer on a compliant record ends `refer`): 0.
 
-A miss is counted only for customers the set labels misled, unaware or did not agree. `incomplete` is not a miss and not a referral: the call did not yield enough to decide. The last column runs the rule engine on the set's own extraction, so a miss there is the rules', not the extractor's. Base cases, not calls, are the independent unit.
+A miss is counted only for customers the set labels misled, unaware or did not agree. `incomplete` is not a miss and not a referral: the call did not yield enough to decide. The last column runs the rule engine on the set's own extraction, so a miss there is the rules', not the extractor's. Base cases, not calls, are the independent unit. A referral on the record alone rests only on the lender's record (for example no consent on record) and on nothing the customer said; a referral on what the customer said has at least one refer-tier flag that rests on the customer's words (counts of the group's calls, base cases in brackets).
 
 ## Verdicts, gold against pipeline (all calls)
 
@@ -103,18 +103,18 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 
 ## Cost and latency
 
-- LLM calls: 513 for 20 calls (513 served from the cache in this run).
+- LLM calls: 519 for 20 calls (519 served from the cache in this run).
 
 | request | LLM calls | cost with nothing cached |
 |---|---|---|
 | answer | 229 | $0.01747 |
 | screen | 174 | $0.00765 |
-| check | 110 | $0.01018 |
+| check | 116 | $0.01122 |
 
-- The change check (a second look at a reply of two or more clauses: did the customer change their answer?) said: {'none': 102, 'not used': 3, 'corrected': 5}. `not used`: a recall reply that named nothing, or a reply whose answer call failed.
+- The change check (a second look at a reply of two or more clauses, or of one clause with a marker word such as नहीं or ruko: did the customer change their answer?) said: {'none': 108, 'not used': 3, 'corrected': 5}. `not used`: a recall reply that named nothing, or a reply whose answer call failed.
 - Spent in this run: $0.00000.
-- Cost of these calls with nothing cached: $0.03529 ($0.00176 per transcript, $0.00007 per LLM call).
-- Latency per LLM call when first made: median 2.03 s, p90 3.81 s (wall time of the client call, retries included, one network).
+- Cost of these calls with nothing cached: $0.03633 ($0.00182 per transcript, $0.00007 per LLM call).
+- Latency per LLM call when first made: median 2.04 s, p90 3.83 s (wall time of the client call, retries included, one network).
 
 ## Failures
 

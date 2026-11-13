@@ -53,9 +53,14 @@ def _asks_premium(bot: dict) -> bool:
 class Call:
     """One call on the hero record. Each turn is a new clip; `heard` says what each model reads."""
 
-    def __init__(self, phone: TestClient, fake: FakeSpeech, state: Path) -> None:
+    def __init__(
+        self, phone: TestClient, fake: FakeSpeech, state: Path, identity: dict | None = None
+    ) -> None:
         self.phone, self.fake, self.state = phone, fake, state
-        created = phone.post("/api/sessions", json={"params": {"record": "hero", "language": "hi"}})
+        body: dict = {"params": {"record": "hero", "language": "hi"}}
+        if identity is not None:  # the demo picker's setting; None: the server's [identity]
+            body["identity"] = identity
+        created = phone.post("/api/sessions", json=body)
         assert created.status_code == 201, created.text
         self.sid, self.bot = created.json()["session_id"], created.json()["bot"]
         self.turns = 0

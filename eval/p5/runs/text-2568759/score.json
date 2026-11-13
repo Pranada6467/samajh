@@ -1,0 +1,6597 @@
+{
+ "closed_readings": [
+  {
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 6,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "coached",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "misled",
+   "n": 14,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "took_nothing",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "uninformed",
+   "n": 2,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 6,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "problem",
+   "kind": "coached",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "problem",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "problem",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "problem",
+   "kind": "misled",
+   "n": 14,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "problem",
+   "kind": "took_nothing",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.25,
+   "gold_class": "problem",
+   "kind": "uninformed",
+   "n": 2,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "confirmed_primary": 3,
+   "confirmed_lenient": 6,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "problem",
+   "kind": "coached",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "problem",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "problem",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "problem",
+   "kind": "misled",
+   "n": 14,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "problem",
+   "kind": "took_nothing",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.5,
+   "gold_class": "problem",
+   "kind": "uninformed",
+   "n": 2,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 1,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "confirmed_primary": 2,
+   "confirmed_lenient": 3,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "confirmed_primary": 4,
+   "confirmed_lenient": 6,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "problem",
+   "kind": "coached",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "problem",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "problem",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "problem",
+   "kind": "misled",
+   "n": 14,
+   "confirmed_primary": 1,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "problem",
+   "kind": "took_nothing",
+   "n": 4,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.75,
+   "gold_class": "problem",
+   "kind": "uninformed",
+   "n": 2,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 1,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "confirmed_primary": 6,
+   "confirmed_lenient": 7,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "confirmed_primary": 3,
+   "confirmed_lenient": 3,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "confirmed_primary": 4,
+   "confirmed_lenient": 6,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "problem",
+   "kind": "coached",
+   "n": 4,
+   "confirmed_primary": 4,
+   "confirmed_lenient": 4,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "problem",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "confirmed_primary": 1,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "problem",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "problem",
+   "kind": "misled",
+   "n": 14,
+   "confirmed_primary": 7,
+   "confirmed_lenient": 7,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "problem",
+   "kind": "took_nothing",
+   "n": 4,
+   "confirmed_primary": 2,
+   "confirmed_lenient": 2,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 1.0,
+   "gold_class": "problem",
+   "kind": "uninformed",
+   "n": 2,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  }
+ ],
+ "paired_level0_lenient": [
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "all kinds",
+   "pairs": 20,
+   "both": 2,
+   "open_only": 0,
+   "closed_only": 12,
+   "neither": 6,
+   "no_result_pairs": 0,
+   "mcnemar_p": 0.0005
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "fraud_suspicion",
+   "pairs": 1,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "in_a_hurry",
+   "pairs": 1,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "ordinary_informed",
+   "pairs": 8,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 7,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 0.0156
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "uninformed",
+   "pairs": 4,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 3,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 0.25
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "well_informed",
+   "pairs": 6,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 6,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "all kinds",
+   "pairs": 26,
+   "both": 25,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "coached",
+   "pairs": 4,
+   "both": 4,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "fraud_suspicion",
+   "pairs": 1,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "in_a_hurry",
+   "pairs": 1,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "misled",
+   "pairs": 14,
+   "both": 13,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "took_nothing",
+   "pairs": 4,
+   "both": 4,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "uninformed",
+   "pairs": 2,
+   "both": 2,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  }
+ ],
+ "closed_not_yes_without_problem": [
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_source",
+   "reply": "हाँ, यह लोन से नहीं, मेरे बचत खाते से अलग कटा था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_frequency",
+   "reply": "यह एक ही बार था या हर साल, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_voluntary",
+   "reply": "मुझे ज़्यादा नहीं पता, जैसा उन्होंने कहा मैंने कर दिया।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cover",
+   "reply": "इसमें क्या मिलता है और कितना, मुझे मालूम नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_term",
+   "reply": "यह कितने समय चलेगा, मुझे इसकी जानकारी नहीं है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_source",
+   "reply": "हाँ, यह लोन से नहीं, मेरे बचत खाते से अलग कटा था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_frequency",
+   "reply": "यह एक ही बार था या हर साल, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_cover",
+   "reply": "इसमें क्या मिलता है और कितना, मुझे मालूम नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_term",
+   "reply": "यह कितने समय चलेगा, मुझे इसकी जानकारी नहीं है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_frequency",
+   "reply": "यह एक ही बार था या हर साल, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_cover",
+   "reply": "इसमें क्या मिलता है और कितना, मुझे मालूम नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_term",
+   "reply": "यह कितने समय चलेगा, मुझे इसकी जानकारी नहीं है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "मुझे ज़्यादा नहीं पता, कितने रुपये कटे थे याद नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_source",
+   "reply": "हाँ, यह लोन से नहीं, मेरे बचत खाते से अलग कटा था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "यह एक ही बार था या हर साल, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_voluntary",
+   "reply": "मुझे ज़्यादा नहीं पता, जैसा उन्होंने कहा मैंने कर दिया।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cover",
+   "reply": "इसमें क्या मिलता है और कितना, मुझे मालूम नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "यह कितने समय चलेगा, मुझे इसकी जानकारी नहीं है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "रद्द करवा सकते हैं या नहीं, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C017",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "पैसे वापस मिलेंगे या नहीं, मुझे ज़्यादा नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "exact amount तो याद नहीं, बस कुछ हज़ार था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_frequency",
+   "reply": "मुझे नहीं पता कि यह एक बार का था या बार-बार का।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_voluntary",
+   "reply": "यह ज़रूरी था या optional, मैंने पूछा नहीं था।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cover",
+   "reply": "कितने का cover है, यह मुझे नहीं मालूम।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "पैसे वापस मिलेंगे या नहीं, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_frequency",
+   "reply": "मुझे नहीं पता कि यह एक बार का था या बार-बार का।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_voluntary",
+   "reply": "यह ज़रूरी था या optional, मैंने पूछा नहीं था।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_cover",
+   "reply": "कितने का cover है, यह मुझे नहीं मालूम।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "पैसे वापस मिलेंगे या नहीं, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_frequency",
+   "reply": "मुझे नहीं पता कि यह एक बार का था या बार-बार का।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_voluntary",
+   "reply": "यह ज़रूरी था या optional, मैंने पूछा नहीं था।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "पैसे वापस मिलेंगे या नहीं, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "exact amount तो याद नहीं, बस कुछ हज़ार था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "मुझे नहीं पता कि यह एक बार का था या बार-बार का।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_voluntary",
+   "reply": "यह ज़रूरी था या optional, मैंने पूछा नहीं था।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cover",
+   "reply": "कितने का cover है, यह मुझे नहीं मालूम।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "यह कितने time चलेगा, मुझे जानकारी नहीं है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "cancel कराने का मुझे कुछ नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C018",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "पैसे वापस मिलेंगे या नहीं, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "रकम मुझे याद नहीं, कुछ हज़ार ही थे।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_frequency",
+   "reply": "एक बार भरा या बार-बार, यह मुझे पता नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_term",
+   "reply": "कितने साल चलता है, पता नहीं जी।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cancel",
+   "reply": "अच्छा।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "जमा है या नहीं, यह भी मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_cancel",
+   "reply": "अच्छा।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "जमा है या नहीं, यह भी मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_cancel",
+   "reply": "अच्छा।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "जमा है या नहीं, यह भी मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "रकम मुझे याद नहीं, कुछ हज़ार ही थे।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "एक बार भरा या बार-बार, यह मुझे पता नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_voluntary",
+   "reply": "यह तो मुझे नहीं पता, जो बोला वही मान लिया।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cover",
+   "reply": "कितना देता है, यह मुझे मालूम नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "कितने साल चलता है, पता नहीं जी।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "रद्द हो सकता है या नहीं, मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "जमा है या नहीं, यह भी मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C019",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 1.0,
+   "statement_id": "c_cancel",
+   "reply": "अच्छा।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "नहीं, amount तो मुझे नहीं पता। दस-पंद्रह हज़ार कुछ भी हो सकता है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_frequency",
+   "reply": "वो नहीं पता, एक बार है या हर महीने कटता है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_voluntary",
+   "reply": "मैंने पढ़ा नहीं था, तो नहीं पता ज़रूरी था या optional।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cover",
+   "reply": "नहीं पता, cover कितने का है वो मैंने देखा ही नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_term",
+   "reply": "तीन साल? वो मुझे नहीं पता, नहीं देखा था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cancel",
+   "reply": "वो भी नहीं पता, cancel का मैंने कुछ पढ़ा नहीं था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "पता नहीं यार, savings है या नहीं मुझे नहीं मालूम।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_premium",
+   "reply": "नहीं, amount तो मुझे नहीं पता। दस-पंद्रह हज़ार कुछ भी हो सकता है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_cover",
+   "reply": "नहीं पता, cover कितने का है वो मैंने देखा ही नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_term",
+   "reply": "तीन साल? वो मुझे नहीं पता, नहीं देखा था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_cancel",
+   "reply": "वो भी नहीं पता, cancel का मैंने कुछ पढ़ा नहीं था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_premium",
+   "reply": "नहीं, amount तो मुझे नहीं पता। दस-पंद्रह हज़ार कुछ भी हो सकता है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_cover",
+   "reply": "नहीं पता, cover कितने का है वो मैंने देखा ही नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_cancel",
+   "reply": "वो भी नहीं पता, cancel का मैंने कुछ पढ़ा नहीं था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "नहीं, amount तो मुझे नहीं पता। दस-पंद्रह हज़ार कुछ भी हो सकता है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "वो नहीं पता, एक बार है या हर महीने कटता है।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_voluntary",
+   "reply": "मैंने पढ़ा नहीं था, तो नहीं पता ज़रूरी था या optional।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cover",
+   "reply": "नहीं पता, cover कितने का है वो मैंने देखा ही नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "तीन साल? वो मुझे नहीं पता, नहीं देखा था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "वो भी नहीं पता, cancel का मैंने कुछ पढ़ा नहीं था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C020",
+   "kind": "uninformed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "पता नहीं यार, savings है या नहीं मुझे नहीं मालूम।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "पक्का नहीं पता, बस इतना याद है कि पंद्रह हज़ार के आसपास था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cancel",
+   "reply": "दिन ठीक से याद नहीं, शायद पंद्रह या तीस दिन का समय था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह कोई बचत नहीं है, इसके पैसे वापस नहीं मिलते।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_cancel",
+   "reply": "दिन ठीक से याद नहीं, शायद पंद्रह या तीस दिन का समय था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह कोई बचत नहीं है, इसके पैसे वापस नहीं मिलते।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "पक्का नहीं पता, बस इतना याद है कि पंद्रह हज़ार के आसपास था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "मुझे तो इतना पता है कि जब तक लोन है तब तक चलेगा।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "दिन ठीक से याद नहीं, शायद पंद्रह या तीस दिन का समय था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C021",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह कोई बचत नहीं है, इसके पैसे वापस नहीं मिलते।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "Exact amount याद नहीं, twenty-seven twenty-eight thousand के आसपास था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cover",
+   "reply": "Whatever loan is left वह pay हो जाएगा, exact amount confirm नहीं।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cancel",
+   "reply": "Cancel का option था, but exact days मुझे याद नहीं हैं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है यह savings नहीं है, money वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_premium",
+   "reply": "Exact amount याद नहीं, twenty-seven twenty-eight thousand के आसपास था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_cancel",
+   "reply": "Cancel का option था, but exact days मुझे याद नहीं हैं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है यह savings नहीं है, money वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_premium",
+   "reply": "Exact amount याद नहीं, twenty-seven twenty-eight thousand के आसपास था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है यह savings नहीं है, money वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "Exact amount याद नहीं, twenty-seven twenty-eight thousand के आसपास था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cover",
+   "reply": "Whatever loan is left वह pay हो जाएगा, exact amount confirm नहीं।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "Cancel का option था, but exact days मुझे याद नहीं हैं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C022",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है यह savings नहीं है, money वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "नौ हज़ार चार सौ... मुझे तो नौ हज़ार पाँच सौ लगता है, ठीक-ठीक याद नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_source",
+   "reply": "हाँ, लोन की रकम से नहीं कटा, मैंने अपने खाते से अलग भरा था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार भरा, दोबारा नहीं भरना।",
+   "reading": "other",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह बचत नहीं है, पैसा वापस नहीं मिलता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_source",
+   "reply": "हाँ, लोन की रकम से नहीं कटा, मैंने अपने खाते से अलग भरा था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार भरा, दोबारा नहीं भरना।",
+   "reading": "other",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_source",
+   "reply": "हाँ, लोन की रकम से नहीं कटा, मैंने अपने खाते से अलग भरा था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार भरा, दोबारा नहीं भरना।",
+   "reading": "other",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "नौ हज़ार चार सौ... मुझे तो नौ हज़ार पाँच सौ लगता है, ठीक-ठीक याद नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_source",
+   "reply": "हाँ, लोन की रकम से नहीं कटा, मैंने अपने खाते से अलग भरा था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार भरा, दोबारा नहीं भरना।",
+   "reading": "other",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह बचत नहीं है, पैसा वापस नहीं मिलता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C023",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 1.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_kind",
+   "reply": "life insurance नहीं, loan insurance था — loan पे cover।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार pay हुआ, बार-बार नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_term",
+   "reply": "मुझे लगा loan जितना चलेगा उतना, six months।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_term",
+   "reply": "मुझे लगा loan जितना चलेगा उतना, six months।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_term",
+   "reply": "मुझे लगा loan जितना चलेगा उतना, six months।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_kind",
+   "reply": "life insurance नहीं, loan insurance था — loan पे cover।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार pay हुआ, बार-बार नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "मुझे लगा loan जितना चलेगा उतना, six months।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "यह मुझे नहीं पता, cancel हो सकता है या नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C024",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, savings नहीं है, पैसा वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C025",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "उन्नीस हज़ार कुछ था, पक्का याद नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C025",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cover",
+   "reply": "कितनी रकम तक का है, यह मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C025",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह कोई बचत नहीं है, पैसे वापस नहीं मिलेंगे।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C025",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_premium",
+   "reply": "उन्नीस हज़ार कुछ था, पक्का याद नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C025",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_premium",
+   "reply": "उन्नीस हज़ार कुछ था, पक्का याद नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C025",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "उन्नीस हज़ार कुछ था, पक्का याद नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C025",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cover",
+   "reply": "कितनी रकम तक का है, यह मुझे नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C025",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह कोई बचत नहीं है, पैसे वापस नहीं मिलेंगे।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C026",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_term",
+   "reply": "Term मुझे exactly याद नहीं, one year था या two years।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C026",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हां, मुझे पता है कि money return नहीं होता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C026",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_term",
+   "reply": "Term मुझे exactly याद नहीं, one year था या two years।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C026",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "Term मुझे exactly याद नहीं, one year था या two years।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C026",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हां, मुझे पता है कि money return नहीं होता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_term",
+   "reply": "जब तक लोन चलेगा, तब तक बीमा चलेगा, दो साल नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_cancel",
+   "reply": "रद्द हो सकता है, महीना-भर का समय था, तीस दिन ठीक-ठीक नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसा वापस नहीं मिलता, कोई बचत नहीं है।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_term",
+   "reply": "जब तक लोन चलेगा, तब तक बीमा चलेगा, दो साल नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_cancel",
+   "reply": "रद्द हो सकता है, महीना-भर का समय था, तीस दिन ठीक-ठीक नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसा वापस नहीं मिलता, कोई बचत नहीं है।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_term",
+   "reply": "जब तक लोन चलेगा, तब तक बीमा चलेगा, दो साल नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसा वापस नहीं मिलता, कोई बचत नहीं है।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "दस-ग्यारह हज़ार कटा था, पर ठीक दस हज़ार सात सौ पचास नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "जब तक लोन चलेगा, तब तक बीमा चलेगा, दो साल नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "रद्द हो सकता है, महीना-भर का समय था, तीस दिन ठीक-ठीक नहीं पता।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C027",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसा वापस नहीं मिलता, कोई बचत नहीं है।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "नहीं, eight thousand कटा था, seven nine hundred नहीं।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार pay हुआ, बार-बार नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "Savings नहीं है, सही। वापस मिलेगा या नहीं, मुझे sure नहीं।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_premium",
+   "reply": "नहीं नहीं, आठ हज़ार था।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार pay हुआ, बार-बार नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "Savings नहीं है, सही। वापस मिलेगा या नहीं, मुझे sure नहीं।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_premium",
+   "reply": "नहीं नहीं, आठ हज़ार था।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "Savings नहीं है, सही। वापस मिलेगा या नहीं, मुझे sure नहीं।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "नहीं, eight thousand कटा था, seven nine hundred नहीं।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार pay हुआ, बार-बार नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "Savings नहीं है, सही। वापस मिलेगा या नहीं, मुझे sure नहीं।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 1.0,
+   "statement_id": "c_premium",
+   "reply": "नहीं नहीं, आठ हज़ार था।",
+   "reading": "no",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C028",
+   "kind": "ordinary_informed",
+   "gold_class": "knowledge_gap_only",
+   "level": 1.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, deposit नहीं है।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C029",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मैं जानती हूँ कि यह बचत नहीं है और पैसे वापस नहीं मिलेंगे।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C029",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मैं जानती हूँ कि यह बचत नहीं है और पैसे वापस नहीं मिलेंगे।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C030",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है कि premium वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C030",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है कि premium वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C031",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, जमा नहीं है, पैसा वापस नहीं मिलता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C031",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, जमा नहीं है, पैसा वापस नहीं मिलता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C031",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C031",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार भरा गया, बार-बार नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C031",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, जमा नहीं है, पैसा वापस नहीं मिलता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C031",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 1.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.25,
+   "statement_id": "c_source",
+   "reply": "हाँ, loan amount से cut नहीं हुआ, मैंने UPI से separately pay किया था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.25,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार pay हुआ था, बार-बार नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह deposit या savings नहीं है, premium वापस नहीं मिलता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.5,
+   "statement_id": "c_source",
+   "reply": "हाँ, loan amount से cut नहीं हुआ, मैंने UPI से separately pay किया था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसे वापस नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसे वापस नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_source",
+   "reply": "हाँ, loan amount से cut नहीं हुआ, मैंने UPI से separately pay किया था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_frequency",
+   "reply": "हाँ, एक ही बार pay हुआ था, बार-बार नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, यह deposit या savings नहीं है, premium वापस नहीं मिलता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C032",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 1.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसे वापस नहीं।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C033",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पता है कि यह पैसा वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C033",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पता है कि यह पैसा वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C034",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "जी हाँ, पता है कि premium वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C034",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "जी हाँ, पता है कि premium वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C034",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "जी हाँ, पता है कि premium वापस नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "पूरा नंबर नहीं पता, करीब बारह हज़ार कटा था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_term",
+   "reply": "जितने दिन लोन, उतने दिन बीमा।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसा वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_premium",
+   "reply": "पूरा नंबर नहीं पता, करीब बारह हज़ार कटा था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसा वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.75,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "पूरा नंबर नहीं पता, करीब बारह हज़ार कटा था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_term",
+   "reply": "जितने दिन लोन, उतने दिन बीमा।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_cancel",
+   "reply": "कुछ दिन में रद्द हो जाता है, कितने दिन, पता नहीं।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, पैसा वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C043",
+   "kind": "in_a_hurry",
+   "gold_class": "knowledge_gap_only",
+   "level": 1.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, वापस नहीं आता।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C046",
+   "kind": "fraud_suspicion",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_premium",
+   "reply": "exact amount याद नहीं, twenty thousand something था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C046",
+   "kind": "fraud_suspicion",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_voluntary",
+   "reply": "जी, यह मेरी अपनी choice थी, mandatory नहीं था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C046",
+   "kind": "fraud_suspicion",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.25,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है यह pure insurance है, refund नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C046",
+   "kind": "fraud_suspicion",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_voluntary",
+   "reply": "जी, यह मेरी अपनी choice थी, mandatory नहीं था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C046",
+   "kind": "fraud_suspicion",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.5,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है यह pure insurance है, refund नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C046",
+   "kind": "fraud_suspicion",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_premium",
+   "reply": "exact amount याद नहीं, twenty thousand something था।",
+   "reading": "other",
+   "lenient_yes": false
+  },
+  {
+   "customer_id": "P5-C046",
+   "kind": "fraud_suspicion",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_voluntary",
+   "reply": "जी, यह मेरी अपनी choice थी, mandatory नहीं था।",
+   "reading": "no",
+   "lenient_yes": true
+  },
+  {
+   "customer_id": "P5-C046",
+   "kind": "fraud_suspicion",
+   "gold_class": "knowledge_gap_only",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मुझे पता है यह pure insurance है, refund नहीं मिलेगा।",
+   "reading": "no",
+   "lenient_yes": true
+  }
+ ],
+ "voice": null,
+ "misses": [
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "kind": "coached",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "kind": "misled",
+   "n": 14,
+   "caught": 14,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "kind": "coached",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "kind": "misled",
+   "n": 14,
+   "caught": 14,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "kind": "coached",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "kind": "misled",
+   "n": 14,
+   "caught": 14,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "kind": "coached",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "kind": "misled",
+   "n": 14,
+   "caught": 13,
+   "miss": 1,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {
+    "confirmed": 1
+   },
+   "per100": 7.1,
+   "ci95": [
+    1.3,
+    31.5
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "kind": "coached",
+   "n": 4,
+   "caught": 0,
+   "miss": 4,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {
+    "confirmed": 4
+   },
+   "per100": 100.0,
+   "ci95": [
+    51.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 0,
+   "miss": 1,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {
+    "confirmed": 1
+   },
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "kind": "misled",
+   "n": 14,
+   "caught": 7,
+   "miss": 7,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {
+    "confirmed": 7
+   },
+   "per100": 50.0,
+   "ci95": [
+    26.8,
+    73.2
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 2,
+   "miss": 2,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {
+    "confirmed": 2
+   },
+   "per100": 50.0,
+   "ci95": [
+    15.0,
+    85.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "kind": "coached",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "kind": "misled",
+   "n": 14,
+   "caught": 13,
+   "miss": 0,
+   "incomplete": 1,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "kind": "coached",
+   "n": 4,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 2,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "kind": "misled",
+   "n": 14,
+   "caught": 9,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 5,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "kind": "coached",
+   "n": 4,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 2,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "kind": "misled",
+   "n": 14,
+   "caught": 5,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 9,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 3,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 2,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "kind": "coached",
+   "n": 4,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 1,
+   "ended_early": 2,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "kind": "misled",
+   "n": 14,
+   "caught": 3,
+   "miss": 0,
+   "incomplete": 1,
+   "ended_early": 10,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 1,
+   "ended_early": 2,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 2,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "kind": "coached",
+   "n": 4,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 2,
+   "ended_early": 2,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "kind": "misled",
+   "n": 14,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 2,
+   "ended_early": 12,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 1,
+   "ended_early": 3,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 0,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 2,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "kind": "coached",
+   "n": 4,
+   "caught": 3,
+   "miss": 0,
+   "incomplete": 1,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "kind": "in_a_hurry",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "kind": "misled",
+   "n": 14,
+   "caught": 10,
+   "miss": 0,
+   "incomplete": 4,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "kind": "took_nothing",
+   "n": 4,
+   "caught": 4,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "kind": "uninformed",
+   "n": 2,
+   "caught": 2,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  }
+ ],
+ "referrals": [
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 8,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    67.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 4,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    51.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 6,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    61.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 8,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    67.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 4,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    51.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 6,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    61.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 8,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    67.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 4,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    51.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 3,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 3,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 50.0,
+   "ci95": [
+    18.8,
+    81.2
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 1,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 6,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 2,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 75.0,
+   "ci95": [
+    40.9,
+    92.9
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 4,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    51.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 2,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 4,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 33.3,
+   "ci95": [
+    9.7,
+    70.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 1,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 2,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 6,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 25.0,
+   "ci95": [
+    7.1,
+    59.1
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 3,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 25.0,
+   "ci95": [
+    4.6,
+    69.9
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 2,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 4,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 33.3,
+   "ci95": [
+    9.7,
+    70.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 1,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 1,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 6,
+   "incomplete": 1,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 12.5,
+   "ci95": [
+    2.2,
+    47.1
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 3,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 25.0,
+   "ci95": [
+    4.6,
+    69.9
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 0,
+   "clear": 1,
+   "understanding_gap": 0,
+   "incomplete": 5,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    39.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 1,
+   "confirmed": 0,
+   "ended_early": 7,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    32.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 2,
+   "confirmed": 0,
+   "ended_early": 2,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 6,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    39.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 1,
+   "confirmed": 0,
+   "ended_early": 7,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    32.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 4,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 6,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    39.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 1,
+   "confirmed": 0,
+   "ended_early": 7,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    32.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 4,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 6,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    39.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 3,
+   "confirmed": 0,
+   "ended_early": 5,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    32.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 4,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 6,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    39.0
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "fraud_suspicion",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 1,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "in_a_hurry",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 1,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "ordinary_informed",
+   "n": 8,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 8,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    32.4
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "kind": "uninformed",
+   "n": 4,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 4,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 6,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 6,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    39.0
+   ]
+  }
+ ],
+ "referral_basis": [
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "knowledge_gap_only",
+   "customer_statement": 2,
+   "record_only": 0,
+   "none": 0
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "problem",
+   "customer_statement": 25,
+   "record_only": 0,
+   "none": 0
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "gold_class": "problem",
+   "customer_statement": 17,
+   "record_only": 0,
+   "none": 0
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "gold_class": "problem",
+   "customer_statement": 10,
+   "record_only": 0,
+   "none": 0
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "gold_class": "problem",
+   "customer_statement": 5,
+   "record_only": 0,
+   "none": 0
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "gold_class": "problem",
+   "customer_statement": 21,
+   "record_only": 0,
+   "none": 0
+  }
+ ],
+ "opening_kinds": [
+  {
+   "level": 0.0,
+   "kind": "call_back_later",
+   "n": 3,
+   "reached": 3,
+   "outcomes": {
+    "call_back_later": 3
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    43.9,
+    100.0
+   ]
+  },
+  {
+   "level": 0.0,
+   "kind": "language_switch",
+   "n": 2,
+   "reached": 2,
+   "outcomes": {
+    "language_switch": 2
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "level": 0.0,
+   "kind": "refusal",
+   "n": 3,
+   "reached": 2,
+   "outcomes": {
+    "declined": 2,
+    "not_confirmed": 1
+   },
+   "no_result": 0,
+   "per100": 66.7,
+   "ci95": [
+    20.8,
+    93.9
+   ],
+   "refusal_not_read": 1,
+   "asked_further": 0,
+   "asked_about_loan_after": 0
+  },
+  {
+   "level": 0.0,
+   "kind": "third_party",
+   "n": 6,
+   "reached": 6,
+   "outcomes": {
+    "wrong_party": 6
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    61.0,
+    100.0
+   ],
+   "loan_named": 0
+  },
+  {
+   "level": 0.25,
+   "kind": "call_back_later",
+   "n": 3,
+   "reached": 3,
+   "outcomes": {
+    "call_back_later": 3
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    43.9,
+    100.0
+   ]
+  },
+  {
+   "level": 0.25,
+   "kind": "language_switch",
+   "n": 2,
+   "reached": 2,
+   "outcomes": {
+    "language_switch": 2
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "level": 0.25,
+   "kind": "refusal",
+   "n": 3,
+   "reached": 2,
+   "outcomes": {
+    "declined": 2,
+    "not_confirmed": 1
+   },
+   "no_result": 0,
+   "per100": 66.7,
+   "ci95": [
+    20.8,
+    93.9
+   ],
+   "refusal_not_read": 1,
+   "asked_further": 0,
+   "asked_about_loan_after": 0
+  },
+  {
+   "level": 0.25,
+   "kind": "third_party",
+   "n": 6,
+   "reached": 6,
+   "outcomes": {
+    "wrong_party": 6
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    61.0,
+    100.0
+   ],
+   "loan_named": 0
+  },
+  {
+   "level": 0.5,
+   "kind": "call_back_later",
+   "n": 3,
+   "reached": 3,
+   "outcomes": {
+    "call_back_later": 3
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    43.9,
+    100.0
+   ]
+  },
+  {
+   "level": 0.5,
+   "kind": "language_switch",
+   "n": 2,
+   "reached": 2,
+   "outcomes": {
+    "language_switch": 2
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "level": 0.5,
+   "kind": "refusal",
+   "n": 3,
+   "reached": 2,
+   "outcomes": {
+    "declined": 2,
+    "not_confirmed": 1
+   },
+   "no_result": 0,
+   "per100": 66.7,
+   "ci95": [
+    20.8,
+    93.9
+   ],
+   "refusal_not_read": 1,
+   "asked_further": 0,
+   "asked_about_loan_after": 0
+  },
+  {
+   "level": 0.5,
+   "kind": "third_party",
+   "n": 6,
+   "reached": 6,
+   "outcomes": {
+    "wrong_party": 6
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    61.0,
+    100.0
+   ],
+   "loan_named": 0
+  },
+  {
+   "level": 0.75,
+   "kind": "call_back_later",
+   "n": 3,
+   "reached": 3,
+   "outcomes": {
+    "call_back_later": 3
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    43.9,
+    100.0
+   ]
+  },
+  {
+   "level": 0.75,
+   "kind": "language_switch",
+   "n": 2,
+   "reached": 2,
+   "outcomes": {
+    "language_switch": 2
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "level": 0.75,
+   "kind": "refusal",
+   "n": 3,
+   "reached": 2,
+   "outcomes": {
+    "declined": 2,
+    "not_confirmed": 1
+   },
+   "no_result": 0,
+   "per100": 66.7,
+   "ci95": [
+    20.8,
+    93.9
+   ],
+   "refusal_not_read": 1,
+   "asked_further": 0,
+   "asked_about_loan_after": 0
+  },
+  {
+   "level": 0.75,
+   "kind": "third_party",
+   "n": 6,
+   "reached": 6,
+   "outcomes": {
+    "wrong_party": 6
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    61.0,
+    100.0
+   ],
+   "loan_named": 0
+  },
+  {
+   "level": 1.0,
+   "kind": "call_back_later",
+   "n": 3,
+   "reached": 3,
+   "outcomes": {
+    "call_back_later": 3
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    43.9,
+    100.0
+   ]
+  },
+  {
+   "level": 1.0,
+   "kind": "language_switch",
+   "n": 2,
+   "reached": 2,
+   "outcomes": {
+    "language_switch": 2
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "level": 1.0,
+   "kind": "refusal",
+   "n": 3,
+   "reached": 2,
+   "outcomes": {
+    "declined": 2,
+    "not_confirmed": 1
+   },
+   "no_result": 0,
+   "per100": 66.7,
+   "ci95": [
+    20.8,
+    93.9
+   ],
+   "refusal_not_read": 1,
+   "asked_further": 0,
+   "asked_about_loan_after": 0
+  },
+  {
+   "level": 1.0,
+   "kind": "third_party",
+   "n": 6,
+   "reached": 6,
+   "outcomes": {
+    "wrong_party": 6
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    61.0,
+    100.0
+   ],
+   "loan_named": 0
+  }
+ ],
+ "paired_level0": [
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "all kinds",
+   "pairs": 20,
+   "both": 2,
+   "open_only": 0,
+   "closed_only": 18,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 0.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "fraud_suspicion",
+   "pairs": 1,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "in_a_hurry",
+   "pairs": 1,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "ordinary_informed",
+   "pairs": 8,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 7,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 0.0156
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "uninformed",
+   "pairs": 4,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 3,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 0.25
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "well_informed",
+   "pairs": 6,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 6,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 0.0312
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "all kinds",
+   "pairs": 26,
+   "both": 25,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "coached",
+   "pairs": 4,
+   "both": 4,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "fraud_suspicion",
+   "pairs": 1,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "in_a_hurry",
+   "pairs": 1,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "misled",
+   "pairs": 14,
+   "both": 13,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "took_nothing",
+   "pairs": 4,
+   "both": 4,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "uninformed",
+   "pairs": 2,
+   "both": 2,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  }
+ ],
+ "by_writer": [
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 7,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    64.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 2,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    22.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 7,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    64.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 4,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    51.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    22.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 7,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    64.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 2,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    22.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 7,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    64.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 4,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    51.0,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    22.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 7,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    64.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 2,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    22.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 7,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    64.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 1,
+   "no_result": 0,
+   "per100": 25.0,
+   "ci95": [
+    4.6,
+    69.9
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    22.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 7,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    64.6,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 2,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    22.8
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 4,
+   "no_result": 0,
+   "per100": 57.1,
+   "ci95": [
+    25.0,
+    84.2
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 1,
+   "no_result": 0,
+   "per100": 7.7,
+   "ci95": [
+    1.4,
+    33.3
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 4,
+   "no_result": 0,
+   "per100": 57.1,
+   "ci95": [
+    25.0,
+    84.2
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 2,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    34.2,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 4,
+   "no_result": 0,
+   "per100": 30.8,
+   "ci95": [
+    12.7,
+    57.6
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 13,
+   "counts": "miss",
+   "count": 10,
+   "no_result": 0,
+   "per100": 76.9,
+   "ci95": [
+    49.7,
+    91.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 1,
+   "no_result": 0,
+   "per100": 14.3,
+   "ci95": [
+    2.6,
+    51.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 12,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    24.2
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 1,
+   "no_result": 0,
+   "per100": 14.3,
+   "ci95": [
+    2.6,
+    51.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 14,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 12,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    24.2
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 14,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 12,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    24.2
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 14,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 12,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    24.2
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 14,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 12,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    24.2
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 14,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "no_problem",
+   "n": 2,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    65.8
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "writer_model": "deepseek/deepseek-v4.1-flash",
+   "gold_class": "problem",
+   "n": 12,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    24.2
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "knowledge_gap_only",
+   "n": 7,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    35.4
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 4,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    49.0
+   ]
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 14,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    21.5
+   ]
+  }
+ ],
+ "health": [
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "calls": 46,
+   "customer_turns": 559,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "closed",
+   "level": 0.25,
+   "calls": 46,
+   "customer_turns": 559,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "closed",
+   "level": 0.5,
+   "calls": 46,
+   "customer_turns": 559,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "closed",
+   "level": 0.75,
+   "calls": 46,
+   "customer_turns": 559,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "closed",
+   "level": 1.0,
+   "calls": 46,
+   "customer_turns": 559,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "calls": 60,
+   "customer_turns": 670,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "open",
+   "level": 0.25,
+   "calls": 60,
+   "customer_turns": 523,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "open",
+   "level": 0.5,
+   "calls": 60,
+   "customer_turns": 399,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "open",
+   "level": 0.75,
+   "calls": 60,
+   "customer_turns": 379,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "open",
+   "level": 1.0,
+   "calls": 60,
+   "customer_turns": 424,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "open-terse",
+   "level": 0.0,
+   "calls": 60,
+   "customer_turns": 713,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  }
+ ],
+ "no_result": [],
+ "calls": 590
+}

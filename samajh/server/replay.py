@@ -6,13 +6,15 @@
 DIR holds the customer's turns. With a `call.json` in DIR the call is scripted:
 
     {"params": {"record": "hero", "language": "hi"},
+     "identity": {"second_check": "year_of_birth", "attempts": 1},     (optional)
      "turns": [{"file": "01.wav", "answers": "right_party.ask", "text": "हाँ जी, बोल रहा हूँ"}, ...]}
 
 For a loan that `samajh.ops` drew from the synthetic loan book the params name the loan instead,
 `{"loan": "SYN-PL-270107-0008", "language": "hi"}` (`prepare --loan` writes this), and the server
 links the session to its draw when it is created (`samajh.server.loanbook`).
 
-`answers` (optional) is the key of the bot line the turn replies to; when the bot asked something
+`identity` (optional) is the call's right-party setting (`samajh.identity`), sent as the session
+request's `identity`; without it the server's `[identity]` applies. `answers` (optional) is the key of the bot line the turn replies to; when the bot asked something
 else the replay stops with `script_drift` instead of answering the wrong question. `text` is
 what the audio says, for the reader; the server never sees it. A turn with no `file` is silence.
 Without `call.json` the files of DIR are the turns in name order (an empty file or one named
@@ -68,10 +70,15 @@ class Script:
     turns: tuple[ScriptTurn, ...]
     params: dict[str, str] = field(default_factory=dict)
     dialogue: str | None = None  # None: the server's default
+    # The right-party setting sent as the session request's `identity`; None: the server's own.
+    identity: dict[str, Any] | None = None
 
     def fingerprint(self) -> str:
-        """Changes when a turn's audio, order or the params change, so a resume never mixes calls."""
-        digest = hashlib.sha256(json.dumps([self.params, self.dialogue], sort_keys=True).encode())
+        """Changes when a turn's audio, order, params or setting change, so a resume never mixes calls."""
+        head: list[Any] = [self.params, self.dialogue]
+        if self.identity is not None:
+            head.append(self.identity)
+        digest = hashlib.sha256(json.dumps(head, sort_keys=True).encode())
         for turn in self.turns:
             digest.update(b"|" + (turn.file.read_bytes() if turn.file else b"none"))
         return digest.hexdigest()[:16]
@@ -99,7 +106,10 @@ def load_script(
             for t in data["turns"]
         )
         return Script(
-            turns, dict(params or {}) | dict(data.get("params", {})), data.get("dialogue", dialogue)
+            turns,
+            dict(params or {}) | dict(data.get("params", {})),
+            data.get("dialogue", dialogue),
+            data.get("identity"),
         )
     turns = tuple(
         ScriptTurn(file=None if p.suffix == ".none" or p.stat().st_size == 0 else p)
@@ -257,6 +267,8 @@ def replay_call(
             session_id = saved["session_id"]
     if session_id is None:
         body: dict[str, Any] = {"line_rate": line_rate, "params": script.params}
+        if script.identity is not None:
+            body["identity"] = script.identity
         if script.dialogue is not None:
             body["dialogue"] = script.dialogue
         session_id = _checked("create", http.post("/api/sessions", json=body)).json()["session_id"]

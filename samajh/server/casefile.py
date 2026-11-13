@@ -28,11 +28,14 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from samajh.clients.gnani import BatchOptions, BatchTranscript
 from samajh.extract import Llm
+from samajh.identity import describe
 from samajh.pipeline import run_text
 from samajh.rules import summarise
 from samajh.server.loanbook import BookLink
 from samajh.server.records import CallRecord
 from samajh.server.samajh_dialogue import (
+    WITHHELD,
+    call_identity,
     call_outcome,
     call_speaker_confirmed,
     call_state,
@@ -40,6 +43,7 @@ from samajh.server.samajh_dialogue import (
     degraded_turns,
     followed_by,
     readings_agreed,
+    shown_log,
 )
 from samajh.server.sessionlog import (
     BotEvent,
@@ -101,6 +105,9 @@ class TurnEvidence(_Model):
     # "read_back", "asked_again" or "other". None only in case files written before this field.
     followed_by: FollowedBy | None = None
     degraded: bool = False  # read without the dialogue's classifier (see CaseFile.degraded_turns)
+    # The reply to the year-of-birth question: its words (text, readings, the Batch segments over it,
+    # the transcript) read `samajh_dialogue.WITHHELD`; its timing and audio offset stay.
+    withheld: bool = False
     segments: list[AlignedSegment] = Field(default_factory=list)
     speaker: int | None = None  # the Batch speaker with the most overlap
     latency: TurnLatency | None = None
@@ -153,10 +160,18 @@ class CaseFile(_Model):
     started_at: str
     finished_at: str | None = None
     call_outcome: str  # the dialogue's Outcome, or "in_progress" for a call hung up early
-    # True once the year-of-birth check passed, False on any earlier end; None when the dialogue
+    # True once the right-party check passed (the year of birth, or with no second check the
+    # affirmation `identity` describes), False on any earlier end; None when the dialogue
     # does not say (`samajh_dialogue.speaker_confirmed`). A request to stop or call back from an
     # unconfirmed speaker is not the borrower's own.
     speaker_confirmed: bool | None = None
+    # The right-party check as it ran (samajh.identity.IdentityRecord): the policy in force, the
+    # check used, attempts allowed and used, whether it passed, whether the prior notice was shown
+    # (always mocked) and one fixed sentence. It holds no expected answer and no reply. None only in
+    # case files written before this field.
+    identity: dict[str, Any] | None = None
+    # `samajh.identity.describe(policy)`: what the setting does and does not establish.
+    identity_description: str | None = None
     ended_reason: str | None
     recording: Recording | None = None
     models: dict[str, Any] = Field(default_factory=dict)  # every model and parameter used
@@ -252,6 +267,7 @@ def new_case(log: SessionLog, record: CallRecord) -> CaseFile:
     """The case's head, from the session alone: the same on every build of the same call."""
     customers = [e for e in log.events if isinstance(e, CustomerEvent) and not e.superseded]
     book = BookLink.from_params(log.params).evidence() if "loan" in log.params else None
+    identity = call_identity(log)
     return CaseFile(
         session_id=log.session_id,
         record_id=record.id,
@@ -262,6 +278,8 @@ def new_case(log: SessionLog, record: CallRecord) -> CaseFile:
         started_at=log.created_at,
         call_outcome=call_outcome(log),
         speaker_confirmed=call_speaker_confirmed(log),
+        identity=identity.model_dump(mode="json"),
+        identity_description=describe(identity.policy),
         # In the head, so a case file whose later steps fail still says the call is void.
         degraded_turns=list(degraded_turns(call_state(log))),
         ended_reason=log.ended_reason,
@@ -285,7 +303,11 @@ def build_case(
 
     `recording` returns call.wav (assembled if need be) and its bytes. `batch` and `llm` build
     their clients on first use, so a missing key fails its step, not the job.
+
+    The reply to the year-of-birth question is withheld everywhere in the file and in what the
+    extractor is given (`samajh_dialogue.WITHHELD`), whenever the session was logged.
     """
+    log = shown_log(log)
     case = new_case(log, record)
     case.models = {
         "stt_primary": {"model": log.stt.model, "format": log.stt.format},
@@ -334,6 +356,7 @@ def build_case(
                 readings_agreed=readings_agreed(event.readings, agreed.get(turn.id)),
                 followed_by=_followed_by(log, event),
                 degraded=turn.id in case.degraded_turns,
+                withheld=event.transcript == WITHHELD,
                 latency=event.latency,
                 pauses=event.pauses,
             )
@@ -361,6 +384,14 @@ def build_case(
         case.batch_speakers = sorted({s.speaker for s in segments if s.speaker is not None})
 
     def do_align() -> None:
+        # A Batch segment over the withheld reply holds its words: withhold the segment's text too.
+        hidden = [(t.start_s, t.end_s) for t in case.turns if t.withheld and t.start_s is not None]
+        for k, seg in enumerate(segments):
+            if any(
+                t_end is not None and min(t_end, seg.end) - max(t_start, seg.start) > 0
+                for t_start, t_end in hidden
+            ):
+                segments[k] = seg.model_copy(update={"text": WITHHELD})
         for turn in case.turns:
             turn.segments = align(turn.start_s, turn.end_s, segments)
             by_speaker: dict[int, float] = {}

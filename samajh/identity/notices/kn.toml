@@ -1,0 +1,33 @@
+# The written notice sent before a Samajh call (P8 contract section 6), Kannada. NOT HUMAN-REVIEWED:
+# written by the build agent, with no fluent reader. MOCKED: the demo shows it as a card; no
+# message is ever sent. Data, not code: samajh/identity/notice.py loads and checks it (the bot-line
+# bans, no loan or product word, no digit: the number series is the {series} slot, which the code
+# fills with 1600). Slots: {lender}, {series}. It names the lender and never the borrower, the loan
+# or a product.
+
+language = "kn"
+review = "not human-reviewed"
+
+[[parts]]
+name = "who"
+text = "{lender} ಕಡೆಯಿಂದ: ಮುಂದಿನ ಕೆಲವು ದಿನಗಳಲ್ಲಿ ನಿಮಗೆ ಒಂದು ಸಣ್ಣ ಅಭಿಪ್ರಾಯ ಕರೆ ಬರುತ್ತದೆ."
+
+[[parts]]
+name = "automated"
+text = "ಕರೆಯಲ್ಲಿ ಮಾತನಾಡುವುದು ಸ್ವಯಂಚಾಲಿತ ಧ್ವನಿ, ಮನುಷ್ಯ ಅಲ್ಲ."
+
+[[parts]]
+name = "not_sales"
+text = "ಇದು ಮಾರಾಟದ ಕರೆ ಅಲ್ಲ."
+
+[[parts]]
+name = "number"
+text = "ಕರೆ {series} ರಿಂದ ಆರಂಭವಾಗುವ ಸಂಖ್ಯೆಯಿಂದ ಬರುತ್ತದೆ."
+
+[[parts]]
+name = "never_ask"
+text = "ನಾವು ಒ-ಟಿ-ಪಿ, ಪಿನ್ ಅಥವಾ ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ಎಂದಿಗೂ ಕೇಳುವುದಿಲ್ಲ."
+
+[[parts]]
+name = "check"
+text = "ಅನುಮಾನವಿದ್ದರೆ, ಕರೆ ಕಟ್ ಮಾಡಿ, ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿರುವ {lender} ಗ್ರಾಹಕ ಸೇವಾ ಸಂಖ್ಯೆಗೆ ನೀವೇ ಕರೆ ಮಾಡಬಹುದು."

@@ -1,0 +1,523 @@
+{
+ "customer_id": "P5-C057",
+ "arm": "open",
+ "condition": "terse",
+ "level": 0.0,
+ "language": "hi-en",
+ "kind": "call_back_later",
+ "gold_class": "procedural",
+ "record_id": "p5-c057",
+ "writer_model": "deepseek/deepseek-v4.1-flash",
+ "second_reading": null,
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "Hello, क्या आप Tanvi जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "हाँ, Tanvi बोल रही हूँ। कौन?",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "confirms_self",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह sales नहीं, feedback call है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन minute बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "can_we_talk",
+    "variant": "own",
+    "text": "अभी नहीं, मैं exam hall में जा रही हूँ, बाद में call करें।",
+    "line_key": "disclosure.go_ahead",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "go_ahead",
+     "intent": "call_later",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "call_back",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  },
+  {
+   "bot": [
+    {
+     "key": "callback.when",
+     "text": "ठीक है। आपको कब call करें?",
+     "step": "close",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "when_to_call",
+    "variant": "own",
+    "text": "पता नहीं, maybe कल।",
+    "line_key": "callback.when",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "callback_time",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "final_bot": [
+  {
+   "key": "end.call_back",
+   "text": "ठीक है, हम बाद में call करने की कोशिश करेंगे। Thank you, नमस्ते।",
+   "step": "close",
+   "asks": null
+  }
+ ],
+ "outcome": "call_back_later",
+ "speaker_confirmed": true,
+ "degraded_turns": 0,
+ "unresolved": [],
+ "tier": "incomplete",
+ "flags": [],
+ "gaps": [
+  {
+   "rule_id": "kind",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "premium",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "cover",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "term",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "cancel_window",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "recall",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "consent",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "loan_funded",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "bundling",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "belief_mismatch",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "recall_unmatched",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  }
+ ],
+ "referral_basis": null,
+ "summary": {
+  "loan_id": "TEST-P5-LN-057",
+  "call_id": "p5-P5-C057-open-terse-L0.0",
+  "tier": "incomplete",
+  "lines": [
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: what the product is.",
+    "record_value": "credit-life insurance from Kalpanik Jeevan Bima (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "kind"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: the premium.",
+    "record_value": "premium ₹2,050, deducted from the loan",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "premium"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how they agreed to it.",
+    "record_value": "consent on record: click or tick on a screen on 2026-11-01",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101G"
+    ],
+    "rule_ids": [
+     "consent"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how it was paid for.",
+    "record_value": "premium ₹2,050, deducted from the loan",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101W"
+    ],
+    "rule_ids": [
+     "loan_funded"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: whether it was required and the choice of provider.",
+    "record_value": "required for the loan: no; risk mitigant: yes; choice of provider offered: yes",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101V"
+    ],
+    "rule_ids": [
+     "bundling"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: getting the money back.",
+    "record_value": "features on record: a single payment",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "6(9A)(ii)"
+    ],
+    "rule_ids": [
+     "belief_mismatch"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": null,
+    "tier": "incomplete",
+    "title": "The call did not get to: the open question about what they took with the loan.",
+    "record_value": "products on record: credit-life insurance from Kalpanik Jeevan Bima (synthetic) (P1)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "recall_unmatched"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cover.",
+    "record_value": "cover ₹70,000",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cover"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the term.",
+    "record_value": "term 6 months",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "term"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cancellation window.",
+    "record_value": "cancellation window 15 days",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cancel_window"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the open question about what they took with the loan.",
+    "record_value": "credit-life insurance from Kalpanik Jeevan Bima (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "recall"
+    ],
+    "record_only": false,
+    "note": false
+   }
+  ]
+ },
+ "transcript": {
+  "call_id": "p5-P5-C057-open-terse-L0.0",
+  "loan_id": "TEST-P5-LN-057",
+  "language": "hi-en",
+  "turns": [
+   {
+    "id": 1,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "Hello, क्या आप Tanvi जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 2,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "हाँ, Tanvi बोल रही हूँ। कौन?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 3,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 4,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "यह sales नहीं, feedback call है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 5,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 6,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 7,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 8,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "क्या दो-तीन minute बात करें?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 9,
+    "speaker": "customer",
+    "step": "disclosure",
+    "text": "अभी नहीं, मैं exam hall में जा रही हूँ, बाद में call करें।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 10,
+    "speaker": "bot",
+    "step": "close",
+    "text": "ठीक है। आपको कब call करें?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 11,
+    "speaker": "customer",
+    "step": "close",
+    "text": "पता नहीं, maybe कल।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 12,
+    "speaker": "bot",
+    "step": "close",
+    "text": "ठीक है, हम बाद में call करने की कोशिश करेंगे। Thank you, नमस्ते।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   }
+  ]
+ },
+ "finished_utc": "2026-11-13T06:58:19+00:00"
+}

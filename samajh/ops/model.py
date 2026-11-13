@@ -120,6 +120,16 @@ FROM_DIALOGUE: dict[str, AttemptOutcome] = {
 UNCONFIRMED_REQUESTS = frozenset({"do_not_call", "human_requested", "call_back_later", "written_requested"})
 
 
+def kept_when_void(dialogue_outcome: str | None, speaker_confirmed: bool | None) -> bool:
+    """A session the classifier failed on is logged, not counted, when it ended in a request that
+    would be lost if it were dropped: any of `UNCONFIRMED_REQUESTS`, or a `declined` from a speaker
+    confirmed as the borrower (a borrower who declined would otherwise be called again). An
+    unconfirmed `declined` is not the borrower's and is dropped like any other void session."""
+    return dialogue_outcome in UNCONFIRMED_REQUESTS or (
+        dialogue_outcome == "declined" and speaker_confirmed is True
+    )
+
+
 def attempt_outcome_for(dialogue_outcome: str, speaker_confirmed: bool | None) -> AttemptOutcome:
     """The one mapping from a session's (dialogue outcome, `speaker_confirmed`) to its attempt
     outcome. `speaker_confirmed` None (the case file does not say) and True give `FROM_DIALOGUE`;
@@ -267,9 +277,23 @@ class Attempt(Frozen):
     # case file was rebuilt (samajh.ops.sessions). Both lines stay in attempts.jsonl; readers take
     # the last line per attempt id (`OpsStore.attempts`).
     supersedes: Literal[AttemptOutcome.completed_not_analysed] | None = None
+    # Set on a phone session the dialogue's classifier failed on (its case file's `degraded_turns`)
+    # that ended in a request `kept_when_void` keeps: why it is not counted, in words. The request is
+    # logged so the loan's chain and the phone server see it (a confirmed `do_not_call` ends the
+    # chain), but the attempt is in no tier, counted call or analysed-call count; the reach funnel
+    # counts it as an attempt, with the exit its outcome maps to (samajh.ops.sessions). Added after the first stores were written: a dump leaves it out while None.
+    not_counted: str | None = None
+
+    added_later: ClassVar[frozenset[str]] = frozenset({"not_counted"})
 
     @model_validator(mode="after")
     def _coherent(self) -> "Attempt":
+        if self.not_counted is not None and not (
+            isinstance(self.source, PhoneSession)
+            and kept_when_void(self.dialogue_outcome, self.right_party_confirmed)
+            and self.call_id is None
+        ):
+            raise ValueError("only a phone session's request with no analysed call is logged not counted")
         expected = CONFIRMED_BY_OUTCOME.get(self.outcome)
         if expected is not None and self.right_party_confirmed is not expected:
             raise ValueError(f"outcome {self.outcome} contradicts right_party_confirmed")

@@ -1,0 +1,885 @@
+{
+ "customer_id": "P5-C006",
+ "arm": "open",
+ "condition": "disposition",
+ "level": 0.0,
+ "language": "hi-en",
+ "kind": "misled",
+ "gold_class": "problem",
+ "record_id": "p5-c006",
+ "writer_model": "google/gemini-3.7-flash",
+ "second_reading": "prisma-v2.5 transcribe within 2.5 s on turns that may carry a figure",
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "Hello, क्या आप Arjun जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "हाँ जी, मैं Arjun बोल रहा हूँ. बताइए!",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ जी, मैं अर्जुन बोल रहा हूँ, बताइए।",
+     "expecting": "identity",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "confirms_self",
+     "amount_inr": null,
+     "approx": null,
+     "n": 58
+    }
+   ],
+   "degraded": false,
+   "seq": 1,
+   "reply_to": 0,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ जी, मैं अर्जुन बोल रहा हूँ, बताइए।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ जी, मैं अर्जुन बोल रहा हूँ, बताइए।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.72
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह sales नहीं, feedback call है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन minute बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "can_we_talk",
+    "variant": "own",
+    "text": "हाँ बिल्कुल, बोलिए, do-teen minute बात कर सकते हैं.",
+    "line_key": "disclosure.go_ahead",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+     "expecting": "go_ahead",
+     "intent": "maybe_decline",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "call_back",
+     "amount_inr": null,
+     "approx": null,
+     "n": 59
+    }
+   ],
+   "degraded": false,
+   "seq": 3,
+   "reply_to": 2,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.68
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "stop_check.decline",
+     "text": "क्या मैं आगे बढ़ूँ?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "carry_on",
+    "variant": "own",
+    "text": "हाँ हाँ, बिल्कुल continue करिए, कोई issue नहीं.",
+    "line_key": "stop_check.decline",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+     "expecting": "stop_check",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "yes",
+     "amount_inr": null,
+     "approx": null,
+     "n": 60
+    }
+   ],
+   "degraded": false,
+   "seq": 5,
+   "reply_to": 4,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.04
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.reask",
+     "text": "यह नमूना फ़ाइनेंस की feedback call है, sales call नहीं। क्या अभी दो-तीन minute बात करें? बस हाँ या ना कह दीजिए।",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "can_we_talk",
+    "variant": "own",
+    "text": "हाँ बिल्कुल, बोलिए, do-teen minute बात कर सकते हैं.",
+    "line_key": "disclosure.reask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+     "expecting": "go_ahead",
+     "intent": "maybe_decline",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "call_back",
+     "amount_inr": null,
+     "approx": null,
+     "n": 61
+    }
+   ],
+   "degraded": false,
+   "seq": 7,
+   "reply_to": 6,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.68
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "stop_check.decline",
+     "text": "क्या मैं आगे बढ़ूँ?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "carry_on",
+    "variant": "own",
+    "text": "हाँ हाँ, बिल्कुल continue करिए, कोई issue नहीं.",
+    "line_key": "stop_check.decline",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+     "expecting": "stop_check",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "yes",
+     "amount_inr": null,
+     "approx": null,
+     "n": 62
+    }
+   ],
+   "degraded": false,
+   "seq": 9,
+   "reply_to": 8,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.04
+   }
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "final_bot": [
+  {
+   "key": "end.neutral",
+   "text": "कोई बात नहीं। Disturb करने के लिए sorry। नमस्ते।",
+   "step": "close",
+   "asks": null
+  }
+ ],
+ "outcome": "no_go_ahead",
+ "speaker_confirmed": true,
+ "degraded_turns": 0,
+ "unresolved": [],
+ "tier": "incomplete",
+ "flags": [],
+ "gaps": [
+  {
+   "rule_id": "kind",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "premium",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "cover",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "term",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "cancel_window",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "recall",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "consent",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "loan_funded",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "bundling",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "belief_mismatch",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "recall_unmatched",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  }
+ ],
+ "referral_basis": null,
+ "summary": {
+  "loan_id": "TEST-P5-LN-006",
+  "call_id": "20261113T043123-6a1d299d233f",
+  "tier": "incomplete",
+  "lines": [
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: what the product is.",
+    "record_value": "credit-life insurance from Namoona Life (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "kind"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: the premium.",
+    "record_value": "premium ₹32,400, deducted from the loan",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "premium"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how they agreed to it.",
+    "record_value": "consent on record: OTP on 2026-10-19",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101G"
+    ],
+    "rule_ids": [
+     "consent"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how it was paid for.",
+    "record_value": "premium ₹32,400, deducted from the loan",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101W"
+    ],
+    "rule_ids": [
+     "loan_funded"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: whether it was required and the choice of provider.",
+    "record_value": "required for the loan: no; risk mitigant: yes; choice of provider offered: yes",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101V"
+    ],
+    "rule_ids": [
+     "bundling"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: getting the money back.",
+    "record_value": "features on record: a single payment",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "6(9A)(ii)"
+    ],
+    "rule_ids": [
+     "belief_mismatch"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": null,
+    "tier": "incomplete",
+    "title": "The call did not get to: the open question about what they took with the loan.",
+    "record_value": "products on record: credit-life insurance from Namoona Life (synthetic) (P1)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "recall_unmatched"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cover.",
+    "record_value": "cover ₹5,00,000",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cover"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the term.",
+    "record_value": "term 36 months",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "term"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cancellation window.",
+    "record_value": "cancellation window 30 days",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cancel_window"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the open question about what they took with the loan.",
+    "record_value": "credit-life insurance from Namoona Life (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "recall"
+    ],
+    "record_only": false,
+    "note": false
+   }
+  ]
+ },
+ "transcript": {
+  "call_id": "20261113T043123-6a1d299d233f",
+  "loan_id": "TEST-P5-LN-006",
+  "language": "hi-en",
+  "turns": [
+   {
+    "id": 1,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "Hello, क्या आप Arjun जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": 0.0,
+    "end_s": 2.24
+   },
+   {
+    "id": 2,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "हाँ जी, मैं अर्जुन बोल रहा हूँ, बताइए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 2.74,
+    "end_s": 5.46
+   },
+   {
+    "id": 3,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 5.96,
+    "end_s": 11.0
+   },
+   {
+    "id": 4,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "यह sales नहीं, feedback call है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 11.15,
+    "end_s": 13.39
+   },
+   {
+    "id": 5,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 13.54,
+    "end_s": 18.18
+   },
+   {
+    "id": 6,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 18.33,
+    "end_s": 23.37
+   },
+   {
+    "id": 7,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 23.52,
+    "end_s": 28.0
+   },
+   {
+    "id": 8,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "क्या दो-तीन minute बात करें?",
+    "asks": null,
+    "product_id": null,
+    "start_s": 28.15,
+    "end_s": 30.15
+   },
+   {
+    "id": 9,
+    "speaker": "customer",
+    "step": "disclosure",
+    "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 30.65,
+    "end_s": 34.33
+   },
+   {
+    "id": 10,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "क्या मैं आगे बढ़ूँ?",
+    "asks": null,
+    "product_id": null,
+    "start_s": 34.83,
+    "end_s": 36.83
+   },
+   {
+    "id": 11,
+    "speaker": "customer",
+    "step": "disclosure",
+    "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+    "asks": null,
+    "product_id": null,
+    "start_s": 37.33,
+    "end_s": 40.37
+   },
+   {
+    "id": 12,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "यह नमूना फ़ाइनेंस की feedback call है, sales call नहीं। क्या अभी दो-तीन minute बात करें? बस हाँ या ना कह दीजिए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 40.87,
+    "end_s": 47.35
+   },
+   {
+    "id": 13,
+    "speaker": "customer",
+    "step": "disclosure",
+    "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 47.85,
+    "end_s": 51.53
+   },
+   {
+    "id": 14,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "क्या मैं आगे बढ़ूँ?",
+    "asks": null,
+    "product_id": null,
+    "start_s": 52.03,
+    "end_s": 54.03
+   },
+   {
+    "id": 15,
+    "speaker": "customer",
+    "step": "disclosure",
+    "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+    "asks": null,
+    "product_id": null,
+    "start_s": 54.53,
+    "end_s": 57.57
+   },
+   {
+    "id": 16,
+    "speaker": "bot",
+    "step": "close",
+    "text": "कोई बात नहीं। Disturb करने के लिए sorry। नमस्ते।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 58.07,
+    "end_s": 61.43
+   }
+  ]
+ },
+ "finished_utc": "2026-11-13T04:31:24+00:00",
+ "path": "voice",
+ "session_id": "20261113T043123-6a1d299d233f",
+ "voice": "Harshad",
+ "tts": {
+  "model": "timbre-v3.0",
+  "language": "hi-en",
+  "sample_rate": 8000
+ },
+ "batch": "off: the launcher's null Batch client (0 segments, no request)",
+ "case_status": "ready",
+ "case_failed": [],
+ "case_steps": [
+  {
+   "name": "transcript",
+   "ok": true,
+   "error": null,
+   "seconds": 0.0
+  },
+  {
+   "name": "recording",
+   "ok": true,
+   "error": null,
+   "seconds": 0.003
+  },
+  {
+   "name": "batch",
+   "ok": true,
+   "error": null,
+   "seconds": 0.0
+  },
+  {
+   "name": "align",
+   "ok": true,
+   "error": null,
+   "seconds": 0.0
+  },
+  {
+   "name": "extract",
+   "ok": true,
+   "error": null,
+   "seconds": 0.005
+  },
+  {
+   "name": "summary",
+   "ok": true,
+   "error": null,
+   "seconds": 0.0
+  }
+ ],
+ "degraded_turn_ids": [],
+ "models": {
+  "stt_primary": {
+   "model": "prisma-v3.0",
+   "format": "transcribe"
+  },
+  "stt_second": {
+   "model": "prisma-v2.5",
+   "format": "transcribe",
+   "timeout_s": 2.5
+  },
+  "dialogue_reads_first": "prisma-v2.5 when it has text, else prisma-v3.0",
+  "tts": {
+   "model": "timbre-v3.0",
+   "voice": "Shivani"
+  },
+  "line_rate": 8000,
+  "batch": {
+   "model": "prisma-v3.0",
+   "language": [
+    "hi-IN",
+    "en-IN"
+   ],
+   "format": "transcribe",
+   "diarize": true,
+   "num_speakers": 2,
+   "denoise": false,
+   "keyterms": []
+  },
+  "extraction": {
+   "model": "openai/gpt-6-luna"
+  }
+ },
+ "recording_seconds": 61.43,
+ "ended_reason": "dialogue",
+ "ledger": {
+  "before": 325.597629,
+  "after": 325.597629,
+  "delta": 0.0
+ },
+ "resumed": 0
+}

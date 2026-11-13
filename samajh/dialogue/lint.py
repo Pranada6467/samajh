@@ -28,6 +28,22 @@ def _ban(name: str, *texts: str, denied_in: tuple[str, ...] = ()) -> Ban:
 
 _OTP = ("otp", "o t p", "ओटीपी", "ओ टी पी", "ஓடிபி", "ஓ டி பி", "ಒಟಿಪಿ", "ಒ ಟಿ ಪಿ")
 
+_CREDENTIAL_PARAPHRASES = (
+    # a code from the phone or a message
+    "कोड", "code", "codes", "कोड नंबर", "code number", "verification", "वेरिफिकेशन", "sms", "एसएमएस", "मैसेज", "message",
+    "msg", "मेसेज", "संदेश", "one time", "वन टाइम", "फोन पर आया", "फोन पे आया", "फोन में आया", "mobile पर आया", "मोबाइल पर आया",
+    "phone pe aaya", "phone par aaya", "आया हुआ नंबर", "छह अंक", "चार अंक", "six digit*", "4 digit*", "6 digit*",
+    # mother's maiden name
+    "maiden", "शादी से पहले का नाम", "शादी के पहले का नाम", "shaadi se pehle ka naam", "shadi se pehle ka naam",
+    "मायके का नाम", "mayke ka naam", "माता का नाम", "माताजी का नाम", "मम्मी का नाम", "maa ka naam", "mummy ka naam",
+    "mata ka naam", "mothers name", "mother name", "mother s name",
+    # CVV, PIN, card and account numbers
+    "सीवीवी", "सी वी वी", "c v v", "cvc", "mpin", "m pin", "एमपिन", "एम पिन", "atm pin", "एटीएम", "atm", "pin code",
+    "पिन कोड", "पिन नंबर", "pin number", "net banking", "नेट बैंकिंग", "netbanking", "user id", "यूजर आईडी", "login",
+    "लॉगिन", "upi", "यूपीआई", "khata number", "khata sankhya", "account no", "a c number", "card ke peeche",
+    "कार्ड के पीछे", "expiry", "एक्सपायरी", "ifsc",
+)
+
 BANS: tuple[Ban, ...] = (
     _ban(
         "a finding (the bot never says mis-selling, fraud or violation)",
@@ -80,6 +96,9 @@ BANS: tuple[Ban, ...] = (
         "four digits", "डिजिट", "अंक", "maiden name", "मां का नाम", "பின்", "கடவுச்சொல்",
         "கணக்கு எண்", "பிறந்த தேதி", "பிறந்த நாள்", "ಪಿನ್", "ಪಾಸ್ವರ್ಡ್", "ಖಾತೆ ಸಂಖ್ಯೆ*", "ಹುಟ್ಟಿದ ದಿನಾಂಕ*",
         "ಜನ್ಮ ದಿನಾಂಕ*",
+        # Iteration 3 fix round: paraphrases of a credential. A code sent to the phone (an OTP in other words), a
+        # mother's maiden name, a CVV, a PIN, a card or account number, in Devanagari, romanised and English.
+        *_CREDENTIAL_PARAPHRASES,
         denied_in=("disclosure.never_ask", "verify.before_loan", "verify.after_loan"),
     ),
     _ban(

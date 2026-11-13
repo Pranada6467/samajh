@@ -8,7 +8,7 @@ import time
 from types import SimpleNamespace
 
 import pytest
-from dialogue_kit import CUSTOMERS, LENDER, play, product, record
+from dialogue_kit import CUSTOMERS, LENDER, YEAR_POLICY, play, product, record
 
 from samajh.clients.errors import TransportError
 from samajh.dialogue import CallState, Expecting, Outcome, prefetch, start, step
@@ -151,7 +151,7 @@ def test_invariant_no_lender_before_a_strong_claim_or_the_year_and_no_loan_befor
     """Walk every three-reply opening on both paths, rules only."""
     rec = record(product())
     for replies in itertools.product(OPENING_REPLIES, repeat=3):
-        state, said = start(rec, HI, lender_name=LENDER)
+        state, said = start(rec, HI, lender_name=LENDER, identity=YEAR_POLICY)
         strong, year_passed = False, False
         for k, reply in enumerate(replies):
             position = state.position
@@ -171,7 +171,7 @@ def test_invariant_no_lender_before_a_strong_claim_or_the_year_and_no_loan_befor
 
 
 def test_a_state_saved_before_round_3_still_loads():
-    state, _ = start(record(), HI, lender_name=LENDER)
+    state, _ = start(record(), HI, lender_name=LENDER, identity=YEAR_POLICY)
     state, _ = step(state, "हाँ जी, बोल रहा हूँ")
     state, _ = step(state, "हाँ")
     saved = state.model_dump(mode="json")
@@ -375,7 +375,7 @@ def test_a_begun_call_that_fails_leaves_the_safe_default():
 
 
 def test_prefetch_never_raises():
-    state, _ = start(record(), HI, lender_name=LENDER)
+    state, _ = start(record(), HI, lender_name=LENDER, identity=YEAR_POLICY)
 
     class Broken:
         def begin(self, *a, **k):

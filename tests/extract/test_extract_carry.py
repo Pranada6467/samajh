@@ -234,7 +234,7 @@ def test_two_premium_answers_conflict_only_beyond_their_tolerance(again, conflic
 
 # --- the carry follows the recall reply's change check -----------------------------------------
 # A premium is carried only when the recall reply's change check said `none`, or the reply had one
-# clause and so got no check. Premium 41,300 never asked; the bot reads it back and hears "हाँ जी।".
+# clause and no marker word, so needed no check. Premium 41,300 never asked; the bot reads it back and hears "हाँ जी।".
 
 READ_41 = "इकतालीस हज़ार तीन सौ"
 

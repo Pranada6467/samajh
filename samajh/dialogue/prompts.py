@@ -43,6 +43,8 @@ def _question(key: str, question: Question) -> dict[str, LineSpec]:
 LINES: dict[str, LineSpec] = {
     "right_party.ask": LineSpec(CallStep.right_party_check, slots=frozenset({"first_name"})),
     "right_party.reask": LineSpec(CallStep.right_party_check, slots=frozenset({"first_name"})),
+    # Iteration 3: the who-check after a sign of another speaker, a choice question; no lender, no loan.
+    "right_party.who_check": LineSpec(CallStep.right_party_check, slots=frozenset({"first_name"})),
     "purpose.before_confirm": LineSpec(CallStep.right_party_check),  # no lender, no loan
     "disclosure.who": LineSpec(CallStep.disclosure, slots=frozenset({"lender"})),
     "disclosure.not_sales": LineSpec(CallStep.disclosure),
@@ -65,6 +67,8 @@ LINES: dict[str, LineSpec] = {
     "teach_back.intro": LineSpec(CallStep.teach_back),
     "teach_back.intro_nth": LineSpec(CallStep.teach_back, slots=_ORDINAL, optional=_ORDINAL),
     **_question("kind", Question.kind),
+    "kind.ask_named": LineSpec(CallStep.teach_back, Question.kind),  # gain 8: the customer named something
+    "ack.neutral": LineSpec(CallStep.teach_back),  # gain 8: "जी।" by position only (Hindi and Hinglish)
     **_question("premium", Question.premium),
     "premium.say_again": LineSpec(CallStep.teach_back, Question.premium),
     **_question("payment_source", Question.payment_source),

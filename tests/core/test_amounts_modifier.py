@@ -58,13 +58,13 @@ def test_a_count_or_a_determiner_after_an_amount_leaves_the_amount(text, rupees)
 
 
 @pytest.mark.parametrize(
-    "text", ["ஒரே தடவைதான் கட்டணும்", "ஒரே முறை", "ஒரு தடவை", "ek baar", "ek time", "ಒಂದೇ ಸಲ", "one year"]
+    "text", ["ஒரே தடவைதான் கட்டணும்", "ஒரே முறை", "ஒரு தடவை", "ಒಂದೇ ಸಲ", "one year"]
 )
 def test_once_by_itself_is_no_amount(text):
     assert parse_amount(text) == NoAmount()
 
 
-@pytest.mark.parametrize("text", ["एक बार", "एक ही बार", "one time", "ಒಂದು ಸಲ", "one policy", "दो बार"])
+@pytest.mark.parametrize("text", ["एक बार", "एक ही बार", "one time", "ಒಂದು ಸಲ", "one policy", "दो बार", "ek baar", "ek time", "do baar"])
 def test_a_lone_count_in_a_script_we_read_stays_a_bare_number_and_never_an_amount(text):
     # The contract for a number under 100 by itself ("एक FD", "दो बार बोला, दो बार") is unchanged.
     result = parse_amount(text)

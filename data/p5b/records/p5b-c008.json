@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Komal, born 1998, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c008",
+  "label": "Synthetic P5b record. Komal: a personal loan and one add-on",
+  "lender_name": "नमूना भारत बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1998-08-21",
+      "language": "hi-en",
+      "name": "Komal Abhyasi"
+    },
+    "disbursed_inr": 223520,
+    "disbursed_on": "2026-10-17",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5B-LN-008",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-17",
+          "method": "otp"
+        },
+        "cover_inr": 230000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 6480,
+        "provider": "Abhyasi Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 18
+      }
+    ],
+    "sanctioned_inr": 230000,
+    "tenure_months": 24
+  }
+}

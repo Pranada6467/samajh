@@ -1,0 +1,94 @@
+[
+ {
+  "started_utc": "2026-11-13T06:59:03+00:00",
+  "git_commit": "3b64086d07604f2a22dc7e080ea4167210830750",
+  "git_status_samajh_prompts": "",
+  "label": "fresh check on P5b (first run on this set)",
+  "data_dir": "data/p5b",
+  "harness_sha256": {
+   "bank.py": "55f33c5a50c9eb00907c403095ed4f8608e84e7df7d70d62c5bcae140ccd16b9",
+   "player.py": "3aac521140bcfc8f2277d8bacbfa5de2c3c4d0e918e4893b5ec2bad7297e6646",
+   "run.py": "e71f674bf5429d514f4140f6e0064178ef2d40c1ebe88e3d96f57a65b57fe192",
+   "score.py": "825d34b5c24fbcb0d4cb3080ca1056badb3432d764d2295a99a4a413f67ad7de",
+   "serve.py": "338814345c8eb04ec81008610d0813af456c99c0ae9f69c6efc3ea4fb8d8ea58",
+   "text_run.py": "3ed01788c11159a65bb761da29be9cca6e166b9835bc4dc7fa692de3a1ae7b32",
+   "voice_run.py": "6ce1bf08fa2e02f1cb0580aed60546b630d55da353517915ae81ca6b5d587319",
+   "voices.py": "55546af2c9ef1ccdb63ffe812f6293bcc3e07c9de06e55c716c8806621a49d46",
+   "write_customers.py": "d5bd731585011496cae7daddb9c4a1e4cc7ebcad0f210257cbfe8d11e0ea2ce9"
+  },
+  "frozen_digests": {
+   "inputs": {
+    "customers.jsonl": "2a0e2fc21ccbe7dbf2999a0014107a0894f319b39f1665e088b6079662a2f79a",
+    "gold.jsonl": "1983b491e5ecad8e0d0c4fdfb5193ba459680dc2414dc361c7735dcfd9a06ca8",
+    "topics.json": "523df0dfc00cdf0692a105b2bce37dc00016abf9b35226931b94be5e4d649ed7",
+    "closed_script.json": "1874be1dd3034eae66bb9e81fa98272e864452f75083e20850a01bb3d870c8a2",
+    "records": "ec5d44b0e3d97f20d61c2caf34ded9072f657ba31c91ad781bfaafc93919465f"
+   },
+   "words": {
+    "replies.jsonl": "3a17acfb1b58be1cc194228052e0eea0a23836be15650460a390ab360a9a0a75",
+    "closed_statements.jsonl": "2eb5458ca7e218f2953443750d865298eccc962d85a606cf11909be8de90188f",
+    "writer_requests.jsonl": "59974372e78f2b9bfc509a4923188f92ff3f4fbe7bd423bf3284c2c04d658297"
+   },
+   "other": {
+    "build_customers.py": "b7c357d06feb9c917b193d4493af487bd598bcadbfedf82cbbb74fe54d7a03a5",
+    "write_customers.py": "e9aaddeee5883656c51910da543a1bba0d09f97371a6bf221550383c266adbcf"
+   }
+  },
+  "interpreter": {
+   "class": "LlmFallbackInterpreter",
+   "model": "mistralai/mistral-small-3.2-24b-instruct",
+   "timeout_s": null
+  },
+  "extraction_model": "openai/gpt-6-luna",
+  "second_reading": null,
+  "second_reading_note": "text path: no second speech model; step(..., second_reading=None)",
+  "arms": [
+   "open",
+   "closed",
+   "terse"
+  ],
+  "levels": [
+   0.0,
+   0.25,
+   0.5,
+   0.75,
+   1.0
+  ],
+  "customers": [
+   "P5B-C001",
+   "P5B-C002",
+   "P5B-C003",
+   "P5B-C004",
+   "P5B-C005",
+   "P5B-C006",
+   "P5B-C007",
+   "P5B-C008",
+   "P5B-C009",
+   "P5B-C010",
+   "P5B-C011",
+   "P5B-C012",
+   "P5B-C013",
+   "P5B-C014",
+   "P5B-C015",
+   "P5B-C016",
+   "P5B-C017",
+   "P5B-C018",
+   "P5B-C019",
+   "P5B-C020",
+   "P5B-C021",
+   "P5B-C022",
+   "P5B-C023",
+   "P5B-C024"
+  ],
+  "planned_calls": 239,
+  "usd_budget": 1.5,
+  "client_usd_cap": 3.1,
+  "finished_utc": "2026-11-13T07:05:24+00:00",
+  "usd_spent_this_process": 0.068694,
+  "budget_reached": false,
+  "done": 239,
+  "skipped": 0,
+  "no_result": 0,
+  "not_started": 0
+ }
+]

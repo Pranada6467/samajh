@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Poonam, born 1995, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c004",
+  "label": "Synthetic P5b record. Poonam: a personal loan and one add-on",
+  "lender_name": "नमूना क्रेडिट",
+  "record": {
+    "borrower": {
+      "dob": "1995-02-19",
+      "language": "hi-en",
+      "name": "Poonam Nakli"
+    },
+    "disbursed_inr": 210000,
+    "disbursed_on": "2026-10-30",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-004",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-30",
+          "method": "digital_click"
+        },
+        "cover_inr": 210000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 11970,
+        "provider": "Nakli Life Cover (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 210000,
+    "tenure_months": 18
+  }
+}

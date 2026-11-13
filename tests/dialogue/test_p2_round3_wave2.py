@@ -114,7 +114,7 @@ def test_now_at_the_call_back_question_resumes_the_question(now):
     call = keys_after([*AT_KIND, "बाद में कॉल करना"])
     assert isinstance(call.state.position, AtCallbackTime)
     _, said = step(call.state, now)
-    assert not hasattr(said, "outcome") and said.lines[-1].key in ("kind.ask", "kind.reask")
+    assert not hasattr(said, "outcome") and said.lines[-1].key in ("kind.ask", "kind.ask_named", "kind.reask")
 
 
 @pytest.mark.parametrize("later", ["कल शाम को", "अभी नहीं, कल"])
@@ -193,13 +193,13 @@ DOWN = {"rules": lambda: RULES, "raises": lambda: LlmFallbackInterpreter(Labels(
 def test_a_possible_takeover_asks_who_is_speaking(arm, reply):
     reader = DOWN[arm]()
     call = keys_after([*AT_KIND, reply], interpreter=reader)
-    assert call.keys[-1] == "right_party.reask" and call.end is None
+    assert call.keys[-1] == "right_party.who_check" and call.end is None
     last = call.utterances[-1].text
     assert LENDER not in last and "लोन" not in last
     if arm == "raises":
         assert call.state.degraded_turns and call.state.degraded_turns[-1] == call.state.turns[-2].id
     resumed = keys_after([*AT_KIND, reply, "हाँ, मैं ही बोल रहा हूँ"], interpreter=reader)
-    assert resumed.end is None and resumed.keys[-1] in ("kind.ask", "kind.reask")
+    assert resumed.end is None and resumed.keys[-1] in ("kind.ask", "kind.ask_named", "kind.reask")
     ended = keys_after([*AT_KIND, reply, "नहीं"], interpreter=reader)
     assert ended.end.outcome is Outcome.wrong_party and ended.keys[-1] == "end.third_party"
 
@@ -209,19 +209,19 @@ def test_a_working_classifier_decides_a_takeover():
     assert keys_after([*AT_KIND, "main unki wife hoon"], interpreter=ends).end.outcome is Outcome.wrong_party
     # Wave 3 (X8): a classifier that answers anything but an end label cannot clear the flag.
     goes_on = LlmFallbackInterpreter(Labels(sensible))
-    assert keys_after([*AT_KIND, "main unki wife hoon"], interpreter=goes_on).keys[-1] == "right_party.reask"
+    assert keys_after([*AT_KIND, "main unki wife hoon"], interpreter=goes_on).keys[-1] == "right_party.who_check"
 
 
 @pytest.mark.parametrize("reply", ACCOUNTS)
 def test_an_account_naming_a_relative_or_staff_is_not_a_takeover(reply):
-    assert keys_after([*AT_KIND, reply]).keys[-1] != "right_party.reask"
+    assert keys_after([*AT_KIND, reply]).keys[-1] != "right_party.who_check"
 
 
 def test_a_takeover_in_one_of_two_readings_is_acted_on():
     state = keys_after(figure_positions()["premium"]).state
     for pair in (("बावन हज़ार", "main unki wife hoon"), ("main unki wife hoon", "बावन हज़ार")):
         _, said = step(state, *pair[:1], second_reading=pair[1])
-        assert said.lines[-1].key == "right_party.reask"
+        assert said.lines[-1].key == "right_party.who_check"
 
 
 def test_takeover_checks_are_capped():
@@ -245,7 +245,7 @@ def test_dont_think_so_at_the_follow_up_goes_to_consent():
 
 
 def test_a_reply_that_names_something_still_starts_the_products():
-    assert keys_after([*AT_RECALL, "एक एफडी ली थी"]).keys[-1] == "kind.ask"
+    assert keys_after([*AT_RECALL, "एक एफडी ली थी"]).keys[-1] == "kind.ask_named"
 
 
 # --- W9: the two lines and the second product -------------------------------------------------

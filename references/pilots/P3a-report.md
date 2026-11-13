@@ -2,6 +2,107 @@
 
 Builder, 2026-11-10. Took over from three cut-off workers; their committed work (types, tiers, checks, summary, extractor) was kept. Not yet independently verified. Synthetic text only, no speech. Tamil and Kannada not human-reviewed.
 
+## Iteration 3, chain round 2: answers the customer clearly gave (after the first P5 run), 2026-11-13
+
+**Why.** The first unscripted-customer run (P5, open arm, text, level 0) left 5 of 6 well-informed customers `incomplete`. The P5 worker traced six causes. They were fixed by principle: an answer the customer clearly gave is never thrown away, and `incomplete` is only for replies that cannot be used. Nobody in this lane opened a P5 file. Every example was written fresh: by the builder (Opus medium), and again by an independent verifier (Opus high) that wrote none of the code. The verifier ran one round and one recheck. A two-line fix after the recheck was not re-verified. All inputs are typed text, so nothing here is about speech or real callers. Verifier's report and addendum, unchanged: `references/reviews/iter3/verify-chain-r2.md`.
+
+**What changed** (contract: `P3a-contract.md`, "P5 fix round" and "Round 2")
+- **(A) Consent answer that gives only the method** (signature, OTP, app click, a yes on a call). The method is now a usable answer. Code, not the model, takes the "what" half from the customer's own naming of the product elsewhere in the same call. If the product was named nowhere, a matching method gives the new flag `consent_product_not_named`, tier `understanding_gap`. A different method still refers. None of this applies after a correction, a withdrawal, a take-back tail, a failed call or an ungrounded quote.
+- **(F) "I said yes on the phone."** It is classed as `recorded_call` unless the customer says the call was not recorded. That case is `verbal`, which differs from the record and refers. The comparison with the record stays deterministic. No new consent method was added, because one would reshuffle the ops lane's seeded loan book.
+- **(B) Provider choice.** "Nobody told me about another company" counts as a stated "no". On that question, a "no" followed only by a don't-know tail is kept even when the change check says `withdrawn`; this errs toward referral. "I don't know if it was required" is unchanged.
+- **(C) Premium "free / zero / I paid nothing".** It is a stated 0 (`PremiumReply.free`, which code maps to 0). A new flag, `premium_said_zero`, refers whenever the record shows a premium. The 0 is not used when the same reply holds another figure, or names the loan, a bank, a deduction or another payer; those replies stay undecided.
+- **(D) "The bank paid, I paid nothing."** This is the new `PaymentSource.not_charged`. The new flag `payment_says_not_charged` refers.
+- **(E) Money back.**
+  - Denials were never misread on either the builder's inputs or the verifier's.
+  - The verifier found an older gap: an untimed belief that the money comes back recorded no claim, so the call ended `clear`.
+  - The fix is a new `FeatureClaim.money_back`. No record holds it. Code treats it as true for a product with a deposit, any-time refund or after-period withdrawal feature (one table, `MONEY_BACK_VIA`).
+  - Only the money-back question reads it. The screening schema is unchanged.
+- **Exactness doubt.** "पक्का नहीं पता", "exact yaad nahi" and similar now set the hedge marker on a figure. The marker does not change the tier. Cover is left as it was, because there `hedged` is a tier input.
+- **Pins.** The prompt pins for answer requests and wire schemas were reset on purpose. The change-check and screening requests and schemas are unchanged byte for byte. No record value for a field under test reaches the model. The verifier tested this with one call under two records that differ in every field: all 29 requests were byte-identical.
+
+**Verified (verifier's counts, new typed calls)**
+- Round 1, 123 calls: 42 of 42 informed replies across the six causes ended `clear`.
+- Round 1, consent: 10 of 10 matching method-only consents were `clear`, and 9 of 9 with a different method referred.
+- Round 1, premium and payment: 10 of 10 "free / zero" premiums with no payer word referred. 7 of 7 "paid by nobody" replies referred, and 6 of 6 "the bank paid from my loan" replies were `clear`.
+- Round 1, mutations: 6 of 6 caught.
+- Recheck, 54 calls, money back: 10 of 10 untimed money-back beliefs on insurance referred, and 7 of 7 on a product that does give money back were `clear`. 7 of 7 denials, double negatives included, were `clear`.
+- Recheck, provider choice: 7 of 8 "nobody told me, don't know" replies referred and none ended `clear`.
+- Recheck, mutations: 3 of 3 caught.
+- Neither round found a call ending `clear` on a wrong or withdrawn belief that this round's code caused.
+
+**Built, not verified.** A trailing filler after the don't-know tail ("नहीं कहा था पता नहीं जी") caused the 1 of 8 provider-choice miss; the fix now drops it. The Devanagari spellings of "exact" were added to the doubt list. Builder tests only.
+
+**Frozen text-path set** (144 calls, final code, cache plus 46 paid re-reads of the changed prompts). 2 rows moved against the report before this round, both Tamil or Kannada (experimental): G01-ta consent method verbal → unclear, and G01-kn premium gap → 2,00,000. Both moves now match gold. Neither changed a tier or verdict. No Hindi or Hinglish row moved, and every headline and triage number is unchanged. The 7 rows that moved in this round's first run went back after the final re-reads; that is model reading-to-reading variation on the experimental languages. Reports: `eval/text_path/runs/frozen__openai-gpt-6-luna__before-p5fix.md`, `__p5fix-first.md`, `__p5fix-final.md`, `__p5fix-r2.md`.
+
+**Cost.** $0.00214 → $0.00220 per transcript with nothing cached. LLM spend for the round was about $0.13 (builder about $0.08, verifier $0.046), with no Gnani calls.
+
+**Tests.** `tests/core` + `tests/extract`: 2,738 passed. Whole suite: 2 failed, 8,489 passed, both in other lanes:
+- **Server lane:** `tests/server/test_readings_fields.py::test_the_prepared_demo_call_asks_again_and_reads_back_the_right_figure`. Its fake model keys the premium output on `SpanReply`; it needs `PremiumReply` with `"free": false`, a one-line change.
+- **P5 lane:** `tests/p5/test_p5_data_dir.py::test_run_refuses_on_the_given_directorys_frozen_file`. It passes when run alone, so it depends on test order.
+
+**Still open**
+- "Free" said next to the bank or the loan ("loan ke saath free mila tha") ends `incomplete`, not `refer`: 2 of 12 misled premium replies in round 1.
+- An untimed money-back belief said in answer to any other question is not read.
+- "मुझे नहीं पता था कि बाहर से भी ले सकते हैं" is read as don't know, so it ends `incomplete`.
+- A figure with "nahi" in its own clause ("41300 sahi se nahi pata") is refused by the parser.
+- One earlier probe, "41,300, actually, pakka nahi pata.", ends `clear` under one question wording. The verifier judged it a hedge, not a take-back; it now carries the hedge marker.
+- Outside this lane:
+  - `eval/p5/write_customers.py` builds its allowed set from `ConsentMethod` (unchanged, since no value was added).
+  - Any P5 or ops scorer that lists `PaymentSource` or `FeatureClaim` values should learn `not_charged` and `money_back`.
+  - The live dialogue may not read back a "free" premium. The rules refer without a read-back.
+
+## Iteration 3 (chain), 2026-11-13
+
+Two Opus-medium builders, one Opus-high verifier that wrote none of the code: one round on new inputs, one recheck of the fixes. A last small fix round after the recheck was not re-verified. All inputs are typed text. Nothing here is about speech or real callers. Verifier: `references/reviews/iter3/verify-chain.md`, report and addendum, unchanged.
+
+**Which text the case file reads.** It reads the dialogue's own turn texts (`casefile.py` `do_transcript` → `call_transcript`). Prisma Batch is used only to align turns to the recording. On ordinary turns the text is v3.0 `transcribe`. On figure turns (premium, cover, read-backs) it is the v2.5 `transcribe` reading whenever v2.5 heard something (`samajh_dialogue.readings`). A carried premium comes from the open-recall turn, so it is v3.0 text.
+
+**How often that text is one clause**, counted with the extractor's clause splitter (`eval/text_path/punctuation_rate.py`, cache only):
+- v2.5 `transcribe`, public real-voice clips over six words: one clause in 246 of 246.
+- v2.5 `transcribe`, Timbre clips over six words: one clause in 376 of 395.
+- v3.0 `transcribe`, public real-voice clips over six words: two or more clauses in 104 of 248.
+- v3.0 `transcribe`, Timbre clips over six words: two or more clauses in 26 of 392.
+
+So the "640 of 640" in `prisma-punctuation-note.md` counts any punctuation mark, end-of-sentence full stops included. It does not count clause breaks, so that note overstates how often the change check could run. Figure-turn text is almost always one clause.
+
+**What changed**
+- *Change check* (`samajh/extract`). The check now also runs on a one-clause reply that holds a take-back word, not only on replies of two or more clauses. On a one-clause reply, a `withdrawn`, `corrected` or failed check makes the answer unusable (`incomplete`). A code rule needs no model: a one-clause reply ending in a "who knows / forgot / or something else" tail is unusable whatever the check said. It is exempt when an exactness word comes just before the tail ("ठीक से याद नहीं"). It is also exempt on non-amount questions when the reply names another detail ("बीमा है पता नहीं कितने का"). The carried premium follows the same rules. No prompt text changed. New sha256 tests pin the prompts and wire schemas, so an edit fails a test. The `ChangeReply` docstring still says "two or more clauses"; it is stale but pinned, and a code comment says so.
+- *Amounts* (`samajh/amounts`, `samajh/rules/normalise.py`):
+  - "sorry/सॉरी" refuses a figure only when a number follows it.
+  - A bound ("X तक", "के अंदर", "up to X") is read as X and marked `bound`. The rules accept a bound figure for cover and the bot's read-back lines. They refuse it for the premium and never carry it.
+  - A small count before a noun ("do kisht mein 41300", "do policy") is refused. "ek baar X" reads X, as in Devanagari.
+  - Romanised Hindi number words 0–99 and the units are read ("bavan hazaar" → 52,000). A gate keeps everyday words (do, saath, das, tera, bara) from becoming numbers.
+
+**Verified (verifier's counts)**
+- Round 1: 23 of 23 withdrawals with a marker word were not `clear`. 19 of 19 informed replies where नहीं/nahi/no is the answer were `clear`. In 10 corrections away from the record, the taken-back value was never stated.
+- Recheck:
+  - A confirmed cover read-back on the bot's real line: 3 of 3 `clear`.
+  - Bounded premiums: 7 of 7 not `clear`.
+  - Romanised replies using saath/do/tera/bara/das as everyday words: the amount was read in 8 of 8.
+  - Punctuated "…, कौन जाने।" withdrawals: 5 of 5 not `clear`.
+  - Prompt pin: a one-character docstring edit failed 2 of 5 pin tests.
+
+**Built, not verified (the last round answered the recheck's four items)**
+- Before that round, 2 of 13 withdrawals ending in "या फिर कुछ और" were `clear`, and 9 of 13 informed one-clause replies were falsely made `incomplete`. The builder reran the verifier's own probes from the cache after the fix and reports 0 and 0. Those inputs were known to the builder, so this is not evidence.
+- Romanised small counts before a noun are now refused; builder tests only.
+
+**Frozen text-path set** (144 calls, cache only, final code). Every headline and triage number is identical to before this package. Hindi + Hinglish problem customers: 2 of 38 missed, 30 `refer`. Informed: 18 of 18 `clear`. All 144 rows are identical on tier, flags, gaps and fields. An earlier run in this package moved 3 Hindi cover fields ("तीन लाख तक का कवर है" refused). That regression showed up there and in the dialogue tests, and the bound/cover split fixed it. The fix was made on what the words mean, not tuned on the set, but the set did reveal the regression. Reports: `eval/text_path/runs/frozen__openai-gpt-6-luna__before-iter3.md`, `__iter3-first.md`, `__iter3-final.md`.
+
+**Cost per call.** The change check ran 1,107 times before and 1,164 after (+57, every one said `none`). Cost with nothing cached went from $0.00210 to **$0.00214** per transcript ($0.30308 → $0.30774 for 144). LLM spend for the whole package was about $0.06, with no Gnani calls.
+
+**Tests.** `uv run pytest tests/core tests/extract -q`: 2,631 passed. Whole suite: 4 failed, 7,281 passed, all in other lanes:
+- 3 dialogue tests use "bavan hazaar" as an example the parser refuses; it is now read on purpose.
+- 1 P5 test: new dialogue line keys are not mapped.
+
+**Not done / still open**
+- One-clause corrections, even toward the record, are now `incomplete`: 5 of 5 on the verifier's probe. This is the accepted cost.
+- A withdrawal phrased with a word on no list still rests on one model reading.
+- The tail rule covers one-clause replies only.
+- "X और कुछ नहीं" after a recall figure is refused, as it was at HEAD.
+- "do 50,000 ki FD" reads 50,000.
+- No speech, no real callers, no Tamil or Kannada.
+- The held-out amounts result stays scored at commit 59c12d9. It was not rescored.
+
 ## P3c: what a referral rests on (2026-11-10)
 
 Status: built (Opus medium), then one narrow check by an Opus-high subagent that wrote none of it; its six defects were fixed in one pass and the fixes were confirmed by the coordinating worker only (tests, frozen comparison, demo), not by a second independent check. Synthetic text only, no speech.

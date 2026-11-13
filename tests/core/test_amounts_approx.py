@@ -62,7 +62,6 @@ STAYS_AMBIGUOUS = [
     "पचास हज़ार बावन हज़ार",
     "पचास से बावन हज़ार, या साठ हज़ार",
     "पचास से बावन हज़ार, मतलब 51,000",
-    "pachas se bavan hazaar",  # romanised number words are out of scope
     "सॉरी, बावन हज़ार",  # a correction word is not a hedge
     "करीब सारे तीन लाख",
     "करीब पचास",

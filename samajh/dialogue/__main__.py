@@ -1,6 +1,7 @@
 """Command line for the call core.
 
-    uv run python -m samajh.dialogue play --record tests/dialogue/fixtures/record_gold_loan.json --lang hi
+    uv run python -m samajh.dialogue play --record tests/dialogue/fixtures/record_gold_loan.json --lang hi \
+        [--identity none|year_of_birth] [--attempts 1|2] [--no-call-back-line]
     uv run python -m samajh.dialogue eval-turns --set tests/dialogue/fixtures/turns_heldout.jsonl [--llm]
 
 `play` runs one call in the terminal: you type the customer's turns. Type `first || second` to give
@@ -37,6 +38,7 @@ from samajh.dialogue.machine import (
     step,
 )
 from samajh.dialogue.prompts import PRODUCT_QUESTIONS, load_prompts
+from samajh.identity import MENU, CheckKind, IdentityPolicy, describe, parse_policy
 from samajh.types import Language, LoanRecord, Question
 
 
@@ -53,8 +55,12 @@ def _play(args: argparse.Namespace) -> int:
     record = LoanRecord.model_validate_json(Path(args.record).read_text(encoding="utf-8"))
     language = Language(args.lang)
     interpreter = _interpreter(args.llm, args.llm_model)
-    state, said = start(record, language, lender_name=args.lender)
+    policy = parse_policy(
+        {"second_check": args.identity, "attempts": args.attempts, "call_back_line": not args.no_call_back_line}
+    )
+    state, said = start(record, language, lender_name=args.lender, identity=policy)
     print(f"[{language.value} prompts: {load_prompts(language).review}]")
+    print(f"[identity: {describe(policy)}]")
     while True:
         for line in said.lines:
             print(f"BOT  [{line.step.value}{'/' + line.asks.value if line.asks else ''}] {line.text}")
@@ -113,7 +119,9 @@ def _position_for(question_key: str) -> Position:
 
 def effect_of(language: Language, question_key: str, text: str, interpreter: TurnInterpreter) -> str:
     """What one reply does to a call that has just asked `question_key`, by running the real machine."""
-    state, _ = start(LoanRecord.model_validate(_EVAL_RECORD), language, lender_name="Namoona Bank")
+    # The turn set was labelled on the call with the year of birth (its rows include `second_check.ask`).
+    year = IdentityPolicy(second_check=CheckKind.year_of_birth)
+    state, _ = start(LoanRecord.model_validate(_EVAL_RECORD), language, lender_name="Namoona Bank", identity=year)
     before = _position_for(question_key)
     state, _ = _say(state, before)
     after, said = step(state, text, interpreter=interpreter)
@@ -191,6 +199,9 @@ def main(argv: list[str] | None = None) -> int:
     play.add_argument("--lender", default="Namoona Bank", help="lender name spoken in the disclosure")
     play.add_argument("--llm", action="store_true", help="add the LLM fallback (needs OPENROUTER_API_KEY)")
     play.add_argument("--out", help="write the finished transcript to this JSON file")
+    play.add_argument("--identity", default="none", choices=MENU, help="the lender's second check (default: none)")
+    play.add_argument("--attempts", type=int, default=1, choices=(1, 2), help="answers the second check judges")
+    play.add_argument("--no-call-back-line", action="store_true", help="drop the hang-up-and-call-back line")
     play.set_defaults(run=_play)
     turns = commands.add_parser("eval-turns", help="score the turn interpreter on a labelled set")
     turns.add_argument("--set", required=True, help="JSONL rows: language, question_key, text, gold, fold")

@@ -12,7 +12,7 @@ scope), so a Tamil or Kannada hedge stays refused, as before.
 
 import re
 from decimal import Decimal
-from typing import Literal
+from typing import ClassVar, Literal
 
 from samajh.amounts._grammar import evaluate
 from samajh.amounts._lexicon import Atom, near_coefficient, near_fraction, near_unit, norm_key
@@ -26,6 +26,7 @@ from samajh.amounts._parse import (
     NoAmount,
     Parsed,
     Span,
+    _sorry_counts,
     parse_amount,
     takes_coefficient,
 )
@@ -49,6 +50,8 @@ class Approximate(Frozen):
     low: int
     high: int
     span: Span
+    bound: bool = False  # "करीब पचास हज़ार तक": a ceiling, as `Parsed.bound`
+    added_later: ClassVar[frozenset[str]] = frozenset({"bound"})
 
 
 # A letter in any script we read: Python's \w leaves out Indic vowel signs. The danda is not one.
@@ -72,6 +75,19 @@ _DOUBT_PHRASES = (
     r"i\s+think|i\s+guess|i\s+believe|something\s+like",
 )
 _DOUBT = re.compile(rf"(?<!{_L})(?:{'|'.join(_DOUBT_PHRASES)})(?!{_L})")
+
+# Doubt about exactness ("पक्का नहीं पता", "ठीक से याद नहीं", "exact yaad nahi"). Only the hedge marker
+# reads it (`has_doubt_word(..., exactness=True)`): it never makes a figure approximate.
+_EXACT_WORD = (
+    r"(?:पक्का|पक्की|ठीक\s+से|सही\s+से|pakka|pakki|theek\s+se|thik\s+se|sahi\s+se|exact|exactly"
+    rf"|ए[गक]्ज{_N}ैक्ट(?:ली)?)"  # एग्ज़ैक्ट, एग्जैक्ट, एक्ज़ैक्ट, एग्ज़ैक्टली; a nukta either way
+)
+_DONT_KNOW = r"(?:नहीं|नही|nahi|nahin|nhi)"
+_KNOW = r"(?:पता|मालूम|याद|pata|maloom|malum|yaad|yad)"
+_EXACTNESS = re.compile(
+    rf"(?<!{_L})(?:{_EXACT_WORD}\s+(?:{_DONT_KNOW}\s+{_KNOW}|{_KNOW}\s+{_DONT_KNOW}|{_DONT_KNOW})"
+    rf"|not\s+sure|not\s+exactly|don'?t\s+remember\s+exactly)(?!{_L})"
+)
 
 _LOAN = r"(?:लोन|ऋण|क़?र्ज़?|loan)"
 _TENURE_PHRASES = (
@@ -110,13 +126,15 @@ def _fold(text: str) -> str:
     return "".join(c if len(c.lower()) != 1 else c.lower() for c in text.translate(_FOLD))
 
 
-def has_doubt_word(text: str) -> bool:
+def has_doubt_word(text: str, *, exactness: bool = False) -> bool:
     """A word of doubt or approximation is in `text`: "शायद", "करीब", "के आसपास", "I think".
 
-    A marker only. It never makes a wrong answer right; it tells the reviewer the customer
-    was unsure. "लगता नहीं" ("I don't think so") is a negation, not doubt, and is not matched.
+    With `exactness`, a doubt about exactness also counts ("पक्का नहीं पता", "ठीक से याद नहीं",
+    "exact yaad nahi"). A marker only. It never makes a wrong answer right; it tells the reviewer
+    the customer was unsure. "लगता नहीं" ("I don't think so") is a negation, not doubt, and is not matched.
     """
-    return _DOUBT.search(_fold(text)) is not None
+    folded = _fold(text)
+    return _DOUBT.search(folded) is not None or (exactness and _EXACTNESS.search(folded) is not None)
 
 
 def is_loan_tenure(text: str) -> bool:
@@ -223,7 +241,7 @@ def _stretch_range(text: str, toks: list[Tok]) -> tuple[int, int] | None:
 
 def _read_range(text: str, exact: bool) -> Approximate | None:
     toks = scan(text)
-    if any(t.kind in _REFUSE for t in toks):
+    if any(t.kind in _REFUSE or (t.kind == "sorry" and _sorry_counts(toks, k)) for k, t in enumerate(toks)):
         return None
 
     def joins(t: Tok) -> bool:
@@ -299,7 +317,7 @@ def parse_approx_amount(text: str, *, exact: bool = False) -> AmountResult | App
     if isinstance(plain, Parsed):
         if not hedged:
             return plain
-        return Approximate(low=plain.rupees, high=plain.rupees, span=plain.span)
+        return Approximate(low=plain.rupees, high=plain.rupees, span=plain.span, bound=plain.bound)
     if plain.reason in (AmbiguityReason.multiple_amounts, AmbiguityReason.malformed):
         found = _read_range(masked, exact=False)
         if found is not None:

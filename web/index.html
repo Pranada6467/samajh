@@ -46,11 +46,27 @@
           <option value="ta">Tamil (experimental, not human-reviewed)</option>
           <option value="kn">Kannada (experimental, not human-reviewed)</option>
         </select>
+        <label for="identity-check">Second check</label>
+        <select id="identity-check">
+          <option value="none">None</option>
+          <option value="year_of_birth">Year of birth</option>
+        </select>
+        <label for="identity-attempts" id="identity-attempts-label">Attempts</label>
+        <select id="identity-attempts">
+          <option value="1">1</option>
+          <option value="2">2</option>
+        </select>
         <label for="turn-mode">Turn-taking</label>
         <select id="turn-mode">
           <option value="handsfree">Hands-free</option>
           <option value="ptt">Push to talk</option>
         </select>
+      </div>
+      <p class="hint" id="identity-note" aria-live="polite"></p>
+      <!-- The written notice a lender sends before the call (prior_notice). Mocked: nothing is sent. -->
+      <div id="notice-card" class="panel notice-card" hidden>
+        <div class="notice-head"><strong>SMS, mocked: not sent</strong> <span id="notice-review"></span></div>
+        <p id="notice-text"></p>
       </div>
       <p class="hint" id="server-note"></p>
       <button id="place-call" class="btn primary wide" type="button">Place demo call</button>
@@ -126,6 +142,7 @@
       <dt>Line rate</dt><dd id="mon-line"></dd>
       <dt>Record</dt><dd id="mon-record"></dd>
       <dt>Listening for</dt><dd id="mon-listen">n/a</dd>
+      <dt>Second check</dt><dd id="mon-identity"></dd>
       <dt>Turn-taking</dt><dd id="mon-mode"></dd>
       <dt>Microphone</dt><dd id="mon-mic"></dd>
       <dt>Server</dt><dd id="mon-server">checking</dd>

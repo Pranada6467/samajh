@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Omprakash, born 1966, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c016",
+  "label": "Synthetic P5b record. Omprakash: a personal loan and one add-on",
+  "lender_name": "नमूना क्रेडिट",
+  "record": {
+    "borrower": {
+      "dob": "1966-02-11",
+      "language": "hi",
+      "name": "Omprakash Kritrim"
+    },
+    "disbursed_inr": 276050,
+    "disbursed_on": "2026-10-25",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-016",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-25",
+          "method": "otp"
+        },
+        "cover_inr": 290000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 13950,
+        "provider": "Kritrim Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 290000,
+    "tenure_months": 24
+  }
+}

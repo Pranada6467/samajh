@@ -12,6 +12,7 @@ from samajh.dialogue.__main__ import main
 from samajh.types import Language, Transcript
 
 RECORD = str(Path(__file__).parent / "fixtures" / "record_gold_loan.json")
+YEAR = ["--identity", "year_of_birth"]  # P8: the scripted customers answer the year; the default is no check
 
 
 def typed(monkeypatch, replies: list[str]) -> None:
@@ -32,7 +33,7 @@ def typed(monkeypatch, replies: list[str]) -> None:
 def test_play_runs_a_whole_call_and_writes_the_transcript(language, monkeypatch, capsys, tmp_path):
     typed(monkeypatch, CUSTOMERS[language].happy())
     out = tmp_path / "call.json"
-    code = main(["play", "--record", RECORD, "--lang", language.value, "--out", str(out)])
+    code = main(["play", "--record", RECORD, "--lang", language.value, "--out", str(out), *YEAR])
 
     printed = capsys.readouterr().out
     assert code == 0
@@ -44,13 +45,13 @@ def test_play_runs_a_whole_call_and_writes_the_transcript(language, monkeypatch,
 
 def test_play_reports_when_typing_stops_before_the_call_ends(monkeypatch, capsys):
     typed(monkeypatch, CUSTOMERS[Language.hi].happy()[:3])
-    assert main(["play", "--record", RECORD, "--lang", "hi"]) == 1
+    assert main(["play", "--record", RECORD, "--lang", "hi", *YEAR]) == 1
     assert "input ended before the call did" in capsys.readouterr().out
 
 
 def test_play_shows_the_review_label_of_the_language(monkeypatch, capsys):
     typed(monkeypatch, [CUSTOMERS[Language.ta].wrong_person])
-    assert main(["play", "--record", RECORD, "--lang", "ta"]) == 0
+    assert main(["play", "--record", RECORD, "--lang", "ta", *YEAR]) == 0
     printed = capsys.readouterr().out
     assert "not human-reviewed" in printed and "[call ended: wrong_party" in printed
 
@@ -58,10 +59,10 @@ def test_play_shows_the_review_label_of_the_language(monkeypatch, capsys):
 def test_a_turn_typed_as_two_transcripts_is_heard_twice(monkeypatch, capsys):
     replies = CUSTOMERS[Language.hi].happy()
     replies[5:5] = [
-        "bavan hazaar || 52,000"
-    ]  # the parser refuses the first transcript: the amount is asked again
+        "ठीक ठाक पैसे थे || 52,000"
+    ]  # the first transcript holds no figure the parser can read: the amount is asked again
     typed(monkeypatch, replies)
-    assert main(["play", "--record", RECORD, "--lang", "hi"]) == 0
+    assert main(["play", "--record", RECORD, "--lang", "hi", *YEAR]) == 0
     printed = capsys.readouterr().out
     assert printed.count("BOT  [teach_back/premium]") == 2  # the question, then the one say-again
     assert "बावन हज़ार रुपये दिए। सही है?" in printed and "unresolved questions: 0" in printed

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pytest
-from dialogue_kit import CUSTOMERS, LANGUAGES, LENDER, play, product, record
+from dialogue_kit import CUSTOMERS, LANGUAGES, LENDER, YEAR_POLICY, play, product, record
 
 from samajh.amounts import parse_amount
 from samajh.dialogue import PRODUCT_QUESTIONS, CallState, Ended, Limits, Outcome, start, step
@@ -182,7 +182,9 @@ def test_an_unclear_answer_is_asked_once_more_then_recorded_and_the_call_moves_o
 
     assert call.end.outcome is Outcome.completed
     assert call.keys.count("stop_check.disengaged") == 1  # after the first two unusable replies, once a call
-    asked = [line.key for line in call.lines if line.key.endswith((".ask", ".reask"))]
+    # Iteration 3 (gain 8): the recall reply named something, so the kind question is `kind.ask_named`.
+    named = {"kind.ask_named": "kind.ask"}
+    asked = [named.get(key, key) for key in call.keys if key.endswith((".ask", ".reask")) or key in named]
     for name in [*[q.value for q in PRODUCT_QUESTIONS], "consent"]:
         assert asked.count(f"{name}.ask") == 1 and asked.count(f"{name}.reask") == 1
     assert len(call.end.unresolved) == len(PRODUCT_QUESTIONS) + 1
@@ -343,7 +345,7 @@ def test_a_record_with_no_products_goes_from_recall_to_consent_to_close(language
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_state_survives_a_json_round_trip_at_every_turn(language):
     replies = CUSTOMERS[language].happy()
-    state, _ = start(record(), language, lender_name=LENDER)
+    state, _ = start(record(), language, lender_name=LENDER, identity=YEAR_POLICY)
     for reply in replies:
         restored = CallState.model_validate_json(state.model_dump_json())
         assert restored == state
@@ -353,7 +355,7 @@ def test_state_survives_a_json_round_trip_at_every_turn(language):
 
 
 def test_the_state_keeps_only_the_plan_not_the_record():
-    state, _ = start(record(), LANGUAGES[0], lender_name=LENDER)
+    state, _ = start(record(), LANGUAGES[0], lender_name=LENDER, identity=YEAR_POLICY)
     kept = state.model_dump_json()
     for secret in (
         "52000",

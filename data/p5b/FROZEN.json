@@ -1,0 +1,37 @@
+{
+  "set": "samajh-p5b-customers",
+  "version": 1,
+  "stage_1": {
+    "what": "fact sheets, records, gold, topics (P5's with the disposition seed changed) and the closed script (P5's, unchanged): frozen before any customer words existed, after the blind second labelling and the C016/C017 sheet edit",
+    "frozen_at_utc": "2026-11-13T05:00:56Z",
+    "by": "P5b builder (Opus), on the coordinator's instruction",
+    "counts": {
+      "customers": 24,
+      "records": 24,
+      "gold_rows": 24
+    }
+  },
+  "inputs": {
+    "customers.jsonl": "2a0e2fc21ccbe7dbf2999a0014107a0894f319b39f1665e088b6079662a2f79a",
+    "gold.jsonl": "1983b491e5ecad8e0d0c4fdfb5193ba459680dc2414dc361c7735dcfd9a06ca8",
+    "topics.json": "523df0dfc00cdf0692a105b2bce37dc00016abf9b35226931b94be5e4d649ed7",
+    "closed_script.json": "1874be1dd3034eae66bb9e81fa98272e864452f75083e20850a01bb3d870c8a2",
+    "records": "ec5d44b0e3d97f20d61c2caf34ded9072f657ba31c91ad781bfaafc93919465f"
+  },
+  "how_to_recompute": "uv run python data/p5b/write_customers.py inputs-hash ; records = sha256 of the lines '<sha256>  <file name>' for data/p5b/records/*.json sorted by name (cd data/p5b/records && shasum -a 256 *.json | shasum -a 256) ; words and other: shasum -a 256 <file>",
+  "stage_2": {
+    "what": "the customers' words (open, closed and defer replies written by two outside models from the fact sheets), the rendered closed-call lines and every request sent to a writer model: frozen before any audio",
+    "frozen_at_utc": "2026-11-13T05:10:26Z",
+    "by": "P5b builder (Opus), on the coordinator's instruction"
+  },
+  "words": {
+    "replies.jsonl": "3a17acfb1b58be1cc194228052e0eea0a23836be15650460a390ab360a9a0a75",
+    "closed_statements.jsonl": "2eb5458ca7e218f2953443750d865298eccc962d85a606cf11909be8de90188f",
+    "writer_requests.jsonl": "59974372e78f2b9bfc509a4923188f92ff3f4fbe7bd423bf3284c2c04d658297"
+  },
+  "other": {
+    "build_customers.py": "b7c357d06feb9c917b193d4493af487bd598bcadbfedf82cbbb74fe54d7a03a5",
+    "write_customers.py": "e9aaddeee5883656c51910da543a1bba0d09f97371a6bf221550383c266adbcf"
+  },
+  "history": []
+}

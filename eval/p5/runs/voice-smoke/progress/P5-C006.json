@@ -1,0 +1,363 @@
+{
+ "session_id": "20261113T042804-669ce047b5e8",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "Hello, क्या आप Arjun जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "हाँ जी, मैं Arjun बोल रहा हूँ. बताइए!",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ जी, मैं अर्जुन बोल रहा हूँ, बताइए।",
+     "expecting": "identity",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "confirms_self",
+     "amount_inr": null,
+     "approx": null,
+     "n": 16
+    }
+   ],
+   "degraded": false,
+   "seq": 1,
+   "reply_to": 0,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ जी, मैं अर्जुन बोल रहा हूँ, बताइए।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ जी, मैं अर्जुन बोल रहा हूँ, बताइए।",
+     "literal": null,
+     "cache_hit": false,
+     "seconds": 0.2682,
+     "attempts": 1,
+     "est_credits": 0.027200000000000002
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": false,
+    "est_credits": 0.074,
+    "audio_seconds": 2.72
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह sales नहीं, feedback call है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन minute बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "can_we_talk",
+    "variant": "own",
+    "text": "हाँ बिल्कुल, बोलिए, do-teen minute बात कर सकते हैं.",
+    "line_key": "disclosure.go_ahead",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+     "expecting": "go_ahead",
+     "intent": "maybe_decline",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "call_back",
+     "amount_inr": null,
+     "approx": null,
+     "n": 17
+    }
+   ],
+   "degraded": false,
+   "seq": 3,
+   "reply_to": 2,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+     "literal": null,
+     "cache_hit": false,
+     "seconds": 0.3829,
+     "attempts": 1,
+     "est_credits": 0.0368
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": false,
+    "est_credits": 0.10200000000000001,
+    "audio_seconds": 3.68
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "stop_check.decline",
+     "text": "क्या मैं आगे बढ़ूँ?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "carry_on",
+    "variant": "own",
+    "text": "हाँ हाँ, बिल्कुल continue करिए, कोई issue नहीं.",
+    "line_key": "stop_check.decline",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+     "expecting": "stop_check",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "yes",
+     "amount_inr": null,
+     "approx": null,
+     "n": 18
+    }
+   ],
+   "degraded": false,
+   "seq": 5,
+   "reply_to": 4,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+     "literal": null,
+     "cache_hit": false,
+     "seconds": 0.2038,
+     "attempts": 1,
+     "est_credits": 0.0304
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": false,
+    "est_credits": 0.094,
+    "audio_seconds": 3.04
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.reask",
+     "text": "यह नमूना फ़ाइनेंस की feedback call है, sales call नहीं। क्या अभी दो-तीन minute बात करें? बस हाँ या ना कह दीजिए।",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "can_we_talk",
+    "variant": "own",
+    "text": "हाँ बिल्कुल, बोलिए, do-teen minute बात कर सकते हैं.",
+    "line_key": "disclosure.reask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+     "expecting": "go_ahead",
+     "intent": "maybe_decline",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "call_back",
+     "amount_inr": null,
+     "approx": null,
+     "n": 19
+    }
+   ],
+   "degraded": false,
+   "seq": 7,
+   "reply_to": 6,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ, बिल्कुल बोलिए 15 minute बाद कर सकते हैं।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.68
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "stop_check.decline",
+     "text": "क्या मैं आगे बढ़ूँ?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "carry_on",
+    "variant": "own",
+    "text": "हाँ हाँ, बिल्कुल continue करिए, कोई issue नहीं.",
+    "line_key": "stop_check.decline",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+     "expecting": "stop_check",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "yes",
+     "amount_inr": null,
+     "approx": null,
+     "n": 20
+    }
+   ],
+   "degraded": false,
+   "seq": 9,
+   "reply_to": 8,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ हाँ बिल्कुल continue करिए कोई issue नहीं",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.04
+   }
+  }
+ ],
+ "unmapped": [],
+ "ledger_before": 322.1380293749989,
+ "resumed": 0
+}

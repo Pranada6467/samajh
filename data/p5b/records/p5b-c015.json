@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Bhavna, born 1993, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c015",
+  "label": "Synthetic P5b record. Bhavna: a personal loan and one add-on",
+  "lender_name": "नमूना भारत बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1993-03-29",
+      "language": "hi-en",
+      "name": "Bhavna Pratiroop"
+    },
+    "disbursed_inr": 502060,
+    "disbursed_on": "2026-10-26",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5B-LN-015",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-26",
+          "method": "digital_click"
+        },
+        "cover_inr": 520000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 17940,
+        "provider": "Pratiroop Insurance (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 520000,
+    "tenure_months": 36
+  }
+}

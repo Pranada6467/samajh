@@ -4,8 +4,9 @@ Pure functions: no network, no LLM, no audio. Decimal and integer arithmetic onl
 
 Handles Hindi (Devanagari), English number words (Latin or Devanagari script), Tamil and
 Kannada, plus digits in ASCII or native script with Indian or Western grouping. Romanised
-Hindi number words (bavan, saadhe) are out of scope: a text with one of the listed words, or
-with an unknown word directly before a unit word, comes back `Ambiguous`, never as a number.
+Hindi number words 0 to 99 and units (bavan, iktalis, hazaar, karod) are read; the ones that are
+also everyday words ("do", "das", "saath") only inside a number phrase. Romanised fraction words
+(saadhe, paune) are refused, and so is an unknown word directly before a unit word.
 Tamil and Kannada tables and output are not human-reviewed.
 
 `parse_duration_months` reads a term; `parse_duration_days` reads a cancellation window.

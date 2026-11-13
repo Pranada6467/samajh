@@ -534,6 +534,11 @@ FLAG_CASES: dict[FlagReason, tuple[dict, dict, dict]] = {
     R.premium_differs: ({}, {"premium_inr": said(70_000), "premium_readback": NotAsked()}, {}),
     R.premium_dont_know: ({}, {"premium_inr": dont_know()}, {}),
     R.premium_approximate: ({}, {"premium_inr": about(50_000)}, {}),
+    R.premium_said_zero: ({}, {"premium_inr": said(0), "premium_readback": NotAsked()}, {}),
+    R.consent_product_not_named: (
+        {}, {"consent_given": Unclear(evidence=ev()), "kind": NotAsked()}, {"recall": recall_of()}
+    ),
+    R.payment_says_not_charged: ({}, {"payment_source": said(PaymentSource.not_charged)}, {}),
     R.cover_differs: ({}, {"cover_inr": about(100_000)}, {}),
     R.cover_differs_confirmed: ({}, {"cover_inr": said(1), "cover_readback": said(True)}, {}),
     R.cover_differs_unconfirmed: ({}, {"cover_inr": said(1)}, {}),
@@ -572,7 +577,8 @@ REFER_REASONS = {
     R.consent_no_record, R.consent_not_recognised, R.consent_method_differs, R.consent_dont_know,
     R.funded_no_consent, R.funded_says_separately, R.funded_dont_know, R.unfunded_says_deducted,
     R.bundled_not_mitigant, R.bundled_described_as_deposit, R.bundled_no_choice_on_record,
-    R.bundled_no_choice_told, R.feature_contradicted, R.sale_concern,
+    R.bundled_no_choice_told, R.feature_contradicted, R.sale_concern, R.premium_said_zero,
+    R.payment_says_not_charged,
 }  # fmt: skip
 INCOMPLETE_REASONS = {R.premium_differs, R.cover_differs_unconfirmed}
 

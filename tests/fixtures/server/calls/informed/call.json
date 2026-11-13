@@ -23,66 +23,61 @@
     },
     {
       "file": "03.wav",
-      "answers": "second_check.ask",
-      "text": "nineteen eighty four"
-    },
-    {
-      "file": "04.wav",
       "answers": "open_recall.ask",
       "text": "एक credit life insurance लिया था, fifty two thousand का"
     },
     {
-      "file": "05.wav",
-      "answers": "kind.ask",
+      "file": "04.wav",
+      "answers": "kind.ask_named",
       "text": "life insurance है, अगर मुझे कुछ हो गया तो loan उससे चुक जाएगा"
     },
     {
-      "file": "06.wav",
+      "file": "05.wav",
       "answers": "read_back.confirm",
       "text": "yes, correct"
     },
     {
-      "file": "07.wav",
+      "file": "06.wav",
       "answers": "payment_source.ask",
       "text": "loan amount में से cut हुआ"
     },
     {
-      "file": "08.wav",
+      "file": "07.wav",
       "answers": "payment_frequency.ask",
       "text": "one time, एक ही बार"
     },
     {
-      "file": "09.wav",
+      "file": "08.wav",
       "answers": "required_for_loan.ask",
       "text": "ज़रूरी नहीं था, मेरी अपनी मर्ज़ी थी"
     },
     {
-      "file": "10.wav",
+      "file": "09.wav",
       "answers": "cover.ask",
       "text": "मुझे कुछ हुआ तो five lakh तक का loan cover होता है"
     },
     {
-      "file": "11.wav",
+      "file": "10.wav",
       "answers": "read_back.cover_confirm",
       "text": "yes, correct"
     },
     {
-      "file": "12.wav",
+      "file": "11.wav",
       "answers": "term.ask",
       "text": "two years"
     },
     {
-      "file": "13.wav",
+      "file": "12.wav",
       "answers": "cancel_window.ask",
       "text": "हाँ, thirty days में cancel करा सकते हैं"
     },
     {
-      "file": "14.wav",
+      "file": "13.wav",
       "answers": "features.ask",
       "text": "वापस नहीं मिलता, ये insurance है, investment नहीं"
     },
     {
-      "file": "15.wav",
+      "file": "14.wav",
       "answers": "consent.ask",
       "text": "loan form पर sign किया था, insurance के form पर भी अलग से sign किया था"
     }

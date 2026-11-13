@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Chetan, born 1976, took a gold loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c014",
+  "label": "Synthetic P5b record. Chetan: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1976-08-05",
+      "language": "hi",
+      "name": "Chetan Nakli"
+    },
+    "disbursed_inr": 295120,
+    "disbursed_on": "2026-10-20",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-014",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-20",
+          "method": "signed_form"
+        },
+        "cover_inr": 310000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 14880,
+        "provider": "Nakli Life Cover (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 310000,
+    "tenure_months": 12
+  }
+}

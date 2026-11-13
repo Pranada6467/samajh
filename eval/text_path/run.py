@@ -585,7 +585,8 @@ def report(set_name: str, note: str, model: str, runs: list[CaseRun], cost: Cost
         ),
         "",
         (
-            "- The change check (a second look at a reply of two or more clauses: did the customer change "
+            "- The change check (a second look at a reply of two or more clauses, or of one clause with a "
+            "marker word such as नहीं or ruko: did the customer change "
             f"their answer?) said: {cost.changes or 'no check was made'}. `not used`: a recall reply that "
             "named nothing, or a reply whose answer call failed."
         ),

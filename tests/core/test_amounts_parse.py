@@ -634,9 +634,7 @@ def test_spelling_variant_or_bare_unit(text, rupees):
     [
         # the word before the unit is a number we cannot read: साठ misheard, romanised Hindi
         "साथ हज़ार",
-        "bavan hazaar",
         "paune do lakh",
-        "pachees hazar rupaye",
         # "several", "a few"
         "कई लाख",
         "कुछ हज़ार रुपये",
@@ -820,11 +818,10 @@ REFUSED_AFTER_REVIEW = [
     "पचपन हज़ार या शायद साठ",
     "पता नहीं, शायद बावन हज़ार",
     "ஐம்பதாயிரம் இல்ல",
-    # romanised Hindi number and fraction words are not read, so the text is refused
+    # romanised Hindi fraction words are not read, so the text is refused
     "saadhe 5 hazaar",
     "paune 2 lakh",
     "sawa 2 lakh",
-    "52 hazaar paanch sau",
     "bavan, hazaar",
     # digits we cannot be sure of
     "½ lakh",

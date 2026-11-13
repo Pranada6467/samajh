@@ -523,8 +523,9 @@ unanswered, or where the customer asks for a later call, is followed by another,
   ("did not name the product before it was mentioned"), reported in aggregate. The likely cause,
   not confirmed: the old pages were rendered from a working tree in which the rules were being
   edited, a state that was never committed.
-- The rules were being edited again when the pages were rendered on 2026-11-10, so the pages must
-  be rendered once more after the P3a work lands, and this note brought up to date with the counts.
+- The pages rendered on 2026-11-13 (commit 2568759 plus the ops edits; `RENDERED.md`) show 8
+  referrals of 65 completed calls, one of them the loan-book phone call (attempt 1 on
+  SYN-PL-270107-0008, ingested before the simulated calls).
 """
 
 

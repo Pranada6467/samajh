@@ -119,7 +119,7 @@
   {
    "seq": 7,
    "source": "file",
-   "transcript": "1984",
+   "transcript": "[reply to the year-of-birth question: withheld]",
    "audio_url": "/api/sessions/20261110T103439-10efda4cc6ab/audio/customer-007.wav",
    "audio_seconds": 2,
    "readings": [
@@ -128,7 +128,7 @@
      "model": "prisma-v3.0",
      "ok": true,
      "error": null,
-     "text": "1984",
+     "text": "[reply to the year-of-birth question: withheld]",
      "cache_hit": true,
      "seconds": 0
     }

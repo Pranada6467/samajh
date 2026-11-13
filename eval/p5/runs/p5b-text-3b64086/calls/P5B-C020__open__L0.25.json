@@ -1,0 +1,341 @@
+{
+ "customer_id": "P5B-C020",
+ "arm": "open",
+ "condition": "disposition",
+ "level": 0.25,
+ "language": "hi",
+ "kind": "third_party",
+ "gold_class": "procedural",
+ "record_id": "p5b-c020",
+ "writer_model": "google/gemini-3.7-flash",
+ "second_reading": null,
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "नमस्ते, क्या आप Akhil जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "नहीं, मैं अखिल का पिता बोल रहा हूँ, वह काम से बाहर गया है।",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "wrong_person",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "final_bot": [
+  {
+   "key": "end.third_party",
+   "text": "हम Akhil जी से बाद में बात कर लेंगे। धन्यवाद।",
+   "step": "close",
+   "asks": null
+  }
+ ],
+ "outcome": "wrong_party",
+ "speaker_confirmed": false,
+ "degraded_turns": 0,
+ "unresolved": [],
+ "tier": "incomplete",
+ "flags": [],
+ "gaps": [
+  {
+   "rule_id": "kind",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "premium",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "cover",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "term",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "cancel_window",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "recall",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "consent",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "loan_funded",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "bundling",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "belief_mismatch",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "recall_unmatched",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  }
+ ],
+ "referral_basis": null,
+ "summary": {
+  "loan_id": "TEST-P5B-LN-020",
+  "call_id": "p5-P5B-C020-open-disposition-L0.25",
+  "tier": "incomplete",
+  "lines": [
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: what the product is.",
+    "record_value": "credit-life insurance from Prayogik Suraksha (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85Y"
+    ],
+    "rule_ids": [
+     "kind"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: the premium.",
+    "record_value": "premium ₹9,625, deducted from the loan",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85Y"
+    ],
+    "rule_ids": [
+     "premium"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how they agreed to it.",
+    "record_value": "consent on record: signed form on 2026-10-16",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85G"
+    ],
+    "rule_ids": [
+     "consent"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how it was paid for.",
+    "record_value": "premium ₹9,625, deducted from the loan",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85W"
+    ],
+    "rule_ids": [
+     "loan_funded"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: whether it was required and the choice of provider.",
+    "record_value": "required for the loan: yes; risk mitigant: yes; choice of provider offered: yes",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85V"
+    ],
+    "rule_ids": [
+     "bundling"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: getting the money back.",
+    "record_value": "features on record: a single payment",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "4(20A)(ii)"
+    ],
+    "rule_ids": [
+     "belief_mismatch"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": null,
+    "tier": "incomplete",
+    "title": "The call did not get to: the open question about what they took with the loan.",
+    "record_value": "products on record: credit-life insurance from Prayogik Suraksha (synthetic) (P1)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85Y"
+    ],
+    "rule_ids": [
+     "recall_unmatched"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cover.",
+    "record_value": "cover ₹2,75,000",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85Y"
+    ],
+    "rule_ids": [
+     "cover"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the term.",
+    "record_value": "term 12 months",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85Y"
+    ],
+    "rule_ids": [
+     "term"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cancellation window.",
+    "record_value": "cancellation window 30 days",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85Y"
+    ],
+    "rule_ids": [
+     "cancel_window"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the open question about what they took with the loan.",
+    "record_value": "credit-life insurance from Prayogik Suraksha (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "85Y"
+    ],
+    "rule_ids": [
+     "recall"
+    ],
+    "record_only": false,
+    "note": false
+   }
+  ]
+ },
+ "transcript": {
+  "call_id": "p5-P5B-C020-open-disposition-L0.25",
+  "loan_id": "TEST-P5B-LN-020",
+  "language": "hi",
+  "turns": [
+   {
+    "id": 1,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "नमस्ते, क्या आप Akhil जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 2,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "नहीं, मैं अखिल का पिता बोल रहा हूँ, वह काम से बाहर गया है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 3,
+    "speaker": "bot",
+    "step": "close",
+    "text": "हम Akhil जी से बाद में बात कर लेंगे। धन्यवाद।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   }
+  ]
+ },
+ "finished_utc": "2026-11-13T07:03:28+00:00"
+}

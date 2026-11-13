@@ -117,19 +117,53 @@ _add(WORDS, "दशमलव", Word("num", (PT,)))
 _add(WORDS, "सो", Word("unitafter", (m(HUNDRED),)))
 # "thousands of": a number was meant but none was named.
 _add(WORDS, "सैकड़ों हज़ारों लाखों करोड़ों", Word("vague"))
-# The speaker is unsure or is correcting themselves: no number next to these is safe to read.
-_add(WORDS, "शायद सॉरी सोरी shayad maybe perhaps sorry", Word("vague"))
-# Romanised Hindi number and fraction words. Out of scope to read, so a text that has one is
-# refused instead of read without it ("saadhe 5 hazaar", "52 hazaar paanch sau"). The list is
-# not complete: "ek", "do" and "saath" are left out because they are everyday words.
+# The speaker is unsure: no number next to these is safe to read.
+_add(WORDS, "शायद shayad maybe perhaps", Word("vague"))
+# An apology. Before a number it may open a correction ("पचपन हज़ार, सॉरी बावन"), and in the
+# amount's own clause it may be doubt; after every number and in a clause of its own it is about
+# the line ("…रुपये, सॉरी, नेटवर्क चला गया था") and withdraws nothing. See `samajh.amounts._parse`.
+_add(WORDS, "सॉरी सोरी sorry sori", Word("sorry"))
+# The number these name says how often, not how much: "twice 50,000" is two deductions.
+_add(WORDS, "twice", Word("count", (n(2),)))
+_add(WORDS, "thrice", Word("count", (n(3),)))
+# Romanised Hindi fraction words are not read: a text that has one is refused ("saadhe 5
+# hazaar"), because reading the text without it would give a wrong amount.
 _add(
     WORDS,
-    """
-    teen chaar paanch panch chhe chhah saat aath nau das gyarah barah pandrah bees pachees pachis
-    tees chalis chalees pachas pachaas bavan baavan bawan pachpan sattar assi nabbe sau
-    sawa sava saadhe sadhe saade paune pone pavne dedh derh dhai dhaai adhai aadha adha
-    """,
+    "sawa sava saadhe sadhe saade paune pone pavne dedh derh dhai dhaai adhai aadha adha",
     Word("vague"),
+)
+
+# Romanised Hindi number words, 0 to 99, in the spellings speech-to-text and people commonly
+# write. The words in `ROMAN_COLLIDE` are also everyday Hinglish or English words ("de do",
+# "das baje" is fine but "bara" is big, "saath" is with, "tera" is yours): the tokeniser keeps one
+# as a number only directly before another number word, digits, a unit, a currency, duration,
+# count or clock word, and refuses the text when one stands after a number with nothing of that
+# kind following ("do hazaar do": give two thousand, or 2,002). See `samajh.amounts._text`.
+_ROMAN = _variants("""
+shunya|sunya ek|aik do|doh teen|tin char|chaar paanch|panch|paach chhe|chhah|che|chah|chheh saat|sat aath|ath nau|nao
+das|dus gyarah|gyara|gyaarah|gyaara barah|bara|baarah|baara terah|tera|tehra chaudah|chauda|chaudha pandrah|pandra|pundrah solah|sola satrah|satra|sattrah atharah|athara|attharah|athaara unnees|unnis|unees|unis
+bees|bis ikkees|ikkis baais|bais|baees teis|teyis|taees chaubees|chaubis|chobis pachchees|pachees|pachis|pachchis chhabbees|chhabbis|chabbis|chabbees sattaees|sattais|sattaais atthaees|atthais|athais|athaees untees|untis|unatis
+tees|tis iktees|iktis|ikattis battees|battis|batees taintees|taintis|tentis|tetis chauntees|chauntis|chautis|chontis paintees|paintis|pentis|paitis chhattees|chhattis|chattis saintees|saintis|sentis adtees|adtis|artees|adhtis untalees|untalis|unchalis
+chalees|chalis|chaalis|chaalees iktalees|iktalis|ikatalis bayalees|bayalis|byalis|beyalis taintalees|taintalis|tetalis|tirtalis chauvalees|chauvalis|chawalis|chavalis|chaualis paintalees|paintalis|pentalis chhiyalees|chhiyalis|chiyalis|chhayalis saintalees|saintalis|sentalis adtalees|adtalis|artalis|adhtalis unchaas|unchas
+pachaas|pachas ikyavan|ikyawan|ikkyavan|ikavan|ikkawan baavan|bavan|bawan|baawan tirpan|tirepan chauvan|chauwan|chowan|chauan pachpan chhappan|chappan sattavan|sattawan atthavan|atthawan|athavan|athawan unsath|unsaath
+saath|sath iksath|iksaath baasath|basath tirsath|tirsaath|tiresath chaunsath|chausath|chausaath|chaunsaath painsath|paisath|painsaath chhiyasath|chiyasath|chhiyaasath sadsath|sarsath|sadsaath adsath|arsath|adsaath|athsath unhattar|unahattar
+sattar|satar ikhattar|ikahattar bahattar|behattar tihattar|tehattar chauhattar|chohattar pachattar|pachhattar|pichattar chhihattar|chihattar satattar|sathattar|satahattar athattar|athhattar|athahattar unaasi|unasi|unnasi|unyasi
+assi|asi|assee ikyasi|ikyaasi bayasi|byasi|bayaasi tirasi|tiraasi chaurasi|chauraasi|chourasi pachasi|pachaasi|pichasi chhiyasi|chiyasi|chhiyaasi sattasi|sattaasi|satasi atthasi|atthaasi|athasi navasi|nawasi|navaasi
+nabbe|nabbay|nabe|navve ikyanve|ikyanave|ikyanbe baanve|banve|baanave|banbe tiranve|tiranave|tiranbe chauranve|chauranave|chouranve pachanve|pachanave|panchanve|pachanbe chhiyanve|chiyanve|chhiyanave sattanve|sattanave atthanve|atthanave|athanve ninyanve|ninyanave|ninnyanve|ninanve
+""")
+assert len(_ROMAN) == 100
+for _value, _cell in enumerate(_ROMAN):
+    _add(WORDS, " ".join(_cell), Word("num", (n(_value),)))
+_add(WORDS, "sau", Word("num", (m(HUNDRED),)))
+_add(WORDS, "hajar hajaar hazzar", Word("num", (m(THOUSAND),)))
+_add(WORDS, "karod karor karode", Word("num", (m(CRORE),)))
+ROMAN_COLLIDE = frozenset(
+    norm_key(_word)
+    for _word in _words("""
+    do doh tin teen char sat saat ath nau nao das dus che chah tera bara sola satra bis bees tis tees
+    sath saath satar asi bais artees chauda tehra
+    """)
 )
 # Kannada "tens of", "hundreds of": by sandhi alone ನೂರಾರು would read as ನೂರು + ಆರು = 106.
 _add(WORDS, "ಹತ್ತಾರು ನೂರಾರು ಸಾವಿರಾರು ಲಕ್ಷಾಂತರ ಕೋಟ್ಯಂತರ", Word("vague"))

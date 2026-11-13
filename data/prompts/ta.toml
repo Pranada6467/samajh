@@ -19,6 +19,10 @@ text = "வணக்கம். நான் {first_name} அவர்களி�
 design = "§5 step 1 and the one-re-ask rule: asks whether the speaker is the borrower, not whether he is there; no lender, no loan"
 text = "இது {first_name} அவர்களுக்கான ஒரு தானியங்கி வாடிக்கையாளர் சேவை அழைப்பு. நீங்களே {first_name} அவர்களா?"
 
+[lines."right_party.who_check"]
+design = "§5 step 1 applied mid-call (iteration 3): after a sign of another speaker, a choice question (the borrower, or someone in their place); a bare yes does not answer it; no lender, no loan. Not human-reviewed."
+text = "மன்னிக்கவும், யாரிடம் பேசுகிறேன் என்பதை உறுதிப்படுத்த வேண்டும். நீங்களே {first_name} அவர்களா, அல்லது அவர்களுக்குப் பதிலாக வேறு யாராவதா?"
+
 [lines."purpose.before_confirm"]
 design = "§5 step 1: 'what is this about?' before anyone has claimed to be the borrower; no lender, no loan"
 text = "இது ஒரு வாடிக்கையாளர் சேவை கருத்துக் கேட்பு அழைப்பு; சரியான நபர் என்று உறுதியானதும் மேலும் சொல்கிறோம்."
@@ -60,7 +64,7 @@ design = "§5 step 2: how to check the call is genuine, on request after the loa
 text = "இந்த அழைப்பு {lender} வாடிக்கையாளர் சேவையிலிருந்து. சந்தேகம் இருந்தால், போனை வைத்துவிட்டு உங்கள் கடன் ஆவணங்களில் அச்சிடப்பட்ட வாடிக்கையாளர் சேவை எண்ணுக்கு அழைக்கலாம். நாங்கள் ஒருபோதும் ஓடிபி அல்லது பின் கேட்க மாட்டோம்."
 
 [lines."verify.short"]
-design = "§5 step 2: one short line on checking the call, said with the birth-year question (review round 2)"
+design = "§5 step 2: one short line on checking the call, said with the birth-year question (review round 2); with no second check (P8), with the disclosure; dropped when the lender turns the call-back line off"
 text = "சந்தேகம் இருந்தால், போனை வைத்துவிட்டு {lender} வாடிக்கையாளர் சேவைக்கு நீங்களே அழைக்கலாம்."
 
 [lines."second_check.ask"]
@@ -87,6 +91,10 @@ text = "அதாவது, கடன் வாங்கும்போது �
 design = "§5 step 5: the customer said they took nothing; one neutral follow-up, then consent and close"
 text = "சரி. கடன் வாங்கும்போது, கடனைத் தவிர வேறு ஏதாவது பற்றி யாராவது உங்களிடம் பேசினார்களா?"
 
+[lines."ack.neutral"]
+design = "product review gain 8: the neutral acknowledgement is spoken in Hindi and Hinglish calls only; this line is kept so the file loads and is never said. Not human-reviewed."
+text = "ம்."
+
 [lines."teach_back.intro"]
 design = "§5 step 6: the product is referred to without naming what it is"
 text = "நன்றி. இப்போது கடனுடன் வாங்கிய பொருளைப் பற்றி சில சிறிய கேள்விகள்."
@@ -102,6 +110,10 @@ text = "உங்கள் புரிதலில் அது என்ன?"
 [lines."kind.reask"]
 design = "§5 step 6 and the one-re-ask rule"
 text = "அதாவது, கடனுடன் உங்களுக்குக் கிடைத்த அந்தப் பொருளை நீங்கள் என்னவென்று சொல்வீர்கள்?"
+
+[lines."kind.ask_named"]
+design = "§5 step 6, product review gain 8: the kind question when the customer already named something at open recall; refers to it without echoing the customer's word or suggesting a kind. Not human-reviewed."
+text = "நீங்கள் சொன்னதைக் கொஞ்சம் விளக்குங்கள்: அது என்ன, எதற்குப் பயன்படும்?"
 
 [lines."premium.ask"]
 design = "§5 step 6 'How much did it cost?'"

@@ -362,7 +362,9 @@ CASES: tuple[Case, ...] = (
             ),
         ],
         "flag_for_review",
-        "kind premium cancel_window recall belief_mismatch sale_conduct",
+        # consent: a way of agreeing with nothing named anywhere in the call is a consent flag
+        # (`consent_product_not_named`, understanding gap) since the P5 fix round, not a gap.
+        "kind premium cancel_window recall belief_mismatch sale_conduct consent",
         "does not know, silence, off-topic, a guess",
     ),
     case(

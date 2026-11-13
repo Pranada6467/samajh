@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Zubin, born 1978, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c022",
+  "label": "Synthetic P5b record. Zubin: a personal loan and one add-on",
+  "lender_name": "नमूना भारत बैंक",
+  "record": {
+    "borrower": {
+      "dob": "1978-07-30",
+      "language": "hi-en",
+      "name": "Zubin Abhyasi"
+    },
+    "disbursed_inr": 1130400,
+    "disbursed_on": "2026-10-19",
+    "lender_type": "bank",
+    "loan_id": "TEST-P5B-LN-022",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-19",
+          "method": "signed_form"
+        },
+        "cover_inr": 1200000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 69600,
+        "provider": "Abhyasi Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 60
+      }
+    ],
+    "sanctioned_inr": 1200000,
+    "tenure_months": 60
+  }
+}

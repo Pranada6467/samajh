@@ -270,6 +270,13 @@ def test_not_asked_is_a_gap_never_clear(field):
 @pytest.mark.parametrize("field", ANSWER_FIELDS)
 def test_unclear_is_a_gap_with_its_reason_and_quote(field, reason):
     rule, _ = ANSWER_FIELDS[field]
+    if (field, reason) == ("consent_given", GapReason.no_usable_answer):
+        # A stated method with no "what" is the method-only reply: tests/core/test_rules_p5fix.py.
+        changes = {field: unclear(reason), "consent_method": unclear(GapReason.no_usable_answer)}
+        result = run(belief_changes=changes)
+        (gap, *_) = gaps(result, rule)
+        assert (gap.reason, gap.quote, gap.turn_id) == (reason, QUOTE, TURN)
+        return
     result = run(belief_changes={field: unclear(reason)})
     (gap,) = gaps(result, rule)
     assert (gap.reason, gap.quote, gap.turn_id) == (reason, QUOTE, TURN)

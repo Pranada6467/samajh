@@ -22,7 +22,14 @@ from samajh.server.samajh_dialogue import samajh_factory
 BOOK = load_book(PACKAGED_DIR)
 # Plain words to the rules at the open recall question: only the classifier can read it.
 UNSETTLED = "उस दिन बैंक में भीड़ थी"
-BEFORE_RECALL = ("हाँ जी, बोल रहा हूँ", "हाँ, ठीक है", "उन्नीस सौ चौरासी")  # all settled by the rules
+BEFORE_RECALL = ("हाँ जी, बोल रहा हूँ", "हाँ, ठीक है")  # all settled by the rules (no second check)
+YEAR = "उन्नीस सौ चौरासी"  # the hero record's birth year, for a call with the year-of-birth check
+# The right-party settings a call can run under: the server's default (no second check) and the
+# year of birth, with the replies that reach the open recall question under each.
+SETTINGS_AND_REPLIES = {
+    "none": (None, BEFORE_RECALL),
+    "year_of_birth": ({"second_check": "year_of_birth"}, (*BEFORE_RECALL, YEAR)),
+}
 
 
 class CountingLlm:
@@ -81,7 +88,11 @@ def test_prefetch_gets_the_primary_transcript_before_the_second_reading_is_asked
     assert sum(options.model == V25 for _, options in fake.stt_calls) == v25_before + 1
 
 
-def test_a_classifier_begun_in_prefetch_is_not_asked_again_by_step(fake: FakeSpeech, state: Path) -> None:
+@pytest.mark.parametrize("setting", sorted(SETTINGS_AND_REPLIES))
+def test_a_classifier_begun_in_prefetch_is_not_asked_again_by_step(
+    fake: FakeSpeech, state: Path, setting: str
+) -> None:
+    identity, before_recall = SETTINGS_AND_REPLIES[setting]
     llm, seen = CountingLlm(), []
     inner = samajh_factory(BOOK, SETTINGS, interpreter=LlmFallbackInterpreter(llm, timeout_s=5.0))
 
@@ -91,8 +102,10 @@ def test_a_classifier_begun_in_prefetch_is_not_asked_again_by_step(fake: FakeSpe
             if text == UNSETTLED:  # the classifier was asked from prefetch, before `step` ran
                 assert llm.first.wait(5.0)
 
-    call = Call(phone(fake, state, lambda params: WaitsForTheCall(inner(params), fake, seen)), fake, state)
-    for reply in BEFORE_RECALL:
+    call = Call(
+        phone(fake, state, lambda params: WaitsForTheCall(inner(params), fake, seen)), fake, state, identity
+    )
+    for reply in before_recall:
         call.say(reply)
     assert llm.asked == [] and call.bot["lines"][-1]["key"] == "open_recall.ask"
 

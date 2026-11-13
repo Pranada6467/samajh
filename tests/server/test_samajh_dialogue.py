@@ -156,9 +156,22 @@ def waits_for_a_figure(step: Step) -> bool:
     return expecting(CallState.model_validate_json(step.state).position) in FIGURE_REPLIES
 
 
+YEAR_OF_BIRTH = '{"second_check": "year_of_birth"}'  # the session param the server writes for the picker
+# How the first three prompts listen under each right-party setting: the name question, then the
+# go-ahead after the disclosure (no second check) or the year of birth (a short answer).
+FIRST_THREE = {
+    None: ["yes_no", "yes_no", "open"],
+    YEAR_OF_BIRTH: ["yes_no", "yes_no", "short"],
+}
+
+
+@pytest.mark.parametrize("identity", list(FIRST_THREE), ids=["none", "year_of_birth"])
 @pytest.mark.parametrize("language", ["hi", "hi-en"])
-def test_only_prompts_that_wait_for_a_figure_ask_for_a_second_reading(language: str) -> None:
-    steps, _ = converse(dialogue(language=language), language)
+def test_only_prompts_that_wait_for_a_figure_ask_for_a_second_reading(
+    language: str, identity: str | None
+) -> None:
+    params = {} if identity is None else {"identity": identity}
+    steps, _ = converse(dialogue(language=language, **params), language)
     figure = [waits_for_a_figure(step) for step in steps]
 
     assert [step.say.second_reading for step in steps] == figure
@@ -169,7 +182,7 @@ def test_only_prompts_that_wait_for_a_figure_ask_for_a_second_reading(language: 
     # A question with no figure in its answer is read once.
     assert not any(step.say.second_reading for step in steps if step.say.lines[-1].tags.get("asks") == "kind")
     assert {step.say.listen for step in steps if step.say.second_reading} == {"amount", "yes_no"}
-    assert [step.say.listen for step in steps[:3]] == ["yes_no", "yes_no", "short"]
+    assert [step.say.listen for step in steps[:3]] == FIRST_THREE[identity]
     assert "open" in {step.say.listen for step in steps}
 
 

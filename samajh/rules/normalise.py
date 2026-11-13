@@ -21,6 +21,12 @@ What the rules can rely on afterwards:
    customer's figure is kept either way and the rules decide what the read-back changes. The
    amount may come from the reply to its question or from a correction made in reply to a
    read-back.
+2a. A premium of nothing ("मुफ़्त था", "कुछ नहीं लगा", "zero rupees") is the amount 0. The extractor
+   marks "it was free" with `ZERO_PREMIUM` (the model's `free` answer; free is not a number word),
+   and the amount parser reads "शून्य/zero रुपये" as 0. Either way 0 is kept only when the whole
+   reply holds no other amount and does not say the money came from the loan or from someone else
+   (`paid_otherwise`): "मैंने कुछ नहीं दिया, लोन से कटा" is nothing out of pocket, not a free product,
+   so the premium is then `Unclear(no_usable_answer)`.
 3a. A premium carried forward from open recall (`carried_premiums`): when the bot reads back a
    premium for a product it never asked the premium of, the open-recall reply whose whole text
    reads to the figure read back is accepted as the premium's quote, and nothing else is. When
@@ -82,6 +88,10 @@ from samajh.types import (
 )
 
 _Asks = tuple[ProductId, Question, bool]  # product, question, is it the read-back
+
+# The premium the extractor records when the customer says the product cost nothing (the model's
+# `free` answer). Read here as 0, after the checks in `_read_amount`.
+ZERO_PREMIUM = "0"
 _Reader = Callable[[str, bool], int | None]  # (text, exact) -> number, or None when unsure
 
 
@@ -161,13 +171,21 @@ def _said(evidence: Evidence, replies: dict[TurnId, _Reply], whole_clauses: bool
 
 
 def _rupees(text: str, exact: bool) -> int | None:
+    """A recall item's amount. A bound ("पचास हज़ार तक") is no amount here."""
     result = parse_amount(text, exact=exact)
-    return result.rupees if isinstance(result, Parsed) else None
+    return result.rupees if isinstance(result, Parsed) and not result.bound else None
 
 
-def _ends(text: str, exact: bool) -> tuple[int, int, bool] | None:
-    """(low, high, approximate) of the amount in `text`; low == high for one figure."""
+def _ends(text: str, exact: bool, bound_ok: bool = False) -> tuple[int, int, bool] | None:
+    """(low, high, approximate) of the amount in `text`; low == high for one figure.
+
+    A bound ("पचास हज़ार तक", "up to 50,000") reads as its ceiling only with `bound_ok`: for the
+    cover, which is a maximum by nature, and for the bot's own read-back lines ("तो उससे … रुपये तक
+    मिलता है"). For a premium a ceiling is no figure: None.
+    """
     result = parse_approx_amount(text, exact=exact)
+    if isinstance(result, (Parsed, Approximate)) and result.bound and not bound_ok:
+        return None
     if isinstance(result, Parsed):
         return result.rupees, result.rupees, False
     if isinstance(result, Approximate):
@@ -175,21 +193,56 @@ def _ends(text: str, exact: bool) -> tuple[int, int, bool] | None:
     return None
 
 
-def _read_amount(answer: Answer[str], replies: dict[TurnId, _Reply]) -> Answer[int]:
+# Words that say the money came from the loan or from someone else. A premium of nothing said next
+# to one of them is nothing out of pocket, not a free product. Wide on purpose: a false match leaves
+# the premium undecided (`incomplete`), a miss would refer an informed customer.
+_LOAN_OR_PAYER = frozenset(
+    _norm(w)
+    for w in ("लोन", "loan", "ಲೋನ್", "லோன்", "कर्ज़", "कर्ज", "karz", "बैंक", "bank", "कंपनी", "company",
+              "employer", "lender")
+)  # fmt: skip
+_CUT_PREFIXES = tuple(_norm(w) for w in ("कट", "काट", "kat", "kaat", "cut", "deduct"))
+_SOMEONE_ELSE = tuple(
+    tuple(_norm(w).split()) for w in ("किसी और ने", "kisi aur ne", "someone else", "somebody else")
+)
+
+
+def paid_otherwise(text: str) -> bool:
+    """Does the reply say the money came from the loan, was cut, or was paid by someone else?"""
+    words = _norm(text).split()
+    if _LOAN_OR_PAYER.intersection(words) or any(w.startswith(_CUT_PREFIXES) for w in words):
+        return True
+    return any(tuple(words[k : k + len(r)]) == r for r in _SOMEONE_ELSE for k in range(len(words)))
+
+
+def _read_amount(
+    answer: Answer[str], replies: dict[TurnId, _Reply], bound_ok: bool, premium: bool = False
+) -> Answer[int]:
     """An amount from the customer's whole reply, exact or approximate; the span must agree.
 
     "करीब पचास हज़ार" is 50,000 marked approximate; "पचास बावन हज़ार" is 52,000 with `low`
     50,000. Hedged and approximate are markers: the rules decide what they may change.
+    For the premium, `ZERO_PREMIUM` (the customer said it was free) is 0 when the reply holds no
+    other amount, and any 0 is refused when the reply says the money came from the loan or from
+    someone else (`paid_otherwise`).
     """
     match answer:
         case Stated(value=span, evidence=ev, hedged=hedged, also=also):
             reply = replies[ev.turn_id].text
-            heard, said = _ends(reply, False), _ends(span, False)
-            # The span and the whole reply must read the same. The whole reply already holds every
-            # word next to the span, so a fraction or unit word the model left out is seen there.
-            if heard is None or said is None or said[:2] != heard[:2]:
-                return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
+            heard = _ends(reply, False, bound_ok)
+            if premium and span == ZERO_PREMIUM:
+                if heard is not None and heard[1] != 0:
+                    return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
+                heard = (0, 0, False)
+            else:
+                said = _ends(span, False, bound_ok)
+                # The span and the whole reply must read the same. The whole reply already holds every
+                # word next to the span, so a fraction or unit word the model left out is seen there.
+                if heard is None or said is None or said[:2] != heard[:2]:
+                    return Unclear(reason=GapReason.value_not_parsed, evidence=ev)
             low, high, approximate = heard
+            if premium and high == 0 and paid_otherwise(reply):
+                return Unclear(reason=GapReason.no_usable_answer, evidence=ev)
             return Stated[int](
                 value=high,
                 evidence=ev,
@@ -283,14 +336,15 @@ def _confirm(
         return readback
     read_back_turn = replies[readback.evidence.turn_id].prompt
     said = (figure.low or figure.value, figure.value)
-    read = _ends(read_back_turn.text, False) if read_back_turn is not None else None
+    read = _ends(read_back_turn.text, False, bound_ok=True) if read_back_turn is not None else None
     before = readback.evidence.turn_id
     given = [figure.evidence, *(figure.also if restated else ())]
     if (
         read is not None
         and read[:2] == said
         and any(
-            ev.turn_id < before and (ev is figure.evidence or _reads_as(replies[ev.turn_id].text, said))
+            ev.turn_id < before
+            and (ev is figure.evidence or _reads_as(replies[ev.turn_id].text, said, bound_ok=restated))
             for ev in given
         )
     ):
@@ -298,8 +352,8 @@ def _confirm(
     return Unclear(reason=GapReason.readback_mismatch, evidence=readback.evidence)
 
 
-def _reads_as(text: str, ends: tuple[int, int]) -> bool:
-    heard = _ends(text, False)
+def _reads_as(text: str, ends: tuple[int, int], bound_ok: bool = False) -> bool:
+    heard = _ends(text, False, bound_ok)
     return heard is not None and heard[:2] == ends
 
 
@@ -342,7 +396,7 @@ def carried_premiums(transcript: Transcript) -> dict[ProductId, CarriedPremium]:
 
 
 def _carried(read_back: Turn, recall_replies: list[Turn]) -> CarriedPremium:
-    read = _ends(read_back.text, False)
+    read = _ends(read_back.text, False, bound_ok=True)  # the bot's own line
     for reply in reversed(recall_replies) if read is not None else ():
         result = parse_approx_amount(reply.text)
         span: Span | None = result.span if isinstance(result, (Parsed, Approximate)) else None
@@ -390,7 +444,10 @@ def _product_beliefs(
         come from a correction made in reply to the read-back, or (premium) be carried from recall."""
         own, again = (raw.product_id, question, False), (raw.product_id, question, True)
         grounded = _ground(answer, frozenset({own, again}), own in asked, replies, ungrounded, carried_from)
-        figure = _read_amount(grounded, replies)
+        # A cover is a maximum by nature: "पाँच लाख तक का कवर" is the cover. A premium bound is not.
+        figure = _read_amount(
+            grounded, replies, bound_ok=question is Question.cover, premium=question is Question.premium
+        )
         readback = ground(readback, question, read_back=True)
         return figure, _confirm(figure, readback, replies, restated=question is Question.cover)
 

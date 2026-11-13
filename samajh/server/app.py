@@ -38,6 +38,7 @@ from samajh.clients._runtime import state_dir
 from samajh.clients.errors import BadResponse, ConfigError
 from samajh.clients.gnani import PrismaV25, PrismaV30, Transcript, wav_seconds
 from samajh.extract import Llm
+from samajh.identity import parse_policy
 from samajh.server.audio import (
     MAX_TURN_SECONDS,
     AudioRejected,
@@ -49,9 +50,19 @@ from samajh.server.audio import (
 from samajh.server.casefile import CaseFile, StepResult, build_case, new_case
 from samajh.server.dialogue import Dialogue, DialogueFactory, Heard, Step
 from samajh.server.errors import ApiProblem, Stage, problem_from
+from samajh.server.identity_routes import identity_router
 from samajh.server.loanbook import LINK_PARAMS, LoanBook, LoanRefused, resolve_record
 from samajh.server.review_routes import review_router
-from samajh.server.samajh_dialogue import followed_by, readings_agreed
+from samajh.server.samajh_dialogue import (
+    IDENTITY_PARAM,
+    answers_year_question,
+    followed_by,
+    identity_param,
+    readings_agreed,
+    shown_event,
+    shown_log,
+    withhold_reply,
+)
 from samajh.server.sessionlog import (
     AUDIO_NAME,
     BotEvent,
@@ -125,6 +136,10 @@ class CreateSession(_Body):
     dialogue: str | None = None
     line_rate: LineRate = 8000
     params: dict[str, str] = {}
+    # The right-party setting for this one call (the phone's demo picker), the fields of
+    # `samajh.identity.IdentityPolicy`; None: the server's `[identity]`. Anything outside the menu
+    # is refused (422 invalid_identity). Stored in the session params as canonical JSON.
+    identity: dict[str, Any] | None = None
 
 
 class EndSession(_Body):
@@ -406,6 +421,7 @@ class Sessions:
         }
 
     def turn_json(self, log: SessionLog, customer: CustomerEvent, bot: BotEvent) -> dict[str, Any]:
+        customer = shown_event(log, customer)  # a log written before the year reply was withheld
         name = (customer.audio or "").removeprefix("audio/")
         shown = {"role", "model", "ok", "error", "text", "cache_hit", "seconds"}
         return {
@@ -490,6 +506,14 @@ class Sessions:
         if factory is None:
             raise ApiProblem(422, "request", "unknown_dialogue", "no dialogue has that name")
         params = self._link(dict(request.params))
+        if IDENTITY_PARAM in params:
+            raise ApiProblem(422, "request", "invalid_params", "send the identity setting as `identity`")
+        if request.identity is not None:
+            try:
+                policy = parse_policy(request.identity)
+            except ValueError as error:
+                raise ApiProblem(422, "request", "invalid_identity", str(error)) from None
+            params[IDENTITY_PARAM] = identity_param(policy)
         try:
             dialogue = factory(params)
         except ValueError:
@@ -662,6 +686,8 @@ class Sessions:
             phone=request.phone,
             **audio,
         )
+        if answers_year_question(asked.lines):  # never logged or sent: `samajh_dialogue.WITHHELD`
+            customer = withhold_reply(customer)
 
         def apply(draft: SessionLog) -> None:
             if earlier is not None:
@@ -1178,7 +1204,7 @@ def create_app(
     @app.get("/api/sessions/{session_id}")
     async def session(session_id: str) -> dict[str, Any]:
         async with calls.locked(session_id) as log:
-            return log.model_dump(mode="json", exclude={"dialogue_state", "dialogue_undo"})
+            return shown_log(log).model_dump(mode="json", exclude={"dialogue_state", "dialogue_undo"})
 
     @app.get("/api/sessions/{session_id}/recording.wav")
     async def recording(session_id: str) -> Response:
@@ -1197,6 +1223,7 @@ def create_app(
             return await anyio.to_thread.run_sync(jobs.get, live)
 
     app.include_router(review_router(root))
+    app.include_router(identity_router(settings, records, loans))
     if web_dir is not None and web_dir.is_dir():
         app.mount("/", StaticFiles(directory=web_dir, html=True), name="web")
     return app

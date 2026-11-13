@@ -66,10 +66,18 @@ class FakeLlm:
         if (name, reply) in self.errors:
             raise self.errors[(name, reply)]
         output = self.replies.get((name, reply)) or self.outputs.get((name, question, reply))
+        if output is None and name == "PremiumReply":
+            # The premium used `SpanReply` before `PremiumReply.free` existed: older scripts key it so.
+            output = self.replies.get(("SpanReply", reply)) or self.outputs.get(
+                ("SpanReply", question, reply)
+            )
         if output is None:
             if name not in _UNSCRIPTED:
                 raise AssertionError(f"no output recorded for {name} / {reply!r}")
             output = _UNSCRIPTED[name]
+        if name == "PremiumReply" and "free" not in output:
+            # Outputs recorded before `PremiumReply.free` existed: replayed as "not free".
+            output = output | {"free": False}
         return LlmResult(
             value=schema.model_validate(output), model=model or "fake", prompt_tokens=0, completion_tokens=0,
             usd=0.0, cache_hit=True, attempts=0, generation_id=None,

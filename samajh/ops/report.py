@@ -78,7 +78,9 @@ def funnel(batch: Batch, share: Share = proportion) -> Funnel:
     attempted: at least one attempt. reached: any attempt whose outcome is not no_answer.
     right party confirmed: any attempt with `right_party_confirmed`. completed: completed within
     30 days of the sale and analysed (`FinalStatus.completed`). Exits: one row per other final
-    status (see `Sampled.status`). Completed plus the exits equals sampled.
+    status (see `Sampled.status`). Completed plus the exits equals sampled. An exit row's
+    `not_counted` is how many of its loans end on a request said in a call that was not counted
+    (`Sampled.ended_by_uncounted_call`).
     """
     sampled = batch.sampled
     n = len(sampled)
@@ -93,6 +95,7 @@ def funnel(batch: Batch, share: Share = proportion) -> Funnel:
         for status in FinalStatus
         if status is not FinalStatus.completed
     }
+    uncounted = Counter(s.status for s in sampled if s.ended_by_uncounted_call)
     assert stages["completed"] + sum(exits.values()) == n, "every sampled loan has exactly one final status"
     return Funnel(
         sampled=n,
@@ -102,7 +105,12 @@ def funnel(batch: Batch, share: Share = proportion) -> Funnel:
             for key, count in stages.items()
         ),
         exits=tuple(
-            FunnelRow(key=status.value, label=wording.STATUS_LABEL[status], value=share(count, n))
+            FunnelRow(
+                key=status.value,
+                label=wording.STATUS_LABEL[status],
+                value=share(count, n),
+                not_counted=uncounted[status],
+            )
             for status, count in exits.items()
         ),
     )

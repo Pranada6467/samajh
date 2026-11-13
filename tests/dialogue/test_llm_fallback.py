@@ -260,3 +260,32 @@ def test_a_go_on_word_against_an_end_label_asks_once_instead_of_ending():
         question=Q,
     )
     assert heard.intent is Intent.maybe_decline
+
+
+@pytest.mark.parametrize(
+    "label, text, language, expecting",
+    [
+        ("dont_know", "याद नहीं आ रहा अभी", HI, Expecting.birth_year),  # verify-P2-r4 G3-11
+        ("dont_know", "pata nahi yaar, yaad nahi", Language.hi_en, Expecting.birth_year),  # G3-12
+        ("no", "nahi ji", Language.hi_en, Expecting.identity),  # G4-12
+    ],
+)
+def test_a_label_the_question_does_not_act_on_confirms_nobody_and_is_not_a_failed_classifier(
+    label, text, language, expecting
+):
+    # The classifier answered; only a failure, a timeout or `unclear` marks the turn degraded, because a
+    # degraded turn voids the whole session in ops.
+    llm = FakeLlm(label)
+    heard = LlmFallbackInterpreter(llm).interpret(text, language=language, expecting=expecting, question=Q)
+    assert len(llm.calls) == 1
+    assert not heard.degraded and heard.year is None and heard.intent is not Intent.yes
+    unsure = LlmFallbackInterpreter(FakeLlm("unclear"))
+    assert unsure.interpret(text, language=language, expecting=expecting, question=Q).degraded
+
+
+def test_dont_know_at_the_birth_year_takes_the_same_path_as_a_failed_classifier_without_voiding_the_call():
+    replies = ["हाँ जी", "याद नहीं आ रहा अभी"]
+    judged = play(record(), HI, replies, interpreter=LlmFallbackInterpreter(FakeLlm("dont_know")))
+    down = play(record(), HI, replies, interpreter=LlmFallbackInterpreter(FakeLlm(error=TransportError("x"))))
+    assert judged.keys == down.keys
+    assert judged.state.degraded_turns == () and down.state.degraded_turns != ()

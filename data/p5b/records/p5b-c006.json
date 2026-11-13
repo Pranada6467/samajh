@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Seema, born 1983, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c006",
+  "label": "Synthetic P5b record. Seema: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1983-05-12",
+      "language": "hi-en",
+      "name": "Seema Kritrim"
+    },
+    "disbursed_inr": 453600,
+    "disbursed_on": "2026-11-03",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-006",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-11-03",
+          "method": "otp"
+        },
+        "cover_inr": 480000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 26400,
+        "provider": "Kritrim Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 480000,
+    "tenure_months": 24
+  }
+}

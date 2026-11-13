@@ -83,6 +83,23 @@ book, loan, draw and chain rule (an unknown loan, a batch or draw that does not 
 has ended), because a void call is not an attempt at all. A session brought in before this rule
 stays where it is and is listed as changed, saying it is still counted.
 
+*A void request.* One exception: a void session that ended in one of `UNCONFIRMED_REQUESTS`
+(`do_not_call`, `human_requested`, `call_back_later`, `written_requested`), or in `declined` from a
+speaker the case file confirms as the borrower (`kept_when_void`), is not dropped, since the
+customer's request would be lost (a borrower who said "do not call me" would be called again). It
+goes through every book, loan, draw and chain rule like any attempt and is logged with its outcome
+mapped as above, except that a `speaker_confirmed` the case file does not give is taken as false
+(only a confirmed borrower's request ends anything). So a confirmed `do_not_call` ends the loan's
+chain, for ingest and for the phone server, which read the same attempt log; an unconfirmed one is
+`request_unconfirmed` and the loan is called again. The attempt carries `not_counted` (the
+classifier reason) and no analysed call, so it is in no tier or counted call. The reach funnel
+does count it: as an attempt, with the exit its outcome maps to. It takes the loan's next attempt number: it was
+a real call on the borrower, and an unnumbered attempt would let the loan pass `MAX_ATTEMPTS`
+unseen; its attempt id is fixed by the session, so a rerun finds it and changes nothing. A void
+request that fails a book, loan, draw or chain rule (or has no book block) is skipped with "<the
+classifier reason>; its request was not logged: <the rule>". A request brought in, counted, before
+it became void stays counted and is listed as changed.
+
 **Running it again** changes nothing for a session whose case file is unchanged. One change is
 taken in: a case file that failed and was rebuilt to `ready` turns that session's
 `completed_not_analysed` into `completed` with its analysed call, as an explicit supersede in the
@@ -138,6 +155,7 @@ from samajh.ops.model import (
     SpeechReading,
     TurnReadings,
     attempt_outcome_for,
+    kept_when_void,
 )
 from samajh.ops.store import OpsStore, may_supersede
 from samajh.ops.wording import CLASSIFIER_FAILED
@@ -378,15 +396,27 @@ def _turns(n: int) -> str:
     return f"{n} turn" if n == 1 else f"{n} turns"
 
 
+def _void_reason(turns: list[int]) -> str:
+    """Why a session with a turn the classifier failed on is not counted, in words."""
+    ids = ", ".join(str(t) for t in turns)
+    return f"{CLASSIFIER_FAILED} {_turns(len(turns))} (turn ids {ids})"
+
+
 def _classifier_failed(turns: list[int]) -> _Skip:
     """A session with a turn the classifier failed on: void, never counted, the call to be repeated."""
-    ids = ", ".join(str(t) for t in turns)
-    said = f"the classifier failed on {_turns(len(turns))} (turn ids {ids})"
+    said = _void_reason(turns).removeprefix("not counted: ")
     return _Skip(
-        f"{CLASSIFIER_FAILED} {_turns(len(turns))} (turn ids {ids})",
+        _void_reason(turns),
         changed=f"{said}, and the session was brought in before ingest left such sessions out: "
         "the version brought in first is kept and still counted",
     )
+
+
+def _void_request(case: "_CaseFile") -> bool:
+    """A void session (a turn the classifier failed on) that ended in a request of the borrower's
+    own kind, or a confirmed borrower's `declined` (`kept_when_void`): logged as a request, not
+    counted. Every other void session is skipped."""
+    return bool(case.degraded_turns) and kept_when_void(case.call_outcome, case.speaker_confirmed)
 
 
 def _why(error: Exception) -> str:
@@ -466,8 +496,13 @@ def packaged_records() -> Callable[[str], LoanRecord | None]:
 
 def attempt_outcome(case: _CaseFile) -> AttemptOutcome:
     """The attempt outcome of a finished session (`attempt_outcome_for`); a completed call whose
-    case file is not ready is `completed_not_analysed`. Raises KeyError for an unknown outcome."""
-    outcome = attempt_outcome_for(case.call_outcome, case.speaker_confirmed)
+    case file is not ready is `completed_not_analysed`. In a void session (`degraded_turns`) a
+    `speaker_confirmed` the case file does not give is taken as false: only a speaker confirmed as
+    the borrower makes a request of the borrower's own. Raises KeyError for an unknown outcome."""
+    confirmed = case.speaker_confirmed
+    if confirmed is None and case.degraded_turns:
+        confirmed = False
+    outcome = attempt_outcome_for(case.call_outcome, confirmed)
     if outcome is AttemptOutcome.completed and case.status != "ready":
         return AttemptOutcome.completed_not_analysed
     return outcome
@@ -614,7 +649,8 @@ def _read_case(folder: Path) -> _CaseFile:
         )
     if why := _contradiction(case):
         raise _Skip(why)
-    if case.degraded_turns:  # after the file's own checks, before any book, loan or chain rule
+    # After the file's own checks, before any book, loan or chain rule. A void request goes on (`_one`).
+    if case.degraded_turns and not _void_request(case):
         raise _classifier_failed(case.degraded_turns)
     return case
 
@@ -718,6 +754,9 @@ def _as_attempt(store: OpsStore, case: _CaseFile, loan: BookLoan, draw: Draw, at
         raise _Skip(why)
     outcome = attempt_outcome(case)
     analysed = outcome is AttemptOutcome.completed
+    not_counted = _void_reason(case.degraded_turns) if case.degraded_turns else None
+    if existing is not None and existing.not_counted is None and not_counted is not None:
+        raise _classifier_failed(case.degraded_turns)  # brought in before the rule: kept, still counted
     fresh = Attempt(
         attempt_id=attempt_id,
         draw_id=draw.draw_id,
@@ -731,12 +770,15 @@ def _as_attempt(store: OpsStore, case: _CaseFile, loan: BookLoan, draw: Draw, at
         right_party_confirmed=right_party_confirmed(case, outcome),
         dialogue_outcome=case.call_outcome,
         call_id=sid if analysed else None,
+        not_counted=not_counted,
     )
     _write(store, existing, fresh, _call_record(case, attempt_id) if analysed else None, store.add_attempt)
 
 
 def _as_outside(store: OpsStore, case: _CaseFile, reason: str, record: LoanRecord, at: datetime) -> None:
     sid = case.session_id
+    if case.degraded_turns:  # a void call outside the sample is no attempt and stops nothing
+        raise _Skip(reason)
     if why := _logged_elsewhere(store, sid, None):
         raise _Skip(why)
     outcome = attempt_outcome(case)
@@ -762,7 +804,20 @@ def _as_outside(store: OpsStore, case: _CaseFile, reason: str, record: LoanRecor
 def _one(
     store: OpsStore, batch: _Batch, case: _CaseFile, records: Callable[[str], LoanRecord | None]
 ) -> Literal["linked", "outside"]:
-    """Bring in one readable, finished session. Raises `_Skip` with the reason."""
+    """Bring in one readable, finished session. Raises `_Skip` with the reason. A void request that
+    cannot be logged as an attempt on a drawn loan is skipped with the classifier reason first."""
+    if not case.degraded_turns:
+        return _place(store, batch, case, records)
+    try:
+        return _place(store, batch, case, records)  # never "outside": `_as_outside` refuses a void call
+    except _Skip as error:
+        why = f"{_void_reason(case.degraded_turns)}; its request was not logged: {error.reason}"
+        raise _Skip(why, changed=error.changed or error.reason) from None
+
+
+def _place(
+    store: OpsStore, batch: _Batch, case: _CaseFile, records: Callable[[str], LoanRecord | None]
+) -> Literal["linked", "outside"]:
     loan = batch.loans.get(case.loan_id)
     book = case.book
     if book is None:
@@ -838,7 +893,9 @@ def ingest(store: OpsStore, sessions: Path, records: Callable[[str], LoanRecord 
                 kind = _one(store, batch, case, records)
             except Exception as error:  # noqa: BLE001 - no session may stop the run
                 store.drop_unreferenced_session_calls()  # no call file without its entry
-                found.refuse(case.session_id, _why(error), brought)
+                found.refuse(
+                    case.session_id, _why(error), brought, error.changed if isinstance(error, _Skip) else None
+                )
             else:
                 (found.linked if kind == "linked" else found.outside).append(case.session_id)
         if sessions.is_dir():

@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Leela, born 1994, took a gold loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c021",
+  "label": "Synthetic P5b record. Leela: a gold loan and one add-on",
+  "lender_name": "नमूना क्रेडिट",
+  "record": {
+    "borrower": {
+      "dob": "1994-11-08",
+      "language": "hi-en",
+      "name": "Leela Nakli"
+    },
+    "disbursed_inr": 81940,
+    "disbursed_on": "2026-11-02",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-021",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-11-02",
+          "method": "otp"
+        },
+        "cover_inr": 85000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 3060,
+        "provider": "Nakli Life Cover (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 6
+      }
+    ],
+    "sanctioned_inr": 85000,
+    "tenure_months": 6
+  }
+}

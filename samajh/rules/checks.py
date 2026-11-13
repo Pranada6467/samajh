@@ -95,6 +95,9 @@ SEVERITY: dict[Why, Severity] = {
     Why.feature_dont_know: Severity.low,
     Why.sale_concern: Severity.high,
     Why.premium_approximate: Severity.low,
+    Why.premium_said_zero: Severity.high,
+    Why.consent_product_not_named: Severity.low,
+    Why.payment_says_not_charged: Severity.high,
     Why.recall_denied: Severity.high,
     Why.frequency_recurring_on_single: Severity.low,
     Why.frequency_dont_know: Severity.low,
@@ -139,7 +142,22 @@ FEATURE_LABEL: dict[FeatureClaim, str] = {
     FeatureClaim.guaranteed_return: "it gives a guaranteed return",
     FeatureClaim.one_time_payment: "it is paid only once",
     FeatureClaim.withdrawable_after_period: "the money can be withdrawn after a period",
+    FeatureClaim.money_back: "the money comes back",
 }
+
+# An untimed "the money comes back" is true of a product exactly when the record gives it a way for
+# the money to come back. The one place this is derived; records never list `money_back` themselves.
+MONEY_BACK_VIA = frozenset(
+    {FeatureClaim.is_deposit, FeatureClaim.refundable_anytime, FeatureClaim.withdrawable_after_period}
+)
+
+
+def claim_holds(claim: FeatureClaim, features: frozenset[FeatureClaim]) -> bool:
+    """Is the customer's belief true of a product with these features on record?"""
+    if claim is FeatureClaim.money_back:
+        return bool(features & MONEY_BACK_VIA)
+    return claim in features
+
 
 # The rule that answers a question, and so the rule its conflicting answers are flagged under.
 QUESTION_RULE: dict[Question, RuleId] = {
@@ -345,6 +363,12 @@ def premium(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
             return (_gap(rule, p.id, GapReason.readback_mismatch, readback.evidence),)
         if _too_wide(a):
             return (_gap(rule, p.id, GapReason.not_comparable, a.evidence),)
+        if a.value == 0:
+            # "It was free": no figure that speech recognition could have changed, so no read-back
+            # is needed. `samajh.rules.normalise` reads 0 only when the reply does not also say the
+            # money came from the loan or from someone else.
+            heard = "customer said it cost them nothing"
+            return (_flag(rule, p.id, Why.premium_said_zero, expected, heard, a.evidence),)
         confirmed = isinstance(readback, Stated)
         exact, near = _exact(a, p.premium_inr), _near(a, p.premium_inr)
         if confirmed and exact:
@@ -529,12 +553,49 @@ def recall_unmatched(rule: Rule, record: LoanRecord, beliefs: Beliefs) -> Outcom
 # --- consent, payment, bundling ----------------------------------------------
 
 
+def _method_only(given: Answer[bool], method: Answer[ConsentMethod]) -> bool:
+    """The consent reply gave a way of agreeing and named nothing agreed to.
+
+    The "what" half is the extractor's plain no-answer reading (of the same reply as the method,
+    when it carries a quote), and the method stood without a correction inside that reply (no earlier words of its own turn
+    in `also`). A failed call, an ungrounded quote, a withdrawal or a correction never qualify:
+    the change check and the take-back tail leave the method `Unclear` or mark it.
+    """
+    return (
+        isinstance(method, Stated)
+        and isinstance(given, Unclear)
+        and given.reason is GapReason.no_usable_answer
+        and (given.evidence is None or given.evidence.turn_id == method.evidence.turn_id)
+        and all(e.turn_id != method.evidence.turn_id for e in method.also)
+    )
+
+
+def _naming(p: Product, beliefs: Beliefs, consent_turn: int) -> Evidence | None:
+    """Where the customer named this product in the call: a recall item matched to it, or the kind
+    question answered (any kind: a misdescription is judged by the kind rule). The last naming
+    before the consent reply, else the first after it; None when the customer named it nowhere."""
+    namings = [i.evidence for i in _matched(p, beliefs)]
+    kind = beliefs.for_product(p.id).kind
+    if isinstance(kind, Stated):
+        namings.append(kind.evidence)
+    namings.sort(key=lambda ev: ev.turn_id)
+    before = [ev for ev in namings if ev.turn_id < consent_turn]
+    return before[-1] if before else (namings[0] if namings else None)
+
+
 def consent(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     """A consent record clears nothing by itself: the customer's own account must match it.
 
     No record -> flag from the record alone. A record -> the customer, asked openly what they
-    agreed to buy and how, must name this product and the way of agreeing that is on record.
-    A different way of agreeing is a flag. No usable answer to either half is a gap, never a pass.
+    agreed to buy and how, must name this product and the way of agreeing that is on record. A
+    different way of agreeing is a flag. (A phone yes is classed as `recorded_call` by the extractor
+    unless the customer says the call was not recorded; the comparison here is equality.)
+
+    A reply that gives only the way of agreeing (P5 fix round): the "what" half is taken by code
+    from the customer's own naming of this product elsewhere in the call (open recall or the kind
+    question; `_naming`). If they named it nowhere, a matching way of agreeing is an understanding
+    gap (`consent_product_not_named`); a differing way still refers. Any other unusable answer to
+    either half is a gap, never a pass.
     """
     b = beliefs.for_product(p.id)
     if p.consent is None:
@@ -554,24 +615,39 @@ def consent(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
         f"on {p.consent.at.isoformat()}"
     )
 
+    method = b.consent_method
+
+    def differs(m: Stated[ConsentMethod]) -> Flag:
+        heard = f"customer said they agreed by {CONSENT_LABEL[m.value]}"
+        return _flag(rule, p.id, Why.consent_method_differs, expected, heard, m.evidence)
+
     def stated(a: Stated[bool]) -> Outcomes:
         if not a.value:
             heard = "customer's account of what they agreed to buy does not include this product"
             return (_flag(rule, p.id, Why.consent_not_recognised, expected, heard, a.evidence),)
-        method = b.consent_method
         if isinstance(method, Stated):
-            if method.value is on_record:
+            if method.value == on_record:
                 return _passed(rule, p.id)
-            heard = f"customer said they agreed by {CONSENT_LABEL[method.value]}"
-            return (_flag(rule, p.id, Why.consent_method_differs, expected, heard, method.evidence),)
+            return (differs(method),)
         # The customer names the product but not how they agreed: the record cannot be compared.
         if isinstance(method, DontKnow):
             return (_gap(rule, p.id, GapReason.no_usable_answer, method.evidence),)
         return (_gap_for(rule, p.id, method),)
 
-    return _decide(
-        rule, p.id, b.consent_given, stated=stated, dont_know=Why.consent_dont_know, expected=expected
-    )
+    given = b.consent_given
+    if _method_only(given, method):
+        assert isinstance(method, Stated)
+        named = _naming(p, beliefs, method.evidence.turn_id)
+        if named is not None:
+            given = Stated[bool](value=True, evidence=named)
+        elif method.value != on_record:
+            return (differs(method),)
+        else:
+            heard = (
+                "customer said how they agreed but did not name this product, here or anywhere in the call"
+            )
+            return (_flag(rule, p.id, Why.consent_product_not_named, expected, heard, method.evidence),)
+    return _decide(rule, p.id, given, stated=stated, dont_know=Why.consent_dont_know, expected=expected)
 
 
 def loan_funded(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
@@ -602,6 +678,9 @@ def loan_funded(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     def stated(a: Stated[PaymentSource]) -> Outcomes:
         if a.value is on_record:
             return _passed(rule, p.id)
+        if a.value is PaymentSource.not_charged:
+            said = "customer said they paid nothing for it (free, or paid by the bank or someone else)"
+            return (_flag(rule, p.id, Why.payment_says_not_charged, expected, said, a.evidence),)
         return (_flag(rule, p.id, other, expected, heard, a.evidence),)
 
     return _decide(rule, p.id, answer, stated=stated, dont_know=Why.funded_dont_know, expected=expected)
@@ -697,7 +776,7 @@ def belief_mismatch(rule: Rule, p: Product, beliefs: Beliefs) -> Outcomes:
     claims += [(FeatureClaim.is_deposit, ev) for k, ev in _kind_sources(p, beliefs) if k is KindClaim.deposit]
     contradicted: dict[FeatureClaim, Evidence] = {}
     for claim, ev in claims:
-        if claim not in p.features:
+        if not claim_holds(claim, p.features):
             contradicted.setdefault(claim, ev)
     expected = "what the customer believes matches the product's features"
     frequency = _frequency(rule, p, b)

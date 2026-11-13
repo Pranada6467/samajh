@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Venkatesh, born 1982, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c024",
+  "label": "Synthetic P5b record. Venkatesh: a personal loan and one add-on",
+  "lender_name": "नमूना क्रेडिट",
+  "record": {
+    "borrower": {
+      "dob": "1982-06-26",
+      "language": "hi-en",
+      "name": "Venkatesh Kritrim"
+    },
+    "disbursed_inr": 437920,
+    "disbursed_on": "2026-10-21",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-024",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-21",
+          "method": "digital_click"
+        },
+        "cover_inr": 460000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 22080,
+        "provider": "Kritrim Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": true,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 460000,
+    "tenure_months": 36
+  }
+}

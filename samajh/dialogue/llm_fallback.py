@@ -290,8 +290,13 @@ class LlmFallbackInterpreter:
             # a claim needs an "I": at the first-name question the reply is an ordinary confirmation
             label = _Label.yes if expecting is Expecting.identity else _Label.unclear
         intent = table.get(label)
-        if intent is None or (expecting in _CONFIRMING and label is _Label.unclear):
-            return self._unjudged(first, expecting) if expecting in _CONFIRMING else first
+        if expecting in _CONFIRMING and label is _Label.unclear:
+            return self._unjudged(first, expecting)
+        if intent is None:
+            # The classifier answered, with a label this question does not act on ("dont_know" at the
+            # birth year, "no" at the first name): the word lists' reading, never confirming, and not
+            # degraded, since the classifier did not fail (a degraded turn voids the whole session).
+            return self._unconfirmed(first, expecting) if expecting in _CONFIRMING else first
         if first.intent in _WEAK and intent not in _KEEPS_WEAK:
             return first  # a weak stop signal stays one question to the customer unless clearly an answer or an end
         if first.intent is Intent.yes and intent in (Intent.decline, Intent.call_later):
@@ -307,10 +312,15 @@ class LlmFallbackInterpreter:
     @staticmethod
     def _unjudged(first: Interpretation, expecting: Expecting) -> Interpretation:
         """No judgment: at the confirming questions nobody is confirmed; later, the call asks once."""
+        return LlmFallbackInterpreter._unconfirmed(first, expecting).model_copy(update={"degraded": True})
+
+    @staticmethod
+    def _unconfirmed(first: Interpretation, expecting: Expecting) -> Interpretation:
+        """The word lists' reading with nobody confirmed: no first-person yes, no year."""
         if expecting is Expecting.identity and first.intent is Intent.yes:
             first = first.model_copy(update={"intent": Intent.said})
         # An ordinary confirmation stands: that path discloses nothing before the birth year.
-        return first.model_copy(update={"degraded": True, "year": None})
+        return first.model_copy(update={"year": None})
 
     def _ask(self, messages: list[Message]) -> _Label:
         reply = self._llm.complete(_Verdict, messages, model=self._model, max_tokens=self._max_tokens)

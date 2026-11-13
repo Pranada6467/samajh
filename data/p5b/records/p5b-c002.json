@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Jyoti, born 1990, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c002",
+  "label": "Synthetic P5b record. Jyoti: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1990-07-14",
+      "language": "hi-en",
+      "name": "Jyoti Prayogik"
+    },
+    "disbursed_inr": 528080,
+    "disbursed_on": "2026-10-22",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-002",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-22",
+          "method": "digital_click"
+        },
+        "cover_inr": 560000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 31920,
+        "provider": "Prayogik Suraksha (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 560000,
+    "tenure_months": 36
+  }
+}

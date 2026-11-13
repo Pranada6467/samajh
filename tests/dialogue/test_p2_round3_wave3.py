@@ -76,7 +76,7 @@ def test_now_and_go_on_resumes(now):
     call = run([*AT_KIND, "बाद में कॉल करना"])
     assert isinstance(call.state.position, AtCallbackTime)
     _, said = step(call.state, now)
-    assert not hasattr(said, "outcome") and said.lines[-1].key in ("kind.ask", "kind.reask")
+    assert not hasattr(said, "outcome") and said.lines[-1].key in ("kind.ask", "kind.ask_named", "kind.reask")
 
 
 def test_not_now_later_still_ends():
@@ -103,7 +103,7 @@ ARMS = {
 @pytest.mark.parametrize("reply", TAKEOVERS)
 def test_a_takeover_gets_the_who_check_before_anything_else(arm, reply):
     call = run([*AT_KIND, reply], **ARMS[arm]())
-    assert call.keys[-1] == "right_party.reask", call.keys
+    assert call.keys[-1] == "right_party.who_check", call.keys
     assert "verify.after_loan" not in call.keys and LENDER not in call.utterances[-1].text
 
 
@@ -121,9 +121,9 @@ def test_an_account_is_not_a_takeover(arm, reply):
         # Round 4: "my relative's ..." is a weak sign of another speaker; with no classifier label (or one
         # that says nothing about who is speaking) the who-check is the safe default (one question). An
         # "answer" label decides it.
-        assert keys[-1] == "right_party.reask"
+        assert keys[-1] == "right_party.who_check"
     else:
-        assert keys[-1] != "right_party.reask"
+        assert keys[-1] != "right_party.who_check"
 
 
 def test_a_plain_who_question_from_the_borrower_still_gets_the_verify_line():
@@ -142,7 +142,7 @@ def test_a_plain_who_question_from_the_borrower_still_gets_the_verify_line():
     "मुझे तो समझ नहीं आया, बैंक वाले भैया ने कहा इसमें फ़ायदा है, तो हाँ कर दी।",
 ])  # fmt: skip
 def test_a_reply_that_names_something_in_another_clause_starts_the_products(reply):
-    assert run([*AT_RECALL, reply]).keys[-1] == "kind.ask"
+    assert run([*AT_RECALL, reply]).keys[-1] == "kind.ask_named"
 
 
 @pytest.mark.parametrize("reply", ["कुछ नहीं लिया, बस लोन लिया था", "नहीं, कुछ नहीं कटा", "पता नहीं", "याद नहीं",

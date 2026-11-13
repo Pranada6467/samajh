@@ -19,9 +19,9 @@ shown without its n.
 from collections.abc import Iterable
 from datetime import date, datetime
 from pathlib import Path
-from typing import Literal
+from typing import ClassVar, Literal
 
-from pydantic import model_validator
+from pydantic import Field, model_validator
 
 from samajh.evalkit.score import wilson
 from samajh.ops import wording
@@ -301,6 +301,11 @@ class AttemptView(Frozen):
     # For a request from a speaker not confirmed as the borrower: what the speaker asked, in words
     # (wording.UNCONFIRMED_REQUEST_LABEL); None for every other attempt.
     request: str | None
+    # Why the call was not counted (`Attempt.not_counted`: the classifier failed on some turns), for
+    # a request logged from such a call; None for every counted attempt. A dump leaves it out while None.
+    not_counted: str | None = None
+
+    added_later: ClassVar[frozenset[str]] = frozenset({"not_counted"})
 
 
 class SampledLoanView(Frozen):
@@ -379,6 +384,11 @@ class FunnelRow(Frozen):
     key: str
     label: str
     value: Proportion  # n is the number sampled
+    # Of an exit row's loans, how many end on a request said in a call that was not counted
+    # (`Sampled.ended_by_uncounted_call`); already inside `value`. A dump leaves it out while 0.
+    not_counted: int = Field(default=0, ge=0)
+
+    added_later: ClassVar[frozenset[str]] = frozenset({"not_counted"})
 
 
 class Funnel(Frozen):
@@ -928,6 +938,7 @@ def attempt_log_view(batch: Batch) -> AttemptLogView:
                     session_id=a.source.session_id if isinstance(a.source, PhoneSession) else None,
                     dialogue_outcome=a.dialogue_outcome,
                     request=_request(a.outcome, a.dialogue_outcome),
+                    not_counted=a.not_counted,
                 )
                 for a in s.attempts
             ),

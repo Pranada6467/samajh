@@ -496,7 +496,11 @@ _HI = Lexicon(
                    "ना", "या", "नहीं", "shayad", "hoga", "lagbhag", "kareeb", "maybe", "probably", "i think",
                    "not sure", "around", "right", "or", "no", "ya",
                    # Wave 5 fix 2: "अंदाज़े से चौरासी" is a guess (hedge is read only at the birth year).
-                   "अंदाजे से", "अंदाज से", "अंदाजन", "andaze se", "andaaz se", "andaz se", "andazan", "andaazan"),
+                   "अंदाजे से", "अंदाज से", "अंदाजन", "andaze se", "andaaz se", "andaz se", "andazan", "andaazan",
+                   # Iteration 3 fix round: a year "around" something ("1984 के आसपास", "takriban chaurasi").
+                   "आसपास", "आस पास", "आस-पास", "aaspaas", "aas paas", "aaspas", "aspaas", "aspas", "तकरीबन", "takriban",
+                   "takreeban", "करीबन", "kariban", "kareeban", "इर्द गिर्द", "ird gird", "approx*", "about", "roughly",
+                   "somewhere", "something like", "or so", "ish"),
     do_now=_phrases("ठीक है", "is fine", "fine", "continue", "पूछिए", "पूछ लो", "पूछ लीजिए", "आगे बढ़िए", "कर लेते हैं",
                     "kar lo", "कर लो", "बोलिए", "बताइए", "go ahead", "carry on"),
     absent_frame=_phrases("उनको", "उन्हें", "unko", "unhe", "unhen", "inko"),

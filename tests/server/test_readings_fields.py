@@ -77,11 +77,13 @@ def drive(
     params: dict[str, str],
     reply: Callable[[Step], Readings | None],
     interpreter=None,
+    identity: dict | None = None,
 ) -> tuple[str, list[dict]]:
     """A whole call. `reply(step)` gives the readings of the answer to the twin's step, or None for
-    the informed customer's answer heard alike by both models. Returns the session id and every
-    turn response."""
-    created = phone.post("/api/sessions", json={"params": params})
+    the informed customer's answer heard alike by both models. `identity` is the session request's
+    right-party setting (None: the server's). Returns the session id and every turn response."""
+    body: dict = {"params": params} | ({"identity": identity} if identity is not None else {})
+    created = phone.post("/api/sessions", json=body)
     assert created.status_code == 201, created.text
     sid, bot = created.json()["session_id"], created.json()["bot"]
     stored = SessionStore(state / "sessions").load(sid).params
@@ -348,8 +350,8 @@ class PremiumOnlyLlm:
         reply = re.search(r"Customer's reply: <<<(.*?)>>>", messages[1].content, re.DOTALL).group(1)
         name = schema.__name__
         figure = re.search(r"₹?[0-9][0-9,]*", reply)
-        if name == "SpanReply" and figure and "2,012" in reply:
-            output = {"status": "stated", "span": figure.group(0), "clauses": [1]}
+        if name == "PremiumReply" and figure and "2,012" in reply:
+            output = {"status": "stated", "span": figure.group(0), "free": False, "clauses": [1]}
         elif name == "ReadbackReply" and reply.startswith("हाँ"):
             output = {"status": "stated", "confirms": True, "clauses": [1], "corrected_amount_span": None}
         elif name == "ScreenReply":
@@ -397,6 +399,8 @@ def test_the_prepared_demo_call_asks_again_and_reads_back_the_right_figure(
                                   settings=SETTINGS))  # fmt: skip
     script = load_script(AMOUNT_CHECK)
     assert script.params == {"record": "amount-check", "language": "hi"}
+    # The packaged call that runs with the year-of-birth check (the others run the server's default).
+    assert script.identity == {"second_check": "year_of_birth", "attempts": 1} == persona.identity
 
     result = replay_call(phone, script, case=True, out=tmp_path / "out")
 
@@ -445,7 +449,7 @@ def test_each_packaged_persona_reaches_its_intended_outcome(name: str) -> None:
     from samajh.server.prepare import PERSONAS, script
 
     persona = PERSONAS[name]
-    call = samajh_factory(BOOK, SETTINGS)(persona.params() | {"fallback": "off"})
+    call = samajh_factory(BOOK, SETTINGS)(persona.dialogue_params() | {"fallback": "off"})
     step, keys = call.start(), []
     while not step.say.end_call:
         assert len(keys) < 60
@@ -578,17 +582,28 @@ def _declines_at_go_ahead(step: Step) -> Readings | None:
     return "नहीं, अभी बात नहीं करनी" if asks(step)[0] == "disclosure" else None
 
 
+YEAR_OF_BIRTH = {"second_check": "year_of_birth"}
+
+
 @pytest.mark.parametrize(
-    ("reply", "outcome", "wanted"),
-    [(at_kind(DO_NOT_CALL), "do_not_call", True), (_declines_at_go_ahead, "declined", False)],
+    ("identity", "reply", "outcome", "wanted"),
+    [
+        (YEAR_OF_BIRTH, at_kind(DO_NOT_CALL), "do_not_call", True),
+        (YEAR_OF_BIRTH, _declines_at_go_ahead, "declined", False),
+        (None, at_kind(DO_NOT_CALL), "do_not_call", True),
+        # No second check: "yes, speaking" passed at the name question, before the go-ahead.
+        (None, _declines_at_go_ahead, "declined", True),
+    ],
+    ids=["year-dnc", "year-declined", "none-dnc", "none-declined"],
 )
-def test_the_real_dialogue_says_whether_the_birth_year_check_was_passed(
-    fake: FakeSpeech, state: Path, reply, outcome: str, wanted: bool
+def test_the_real_dialogue_says_whether_the_right_party_check_was_passed(
+    fake: FakeSpeech, state: Path, identity, reply, outcome: str, wanted: bool
 ) -> None:
-    """The round 3 dialogue carries `speaker_confirmed`: True after the year of birth was given,
-    False (not unknown) for a call that ended before the check."""
+    """The dialogue carries `speaker_confirmed`: True once the right-party check passed (the year of
+    birth, or with no second check the borrower's own "yes, speaking"), False (not unknown) for a
+    call that ended before it."""
     phone = phone_for(fake, state)
-    sid, responses = drive(phone, fake, state, {"record": "hero", "language": "hi"}, reply)
+    sid, responses = drive(phone, fake, state, {"record": "hero", "language": "hi"}, reply, identity=identity)
 
     assert responses[-1]["ended"] and responses[-1]["outcome"] == outcome
     assert responses[-1]["speaker_confirmed"] is wanted

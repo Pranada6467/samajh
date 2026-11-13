@@ -5,7 +5,7 @@ import unicodedata
 from dataclasses import dataclass
 from decimal import Decimal
 
-from samajh.amounts._lexicon import STEMS, WORDS, Atom, Word, norm_key
+from samajh.amounts._lexicon import ROMAN_COLLIDE, STEMS, WORDS, Atom, Word, norm_key
 from samajh.amounts._sandhi import SCRIPTS, number_stem, segment
 
 # A fraction of exactly three digits is refused: "52.000" may be 52 or a dotted 52,000.
@@ -130,4 +130,70 @@ def scan(text: str) -> list[Tok]:
             chunk = [Tok(pieces[i][0], pieces[j - 1][1], "other")]
         toks += chunk
         i = j
-    return toks
+    return _gate_collisions(text, toks)
+
+
+# After a word in `ROMAN_COLLIDE`, these make it a number: "do lakh", "do baar", "das baje".
+# After a word in `ROMAN_COLLIDE`, these make it a number: "do baar", "das baje", "sat saal",
+# "do rupaye". A number word or unit word does too ("do lakh", "do teen hazaar"); digits do not.
+_NUMBER_CONTEXT = {"times", "dur", "clock", "cur", "curpfx", "pct"}
+# The small counts are numbers before any ordinary word, as "दो" is ("do kisht mein 41300" is two
+# instalments, "do policy" two policies); "saath", "bara", "tera", "das" before a word are ordinary.
+_COUNTS = frozenset(norm_key(w) for w in ("do", "doh", "teen", "tin", "char", "chaar"))
+_GIVE = frozenset(norm_key(w) for w in ("do", "doh"))
+# "de do", "bata do", "kar do na": after a verb stem "do" is the imperative, not two.
+_VERB_STEMS = frozenset(
+    norm_key(w)
+    for w in ("de", "le", "kar", "karwa", "karva", "kara", "bata", "dikha", "bhej", "dila", "dilwa", "chhod")
+    + ("chod", "ruk", "rakh", "likh", "bol", "sun", "dekh", "nikal", "bhar", "jama", "laga", "samjha", "bula")
+    + ("ho", "aa", "ja", "kha", "pi", "padh", "bech", "khol", "band", "mila", "batao", "lauta", "chala")
+)
+_GAP = re.compile(r"[\s\-‌‍]*")
+
+
+_ONE = (Atom("n", Decimal(1)),)
+_EVERYDAY = frozenset(norm_key(w) for w in ("saath", "sath", "bara", "tera", "asi", "chauda", "tehra"))
+
+
+def _number_word(tok: Tok) -> bool:
+    return tok.kind == "num" and tok.atoms[0].kind != "d"
+
+
+def _gate_collisions(text: str, toks: list[Tok]) -> list[Tok]:
+    """A romanised number word that is also an everyday word ("do", "bara", "saath", "tera") is a
+    number only directly before a number word or unit word ("do lakh"), a count, duration, clock,
+    percent or currency word ("do baar", "das baje"), or, for the small counts in `_COUNTS`, any
+    ordinary word ("do kisht mein", "do policy"), except "do" after a verb stem ("de do na"). Before
+    digits or another word it is an ordinary word and refuses nothing ("mere saath 41300", "de do
+    41300", "bara amount tha 41300", "bees hazaar sath mein"); at the end of the text it is refused
+    when a number word stands directly before it ("do hazaar do": give two thousand, or 2,002).
+    Decided right to left, so "do teen baar" is judged on the final kind of the word after each."""
+    out = list(toks)
+
+    def touching(a: int, b: int) -> bool:
+        return 0 <= a and b < len(out) and _GAP.fullmatch(text, out[a].end, out[b].start) is not None
+
+    for k in range(len(out) - 1, -1, -1):
+        tok = out[k]
+        key = norm_key(text[tok.start : tok.end])
+        if tok.kind != "num" or key not in ROMAN_COLLIDE:
+            continue
+        if touching(k, k + 1):
+            nxt = out[k + 1]
+            # Not before a lone "ek"/"one", which is also the article: "loan ke saath ek insurance".
+            # "loan ke saath bavan hazaar": a word whose everyday sense is common ("with", "big",
+            # "your", "such") is a number before a number word only when that word is a unit.
+            everyday = key in _EVERYDAY and not (nxt.atoms and nxt.atoms[0].kind == "m")
+            if (_number_word(nxt) and nxt.atoms != _ONE and not everyday) or nxt.kind in _NUMBER_CONTEXT:
+                continue
+            after_verb = key in _GIVE and touching(k - 1, k) and norm_key(text[out[k - 1].start : out[k - 1].end]) in _VERB_STEMS
+            if key in _COUNTS and nxt.kind in ("other", "plain") and not after_verb:
+                continue  # "do kisht mein 41300", "teen kishton mein": a count of the noun
+            if key in _EVERYDAY and nxt.kind in ("other", "plain"):
+                out[k] = Tok(tok.start, tok.end, "other")  # "bees hazaar sath mein": "together"
+                continue
+        if touching(k - 1, k) and _number_word(out[k - 1]):
+            out[k] = Tok(tok.start, tok.end, "bad", strong=True)
+        else:
+            out[k] = Tok(tok.start, tok.end, "other")
+    return out

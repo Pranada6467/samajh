@@ -204,7 +204,7 @@
       "seq": 5,
       "start_s": 56.36,
       "end_s": 57.56,
-      "text": "1984",
+      "text": "[reply to the year-of-birth question: withheld]",
       "readings": [
         {
           "role": "primary",
@@ -216,7 +216,7 @@
           },
           "ok": true,
           "error": null,
-          "text": "1984",
+          "text": "[reply to the year-of-birth question: withheld]",
           "literal": null,
           "detected_language": null,
           "cache_hit": false,
@@ -234,7 +234,7 @@
           "end": 57.79,
           "speaker": 2,
           "overlap_s": 1.2,
-          "text": "1984"
+          "text": "[reply to the year-of-birth question: withheld]"
         }
       ],
       "speaker": 2,
@@ -252,7 +252,8 @@
         "trailing_ms": 280.0,
         "pauses_ms": [],
         "longest_pause_ms": 0.0
-      }
+      },
+      "withheld": true
     },
     {
       "turn_id": 15,

@@ -15,9 +15,14 @@ from samajh.dialogue import (
     start,
     step,
 )
+from samajh.identity import CheckKind, IdentityPolicy
 from samajh.types import Language, LoanRecord, Question
 
 LENDER = "Udaharan Bank"
+# The call the tests before P8 were written for: the year of birth after the name, one attempt. `start`'s
+# default is now no second check, so these tests pass this setting explicitly (a setup change only).
+YEAR_POLICY = IdentityPolicy(second_check=CheckKind.year_of_birth)
+NO_CHECK = IdentityPolicy()
 LANGUAGES = tuple(Language)
 RULES = RuleInterpreter()
 
@@ -246,12 +251,13 @@ def play(
     interpreter: TurnInterpreter = RULES,
     limits: Limits | None = None,
     lender_name: str = LENDER,
+    identity: IdentityPolicy = YEAR_POLICY,
 ) -> Call:
     """Feed `replies` to a call until they run out or the call ends.
 
     A reply given as a pair is one turn heard twice: (the first transcript, the second transcript).
     """
-    state, said = start(rec, language, lender_name=lender_name, limits=limits)
+    state, said = start(rec, language, lender_name=lender_name, limits=limits, identity=identity)
     states, utterances, end = [state], [said], None
     for reply in replies:
         first, second = reply if isinstance(reply, tuple) else (reply, None)

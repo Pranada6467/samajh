@@ -89,6 +89,8 @@ class PaymentSource(StrEnum):
 
     from_loan = "from_loan"
     separately = "separately"
+    # Paid nothing and nothing taken from the loan: free, or paid by the bank, a company or someone else.
+    not_charged = "not_charged"
 
 
 class PaymentFrequency(StrEnum):
@@ -106,6 +108,9 @@ class FeatureClaim(StrEnum):
     guaranteed_return = "guaranteed_return"
     one_time_payment = "one_time_payment"
     withdrawable_after_period = "withdrawable_after_period"
+    # The money comes back, with no time or condition given (P5 fix round 2). Never on a record:
+    # `samajh.rules.checks.claim_holds` derives it from the record's other features.
+    money_back = "money_back"
 
 
 class SaleConcern(StrEnum):
@@ -249,6 +254,7 @@ class FlagReason(StrEnum):
     premium_differs = "premium_differs"  # a differing amount that no read-back confirmed
     premium_dont_know = "premium_dont_know"
     premium_approximate = "premium_approximate"  # within the approximate tolerance, not the exact one
+    premium_said_zero = "premium_said_zero"  # says it cost nothing (free, zero); the record shows a premium
     cover_differs = "cover_differs"  # hedged or approximate, and not near the record
     cover_differs_confirmed = "cover_differs_confirmed"  # a plain figure the customer confirmed at a read-back
     cover_differs_unconfirmed = "cover_differs_unconfirmed"  # a plain figure no read-back confirmed
@@ -267,10 +273,13 @@ class FlagReason(StrEnum):
     consent_not_recognised = "consent_not_recognised"
     consent_method_differs = "consent_method_differs"
     consent_dont_know = "consent_dont_know"
+    # Said only how they agreed, and named this product nowhere in the call: the "what" half is missing.
+    consent_product_not_named = "consent_product_not_named"
     funded_no_consent = "funded_no_consent"
     funded_says_separately = "funded_says_separately"
     funded_dont_know = "funded_dont_know"
     unfunded_says_deducted = "unfunded_says_deducted"
+    payment_says_not_charged = "payment_says_not_charged"  # says they paid nothing: free, or paid by someone else
     bundled_not_mitigant = "bundled_not_mitigant"
     bundled_described_as_deposit = "bundled_described_as_deposit"
     bundled_no_choice_on_record = "bundled_no_choice_on_record"
@@ -308,6 +317,7 @@ FLAG_TIER: dict[FlagReason, Tier] = {
             _R.kind_differs,
             _R.kind_dont_know,
             _R.premium_differs_confirmed,
+            _R.premium_said_zero,  # no figure to mishear: needs no read-back (P5 fix round)
             _R.cover_differs_confirmed,  # coordinator decision 2026-11-10
             _R.recall_denied,
             _R.recall_off_record,
@@ -319,6 +329,7 @@ FLAG_TIER: dict[FlagReason, Tier] = {
             _R.funded_says_separately,
             _R.funded_dont_know,
             _R.unfunded_says_deducted,
+            _R.payment_says_not_charged,
             _R.bundled_not_mitigant,
             _R.bundled_described_as_deposit,
             _R.bundled_no_choice_on_record,
@@ -345,6 +356,7 @@ FLAG_TIER: dict[FlagReason, Tier] = {
             _R.cancel_window_dont_know,
             _R.cancel_not_on_record,
             _R.recall_not_named,
+            _R.consent_product_not_named,  # coordinator decision (P5 fix round)
             _R.feature_dont_know,
             _R.frequency_recurring_on_single,
             _R.frequency_dont_know,
@@ -387,6 +399,7 @@ FLAG_BASIS: dict[FlagReason, Basis] = {
             _R.premium_differs,
             _R.premium_dont_know,
             _R.premium_approximate,
+            _R.premium_said_zero,
             _R.cover_differs,
             _R.cover_differs_confirmed,
             _R.cover_differs_unconfirmed,
@@ -404,9 +417,11 @@ FLAG_BASIS: dict[FlagReason, Basis] = {
             _R.consent_not_recognised,
             _R.consent_method_differs,
             _R.consent_dont_know,
+            _R.consent_product_not_named,
             _R.funded_says_separately,
             _R.funded_dont_know,
             _R.unfunded_says_deducted,
+            _R.payment_says_not_charged,
             _R.bundled_described_as_deposit,
             _R.bundled_no_choice_told,
             _R.feature_contradicted,

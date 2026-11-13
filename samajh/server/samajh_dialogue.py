@@ -7,6 +7,7 @@ params and `step` gets the stored state.
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 from collections.abc import Callable, Mapping, Sequence
@@ -20,6 +21,7 @@ from samajh.clients.errors import ConfigError
 from samajh.clients.gnani import TtsLanguage
 from samajh.clients.llm import LlmClient
 from samajh.dialogue.llm_fallback import LlmFallbackInterpreter
+from samajh.identity import IdentityPolicy, IdentityRecord, parse_policy
 from samajh.server.dialogue import BotLine, BotUtterance, Dialogue, DialogueFactory, Heard, ListenKind, Step
 from samajh.server.loanbook import LINK_PARAMS, LoanBook, resolve_record
 from samajh.server.records import CallRecord, RecordBook
@@ -39,6 +41,29 @@ MAX_LINE_CHARS = 600  # the most `BotLine.text` takes
 # Tag on the pieces of a dialogue line that was too long for one clip: "2/3". `call_transcript`
 # uses it to put the pieces back under their one transcript turn.
 PIECE_TAG = "piece"
+
+# The session param that carries a per-call identity setting (the demo picker's), as canonical JSON.
+# The server writes it at creation from the request's top-level `identity`, after `parse_policy`.
+IDENTITY_PARAM = "identity"
+
+
+def identity_param(policy: IdentityPolicy) -> str:
+    """The session param's value for `policy`: canonical JSON of the menu fields."""
+    return json.dumps(policy.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
+
+
+def session_policy(params: Mapping[str, str], default: IdentityPolicy) -> IdentityPolicy:
+    """The identity setting of a session: its own (`IDENTITY_PARAM`) or the server's `default`.
+    Raises ValueError on a value outside the menu."""
+    text = params.get(IDENTITY_PARAM)
+    if text is None:
+        return default
+    try:
+        mapping = json.loads(text)
+    except json.JSONDecodeError as error:
+        raise ValueError("the identity param is not JSON") from error
+    return parse_policy(mapping)
+
 
 # By `Expecting` value, as strings: a value this table does not know listens as "open" and gets
 # no second reading.
@@ -206,11 +231,20 @@ class SamajhDialogue:
         record: CallRecord,
         language: Language,
         interpreter: Callable[[], core.TurnInterpreter],
+        identity: IdentityPolicy = IdentityPolicy(),  # noqa: B008 - frozen, so one shared default is safe
     ) -> None:
         self._record, self._language, self._interpreter = record, language, interpreter
+        self._identity = identity
 
     def start(self) -> Step:
-        return _step(*core.start(self._record.record, self._language, lender_name=self._record.lender_name))
+        return _step(
+            *core.start(
+                self._record.record,
+                self._language,
+                lender_name=self._record.lender_name,
+                identity=self._identity,
+            )
+        )
 
     def prefetch(self, state: str, text: str) -> None:
         """Start the classifier on the primary transcript while the second reading is awaited.
@@ -243,8 +277,10 @@ def samajh_factory(
     loans: LoanBook | None = None,
 ) -> DialogueFactory:
     """The `Dialogue` for a session's params: `record` (an id in `book`) or `loan` (a loan of the
-    batch in `loans`, with the link the server stored at creation: `LINK_PARAMS`), `language`, and
-    `fallback=off` to read turns with the word lists alone. Building it never checks whether a
+    batch in `loans`, with the link the server stored at creation: `LINK_PARAMS`), `language`,
+    `fallback=off` to read turns with the word lists alone, and `identity` (`IDENTITY_PARAM`) for a
+    call whose right-party setting is not the server's (`settings.identity`). The setting is used
+    at `start` only: a call in progress keeps the one in its stored state. Building it never checks whether a
     call may be placed on the loan (`LoanBook.open_call` does, once, at creation).
 
     The LLM fallback's client is built on the first turn that is not `fallback=off`, once for
@@ -265,7 +301,7 @@ def samajh_factory(
         return LlmFallbackInterpreter(llm, rules)
 
     def build(params: Mapping[str, str]) -> Dialogue:
-        unknown = params.keys() - {"record", "loan", "language", "fallback", *LINK_PARAMS}
+        unknown = params.keys() - {"record", "loan", "language", "fallback", IDENTITY_PARAM, *LINK_PARAMS}
         if unknown:
             raise ValueError(f"unknown params {sorted(unknown)}")
         record, _ = resolve_record(params, book, loans)
@@ -273,10 +309,12 @@ def samajh_factory(
         fallback = params.get("fallback", "on")
         if fallback not in ("on", "off"):
             raise ValueError(f"fallback is 'on' or 'off', not {fallback!r}")
+        identity = session_policy(params, settings.identity)
         if interpreter is not None:
-            dialogue = SamajhDialogue(record, language, lambda: interpreter)
+            dialogue = SamajhDialogue(record, language, lambda: interpreter, identity)
         else:
-            dialogue = SamajhDialogue(record, language, with_fallback if fallback == "on" else lambda: rules)
+            reader = with_fallback if fallback == "on" else lambda: rules
+            dialogue = SamajhDialogue(record, language, reader, identity)
         dialogue.start()  # a record the dialogue cannot call is refused here, not on the line
         return dialogue
 
@@ -300,8 +338,8 @@ def degraded_turns(state: core.CallState) -> tuple[int, ...]:
 
 
 def speaker_confirmed(state: object) -> bool | None:
-    """Whether the dialogue's state says the person on the line passed the year-of-birth check:
-    True or False when the state has `speaker_confirmed`, None (unknown) when it does not (the
+    """Whether the dialogue's state says the person on the line passed its right-party check (the
+    year of birth, or with no second check the affirmation the policy asks for): True or False when the state has `speaker_confirmed`, None (unknown) when it does not (the
     dialogue before P2 round 3). Never guessed from the outcome. The one place it is read."""
     value = getattr(state, "speaker_confirmed", None)
     return value if isinstance(value, bool) else None
@@ -309,6 +347,66 @@ def speaker_confirmed(state: object) -> bool | None:
 
 def call_speaker_confirmed(log: SessionLog) -> bool | None:
     return speaker_confirmed(call_state(log))
+
+
+# --- the reply to the year-of-birth question is withheld -------------------------
+#
+# What the customer says to the second check (`second_check.ask`, `second_check.reask`, the retry of
+# a two-attempt check) is the expected answer whenever the check passes. It is kept out of everything
+# a phone, a reviewer or a model reads: the turn response, `GET /api/sessions/{id}`, the session log's
+# events on disk, the case file (turn text, readings, Batch segment text, transcript) and the
+# transcript handed to the extractor. The turn itself stays: its id, timing, audio offset and audio.
+# The dialogue's own state (`dialogue_state` on disk) still holds the words; no response serves it.
+WITHHELD = "[reply to the year-of-birth question: withheld]"
+_YEAR_STEP = "second_check"  # `samajh.dialogue.Step.second_check`, as a bot line's `step` tag
+
+
+def answers_year_question(lines: Sequence[_KeyedLine]) -> bool:
+    """Whether a reply to these bot lines answers the year-of-birth question: the last line (the
+    one the customer answers) is a second-check line."""
+    return bool(lines) and lines[-1].tags.get("step") == _YEAR_STEP
+
+
+def withhold_reply(event: CustomerEvent) -> CustomerEvent:
+    """The event with the words of every reading replaced by `WITHHELD` (silence stays silence)."""
+
+    def mask(text: str) -> str:
+        return WITHHELD if text else text
+
+    return event.model_copy(
+        update={
+            "transcript": mask(event.transcript),
+            "literal": None,
+            "readings": [
+                r.model_copy(update={"text": mask(r.text), "literal": None}) for r in event.readings
+            ],
+        }
+    )
+
+
+def shown_event(log: SessionLog, event: CustomerEvent) -> CustomerEvent:
+    """A customer event as anything outside the dialogue may see it: withheld when it answers the
+    year-of-birth question (also for a log written before the server withheld it)."""
+    asked = (
+        log.events[event.reply_to]
+        if event.reply_to is not None and event.reply_to < len(log.events)
+        else None
+    )
+    if isinstance(asked, BotEvent) and answers_year_question(asked.lines):
+        return withhold_reply(event)
+    return event
+
+
+def shown_log(log: SessionLog) -> SessionLog:
+    """The session log with every reply to the year-of-birth question withheld."""
+    events = [shown_event(log, e) if isinstance(e, CustomerEvent) else e for e in log.events]
+    return log.model_copy(update={"events": events})
+
+
+def call_identity(log: SessionLog) -> IdentityRecord:
+    """The call's right-party record (`samajh.dialogue.identity_record`): the policy, the check, the
+    attempts, whether it passed and one fixed sentence. It holds no expected answer and no reply."""
+    return core.identity_record(call_state(log))
 
 
 def call_outcome(log: SessionLog) -> str:
@@ -337,7 +435,8 @@ def _spans(event: BotEvent) -> list[tuple[float | None, float | None]]:
 
 def call_transcript(log: SessionLog) -> Transcript:
     """The dialogue's transcript with each turn's position in `call.wav`, and the session id as
-    the call id. A turn whose audio was never made keeps None.
+    the call id. A turn whose audio was never made keeps None. The reply to the year-of-birth
+    question reads `WITHHELD`.
 
     Raises ValueError when the log's events and the stored state do not describe the same call.
     """
@@ -358,5 +457,8 @@ def call_transcript(log: SessionLog) -> Transcript:
     turns: list[Turn] = []
     for turn in state.turns:
         start_s, end_s = next(taken[turn.speaker])
-        turns.append(turn.model_copy(update={"start_s": start_s, "end_s": end_s}))
+        update: dict[str, object] = {"start_s": start_s, "end_s": end_s}
+        if turn.speaker is Speaker.customer and turn.step.value == _YEAR_STEP and turn.text:
+            update["text"] = WITHHELD  # the reply to the year-of-birth question (see `WITHHELD`)
+        turns.append(turn.model_copy(update=update))
     return state.transcript().model_copy(update={"call_id": log.session_id, "turns": tuple(turns)})

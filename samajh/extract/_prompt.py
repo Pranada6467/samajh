@@ -162,20 +162,29 @@ The question asks how much the product cost the customer: the premium, or the am
 deducted for it.
 {_AMOUNT}
 An amount for something else (the loan, the EMI) and not the cost of the product is "unclear".
+free=true only when the customer says the product cost nothing at all: it was free, zero, nothing \
+was charged for it ("मुफ़्त था", "कुछ नहीं लगा", "zero rupees", "I paid nothing for it"). Then status \
+is "stated" and `span` is the words that say so. Saying they paid nothing themselves because it was \
+cut from the loan or paid by someone else ("मैंने कुछ नहीं दिया, लोन से कटा") says how it was paid, \
+not what it cost: free=false and "unclear". free is false in every other case.
 With "stated", `span` is the amount and `clauses` may stay empty. With "dont_know", `span` is null \
 and `clauses` points at the words that say so.
 
 Examples
 Reply: "करीब अड़तीस हज़ार रुपये कटे थे उसके।"  Clauses: [1] करीब अड़तीस हज़ार रुपये कटे थे उसके
-{{"status":"stated","span":"करीब अड़तीस हज़ार","clauses":[1]}}
+{{"status":"stated","span":"करीब अड़तीस हज़ार","free":false,"clauses":[1]}}
 Reply: "पक्का याद नहीं, बीस बाईस हज़ार के आसपास रहा होगा।"  Clauses: [1] पक्का याद नहीं [2] बीस बाईस हज़ार के आसपास रहा होगा
-{{"status":"stated","span":"बीस बाईस हज़ार के आसपास","clauses":[2]}}
+{{"status":"stated","span":"बीस बाईस हज़ार के आसपास","free":false,"clauses":[2]}}
 Reply: "24,500 rupees था premium."  Clauses: [1] 24,500 rupees था premium
-{{"status":"stated","span":"24,500","clauses":[1]}}
+{{"status":"stated","span":"24,500","free":false,"clauses":[1]}}
 Reply: "அது, ஞாபகம் இல்லை."  Clauses: [1] அது [2] ஞாபகம் இல்லை
-{{"status":"dont_know","span":null,"clauses":[2]}}
+{{"status":"dont_know","span":null,"free":false,"clauses":[2]}}
 Reply: "ಲೋನ್ ಮೂರು ಲಕ್ಷ ತಗೊಂಡಿದ್ದೆ."  Clauses: [1] ಲೋನ್ ಮೂರು ಲಕ್ಷ ತಗೊಂಡಿದ್ದೆ
-{{"status":"unclear","span":null,"clauses":[]}}
+{{"status":"unclear","span":null,"free":false,"clauses":[]}}
+Reply: "उसका तो कुछ नहीं लगा, फ्री था।"  Clauses: [1] उसका तो कुछ नहीं लगा [2] फ्री था
+{{"status":"stated","span":"कुछ नहीं लगा","free":true,"clauses":[1,2]}}
+Reply: "Maine kuch nahi diya, loan se hi kat gaya tha."  Clauses: [1] Maine kuch nahi diya [2] loan se hi kat gaya tha
+{{"status":"unclear","span":null,"free":false,"clauses":[]}}
 """,
     SlotKind.cover: f"""\
 The question asks how much cover the product gives: the amount it would pay out.
@@ -214,13 +223,17 @@ source:
 because of it.
 - "separately": the customer paid it themselves apart from the loan (cash, UPI, cheque, their own \
 account).
-Anything else is "unclear".
+- "not_charged": the customer says they paid nothing for it and it was not taken from the loan: it \
+was free, or the bank, a company or someone else paid for it ("बैंक ने भरा", "free tha").
+Paying nothing themselves because it was cut from the loan is "from_loan". Anything else is "unclear".
 
 Examples
 Reply: "लोन के पैसे में से ही काट लिया था।"  Clauses: [1] लोन के पैसे में से ही काट लिया था
 {"status":"stated","source":"from_loan","clauses":[1]}
 Reply: "ನಾನೇ ಕ್ಯಾಶ್ ಕೊಟ್ಟೆ, ಲೋನ್‌ನಿಂದ ಅಲ್ಲ."  Clauses: [1] ನಾನೇ ಕ್ಯಾಶ್ ಕೊಟ್ಟೆ [2] ಲೋನ್‌ನಿಂದ ಅಲ್ಲ
 {"status":"stated","source":"separately","clauses":[1,2]}
+Reply: "मैंने तो कुछ नहीं दिया, बैंक वालों ने भरा।"  Clauses: [1] मैंने तो कुछ नहीं दिया [2] बैंक वालों ने भरा
+{"status":"stated","source":"not_charged","clauses":[1,2]}
 """,
     SlotKind.payment_frequency: """\
 The question asks whether the product is paid for once, or again and again.
@@ -296,7 +309,12 @@ The question asks what would happen if the customer wanted this money back. `cla
 answer: every belief from this list that the reply states. It is empty when the customer answers \
 without any of them.
 {_CLAIMS}
+- "money_back": the money comes back to them, with no time or condition given ("पूरा पैसा वापस मिल \
+जाएगा", "mujhe laga tha wapas milega", "refund milta hai"). When they say when or how ("anytime", \
+"after a year", "with interest", "it is an FD"), use the claim above that says so instead.
 "stated" needs `clauses` even when claims is empty. "dont_know": they do not know what would happen.
+A belief named only to deny it is not a claim ("paisa wapas nahi milega", "it is not refundable", \
+"FD नहीं है", "कोई गारंटी वाला रिटर्न नहीं"): claims stays empty.
 
 Examples
 Reply: "वापस नहीं मिलेगा, बीमा है ना।"  Clauses: [1] वापस नहीं मिलेगा [2] बीमा है ना
@@ -313,6 +331,11 @@ Reply: "எப்ப வேணும்னாலும் எடுத்து�
 {{"status":"stated","claims":["refundable_anytime"],"clauses":[1]}}
 Reply: "ಅದು ನನಗೆ ಗೊತ್ತಿಲ್ಲ."  Clauses: [1] ಅದು ನನಗೆ ಗೊತ್ತಿಲ್ಲ
 {{"status":"dont_know","claims":[],"clauses":[1]}}
+Reply: "हाँ जी, वापस मिल जाएगा पूरा।"  Clauses: [1] हाँ जी [2] वापस मिल जाएगा पूरा
+{{"status":"stated","claims":["money_back"],"clauses":[2]}}
+Reply: "Paisa doob jayega aisa nahi hai, wapas aa jayega."  Clauses: [1] Paisa doob jayega aisa nahi hai \
+[2] wapas aa jayega
+{{"status":"stated","claims":["money_back"],"clauses":[1,2]}}
 """,
     SlotKind.consent: """\
 The question asks what the customer agreed to buy when taking the loan, and how they agreed. It \
@@ -326,8 +349,9 @@ method: how they agreed.
 - "signed_form": signed or thumb-printed a paper form.
 - "otp": gave or entered an OTP.
 - "digital_click": ticked, clicked or pressed accept on a phone, tablet or screen.
-- "recorded_call": said yes on a recorded phone call.
-- "verbal": only said yes to the staff, nothing signed or pressed.
+- "recorded_call": said yes on a phone call, unless they say the call was not recorded.
+- "verbal": only said yes in person to the staff, nothing signed or pressed; or said yes on a call \
+they say was not recorded.
 "dont_know" when they say they do not remember how. "unclear" when no way of agreeing is mentioned.
 
 Examples

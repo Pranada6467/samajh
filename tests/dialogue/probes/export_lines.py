@@ -20,7 +20,17 @@ MEANINGS: dict[str, tuple[str, str]] = {
     "right_party.ask": ("Hello, are you {first_name}?", "First line of every call."),
     "right_party.reask": (
         "This is an automated customer-care call for {first_name}. Are you {first_name} yourself?",
-        'Once, when the first reply is not an explicit first-person claim ("haan boliye", "ji", "hello", silence).',
+        (
+            'Once, when the first reply is not an explicit first-person claim ("haan boliye", "ji", "hello", silence). '
+            "With no second check (P8 default) it is the direct question: a yes to it passes."
+        ),
+    ),
+    "right_party.who_check": (
+        "Sorry, I need to be sure who I am speaking with. Are you {first_name} yourself, or someone else in their place?",
+        (
+            "Mid-call, after a sign that someone else may have the phone (iteration 3). Resumes only on an explicit "
+            "'it is me'; a bare yes, or anything else, ends the call as a wrong party."
+        ),
     ),
     "end.third_party": (
         "We will talk to {first_name} later. Thank you.",
@@ -49,7 +59,7 @@ MEANINGS: dict[str, tuple[str, str]] = {
     ),
     "disclosure.never_ask": (
         "We will never ask you for an OTP, PIN, password or account number.",
-        "Just before the birth-year question.",
+        "Just before the birth-year question; with no second check (P8), in the disclosure after the right-party check.",
     ),
     "disclosure.rights": (
         "If you want to stop, or to talk to a person, just say so at any time.",
@@ -103,6 +113,17 @@ MEANINGS: dict[str, tuple[str, str]] = {
     "kind.reask": (
         "I mean, what would you call the thing you took with the loan?",
         "Once, after an unclear answer.",
+    ),
+    "kind.ask_named": (
+        "What you mentioned, explain it a little: what is it, and what is it for?",
+        "Product question 1 instead of kind.ask, when the open-recall reply named something (iteration 3, gain 8).",
+    ),
+    "ack.neutral": (
+        "Ji. (a neutral acknowledgement)",
+        (
+            "Before every second product question (questions 2, 4, 6, 8, 10), by position only; never on a re-ask, "
+            "a stop check, a who-check, a read-back or an end. Hindi and Hinglish only (iteration 3, gain 8)."
+        ),
     ),
     "premium.ask": ("How much did you pay for it?", "Product question 2."),
     "premium.reask": (
@@ -245,7 +266,7 @@ MEANINGS: dict[str, tuple[str, str]] = {
     ),
     "verify.short": (
         "If in doubt, hang up and ask {lender} customer care yourself.",
-        "With the birth-year question.",
+        "With the birth-year question (claim path); with no second check, in the disclosure. Dropped when the lender turns the call-back line off.",
     ),
     "cover.say_again": (
         "Please tell me that amount once more so it is noted correctly. Up to how much do you get from it?",
@@ -276,11 +297,21 @@ ROUND2_CHANGED = frozenset({
 })  # fmt: skip
 # Lines reworded in round 3; the English meaning above translates the current text.
 ROUND3_CHANGED = frozenset({"verify.before_loan", "teach_back.intro_nth", "cancel_window.reask"})
+# Lines added in iteration 3 (P8 and the round 4 follow-ups).
+ITER3_NEW = frozenset({"right_party.who_check", "ack.neutral", "kind.ask_named"})
+# Lines reworded in the iteration 3 fix round: gender-neutral ("क्या आप ख़ुद {first_name} जी हैं?", no "बोल रहे हैं").
+ITER3_CHANGED = frozenset({"right_party.reask"})
 
 
 def _mark(key: str) -> str:
     return (
-        " **(changed, round 3)**"
+        " **(new, iteration 3; gender-neutral in the fix round)**"
+        if key in ITER3_NEW and key == "right_party.who_check"
+        else " **(new, iteration 3)**"
+        if key in ITER3_NEW
+        else " **(changed, iteration 3 fix round: gender-neutral)**"
+        if key in ITER3_CHANGED
+        else " **(changed, round 3)**"
         if key in ROUND3_CHANGED
         else " **(new, round 2)**"
         if key in ROUND2_NEW

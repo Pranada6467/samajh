@@ -1,16 +1,16 @@
 # Text path on the `frozen` set, model `openai/gpt-6-luna`
 
-Run at 2026-11-10T16:48:39+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
+Run at 2026-11-13T06:25:35+00:00. Frozen set version 3 of 2026-11-10: 144 scripted calls (sha256 gold.jsonl 14e49b58929c, calls.jsonl b10111dfc64e). Synthetic, templated text, no speech-to-text, Tamil and Kannada not human-reviewed. Verdicts and flags are scored against the hand-written gold; fields against the set's perfect extraction. Not used for prompt or model selection.
 
 ## Headline
 
 | group | calls | false clear | false alarm | call verdict | product verdict | fields |
 |---|---|---|---|---|---|---|
-| all | 144 | 0.9% (1/108) | 0.0% (0/36) | 99.3% (143/144) | 99.3% (143/144) | 99.4% (2166/2180) |
+| all | 144 | 0.9% (1/108) | 0.0% (0/36) | 99.3% (143/144) | 99.3% (143/144) | 99.4% (2168/2180) |
 | hi | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.6% (543/545) |
 | hi-en | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.6% (543/545) |
-| ta | 36 | 3.7% (1/27) | 0.0% (0/9) | 97.2% (35/36) | 97.2% (35/36) | 98.9% (539/545) |
-| kn | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.3% (541/545) |
+| ta | 36 | 3.7% (1/27) | 0.0% (0/9) | 97.2% (35/36) | 97.2% (35/36) | 99.1% (540/545) |
+| kn | 36 | 0.0% (0/27) | 0.0% (0/9) | 100.0% (36/36) | 100.0% (36/36) | 99.4% (542/545) |
 | gold extraction, no LLM | 144 | 0.0% (0/108) | 0.0% (0/36) | 100.0% (144/144) | 100.0% (144/144) | - |
 
 False clear: gold is flag_for_review or unclear_needs_human and the pipeline says clear (n = calls whose gold is not clear). False alarm: gold is clear and the pipeline does not say clear (n = calls whose gold is clear). Extractor errors: 0. Last row: the rule engine on the set's gold extraction, so any miss there is not the extractor's.
@@ -75,7 +75,7 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 | field | all | hi | hi-en | ta | kn |
 |---|---|---|---|---|---|
 | kind | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
-| premium_inr | 99.3% (143/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) |
+| premium_inr | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | premium_readback | 100.0% (132/132) | 100.0% (33/33) | 100.0% (33/33) | 100.0% (33/33) | 100.0% (33/33) |
 | payment_source | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | required_for_loan | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
@@ -86,7 +86,7 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 | cancel_window_days | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | feature_probe | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
 | consent_given | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
-| consent_method | 93.8% (135/144) | 94.4% (34/36) | 94.4% (34/36) | 91.7% (33/36) | 94.4% (34/36) |
+| consent_method | 94.4% (136/144) | 94.4% (34/36) | 94.4% (34/36) | 94.4% (34/36) | 94.4% (34/36) |
 | recall_items | 98.6% (142/144) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) | 97.2% (35/36) |
 | volunteered_claims | 99.3% (143/144) | 100.0% (36/36) | 100.0% (36/36) | 97.2% (35/36) | 100.0% (36/36) |
 | sale_concerns | 100.0% (144/144) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) | 100.0% (36/36) |
@@ -110,8 +110,8 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 
 ## Spans and grounding
 
-- Spans the model copied (amounts, durations, recall items, claims, concerns) that were not in the reply: 0 of 802 (0.00%). By field: none.
-- Answers whose clause numbers were missing or out of range: 0 of 1196 (0.00%). By field: none.
+- Spans the model copied (amounts, durations, recall items, claims, concerns) that were not in the reply: 0 of 803 (0.00%). By field: none.
+- Answers whose clause numbers were missing or out of range: 0 of 1195 (0.00%). By field: none.
 - Both kinds are dropped to `unclear` (answers) or left for the rule engine to record as an evidence gap (recall items, claims, concerns). None is kept as an answer.
 - Answers marked stated with no value or no span, kept as unclear: 0. By field: none.
 - Gaps the rule engine raised with reason `quote_not_grounded`: 0 (with the gold extraction: 0).
@@ -120,25 +120,25 @@ A miss is counted only for customers the set labels misled, unaware or did not a
 
 ## Cost and latency
 
-- LLM calls: 4498 for 144 calls (4498 served from the cache in this run).
+- LLM calls: 4555 for 144 calls (4509 served from the cache in this run).
 
 | request | LLM calls | cost with nothing cached |
 |---|---|---|
-| answer | 1604 | $0.13418 |
+| answer | 1604 | $0.14326 |
 | screen | 1787 | $0.07719 |
-| check | 1107 | $0.09171 |
+| check | 1164 | $0.09637 |
 
-- The change check (a second look at a reply of two or more clauses: did the customer change their answer?) said: {'none': 1095, 'not used': 12}. `not used`: a recall reply that named nothing, or a reply whose answer call failed.
-- Spent in this run: $0.00000.
-- Cost of these calls with nothing cached: $0.30308 ($0.00210 per transcript, $0.00007 per LLM call).
-- Latency per LLM call when first made: median 2.34 s, p90 4.21 s (wall time of the client call, retries included, one network).
+- The change check (a second look at a reply of two or more clauses, or of one clause with a marker word such as नहीं or ruko: did the customer change their answer?) said: {'none': 1152, 'not used': 12}. `not used`: a recall reply that named nothing, or a reply whose answer call failed.
+- Spent in this run: $0.00414.
+- Cost of these calls with nothing cached: $0.31682 ($0.00220 per transcript, $0.00007 per LLM call).
+- Latency per LLM call when first made: median 2.30 s, p90 4.32 s (wall time of the client call, retries included, one network).
 
 ## By base case
 
 - False clears: 1 calls in 1 of 36 base cases (B03).
 - False alarms: 0 calls in 0 of 36 base cases; gold-clear base cases: 9.
 - Any wrong call verdict: 1 calls in 1 of 36 base cases (B03).
-- Any wrong field: 13 calls in 5 of 36 base cases (B03, G01, G02, U08, U10).
+- Any wrong field: 11 calls in 4 of 36 base cases (B03, G02, U08, U10).
 - `consent_given` where the customer agreed to a misdescribed product (C02, U08, V04, V06; the set expects true and calls false a defensible reading): 16/16 match the set. All other calls: 128/128.
 - Replies to a checked question that are word for word a reply of the development set: 70 of 1604 (4.36%); 28 of them longer than three words. The prompt was iterated on the development set, so the model's reading of these replies is in-sample.
 
@@ -198,19 +198,6 @@ Scenario: Customer who answers 'I don't know' to almost everything [violating, t
 - field `consent_method`: gold `('dont_know', None)`, pipeline `('unclear', None)`
   - turn 28 [consent] bot: "ಲೋನ್ ತೆಗೆದುಕೊಳ್ಳುವಾಗ ನೀವು ಏನೇನು ತೆಗೆದುಕೊಳ್ಳಲು ಒಪ್ಪಿದ್ದಿರಿ, ಒಪ್ಪಿಗೆ ಹೇಗೆ ಕೊಟ್ಟಿರಿ?" customer: "ಯಾವುದಕ್ಕೆಲ್ಲ ಒಪ್ಪಿದ್ದೆ ಅಂತ ನನಗೆ ಗೊತ್ತಿಲ್ಲ."
   - pipeline kept: "ಯಾವುದಕ್ಕೆಲ್ಲ ಒಪ್ಪಿದ್ದೆ ಅಂತ ನನಗೆ ಗೊತ್ತಿಲ್ಲ." (turn 28)
-
-### G01-ta (ta): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
-Scenario: Two lakh debited from the borrower's account for a policy, no consent on record [violating, target rule consent]
-- field `consent_method`: gold `('unclear', None)`, pipeline `('stated', <ConsentMethod.verbal: 'verbal'>)`
-  - turn 28 [consent] bot: "லோன் வாங்கும்போது நீங்கள் என்னென்ன எடுக்க ஒப்புக்கொண்டீர்கள், எப்படி ஒப்புதல் கொடுத்தீர்கள்?" customer: "நான் லோனுக்கு மட்டும்தான் சரின்னு சொன்னேன். இன்ஷூரன்ஸ் பத்தி என்கிட்ட யாரும் கேக்கல. எனக்கு அப்புறம்தான் தெரிஞ்சுது, அக்கவுண்ட்ல இருந்து பணம் போனப்ப."
-  - pipeline kept: "நான் லோனுக்கு மட்டும்தான் சரின்னு சொன்னேன். இன்ஷூரன்ஸ் பத்தி என்கிட்ட யாரும் கேக்கல. எனக்கு அப்புறம்தான் தெரிஞ்சுது, அக்கவுண்ட்ல இருந்து பணம் போனப்ப." (turn 28)
-
-### G01-kn (kn): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
-Scenario: Two lakh debited from the borrower's account for a policy, no consent on record [violating, target rule consent]
-- field `premium_inr`: gold `('stated', 200000)`, pipeline `('unclear', None)`
-  - turn 14 [premium] bot: "ಅದಕ್ಕೆ ನೀವು ಎಷ್ಟು ರೂಪಾಯಿ ಕೊಟ್ಟಿರಿ?" customer: "ಎರಡು ಲಕ್ಷ ರೂಪಾಯಿ ತಗೊಂಡಿದ್ದಾರೆ."
-  - turn 30 [readback] bot: "ಎರಡು ಲಕ್ಷ, ಅಂದರೆ 2,00,000 ರೂಪಾಯಿ, ಸರಿಯೇ?" customer: "ಹೌದು, ಸರಿ."
-  - pipeline kept: "ಎರಡು ಲಕ್ಷ ರೂಪಾಯಿ ತಗೊಂಡಿದ್ದಾರೆ." (turn 14)
 
 ### G02-hi (hi): gold `flag_for_review`, pipeline `flag_for_review`, tier `refer`
 Scenario: Signed consent on file; the customer says they agreed only to the loan [violating, target rule consent]

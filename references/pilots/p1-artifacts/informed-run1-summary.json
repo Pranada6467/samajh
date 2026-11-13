@@ -42,14 +42,14 @@
     {
       "seq": 5,
       "file": "03.wav",
-      "transcript": "1984",
+      "transcript": "[reply to the year-of-birth question: withheld]",
       "readings": [
         {
           "role": "primary",
           "model": "prisma-v3.0",
           "ok": true,
           "error": null,
-          "text": "1984",
+          "text": "[reply to the year-of-birth question: withheld]",
           "cache_hit": false,
           "seconds": 0.2094
         }

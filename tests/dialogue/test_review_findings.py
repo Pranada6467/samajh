@@ -6,7 +6,7 @@ The Hindi and Hinglish sentences are the reviewer's own probes, not recordings; 
 from __future__ import annotations
 
 import pytest
-from dialogue_kit import CUSTOMERS, LANGUAGES, play, product, record
+from dialogue_kit import CUSTOMERS, LANGUAGES, YEAR_POLICY, play, product, record
 
 from samajh.amounts import parse_amount
 from samajh.dialogue import (
@@ -252,7 +252,7 @@ def test_two_readings_that_agree_are_taken_and_still_read_back():
 def test_a_figure_only_the_second_reading_holds_is_asked_for_once_more_then_read_back():
     customer = CUSTOMERS[HI]
     replies = customer.happy()
-    replies[PREMIUM] = ("bavan hazaar", "52,000")  # the first reading is one the parser refuses
+    replies[PREMIUM] = ("ठीक ठाक पैसे थे", "52,000")  # the first reading holds no figure the parser can read
     replies[PREMIUM + 1 : PREMIUM + 1] = [("बावन हज़ार", "52,000")]  # said again; now they agree
     call = play(record(), HI, replies)
     state, end = call.state, call.end
@@ -263,7 +263,7 @@ def test_a_figure_only_the_second_reading_holds_is_asked_for_once_more_then_read
     )
     assert parse_amount(read_back.text).rupees == 52000
     first, second = state.second_readings
-    assert not first.agreed and first.text == "bavan hazaar" and second.agreed
+    assert not first.agreed and first.text == "ठीक ठाक पैसे थे" and second.agreed
     # the turn on record is the reading the call acted on, so the rules read the figure it holds
     assert end.transcript.turns[first.turn_id - 1].text == "52,000"
 
@@ -343,7 +343,7 @@ def test_a_plain_yes_to_a_read_back_stands_whatever_the_second_reading_adds():
 
 
 def test_a_second_reading_is_ignored_where_no_figure_is_asked_for():
-    state, _ = start(record(), HI, lender_name="Udaharan Bank")
+    state, _ = start(record(), HI, lender_name="Udaharan Bank", identity=YEAR_POLICY)
     state, said = step(state, "रॉन्ग नंबर", second_reading="हाँ जी बोल रहा हूँ")
     assert said.outcome is Outcome.wrong_party and state.second_readings == ()
 
@@ -351,7 +351,7 @@ def test_a_second_reading_is_ignored_where_no_figure_is_asked_for():
 def test_a_state_with_second_readings_survives_a_json_round_trip():
     customer = CUSTOMERS[HI]
     replies = customer.happy()[: PREMIUM + 1]
-    replies[PREMIUM] = ("bavan hazaar", "52,000")
+    replies[PREMIUM] = ("ठीक ठाक पैसे थे", "52,000")
     state = play(record(), HI, replies).state
     assert CallState.model_validate_json(state.model_dump_json()) == state
 

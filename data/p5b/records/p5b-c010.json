@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Sunil, born 1969, took a personal loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c010",
+  "label": "Synthetic P5b record. Sunil: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "record": {
+    "borrower": {
+      "dob": "1969-12-15",
+      "language": "hi",
+      "name": "Sunil Pratiroop"
+    },
+    "disbursed_inr": 650000,
+    "disbursed_on": "2026-10-18",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-010",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-18",
+          "method": "signed_form"
+        },
+        "cover_inr": 650000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 38350,
+        "provider": "Pratiroop Insurance (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": true,
+        "risk_mitigant": true,
+        "term_months": 48
+      }
+    ],
+    "sanctioned_inr": 650000,
+    "tenure_months": 48
+  }
+}

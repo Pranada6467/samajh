@@ -19,6 +19,10 @@ text = "ನಮಸ್ಕಾರ. ನಾನು {first_name} ಅವರ ಜೊತೆ 
 design = "§5 step 1 and the one-re-ask rule: asks whether the speaker is the borrower, not whether he is there; no lender, no loan"
 text = "ಇದು {first_name} ಅವರಿಗಾಗಿ ಒಂದು ಸ್ವಯಂಚಾಲಿತ ಗ್ರಾಹಕ ಸೇವಾ ಕರೆ. ನೀವೇ {first_name} ಅವರಾ?"
 
+[lines."right_party.who_check"]
+design = "§5 step 1 applied mid-call (iteration 3): after a sign of another speaker, a choice question (the borrower, or someone in their place); a bare yes does not answer it; no lender, no loan. Not human-reviewed."
+text = "ಕ್ಷಮಿಸಿ, ನಾನು ಯಾರ ಜೊತೆ ಮಾತಾಡುತ್ತಿದ್ದೇನೆ ಎಂದು ಖಚಿತಪಡಿಸಬೇಕು. ನೀವೇ {first_name} ಅವರಾ, ಅಥವಾ ಅವರ ಬದಲು ಬೇರೆ ಯಾರಾದರೂ?"
+
 [lines."purpose.before_confirm"]
 design = "§5 step 1: 'what is this about?' before anyone has claimed to be the borrower; no lender, no loan"
 text = "ಇದು ಗ್ರಾಹಕ ಸೇವಾ ಅಭಿಪ್ರಾಯ ಕರೆ; ಸರಿಯಾದ ವ್ಯಕ್ತಿ ಎಂದು ಖಚಿತವಾದ ಮೇಲೆ ಉಳಿದದ್ದು ಹೇಳುತ್ತೇವೆ."
@@ -60,7 +64,7 @@ design = "§5 step 2: how to check the call is genuine, on request after the loa
 text = "ಈ ಕರೆ {lender} ಗ್ರಾಹಕ ಸೇವೆಯಿಂದ ಬಂದಿದೆ. ಅನುಮಾನವಿದ್ದರೆ, ಫೋನ್ ಇಟ್ಟು ನಿಮ್ಮ ಸಾಲದ ದಾಖಲೆಗಳಲ್ಲಿ ಮುದ್ರಿಸಿರುವ ಗ್ರಾಹಕ ಸೇವಾ ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಿ. ನಾವು ಎಂದಿಗೂ ಒಟಿಪಿ ಅಥವಾ ಪಿನ್ ಕೇಳುವುದಿಲ್ಲ."
 
 [lines."verify.short"]
-design = "§5 step 2: one short line on checking the call, said with the birth-year question (review round 2)"
+design = "§5 step 2: one short line on checking the call, said with the birth-year question (review round 2); with no second check (P8), with the disclosure; dropped when the lender turns the call-back line off"
 text = "ಅನುಮಾನವಿದ್ದರೆ, ಫೋನ್ ಇಟ್ಟು {lender} ಗ್ರಾಹಕ ಸೇವೆಗೆ ನೀವೇ ಕರೆ ಮಾಡಬಹುದು."
 
 [lines."second_check.ask"]
@@ -87,6 +91,10 @@ text = "ಅಂದರೆ, ಸಾಲ ಪಡೆಯುವಾಗ ಅದರ ಜೊತ�
 design = "§5 step 5: the customer said they took nothing; one neutral follow-up, then consent and close"
 text = "ಸರಿ. ಸಾಲ ತೆಗೆದುಕೊಳ್ಳುವಾಗ, ಸಾಲ ಬಿಟ್ಟು ಬೇರೆ ಏನಾದರೂ ಬಗ್ಗೆ ಯಾರಾದರೂ ನಿಮ್ಮ ಜೊತೆ ಮಾತಾಡಿದ್ದರಾ?"
 
+[lines."ack.neutral"]
+design = "product review gain 8: the neutral acknowledgement is spoken in Hindi and Hinglish calls only; this line is kept so the file loads and is never said. Not human-reviewed."
+text = "ಹ್ಮ್."
+
 [lines."teach_back.intro"]
 design = "§5 step 6: the product is referred to without naming what it is"
 text = "ಧನ್ಯವಾದ. ಈಗ ಸಾಲದ ಜೊತೆ ತೆಗೆದುಕೊಂಡ ವಸ್ತುವಿನ ಬಗ್ಗೆ ಕೆಲವು ಚಿಕ್ಕ ಪ್ರಶ್ನೆಗಳು."
@@ -102,6 +110,10 @@ text = "ನಿಮ್ಮ ತಿಳುವಳಿಕೆಯಲ್ಲಿ ಅದು ಏ
 [lines."kind.reask"]
 design = "§5 step 6 and the one-re-ask rule"
 text = "ಅಂದರೆ, ಸಾಲದ ಜೊತೆ ನಿಮಗೆ ಸಿಕ್ಕ ಆ ವಸ್ತುವನ್ನು ನೀವು ಏನೆಂದು ಕರೆಯುತ್ತೀರಿ?"
+
+[lines."kind.ask_named"]
+design = "§5 step 6, product review gain 8: the kind question when the customer already named something at open recall; refers to it without echoing the customer's word or suggesting a kind. Not human-reviewed."
+text = "ನೀವು ಹೇಳಿದ್ದನ್ನು ಸ್ವಲ್ಪ ವಿವರಿಸಿ: ಅದು ಏನು, ಯಾವುದಕ್ಕೆ ಉಪಯೋಗ?"
 
 [lines."premium.ask"]
 design = "§5 step 6 'How much did it cost?'"

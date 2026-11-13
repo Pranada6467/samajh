@@ -1,0 +1,378 @@
+{
+ "customer_id": "P5-C024",
+ "arm": "closed",
+ "condition": "disposition",
+ "level": 0.0,
+ "language": "hi-en",
+ "kind": "ordinary_informed",
+ "gold_class": "knowledge_gap_only",
+ "record_id": "p5-c024",
+ "writer_model": "deepseek/deepseek-v4.1-flash",
+ "second_reading": null,
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "Hello, क्या आप Farhan जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "हाँ, Farhan बोल रहा हूँ।",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "confirms_self",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह sales नहीं, feedback call है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन minute बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "can_we_talk",
+    "variant": "own",
+    "text": "हाँ, बोलिए, दो-तीन मिनट हैं।",
+    "line_key": "disclosure.go_ahead",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "go_ahead",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "yes",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "closed": [
+  {
+   "statement_id": "c_kind",
+   "bot": "अब मैं आपको आपके loan के साथ लिए गए product की कुछ details बताऊँगी, एक-एक करके। हर detail के बाद बताइए कि वह correct है या नहीं। आपने loan के साथ Pareekshan Insurance का एक life insurance लिया है, जो आपके loan पर insurance cover है। क्या यह correct है?",
+   "reply": {
+    "topic": "c_kind",
+    "variant": "own",
+    "text": "life insurance नहीं, loan insurance था — loan पे cover।",
+    "line_key": "c_kind",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "no",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "no",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_premium",
+   "bot": "इस insurance का premium five thousand two hundred fifty rupees था। क्या यह correct है?",
+   "reply": {
+    "topic": "c_premium",
+    "variant": "own",
+    "text": "लगभग पाँच हज़ार, थोड़ा ऊपर-नीचे, हाँ।",
+    "line_key": "c_premium",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": 5000,
+     "approx": [
+      5000,
+      5000
+     ]
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_source",
+   "bot": "यह premium आपके loan amount में से cut किया गया था। क्या यह correct है?",
+   "reply": {
+    "topic": "c_source",
+    "variant": "own",
+    "text": "हाँ, loan amount में से ही cut हुआ था।",
+    "line_key": "c_source",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_frequency",
+   "bot": "यह premium एक ही बार pay हुआ था, इसे बार-बार pay नहीं करना है। क्या यह correct है?",
+   "reply": {
+    "topic": "c_frequency",
+    "variant": "own",
+    "text": "हाँ, एक ही बार pay हुआ, बार-बार नहीं।",
+    "line_key": "c_frequency",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "no",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "no",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_voluntary",
+   "bot": "यह insurance लेना आपकी अपनी choice थी, loan के लिए ज़रूरी नहीं था, और आप इसे किसी भी company से ले सकते थे। क्या यह correct है?",
+   "reply": {
+    "topic": "c_voluntary",
+    "variant": "own",
+    "text": "हाँ, optional था, अपनी insurer भी ले सकते थे।",
+    "line_key": "c_voluntary",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_cover",
+   "bot": "अगर आपकी death हो जाए, तो यह insurance आपका loan चुकाने के लिए one lakh fifty thousand rupees तक देता है। क्या यह correct है?",
+   "reply": {
+    "topic": "c_cover",
+    "variant": "own",
+    "text": "हाँ, one and a half lakh, मेरे loan jitna।",
+    "line_key": "c_cover",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": 150000,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_term",
+   "bot": "यह insurance one year तक चलता है। क्या यह correct है?",
+   "reply": {
+    "topic": "c_term",
+    "variant": "own",
+    "text": "मुझे लगा loan जितना चलेगा उतना, six months।",
+    "line_key": "c_term",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "other",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_cancel",
+   "bot": "आप यह insurance fifteen days के अंदर cancel करवा सकते थे। क्या यह correct है?",
+   "reply": {
+    "topic": "c_cancel",
+    "variant": "own",
+    "text": "यह मुझे नहीं पता, cancel हो सकता है या नहीं।",
+    "line_key": "c_cancel",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "dont_know",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "other",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_not_savings",
+   "bot": "यह insurance कोई deposit या savings नहीं है, और जो premium pay हुआ वह end में वापस नहीं मिलता। क्या यह correct है?",
+   "reply": {
+    "topic": "c_not_savings",
+    "variant": "own",
+    "text": "हाँ, savings नहीं है, पैसा वापस नहीं आता।",
+    "line_key": "c_not_savings",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "no",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "no",
+   "degraded": false
+  },
+  {
+   "statement_id": "c_consent",
+   "bot": "आपने इस insurance के लिए phone या computer पर एक button click करके हाँ कहा था। क्या यह correct है?",
+   "reply": {
+    "topic": "c_consent",
+    "variant": "own",
+    "text": "हाँ, app में button click करके हाँ कहा था।",
+    "line_key": "c_consent",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "reading": "yes",
+   "degraded": false
+  }
+ ],
+ "degraded_turns": 0,
+ "outcome": "closed_not_confirmed",
+ "speaker_confirmed": true,
+ "finished_utc": "2026-11-13T04:28:38+00:00"
+}

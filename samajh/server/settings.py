@@ -8,8 +8,9 @@ from functools import cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from samajh.identity import IdentityPolicy, parse_policy
 from samajh.server.dialogue import ListenKind
 from samajh.server.sessionlog import SttSettings, TtsSettings
 from samajh.types import Language
@@ -63,6 +64,14 @@ class Settings(_Frozen):
     turn_taking: dict[ListenKind, Patience]
     fallback: Fallback
     batch: BatchConfig = BatchConfig()
+    # The lender's right-party setting (samajh.identity), read through `parse_policy`: only the menu.
+    # A session request may override it for one call (the demo picker); absent, no second check.
+    identity: IdentityPolicy = IdentityPolicy()
+
+    @field_validator("identity", mode="before")
+    @classmethod
+    def _identity_menu(cls, value: object) -> object:
+        return value if isinstance(value, IdentityPolicy) else parse_policy(value)  # type: ignore[arg-type]
 
     @model_validator(mode="after")
     def _every_listen_kind(self) -> Settings:

@@ -317,3 +317,11 @@ th { color: var(--muted); font-weight: 600; font-size: 0.75rem; }
 .bubble .degraded { font-size: 0.8125rem; color: var(--danger); }
 .case-readings { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; font-size: 0.8125rem; }
 .case-readings:empty { display: none; }
+
+/* The prior notice (mocked SMS) and the identity setting's honest description. */
+.notice-card { display: block; margin-top: 12px; border-left: 3px solid var(--muted); }
+.notice-card[hidden] { display: none; }
+.notice-head { font-size: 0.8125rem; margin-bottom: 6px; }
+.notice-head span { color: var(--muted); }
+#notice-text { margin: 0; font-size: 0.9rem; line-height: 1.45; }
+#identity-note { margin-top: 10px; }

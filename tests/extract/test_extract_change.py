@@ -1,4 +1,5 @@
-"""The change check: a second, independent model look at a reply of two or more clauses.
+"""The change check: a second, independent model look at a reply of two or more clauses, or of one
+clause that holds a word that may take an answer back (`Reply.has_change_marker`).
 
 It never adds a conflict: a correction whose final answer stands keeps the earlier words (clause runs
 resolved by code) in `also`; otherwise the stated answer is taken away. The call is the small synthetic one in `extractkit` (an informed customer
@@ -56,12 +57,16 @@ def run(transcript, llm, workers: int = 8):
 # --- which replies are checked, and what the check is shown -----------------------------------
 
 
-def test_only_replies_of_two_or_more_clauses_to_a_checked_question_get_the_check():
+def test_only_replies_of_two_or_more_clauses_or_with_a_marker_word_get_the_check():
     transcript, llm = build(BASE)
     traces = extract_traced(transcript, record(), llm).slots
     checked = {t.turn_id for t in traces if t.check}
     answered_turns = {t.turn_id for t in traces if not t.check and not t.screen}
-    many = {t.id for t in transcript.turns if t.id in answered_turns and len(Reply(t.text).clauses()) >= 2}
+    many = {
+        t.id
+        for t in transcript.turns
+        if t.id in answered_turns and (len(Reply(t.text).clauses()) >= 2 or Reply(t.text).has_change_marker())
+    }
     assert checked == many
     assert checked  # BASE has several two-clause replies ("नहीं, मर्ज़ी से लिया।")
     assert answered_turns - checked  # and single-clause ones ("बीमा है।")
@@ -72,7 +77,9 @@ def test_only_replies_of_two_or_more_clauses_to_a_checked_question_get_the_check
 # The requests as they were before the change check existed (recorded from the unmodified code).
 # The answer and screening requests are cached by their bytes; the frozen-set comparison needs them unchanged.
 _BEFORE = {
-    "all answer requests": "f5375055ed087ceb046255e73924df2f4dc8a14a3e11e84b9b1aefbe6fcd61fd",
+    # Changed on purpose in the P5 fix round (premium `free`, payment `not_charged`, consent
+    # phone yes as `recorded_call`, a denial line and `money_back` in the money-back probe); was f5375055…d61fd. Kind and screen unchanged.
+    "all answer requests": "1e76ae518f449fccf0c1b1d308d0e3bce6615845a0b63d6e2b9a354376eb7ebe",
     "kind/hi": "f806afa2443d2bea3a66a3d974b74f51cc1ae836b20fc81ef397d5405ba4f8f6",
     "screen": "035244ade3520822432eacaa889e1a087d13fdc6d0812902004d88ecf89fd1c8",
 }

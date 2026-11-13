@@ -1,0 +1,465 @@
+{
+ "customer_id": "P5-C048",
+ "arm": "open",
+ "condition": "disposition",
+ "level": 0.0,
+ "language": "hi-en",
+ "kind": "third_party",
+ "gold_class": "procedural",
+ "record_id": "p5-c048",
+ "writer_model": "deepseek/deepseek-v4.1-flash",
+ "second_reading": "prisma-v2.5 transcribe within 2.5 s on turns that may carry a figure",
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "Hello, क्या आप Amit जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "नहीं, वो बाहर गए हैं। Phone charge पे था, मैंने उठा लिया। क्या बात है?",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "नहीं, वो बाहर गए हैं, phone charge पे था मैंने उठा लिया, क्या बात है",
+     "expecting": "identity",
+     "intent": "wrong_person",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 83
+    }
+   ],
+   "degraded": false,
+   "seq": 1,
+   "reply_to": 0,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "नहीं, वो बाहर गए हैं, phone charge पे था मैंने उठा लिया, क्या बात है",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN,en-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "नहीं, वो बाहर गए हैं, phone charge पे था मैंने उठा लिया, क्या बात है",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 4.88
+   }
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "final_bot": [
+  {
+   "key": "end.third_party",
+   "text": "हम Amit जी से बाद में बात कर लेंगे। Thank you।",
+   "step": "close",
+   "asks": null
+  }
+ ],
+ "outcome": "wrong_party",
+ "speaker_confirmed": false,
+ "degraded_turns": 0,
+ "unresolved": [],
+ "tier": "incomplete",
+ "flags": [],
+ "gaps": [
+  {
+   "rule_id": "kind",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "premium",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "cover",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "term",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "cancel_window",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "recall",
+   "reason": "not_asked",
+   "tier": "understanding_gap"
+  },
+  {
+   "rule_id": "consent",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "loan_funded",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "bundling",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "belief_mismatch",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  },
+  {
+   "rule_id": "recall_unmatched",
+   "reason": "not_asked",
+   "tier": "incomplete"
+  }
+ ],
+ "referral_basis": null,
+ "summary": {
+  "loan_id": "TEST-P5-LN-048",
+  "call_id": "20261113T043128-58d53765b337",
+  "tier": "incomplete",
+  "lines": [
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: what the product is.",
+    "record_value": "credit-life insurance from Banawati Life Cover (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "kind"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: the premium.",
+    "record_value": "premium ₹6,400, paid separately",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "premium"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how they agreed to it.",
+    "record_value": "consent on record: signed form on 2026-10-29",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101G"
+    ],
+    "rule_ids": [
+     "consent"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how it was paid for.",
+    "record_value": "premium ₹6,400, paid separately",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101W"
+    ],
+    "rule_ids": [
+     "loan_funded"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: whether it was required and the choice of provider.",
+    "record_value": "required for the loan: no; risk mitigant: yes; choice of provider offered: yes",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101V"
+    ],
+    "rule_ids": [
+     "bundling"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: getting the money back.",
+    "record_value": "features on record: a single payment",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "6(9A)(ii)"
+    ],
+    "rule_ids": [
+     "belief_mismatch"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": null,
+    "tier": "incomplete",
+    "title": "The call did not get to: the open question about what they took with the loan.",
+    "record_value": "products on record: credit-life insurance from Banawati Life Cover (synthetic) (P1)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "recall_unmatched"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cover.",
+    "record_value": "cover ₹1,60,000",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cover"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the term.",
+    "record_value": "term 12 months",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "term"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cancellation window.",
+    "record_value": "cancellation window 15 days",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cancel_window"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the open question about what they took with the loan.",
+    "record_value": "credit-life insurance from Banawati Life Cover (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "recall"
+    ],
+    "record_only": false,
+    "note": false
+   }
+  ]
+ },
+ "transcript": {
+  "call_id": "20261113T043128-58d53765b337",
+  "loan_id": "TEST-P5-LN-048",
+  "language": "hi-en",
+  "turns": [
+   {
+    "id": 1,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "Hello, क्या आप Amit जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": 0.0,
+    "end_s": 2.48
+   },
+   {
+    "id": 2,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "नहीं, वो बाहर गए हैं, phone charge पे था मैंने उठा लिया, क्या बात है",
+    "asks": null,
+    "product_id": null,
+    "start_s": 2.98,
+    "end_s": 7.86
+   },
+   {
+    "id": 3,
+    "speaker": "bot",
+    "step": "close",
+    "text": "हम Amit जी से बाद में बात कर लेंगे। Thank you।",
+    "asks": null,
+    "product_id": null,
+    "start_s": 8.36,
+    "end_s": 11.4
+   }
+  ]
+ },
+ "finished_utc": "2026-11-13T04:31:29+00:00",
+ "path": "voice",
+ "session_id": "20261113T043128-58d53765b337",
+ "voice": "Tarika",
+ "tts": {
+  "model": "timbre-v3.0",
+  "language": "hi-en",
+  "sample_rate": 8000
+ },
+ "batch": "off: the launcher's null Batch client (0 segments, no request)",
+ "case_status": "ready",
+ "case_failed": [],
+ "case_steps": [
+  {
+   "name": "transcript",
+   "ok": true,
+   "error": null,
+   "seconds": 0.0
+  },
+  {
+   "name": "recording",
+   "ok": true,
+   "error": null,
+   "seconds": 0.001
+  },
+  {
+   "name": "batch",
+   "ok": true,
+   "error": null,
+   "seconds": 0.0
+  },
+  {
+   "name": "align",
+   "ok": true,
+   "error": null,
+   "seconds": 0.0
+  },
+  {
+   "name": "extract",
+   "ok": true,
+   "error": null,
+   "seconds": 0.003
+  },
+  {
+   "name": "summary",
+   "ok": true,
+   "error": null,
+   "seconds": 0.001
+  }
+ ],
+ "degraded_turn_ids": [],
+ "models": {
+  "stt_primary": {
+   "model": "prisma-v3.0",
+   "format": "transcribe"
+  },
+  "stt_second": {
+   "model": "prisma-v2.5",
+   "format": "transcribe",
+   "timeout_s": 2.5
+  },
+  "dialogue_reads_first": "prisma-v2.5 when it has text, else prisma-v3.0",
+  "tts": {
+   "model": "timbre-v3.0",
+   "voice": "Shivani"
+  },
+  "line_rate": 8000,
+  "batch": {
+   "model": "prisma-v3.0",
+   "language": [
+    "hi-IN",
+    "en-IN"
+   ],
+   "format": "transcribe",
+   "diarize": true,
+   "num_speakers": 2,
+   "denoise": false,
+   "keyterms": []
+  },
+  "extraction": {
+   "model": "openai/gpt-6-luna"
+  }
+ },
+ "recording_seconds": 11.4,
+ "ended_reason": "dialogue",
+ "ledger": {
+  "before": 325.597629,
+  "after": 325.597629,
+  "delta": 0.0
+ },
+ "resumed": 0
+}

@@ -46,8 +46,24 @@ class Status(StrEnum):
     unclear = "unclear"
 
 
+class _ScreenClaim(StrEnum):
+    """A claim about a product. `Product.features` lists the claims that are true of it."""
+
+    is_deposit = "is_deposit"
+    refundable_anytime = "refundable_anytime"
+    guaranteed_return = "guaranteed_return"
+    one_time_payment = "one_time_payment"
+    withdrawable_after_period = "withdrawable_after_period"
+
+
+# The screening call keeps the five claims it was measured with: its schema and prompt are
+# byte-identical to before `FeatureClaim.money_back` (P5 fix round 2), so its cached readings stand.
+# An untimed "the money comes back" is read by the money-back probe (`FeaturesReply`) only.
+_ScreenClaim.__name__ = _ScreenClaim.__qualname__ = "FeatureClaim"
+
+
 class WireClaim(Frozen):
-    claim: FeatureClaim
+    claim: _ScreenClaim
     span: str
 
 
@@ -95,6 +111,15 @@ class SpanReply(Frozen):
 
     status: Status
     span: str | None
+    clauses: Clauses
+
+
+class PremiumReply(Frozen):
+    """The premium: an amount in the customer's words, or `free` when they say it cost nothing."""
+
+    status: Status
+    span: str | None
+    free: bool
     clauses: Clauses
 
 
@@ -155,6 +180,9 @@ class Change(StrEnum):
 # changed 1 of 1,107 frozen-set readings). Its last sentence is out of date about the code: code
 # keeps a corrected answer's earlier words in `also` or takes a stated answer away, and adds no
 # conflict (`samajh.extract._extract._Assembly.check`).
+# Stale but pinned: since P3a round 4 the check also runs on a one-clause reply with a marker word
+# (`Reply.has_change_marker`). The docstring below is sent to the model as the schema description,
+# so it is left as measured; tests/extract/test_extract_prompt_pin.py holds it.
 class ChangeReply(Frozen):
     """The change check: a separate call on every checked reply of two or more clauses.
 
@@ -172,6 +200,7 @@ WireReply = (
     | FrequencyReply
     | YesNoReply
     | SpanReply
+    | PremiumReply
     | ReadbackReply
     | CancelReply
     | ConsentReply
@@ -183,7 +212,7 @@ WireReply = (
 SCHEMA: dict[SlotKind, type[WireReply]] = {
     SlotKind.recall: RecallReply,
     SlotKind.kind: KindReply,
-    SlotKind.premium: SpanReply,
+    SlotKind.premium: PremiumReply,
     SlotKind.readback: ReadbackReply,
     SlotKind.cover_readback: ReadbackReply,
     SlotKind.payment_source: PaymentReply,

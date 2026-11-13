@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Rukhsana, born 1987, took a gold loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c013",
+  "label": "Synthetic P5b record. Rukhsana: a gold loan and one add-on",
+  "lender_name": "नमूना क्रेडिट",
+  "record": {
+    "borrower": {
+      "dob": "1987-01-17",
+      "language": "hi-en",
+      "name": "Rukhsana Abhyasi"
+    },
+    "disbursed_inr": 184490,
+    "disbursed_on": "2026-10-31",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-013",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-31",
+          "method": "otp"
+        },
+        "cover_inr": 170000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 5510,
+        "provider": "Abhyasi Jeevan Bima (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 9
+      }
+    ],
+    "sanctioned_inr": 190000,
+    "tenure_months": 9
+  }
+}

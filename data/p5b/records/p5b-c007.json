@@ -1,0 +1,42 @@
+{
+  "description": "Synthetic P5b record. Ravindra, born 1962, took a gold loan with one add-on. For the P5b evaluation only.",
+  "id": "p5b-c007",
+  "label": "Synthetic P5b record. Ravindra: a gold loan and one add-on",
+  "lender_name": "नमूना क्रेडिट",
+  "record": {
+    "borrower": {
+      "dob": "1962-01-30",
+      "language": "hi",
+      "name": "Ravindra Prayogik"
+    },
+    "disbursed_inr": 120875,
+    "disbursed_on": "2026-10-29",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-P5B-LN-007",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-29",
+          "method": "signed_form"
+        },
+        "cover_inr": 125000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 4125,
+        "provider": "Prayogik Suraksha (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 9
+      }
+    ],
+    "sanctioned_inr": 125000,
+    "tenure_months": 9
+  }
+}

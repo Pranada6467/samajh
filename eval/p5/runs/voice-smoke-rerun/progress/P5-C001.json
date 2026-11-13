@@ -1,0 +1,1246 @@
+{
+ "session_id": "20261113T043125-46d980b17e23",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "नमस्ते, क्या आप Suresh जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "is_this_you",
+    "variant": "own",
+    "text": "हाँ, मैं सुरेश बोल रहा हूँ।",
+    "line_key": "right_party.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ, मैं सुरेश बोल रहा हूँ।",
+     "expecting": "identity",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "confirms_self",
+     "amount_inr": null,
+     "approx": null,
+     "n": 63
+    }
+   ],
+   "degraded": false,
+   "seq": 1,
+   "reply_to": 0,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ, मैं सुरेश बोल रहा हूँ।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ, मैं सुरेश बोल रहा हूँ।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.0
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना बैंक कस्टमर केयर से कंप्यूटर से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह सेल्स नहीं, फ़ीडबैक कॉल है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत रिकॉर्ड हो रही है; जानकारी नमूना बैंक के लिखित नोटिस में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी ओ-टी-पी, पिन, पासवर्ड या खाता नंबर नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "शक हो तो फ़ोन रखकर नमूना बैंक कस्टमर केयर पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन मिनट बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "can_we_talk",
+    "variant": "own",
+    "text": "हाँ बोलिए, बात कर सकते हैं।",
+    "line_key": "disclosure.go_ahead",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "हाँ बोलिए बात कर सकते हैं।",
+     "expecting": "go_ahead",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "yes",
+     "amount_inr": null,
+     "approx": null,
+     "n": 64
+    }
+   ],
+   "degraded": false,
+   "seq": 3,
+   "reply_to": 2,
+   "listen": "yes_no",
+   "second_reading_asked": false,
+   "transcript": "हाँ बोलिए बात कर सकते हैं।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "हाँ बोलिए बात कर सकते हैं।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.0
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "context.loan",
+     "text": "धन्यवाद। आपने हाल ही में नमूना बैंक से जो लोन लिया, उसके बारे में कुछ सवाल हैं।",
+     "step": "context",
+     "asks": null
+    },
+    {
+     "key": "disclosure.rights",
+     "text": "रुकना हो या किसी इंसान से बात करनी हो, तो कभी भी बोल दीजिए।",
+     "step": "context",
+     "asks": null
+    },
+    {
+     "key": "open_recall.ask",
+     "text": "लोन के साथ आपने कुछ और भी लिया था क्या? अगर हाँ, तो क्या, और कितने का?",
+     "step": "open_recall",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "what_did_you_take",
+    "variant": "own",
+    "text": "लोन के साथ एक एफडी बनवाई थी, कोई चालीस-बयालीस हज़ार की।",
+    "line_key": "open_recall.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "लोन के साथ एक एफडी बनवाई थी कोई 40,000-42,000 की।",
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 65
+    }
+   ],
+   "degraded": false,
+   "seq": 5,
+   "reply_to": 4,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "लोन के साथ एक एफडी बनवाई थी कोई 40,000-42,000 की।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "लोन के साथ एक एफडी बनवाई थी कोई 40,000-42,000 की।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 4.4
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "teach_back.intro",
+     "text": "ठीक है, उसके बारे में कुछ छोटे सवाल हैं।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "kind.ask_named",
+     "text": "जो आपने बताया, उसे थोड़ा समझाइए: वो क्या है और किस काम आता है?",
+     "step": "teach_back",
+     "asks": "kind"
+    }
+   ],
+   "reply": {
+    "topic": "what_is_it",
+    "variant": "own",
+    "text": "वो बैंक की एफडी है, जो लोन की सिक्योरिटी के लिए रखी है।",
+    "line_key": "kind.ask_named",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "वो बैंक की FD है जो loan की security के लिए रखी है।",
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null,
+     "n": 66
+    }
+   ],
+   "degraded": false,
+   "seq": 7,
+   "reply_to": 6,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "वो बैंक की FD है जो loan की security के लिए रखी है।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "वो बैंक की FD है जो loan की security के लिए रखी है।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.44
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "premium.ask",
+     "text": "उसके लिए आपने कितने पैसे दिए?",
+     "step": "teach_back",
+     "asks": "premium"
+    }
+   ],
+   "reply": {
+    "topic": "how_much",
+    "variant": "own",
+    "text": "कोई चालीस या बयालीस हज़ार रुपये कटे थे।",
+    "line_key": "premium.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "कोई 40 या ₹42,000 कटे थे",
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 67
+    },
+    {
+     "text": "कोई 40 या 42,000 रुपये कटे थे।",
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 68
+    }
+   ],
+   "degraded": false,
+   "seq": 9,
+   "reply_to": 8,
+   "listen": "amount",
+   "second_reading_asked": true,
+   "transcript": "कोई 40 या ₹42,000 कटे थे",
+   "acted_on": "second",
+   "acted_on_model": "prisma-v2.5",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "कोई 40 या 42,000 रुपये कटे थे।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    },
+    {
+     "role": "second",
+     "model": "prisma-v2.5",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "कोई 40 या ₹42,000 कटे थे",
+     "literal": "कोई चालीस या बयालीस हजार रुपए कटे थे",
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "asked_again",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.88
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "premium.reask",
+     "text": "मतलब, उसके कितने पैसे लगे? जितना याद हो, उतना बताइए।",
+     "step": "teach_back",
+     "asks": "premium"
+    }
+   ],
+   "reply": {
+    "topic": "how_much",
+    "variant": "again",
+    "text": "यही लगभग चालीस-बयालीस हज़ार रुपये थे।",
+    "line_key": "premium.reask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "यही लगभग ₹82,000 थे",
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": 82000,
+     "approx": [
+      82000,
+      82000
+     ],
+     "n": 69
+    },
+    {
+     "text": "यही लगभग 40,42,000 रुपये थे।",
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": 4042000,
+     "approx": [
+      4042000,
+      4042000
+     ],
+     "n": 70
+    }
+   ],
+   "degraded": false,
+   "seq": 11,
+   "reply_to": 10,
+   "listen": "amount",
+   "second_reading_asked": true,
+   "transcript": "यही लगभग ₹82,000 थे",
+   "acted_on": "second",
+   "acted_on_model": "prisma-v2.5",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "यही लगभग 40,42,000 रुपये थे।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    },
+    {
+     "role": "second",
+     "model": "prisma-v2.5",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "यही लगभग ₹82,000 थे",
+     "literal": "यही लगभग चालीस बयालीस हजार रुपए थे",
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": false,
+   "followed_by": "asked_again",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.64
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "premium.say_again",
+     "text": "रक़म एक बार और बता दीजिए, ताकि सही लिखी जाए। कितने पैसे दिए?",
+     "step": "teach_back",
+     "asks": "premium"
+    }
+   ],
+   "reply": {
+    "topic": "say_amount_again",
+    "variant": "own",
+    "text": "चालीस से बयालीस हज़ार रुपये।",
+    "line_key": "premium.say_again",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "40 से 42,000 रुपए।",
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null,
+     "n": 71
+    },
+    {
+     "text": "40 से 42,000 रुपये।",
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null,
+     "n": 72
+    }
+   ],
+   "degraded": false,
+   "seq": 13,
+   "reply_to": 12,
+   "listen": "amount",
+   "second_reading_asked": true,
+   "transcript": "40 से 42,000 रुपए।",
+   "acted_on": "second",
+   "acted_on_model": "prisma-v2.5",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "40 से 42,000 रुपये।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    },
+    {
+     "role": "second",
+     "model": "prisma-v2.5",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "40 से 42,000 रुपए।",
+     "literal": "चालीस से बयालीस हजार रुपए।",
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.32
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "bridge.moving_on",
+     "text": "कोई बात नहीं, आगे बढ़ते हैं।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "payment_source.ask",
+     "text": "वो पैसे कहाँ से और कैसे दिए गए?",
+     "step": "teach_back",
+     "asks": "payment_source"
+    }
+   ],
+   "reply": {
+    "topic": "how_paid",
+    "variant": "own",
+    "text": "लोन के पैसों में से ही उन्होंने काट लिए थे।",
+    "line_key": "payment_source.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "loan के पैसों में से ही उन्होंने काट लिए थे।",
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null,
+     "n": 73
+    }
+   ],
+   "degraded": false,
+   "seq": 15,
+   "reply_to": 14,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "loan के पैसों में से ही उन्होंने काट लिए थे।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "loan के पैसों में से ही उन्होंने काट लिए थे।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.64
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "payment_frequency.ask",
+     "text": "ये पैसे एक ही बार देने थे, या आगे भी देने होंगे?",
+     "step": "teach_back",
+     "asks": "payment_frequency"
+    }
+   ],
+   "reply": {
+    "topic": "how_often",
+    "variant": "own",
+    "text": "बस एक ही बार कटा था, शुरू में।",
+    "line_key": "payment_frequency.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "बस एक ही बार कटा था शुरू में",
+     "expecting": "either_or",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 74
+    }
+   ],
+   "degraded": false,
+   "seq": 17,
+   "reply_to": 16,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "बस एक ही बार कटा था शुरू में",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "बस एक ही बार कटा था शुरू में",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.56
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "required_for_loan.ask",
+     "text": "आपको क्या बताया गया था: लोन के लिए यह लेना ज़रूरी है, या आपकी मर्ज़ी है?",
+     "step": "teach_back",
+     "asks": "required_for_loan"
+    }
+   ],
+   "reply": {
+    "topic": "needed_or_choice",
+    "variant": "own",
+    "text": "अफसर ने कहा था जरूरी है, तभी लोन पास होगा।",
+    "line_key": "required_for_loan.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "अफसर ने कहा था, \"जरूरी है तभी loan pass होगा।\"",
+     "expecting": "either_or",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 75
+    }
+   ],
+   "degraded": false,
+   "seq": 19,
+   "reply_to": 18,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "अफसर ने कहा था, \"जरूरी है तभी loan pass होगा।\"",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "अफसर ने कहा था, \"जरूरी है तभी loan pass होगा।\"",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.44
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "provider_choice.ask",
+     "text": "क्या आपको बताया गया था कि यह आप कहीं और से भी ले सकते हैं, या नहीं?",
+     "step": "teach_back",
+     "asks": "provider_choice"
+    }
+   ],
+   "reply": {
+    "topic": "where_to_take_it_from",
+    "variant": "own",
+    "text": "बैंक से ही करवाने को बोला था, कहीं और का नहीं कहा।",
+    "line_key": "provider_choice.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "बैंक से ही करवाने को बोला था, कहीं और का नहीं कहा।",
+     "expecting": "told",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null,
+     "n": 76
+    }
+   ],
+   "degraded": false,
+   "seq": 21,
+   "reply_to": 20,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "बैंक से ही करवाने को बोला था, कहीं और का नहीं कहा।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "बैंक से ही करवाने को बोला था, कहीं और का नहीं कहा।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.04
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "cover.ask",
+     "text": "उससे आपको क्या मिलता है? कोई रक़म जुड़ी हो, तो वो भी बताइए।",
+     "step": "teach_back",
+     "asks": "cover"
+    }
+   ],
+   "reply": {
+    "topic": "what_it_gives",
+    "variant": "own",
+    "text": "ये मुझे नहीं पता कि उससे क्या मिलेगा या कितना पैसा मिलेगा।",
+    "line_key": "cover.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "यह मुझे नहीं पता कि उससे क्या मिलेगा या कितना पैसा मिलेगा।",
+     "expecting": "amount",
+     "intent": "dont_know",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 77
+    },
+    {
+     "text": "ये मुझे नहीं पता कि उससे क्या मिलेगा या कितना पैसा मिलेगा।",
+     "expecting": "amount",
+     "intent": "dont_know",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 78
+    }
+   ],
+   "degraded": false,
+   "seq": 23,
+   "reply_to": 22,
+   "listen": "amount",
+   "second_reading_asked": true,
+   "transcript": "यह मुझे नहीं पता कि उससे क्या मिलेगा या कितना पैसा मिलेगा।",
+   "acted_on": "second",
+   "acted_on_model": "prisma-v2.5",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "ये मुझे नहीं पता कि उससे क्या मिलेगा या कितना पैसा मिलेगा।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    },
+    {
+     "role": "second",
+     "model": "prisma-v2.5",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "यह मुझे नहीं पता कि उससे क्या मिलेगा या कितना पैसा मिलेगा।",
+     "literal": "यह मुझे नहीं पता कि उससे क्या मिलेगा या कितना पैसा मिलेगा।",
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.44
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "term.ask",
+     "text": "वो कितने समय के लिए है?",
+     "step": "teach_back",
+     "asks": "term"
+    }
+   ],
+   "reply": {
+    "topic": "how_long",
+    "variant": "own",
+    "text": "जब तक लोन चलेगा तब तक रहेगी, फिर निकाल लेंगे।",
+    "line_key": "term.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "जब तक loan चलेगा तब तक रहेगी, फिर निकाल लेंगे",
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null,
+     "n": 79
+    }
+   ],
+   "degraded": false,
+   "seq": 25,
+   "reply_to": 24,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "जब तक loan चलेगा तब तक रहेगी, फिर निकाल लेंगे",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "जब तक loan चलेगा तब तक रहेगी, फिर निकाल लेंगे",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.28
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "cancel_window.ask",
+     "text": "उसे बंद या कैंसल कराने के बारे में आपको क्या बताया गया था?",
+     "step": "teach_back",
+     "asks": "cancel_window"
+    }
+   ],
+   "reply": {
+    "topic": "can_cancel",
+    "variant": "own",
+    "text": "कैंसिल हो सकती है या नहीं, ये मुझे नहीं मालूम।",
+    "line_key": "cancel_window.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "कैंसिल हो सकती है या नहीं, यह मुझे नहीं मालूम।",
+     "expecting": "told",
+     "intent": "dont_know",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 80
+    }
+   ],
+   "degraded": false,
+   "seq": 27,
+   "reply_to": 26,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "कैंसिल हो सकती है या नहीं, यह मुझे नहीं मालूम।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "कैंसिल हो सकती है या नहीं, यह मुझे नहीं मालूम।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 2.88
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "features.ask",
+     "text": "अगर आप उसमें लगे पैसे वापस चाहें, तो क्या होगा? आपको क्या लगता है?",
+     "step": "teach_back",
+     "asks": "features"
+    }
+   ],
+   "reply": {
+    "topic": "money_back",
+    "variant": "own",
+    "text": "जब लोन बंद करूँगा, तब वो एफडी का पैसा वापस मिल जाएगा।",
+    "line_key": "features.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "जब loan बंद करूँगा तब वो FD का पैसा वापस मिल जाएगा।",
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null,
+     "n": 81
+    }
+   ],
+   "degraded": false,
+   "seq": 29,
+   "reply_to": 28,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "जब loan बंद करूँगा तब वो FD का पैसा वापस मिल जाएगा।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "जब loan बंद करूँगा तब वो FD का पैसा वापस मिल जाएगा।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 3.84
+   }
+  },
+  {
+   "bot": [
+    {
+     "key": "consent.ask",
+     "text": "लोन लेते समय आपने किन-किन चीज़ों के लिए हाँ कही थी? और वो हाँ आपने किस तरह दी थी?",
+     "step": "consent_check",
+     "asks": "consent"
+    }
+   ],
+   "reply": {
+    "topic": "what_you_agreed_to",
+    "variant": "own",
+    "text": "लोन के कागज़ात और एफडी के फॉर्म पर दस्तखत किए थे।",
+    "line_key": "consent.ask",
+    "mapped": true,
+    "note": null,
+    "readback": null
+   },
+   "readings": [
+    {
+     "text": "loan के कागजात और FD के form पर दस्तखत किए थे।",
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null,
+     "n": 82
+    }
+   ],
+   "degraded": false,
+   "seq": 31,
+   "reply_to": 30,
+   "listen": "open",
+   "second_reading_asked": false,
+   "transcript": "loan के कागजात और FD के form पर दस्तखत किए थे।",
+   "acted_on": "primary",
+   "acted_on_model": "prisma-v3.0",
+   "stt": [
+    {
+     "role": "primary",
+     "model": "prisma-v3.0",
+     "params": {
+      "language_code": "hi-IN",
+      "format": "transcribe"
+     },
+     "ok": true,
+     "error": null,
+     "text": "loan के कागजात और FD के form पर दस्तखत किए थे।",
+     "literal": null,
+     "cache_hit": true,
+     "seconds": 0.0,
+     "attempts": 0,
+     "est_credits": 0.0
+    }
+   ],
+   "readings_agreed": null,
+   "followed_by": "other",
+   "voiced": {
+    "cache_hit": true,
+    "est_credits": 0.0,
+    "audio_seconds": 4.16
+   }
+  }
+ ],
+ "unmapped": [],
+ "ledger_before": 325.5976293749988,
+ "resumed": 0
+}

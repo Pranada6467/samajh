@@ -97,10 +97,12 @@ ISSUE: dict[FlagReason, str] = {
     R.funded_says_separately: "payment",
     R.funded_dont_know: "payment",
     R.unfunded_says_deducted: "payment",
+    R.payment_says_not_charged: "payment",
     R.bundled_not_mitigant: "bundling",
     R.bundled_no_choice_on_record: "bundling",
     R.bundled_no_choice_told: "bundling",
     R.premium_differs_confirmed: "premium",
+    R.premium_said_zero: "premium",
     R.cover_differs_confirmed: "cover",
     R.recall_denied: "denied",
     R.recall_off_record: "off_record",
@@ -145,6 +147,7 @@ FEATURE_SHORT: dict[FeatureClaim, str] = {
     FeatureClaim.guaranteed_return: "a guaranteed return",
     FeatureClaim.one_time_payment: "a single payment",
     FeatureClaim.withdrawable_after_period: "withdrawal after a period",
+    FeatureClaim.money_back: "money back",
 }
 
 
@@ -271,6 +274,10 @@ PAYMENT_TITLE: dict[FlagReason, str] = {
     R.funded_says_separately: "customer said the premium was paid separately; the record shows it deducted from the loan",
     R.funded_dont_know: "customer did not know the premium was deducted from the loan",
     R.unfunded_says_deducted: "customer said the premium was deducted from the loan; the record shows it paid separately",
+    R.payment_says_not_charged: (
+        "customer said they paid nothing for it (free, or paid by the bank or someone else); "
+        "the record shows a premium charged"
+    ),
 }
 
 BUNDLING_TITLE: dict[FlagReason, str] = {
@@ -357,6 +364,8 @@ def _title(key: tuple, record: LoanRecord, p: Product | None, outcomes: list[Fla
         believed = _and(_unique(FEATURE_LABEL[f.claim] for f in flags if f.claim is not None))
         return f"customer believes {believed}; the record does not list this feature"
     if issue == "premium":
+        if flags[0].reason is R.premium_said_zero:
+            return f"{flags[0].heard}; the record shows a premium of {rupees(p.premium_inr)}"
         return f"{flags[0].heard} and confirmed it at the read-back; the record shows {rupees(p.premium_inr)}"
     if issue == "cover":
         return f"{flags[0].heard} and confirmed it at the read-back; the record shows cover of {rupees(p.cover_inr)}"

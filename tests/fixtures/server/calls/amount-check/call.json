@@ -10,6 +10,10 @@
     "record": "amount-check",
     "language": "hi"
   },
+  "identity": {
+    "second_check": "year_of_birth",
+    "attempts": 1
+  },
   "turns": [
     {
       "file": "01.wav",
@@ -33,7 +37,7 @@
     },
     {
       "file": "05.wav",
-      "answers": "kind.ask",
+      "answers": "kind.ask_named",
       "text": "लाइफ़ इंश्योरेंस है, मुझे कुछ हुआ तो बाकी लोन उससे चुक जाएगा"
     },
     {

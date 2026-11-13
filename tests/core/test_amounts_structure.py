@@ -74,7 +74,6 @@ def test_a_bound_never_becomes_an_approximate_point():
 @pytest.mark.parametrize(
     ("text", "rupees"),
     [
-        ("तीन लाख तक", 300_000),  # decided: "up to" reads as the figure
         ("कम पैसे नहीं थे। पचास हज़ार दिए", 50_000),  # the comparison is in another clause
         ("मैंने पचास हज़ार दिए", 50_000),
     ],

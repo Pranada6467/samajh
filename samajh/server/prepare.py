@@ -29,10 +29,11 @@ from itertools import pairwise
 from pathlib import Path
 
 from samajh.clients.gnani import Timbre
+from samajh.identity import parse_policy
 from samajh.server import speech
 from samajh.server.dialogue import BotUtterance, Heard
 from samajh.server.records import PACKAGED_DIR, load_book
-from samajh.server.samajh_dialogue import TTS_LANGUAGE, samajh_factory
+from samajh.server.samajh_dialogue import IDENTITY_PARAM, TTS_LANGUAGE, identity_param, samajh_factory
 from samajh.server.settings import load_settings
 from samajh.types import Language
 
@@ -55,10 +56,20 @@ class Persona:
     # of the dialogue (`script`) hears such a reply as those two readings on a turn read twice, so
     # the script follows what the live call will hear. Every other reply is heard as written.
     measured: Mapping[str, tuple[str, str]] = field(default_factory=dict)
+    # The right-party setting the call runs under (the fields of `samajh.identity.IdentityPolicy`),
+    # sent as the session request's `identity`; None: the server's `[identity]` (no second check).
+    identity: Mapping[str, object] | None = None
 
     def params(self) -> dict[str, str]:
         """The session params the replay creates the call with."""
         return {"loan" if self.loan else "record": self.record, "language": self.language.value}
+
+    def dialogue_params(self) -> dict[str, str]:
+        """The params a session of this persona stores: `params` and, when the persona has its own
+        identity setting, the server's canonical form of it (what the factory reads)."""
+        if self.identity is None:
+            return self.params()
+        return self.params() | {IDENTITY_PARAM: identity_param(parse_policy(self.identity))}
 
     def reply(self, said: BotUtterance) -> str:
         last = said.lines[-1]
@@ -77,6 +88,8 @@ class Persona:
 
 # The misled customer of the hero record: he believes the add-on is an FD that the loan required.
 # Wording follows the scripted customer of the dialogue's own tests (tests/dialogue/dialogue_kit.py).
+# He runs under the server's default right-party setting (no second check); his year-of-birth reply
+# stays for a call under the year-of-birth setting.
 HERO = Persona(
     record="hero",
     language=Language.hi,
@@ -106,7 +119,7 @@ HERO = Persona(
     },
 )
 
-# An ordinary customer who understood the sale, in Hinglish.
+# An ordinary customer who understood the sale, in Hinglish. The server's default setting (no second check).
 INFORMED = Persona(
     record="informed",
     language=Language.hi_en,
@@ -155,7 +168,8 @@ THIRD_PARTY = Persona(
 # thousand and twelve). Chosen because Prisma v3.0 `transcribe` and v2.5 `transcribe` are known to
 # write it differently on phone-line TTS audio (eval/amounts_v2: amt2-hi-skipped-028, voice
 # Kalpana, v3.0 wrote 2,000); measured again on this persona's own clip (`measured`). One chosen
-# clip, not a rate. She does not name the amount in open recall, so the premium is asked.
+# clip, not a rate. She does not name the amount in open recall, so the premium is asked. She runs
+# under the year-of-birth setting (one attempt), so the packaged calls exercise both settings.
 AMOUNT_CHECK = Persona(
     record="amount-check",
     language=Language.hi,
@@ -187,6 +201,7 @@ AMOUNT_CHECK = Persona(
     # Measured on 2026-11-10 through samajh.clients.gnani: Timbre v3.0 Kalpana, 8 kHz, then the
     # server's turn normalisation, with the server's figure-turn options (hi-IN, transcribe).
     measured={"दो हज़ार बारह रुपये दिए थे": ("2,000 रुपये रुपये दिए थे।", "₹2,012 दिए थे")},
+    identity={"second_check": "year_of_birth", "attempts": 1},
 )
 
 PERSONAS: dict[str, Persona] = {
@@ -251,7 +266,7 @@ def script(persona: Persona, state: Path | None = None) -> list[dict[str, str]]:
     settings = settings.model_copy(
         update={"fallback": settings.fallback.model_copy(update={"enabled": False})}
     )
-    params = persona.params() | {"fallback": "off"}
+    params = persona.dialogue_params() | {"fallback": "off"}
     loans = None
     if persona.loan:
         if state is None:
@@ -309,6 +324,7 @@ def prepare(
         "voice": {"model": options.model, "voice": options.voice, "language": options.language},
         "synthetic": True,
         "params": persona.params(),
+        **({"identity": dict(persona.identity)} if persona.identity is not None else {}),
         "turns": turns,
     }
     (out / "call.json").write_text(

@@ -1,0 +1,345 @@
+{
+ "closed_readings": [
+  {
+   "level": 0.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 1,
+   "ended_early": 0,
+   "no_result": 0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "misled",
+   "n": 1,
+   "confirmed_primary": 0,
+   "confirmed_lenient": 0,
+   "ended_early": 0,
+   "no_result": 0
+  }
+ ],
+ "paired_level0_lenient": [
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "all kinds",
+   "pairs": 1,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 1,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "well_informed",
+   "pairs": 1,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 1,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "all kinds",
+   "pairs": 1,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "misled",
+   "pairs": 1,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  }
+ ],
+ "closed_not_yes_without_problem": [
+  {
+   "customer_id": "P5-C029",
+   "kind": "well_informed",
+   "gold_class": "no_problem",
+   "level": 0.0,
+   "statement_id": "c_not_savings",
+   "reply": "हाँ, मैं जानती हूँ कि यह बचत नहीं है और पैसे वापस नहीं मिलेंगे।",
+   "reading": "no",
+   "lenient_yes": true
+  }
+ ],
+ "voice": null,
+ "misses": [
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "kind": "misled",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "kind": "misled",
+   "n": 1,
+   "caught": 1,
+   "miss": 0,
+   "incomplete": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "miss_tiers": {},
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  }
+ ],
+ "referrals": [
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 1,
+   "referred": 1,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 0,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "no_problem",
+   "kind": "well_informed",
+   "n": 1,
+   "referred": 0,
+   "clear": 0,
+   "understanding_gap": 0,
+   "incomplete": 1,
+   "confirmed": 0,
+   "ended_early": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  }
+ ],
+ "referral_basis": [
+  {
+   "arm": "open",
+   "level": 0.0,
+   "gold_class": "problem",
+   "customer_statement": 1,
+   "record_only": 0,
+   "none": 0
+  }
+ ],
+ "opening_kinds": [
+  {
+   "level": 0.0,
+   "kind": "refusal",
+   "n": 1,
+   "reached": 1,
+   "outcomes": {
+    "declined": 1
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ],
+   "refusal_not_read": 0,
+   "asked_further": 0,
+   "asked_about_loan_after": 0
+  },
+  {
+   "level": 0.0,
+   "kind": "third_party",
+   "n": 1,
+   "reached": 1,
+   "outcomes": {
+    "wrong_party": 1
+   },
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ],
+   "loan_named": 0
+  }
+ ],
+ "paired_level0": [
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "all kinds",
+   "pairs": 1,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "no_problem_or_gap",
+   "kind": "well_informed",
+   "pairs": 1,
+   "both": 0,
+   "open_only": 0,
+   "closed_only": 1,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "all kinds",
+   "pairs": 1,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  },
+  {
+   "level": 0.0,
+   "gold_class": "problem",
+   "kind": "misled",
+   "pairs": 1,
+   "both": 1,
+   "open_only": 0,
+   "closed_only": 0,
+   "neither": 0,
+   "no_result_pairs": 0,
+   "mcnemar_p": 1.0
+  }
+ ],
+ "by_writer": [
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 1,
+   "counts": "referred",
+   "count": 1,
+   "no_result": 0,
+   "per100": 100.0,
+   "ci95": [
+    20.7,
+    100.0
+   ]
+  },
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 1,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "no_problem",
+   "n": 1,
+   "counts": "referred",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "writer_model": "google/gemini-3.7-flash",
+   "gold_class": "problem",
+   "n": 1,
+   "counts": "miss",
+   "count": 0,
+   "no_result": 0,
+   "per100": 0.0,
+   "ci95": [
+    0.0,
+    79.3
+   ]
+  }
+ ],
+ "health": [
+  {
+   "arm": "closed",
+   "level": 0.0,
+   "calls": 2,
+   "customer_turns": 24,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  },
+  {
+   "arm": "open",
+   "level": 0.0,
+   "calls": 4,
+   "customer_turns": 32,
+   "degraded_turns": 0,
+   "unmapped": 0,
+   "no_result": 0,
+   "unmapped_keys": {}
+  }
+ ],
+ "no_result": [],
+ "calls": 6
+}

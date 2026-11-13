@@ -1007,7 +1007,7 @@ def test_a_cover_read_back_of_another_figure_confirms_nothing():
 @pytest.mark.parametrize(
     ("turn", "reply", "field", "span"),
     [
-        (14, "पाँच लाख तक का कवर है।", "cover", "पाँच लाख तक"),  # "up to five lakh"
+        (14, "पाँच लाख तक का कवर है।", "cover", "पाँच लाख तक का कवर है"),  # whole clause: "पाँच लाख तक" alone is a bound
         (6, "बावन हज़ार रुपये लगे।", "premium", "बावन हज़ार रुपये लगे"),
         (16, "पाँच साल तक चलेगा।", "term", "पाँच साल तक"),
     ],

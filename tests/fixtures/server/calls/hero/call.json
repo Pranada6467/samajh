@@ -23,66 +23,61 @@
     },
     {
       "file": "03.wav",
-      "answers": "second_check.ask",
-      "text": "उन्नीस सौ चौरासी"
-    },
-    {
-      "file": "04.wav",
       "answers": "open_recall.ask",
       "text": "बस एक एफडी करवाई थी, लोन की सिक्योरिटी के लिए, बावन हज़ार की"
     },
     {
-      "file": "05.wav",
-      "answers": "kind.ask",
+      "file": "04.wav",
+      "answers": "kind.ask_named",
       "text": "एफडी है"
     },
     {
-      "file": "06.wav",
+      "file": "05.wav",
       "answers": "read_back.confirm",
       "text": "हाँ, सही है"
     },
     {
-      "file": "07.wav",
+      "file": "06.wav",
       "answers": "payment_source.ask",
       "text": "लोन में से कट गया"
     },
     {
-      "file": "08.wav",
+      "file": "07.wav",
       "answers": "payment_frequency.ask",
       "text": "एक ही बार दिया था"
     },
     {
-      "file": "09.wav",
+      "file": "08.wav",
       "answers": "required_for_loan.ask",
       "text": "हाँ, बोला था ज़रूरी है, उसके बिना लोन नहीं मिलेगा"
     },
     {
-      "file": "10.wav",
+      "file": "09.wav",
       "answers": "provider_choice.ask",
       "text": "कुछ नहीं बताया"
     },
     {
-      "file": "11.wav",
+      "file": "10.wav",
       "answers": "cover.ask",
       "text": "पैसा सुरक्षित रहेगा"
     },
     {
-      "file": "12.wav",
+      "file": "11.wav",
       "answers": "term.ask",
       "text": "दो साल"
     },
     {
-      "file": "13.wav",
+      "file": "12.wav",
       "answers": "cancel_window.ask",
       "text": "नहीं बताया"
     },
     {
-      "file": "14.wav",
+      "file": "13.wav",
       "answers": "features.ask",
       "text": "एक साल बाद ब्याज के साथ निकाल सकते हैं"
     },
     {
-      "file": "15.wav",
+      "file": "14.wav",
       "answers": "consent.ask",
       "text": "फॉर्म पर साइन किया था बस"
     }

@@ -54,6 +54,17 @@ grace_ms = 1800
 enabled = true
 timeout_s = 3.0
 
+# The lender's right-party check (samajh.identity; references/pilots/P8-contract.md section 1). Only
+# the menu: second_check is "none" or "year_of_birth"; attempts 1 or 2 (ignored with "none").
+# prior_notice: a written message before the call (the demo shows it mocked; nothing is sent).
+# call_back_line: the spoken "hang up and call the customer-care number on your papers" line.
+# A session request may carry its own `identity` (the phone's demo picker), checked the same way.
+[identity]
+second_check = "none"
+attempts = 1
+prior_notice = true
+call_back_line = true
+
 # After the call: Prisma Batch on the whole recording, for segment times and speaker labels.
 # Two speakers: the bot and the person who answered.
 [batch]

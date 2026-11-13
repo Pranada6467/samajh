@@ -62,6 +62,8 @@ function newCall() {
       record: $("record").value,
       language: $("language").value,
       mode: $("turn-mode").value,
+      identityCheck: $("identity-check").value,
+      identityAttempts: Number($("identity-attempts").value),
     },
     sessionId: null,
     bot: null,
@@ -133,7 +135,8 @@ const ENTER = {
         render();
       }
       const params = sessionParams(call.settings);
-      const s = await api.createSession({ line_rate: call.settings.lineRate, params });
+      const identity = identityRequest(call.settings.identityCheck, call.settings.identityAttempts, identityMenu?.default);
+      const s = await api.createSession({ line_rate: call.settings.lineRate, params, identity });
       if (!live()) return void api.endSession(s.session_id).catch(() => {});
       call.sessionId = s.session_id;
       call.settings.lineRate = s.line_rate;
@@ -790,6 +793,8 @@ function render() {
   $("mon-record").textContent = call.settings.record ? `${call.settings.record} · ${call.settings.language}` : "none";
   $("mon-listen").textContent = state === "listening" && listen ? `${listen.patience.kind}: cut ${listen.patience.cut_ms} ms, grace ${listen.patience.grace_ms} ms` : "n/a";
   $("mon-mode").textContent = call.settings.mode === "ptt" ? "push to talk" : "hands-free";
+  $("mon-identity").textContent =
+    call.settings.identityCheck === "year_of_birth" ? `year of birth, ${call.settings.identityAttempts} attempt(s)` : "none";
   $("mon-mic").textContent = { off: "not requested", asking: "asking", on: "on", unavailable: `file mode (${call.mic.reason})` }[call.mic.status];
   $("mon-turns").replaceChildren(
     ...call.turns.map((t) =>
@@ -819,7 +824,10 @@ preset($("line-rate"), params.get("line"));
 preset($("language"), params.get("lang"));
 preset($("turn-mode"), params.get("mode") === "hands-free" ? "handsfree" : params.get("mode"));
 
-for (const id of ["line-rate", "record", "language", "turn-mode"]) {
+preset($("identity-check"), params.get("identity"));
+preset($("identity-attempts"), params.get("attempts"));
+
+for (const id of ["line-rate", "record", "language", "turn-mode", "identity-check", "identity-attempts"]) {
   $(id).addEventListener("change", () => {
     if (state === "idle") {
       call = newCall();
@@ -896,6 +904,76 @@ function sessionParams(settings) {
   if (settings.record.startsWith(LOAN)) return { loan: settings.record.slice(LOAN.length), language: settings.language };
   return { record: settings.record, language: settings.language };
 }
+
+// ---- the right-party setting (samajh.identity) and the prior notice ------------------------------
+
+let identityMenu = null; // GET /api/identity/menu: the options, their descriptions, the server's default
+
+// The session request's `identity` for the picker's choice. The two fields the picker does not
+// offer (prior_notice, call_back_line) keep the server's setting. Attempts only with a second check.
+// Pure: tests/server/test_phone_identity.py runs it under Node.
+function identityRequest(check, attempts, defaults) {
+  const year = check === "year_of_birth";
+  const body = { second_check: year ? "year_of_birth" : "none", attempts: year && attempts === 2 ? 2 : 1 };
+  if (defaults && typeof defaults.prior_notice === "boolean") body.prior_notice = defaults.prior_notice;
+  if (defaults && typeof defaults.call_back_line === "boolean") body.call_back_line = defaults.call_back_line;
+  return body;
+}
+
+// The server's honest description of a choice, from the menu; null before the menu has loaded.
+// Pure: tests/server/test_phone_identity.py runs it under Node.
+function identityDescription(menu, check, attempts) {
+  const option = menu?.options?.find((o) => o.id === check);
+  if (!option) return null;
+  const n = option.attempts.includes(attempts) ? attempts : option.attempts[0];
+  return option.descriptions[String(n)] ?? null;
+}
+
+function renderIdentity() {
+  const year = $("identity-check").value === "year_of_birth";
+  $("identity-attempts").disabled = !year;
+  $("identity-attempts").hidden = $("identity-attempts-label").hidden = !year;
+  $("identity-note").textContent = identityDescription(identityMenu, $("identity-check").value, Number($("identity-attempts").value)) ?? "";
+}
+
+let noticeAsked = 0;
+async function renderNotice() {
+  const card = $("notice-card");
+  const shown = identityMenu?.default?.prior_notice === true;
+  const value = $("record").value;
+  if (!shown || !value) return void (card.hidden = true);
+  const mine = ++noticeAsked;
+  const query = value.startsWith(LOAN) ? { loan: value.slice(LOAN.length) } : { record: value };
+  try {
+    const n = await api.identityNotice({ ...query, lang: $("language").value });
+    if (mine !== noticeAsked) return;
+    $("notice-text").textContent = n.text;
+    setLang($("notice-text"), n.language);
+    $("notice-review").textContent = n.review === "not human-reviewed" ? "· not human-reviewed" : "";
+    card.hidden = false;
+  } catch {
+    if (mine === noticeAsked) card.hidden = true;
+  }
+}
+
+async function loadIdentity() {
+  try {
+    identityMenu = await api.identityMenu();
+    if (!params.get("identity")) preset($("identity-check"), identityMenu.default.second_check);
+    if (!params.get("attempts")) preset($("identity-attempts"), String(identityMenu.default.attempts));
+  } catch {
+    identityMenu = null; // an older server: the session request then carries the picker's choice alone
+  }
+  renderIdentity();
+  renderNotice();
+  if (state === "idle") {
+    call = newCall();
+    render();
+  }
+}
+
+for (const id of ["identity-check", "identity-attempts"]) $(id).addEventListener("change", renderIdentity);
+for (const id of ["record", "language"]) $(id).addEventListener("change", renderNotice);
 
 function loanNote(l) {
   return (
@@ -1011,7 +1089,9 @@ function renderCase() {
   voided.hidden = !notice;
   voided.textContent = notice ?? "";
   $("case-status").textContent = status;
+  const checked = c?.status === "ready" && c.identity?.sentence ? [el("li", { className: "identity-line", textContent: c.identity.sentence })] : [];
   $("case-lines").replaceChildren(
+    ...checked,
     ...(first ? [el("li", { className: "first-line", textContent: first })] : []),
     ...lines.map((l) =>
       el(
@@ -1032,7 +1112,8 @@ function renderCase() {
 
 render();
 loadClips();
-loadRecords();
+loadRecords().then(renderNotice);
+loadIdentity();
 api.health().then(
   (h) => {
     $("mon-server").textContent = h.gnani_key_configured ? "ok, Gnani key configured" : "ok, no Gnani key configured";

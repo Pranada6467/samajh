@@ -830,6 +830,7 @@ async function pageAttempts(main) {
                           h("b", null, a.number),
                           h("span", null, a.outcome_label),
                           a.request ? h("span", { class: "muted" }, `The speaker ${a.request}`) : null,
+                          a.not_counted ? h("span", { class: "muted" }, `Request kept on the log; the call is ${a.not_counted}`) : null,
                           h("span", { class: "muted" }, `day ${a.day_since_sale} \u00B7 ${a.simulated ? "simulated" : "phone call"}`),
                         ),
                       ),
@@ -896,7 +897,11 @@ function proportionTable({ caption, first, rows, bars = false, intervals = true 
     rows: rows.map((r) => ({
       cells: [
         r.label,
-        r.referred_split ? [pCount(r.value), splitSub(r.referred_split)] : pCount(r.value),
+        r.referred_split
+          ? [pCount(r.value), splitSub(r.referred_split)]
+          : r.not_counted
+            ? [pCount(r.value), h("span", { class: "sub" }, `${int(r.not_counted)} ended on a request said in a call that was not counted`)]
+            : pCount(r.value),
         pShare(r.value),
         ...(intervals ? [pInterval(r.value)] : []),
         ...(bars ? [h("span", { class: "bar", "aria-hidden": "true" }, h("span", { style: `width:${r.value.share === null ? 0 : Math.round(r.value.share * 100)}%` }))] : []),

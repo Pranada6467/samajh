@@ -1,0 +1,68 @@
+{
+  "about": "The P5 matched closed (confirmation) call: after the opening shared with the open call, the caller reads one statement at a time from the lender's record and asks whether it is correct. Statement ids and order follow data/p5/topics.json closed_call.statements. Slots: {provider} (the record's provider name, any parenthetical removed), {premium_words}, {cover_words}, {term_words}, {cancel_days_words}, all filled in words by eval/p5/write_customers.py render-closed (samajh.amounts.spoken_amount); no digit appears in any line. Variants are chosen by record fields: c_source by paid_from_loan; c_voluntary by required_for_loan; c_cancel by whether cancel_window_days is set; c_consent by consent.method (or 'none' when the record holds no consent). c_frequency and c_not_savings state what topics.json says they state; render-closed refuses a record whose features contradict c_not_savings.",
+  "review": "model-written, no human review",
+  "hi": {
+    "intro": "अब मैं आपको बताऊँगी कि आपने लोन के साथ क्या लिया था, एक-एक बात करके। हर बात के बाद बताइए कि वह सही है या नहीं।",
+    "statements": {
+      "c_kind": "आपने लोन के साथ {provider} का एक जीवन बीमा लिया है, जो आपके लोन पर बीमा कवर है। क्या यह सही है?",
+      "c_premium": "इस बीमा का प्रीमियम {premium_words} रुपये था। क्या यह सही है?",
+      "c_source": {
+        "paid_from_loan": "यह प्रीमियम आपके लोन की रकम में से काटा गया था। क्या यह सही है?",
+        "paid_separately": "यह प्रीमियम लोन की रकम से नहीं काटा गया था, आपने इसे अलग से भरा था। क्या यह सही है?"
+      },
+      "c_frequency": "यह प्रीमियम एक ही बार भरा गया था, इसे बार-बार नहीं भरना है। क्या यह सही है?",
+      "c_voluntary": {
+        "required_false": "यह बीमा लेना आपकी अपनी मर्ज़ी थी, लोन के लिए ज़रूरी नहीं था, और आप इसे किसी भी कंपनी से ले सकते थे। क्या यह सही है?",
+        "required_true": "हमने लोन पर एक बीमा कवर माँगा था, और आप यह कवर किसी भी कंपनी से ले सकते थे। क्या यह सही है?"
+      },
+      "c_cover": "अगर आपकी मृत्यु हो जाए, तो यह बीमा आपका लोन चुकाने के लिए {cover_words} रुपये तक देता है। क्या यह सही है?",
+      "c_term": "यह बीमा {term_words} तक चलता है। क्या यह सही है?",
+      "c_cancel": {
+        "with_window": "आप यह बीमा {cancel_days_words} के अंदर रद्द करवा सकते थे। क्या यह सही है?",
+        "no_window": "हमारे रिकॉर्ड में इस बीमा को रद्द करने की कोई अवधि दर्ज नहीं है। क्या आपको भी यही बताया गया था?"
+      },
+      "c_not_savings": "यह बीमा कोई जमा या बचत नहीं है, और जो प्रीमियम भरा गया वह आख़िर में वापस नहीं मिलता। क्या यह सही है?",
+      "c_consent": {
+        "signed_form": "आपने इस बीमा के लिए एक फ़ॉर्म पर दस्तख़त करके हाँ कहा था। क्या यह सही है?",
+        "otp": "आपने इस बीमा के लिए अपने फ़ोन पर आया ओटीपी देकर हाँ कहा था। क्या यह सही है?",
+        "digital_click": "आपने इस बीमा के लिए फ़ोन या कंप्यूटर पर एक बटन दबाकर हाँ कहा था। क्या यह सही है?",
+        "recorded_call": "आपने इस बीमा के लिए एक रिकॉर्ड की गई फ़ोन कॉल पर हाँ कहा था। क्या यह सही है?",
+        "verbal": "आपने इस बीमा के लिए बोलकर हाँ कहा था, किसी काग़ज़ या फ़ोन के बिना। क्या यह सही है?",
+        "none": "हमारे रिकॉर्ड में यह दर्ज नहीं है कि आपने इस बीमा के लिए हाँ कैसे कहा। क्या आपने इसके लिए हाँ कहा था?"
+      }
+    },
+    "close": "बस, इतनी ही बातें थीं। आपका समय देने के लिए धन्यवाद।"
+  },
+  "hi-en": {
+    "intro": "अब मैं आपको आपके loan के साथ लिए गए product की कुछ details बताऊँगी, एक-एक करके। हर detail के बाद बताइए कि वह correct है या नहीं।",
+    "statements": {
+      "c_kind": "आपने loan के साथ {provider} का एक life insurance लिया है, जो आपके loan पर insurance cover है। क्या यह correct है?",
+      "c_premium": "इस insurance का premium {premium_words} rupees था। क्या यह correct है?",
+      "c_source": {
+        "paid_from_loan": "यह premium आपके loan amount में से cut किया गया था। क्या यह correct है?",
+        "paid_separately": "यह premium loan amount से cut नहीं हुआ था, आपने इसे separately pay किया था। क्या यह correct है?"
+      },
+      "c_frequency": "यह premium एक ही बार pay हुआ था, इसे बार-बार pay नहीं करना है। क्या यह correct है?",
+      "c_voluntary": {
+        "required_false": "यह insurance लेना आपकी अपनी choice थी, loan के लिए ज़रूरी नहीं था, और आप इसे किसी भी company से ले सकते थे। क्या यह correct है?",
+        "required_true": "हमने loan पर एक insurance cover माँगा था, और आप यह cover किसी भी company से ले सकते थे। क्या यह correct है?"
+      },
+      "c_cover": "अगर आपकी death हो जाए, तो यह insurance आपका loan चुकाने के लिए {cover_words} rupees तक देता है। क्या यह correct है?",
+      "c_term": "यह insurance {term_words} तक चलता है। क्या यह correct है?",
+      "c_cancel": {
+        "with_window": "आप यह insurance {cancel_days_words} के अंदर cancel करवा सकते थे। क्या यह correct है?",
+        "no_window": "हमारे record में इस insurance को cancel करने का कोई period नहीं लिखा है। क्या आपको भी यही बताया गया था?"
+      },
+      "c_not_savings": "यह insurance कोई deposit या savings नहीं है, और जो premium pay हुआ वह end में वापस नहीं मिलता। क्या यह correct है?",
+      "c_consent": {
+        "signed_form": "आपने इस insurance के लिए एक form sign करके हाँ कहा था। क्या यह correct है?",
+        "otp": "आपने इस insurance के लिए अपने phone पर आया OTP देकर हाँ कहा था। क्या यह correct है?",
+        "digital_click": "आपने इस insurance के लिए phone या computer पर एक button click करके हाँ कहा था। क्या यह correct है?",
+        "recorded_call": "आपने इस insurance के लिए एक recorded phone call पर हाँ कहा था। क्या यह correct है?",
+        "verbal": "आपने इस insurance के लिए बोलकर हाँ कहा था, बिना किसी paper या phone के। क्या यह correct है?",
+        "none": "हमारे record में यह नहीं लिखा है कि आपने इस insurance के लिए हाँ कैसे कहा। क्या आपने इसके लिए हाँ कहा था?"
+      }
+    },
+    "close": "बस, इतनी ही details थीं। अपना time देने के लिए thank you।"
+  }
+}

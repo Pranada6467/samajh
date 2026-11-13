@@ -67,8 +67,10 @@ def said_after(call, k: int) -> str:
 ADMISSIONS = ["हाँ, मैं उनका बेटा, बोलो", "हाँ जी, मैं उनकी वाइफ", "haan, main dost hoon, bolo",
               "जी हाँ, मैं उनका छोटा भाई", "haan bolo, unki taraf se main hoon", "हाँ, मैं भाई हूँ",
               "yes, I am his son, go ahead", "नहीं, वो बाहर हैं"]  # fmt: skip
-AFFIRMATIONS = ["हाँ", "जी हाँ", "हाँ जी बोलिए", "haan bhai bolo", "मैं Ramesh बोल रहा हूँ", "main hi bol raha hoon",
-                "speaking", "हाँ मैं ही हूँ", "हाँ, मैं रमेश", "जी, मैं ख़ुद बोल रहा हूँ"]  # fmt: skip
+# Iteration 3 (decided): only an explicit first-person claim resumes; a bare yes ends the call.
+AFFIRMATIONS = ["मैं Ramesh बोल रहा हूँ", "main hi bol raha hoon", "speaking", "हाँ मैं ही हूँ", "हाँ, मैं रमेश",
+                "जी, मैं ख़ुद बोल रहा हूँ"]  # fmt: skip
+BARE_YES = ["हाँ", "जी हाँ", "हाँ जी बोलिए", "haan bhai bolo"]
 WHO_ARMS = {**ARMS, **{label: (lambda label=label: labelled(label)) for label in
                        ("confirms_self", "yes", "answer", "wrong_person", "third_party_handoff")}}  # fmt: skip
 
@@ -91,11 +93,21 @@ def test_an_affirmation_at_the_who_check_resumes_the_question(arm, reply):
         # classifier is asked; an end label ends the call.
         assert call.end.outcome is Outcome.wrong_party
         return
-    assert call.end is None and call.keys[-1] in ("kind.ask", "kind.reask"), call.keys
+    assert call.end is None and call.keys[-1] in ("kind.ask", "kind.ask_named", "kind.reask"), call.keys
 
 
-@pytest.mark.parametrize("label, resumes", [("confirms_self", True), ("yes", False), ("answer", False),
-                                            ("unclear", False)])  # fmt: skip
+@pytest.mark.parametrize("arm", WHO_ARMS)
+@pytest.mark.parametrize("reply", BARE_YES)
+def test_a_bare_yes_at_the_who_check_ends_as_wrong_party(arm, reply):
+    call = run_at([*AT_KIND, TAKEOVER], [reply], WHO_ARMS[arm](), language=HE if reply.isascii() else HI)
+    assert call.end.outcome is Outcome.wrong_party and call.end.speaker_confirmed is False, call.keys
+    assert call.keys[-1] == "end.third_party" and not any(word in said_after(call, 5) for word in LEAK)
+
+
+# Iteration 3, round 2 (superseding round 4 here): an explicit claim resumes whatever follows it, in every arm, unless a
+# label says someone else is speaking; a reply with no first-person claim still ends.
+@pytest.mark.parametrize("label, resumes", [("confirms_self", True), ("yes", True), ("answer", True),
+                                            ("unclear", True), ("wrong_person", False)])  # fmt: skip
 def test_the_classifier_confirms_an_unexplained_reply_only_with_confirms_self_and_an_i(label, resumes):
     reply = "जी हाँ, मैं ही हूँ, कहिए क्या जानना है"  # "क्या जानना है" is outside the closed vocabulary
     call = run_at([*AT_KIND, TAKEOVER], [reply], labelled(label))
@@ -106,7 +118,9 @@ def test_the_classifier_confirms_an_unexplained_reply_only_with_confirms_self_an
 
 def test_an_unexplained_reply_ends_with_the_word_lists_alone():
     for reader in (RULES, ARMS["raises"]()):
-        call = run_at([*AT_KIND, TAKEOVER], ["जी हाँ, मैं ही हूँ, कहिए क्या जानना है"], reader)
+        claim = run_at([*AT_KIND, TAKEOVER], ["जी हाँ, मैं ही हूँ, कहिए क्या जानना है"], reader)
+        assert claim.end is None, claim.keys
+        call = run_at([*AT_KIND, TAKEOVER], ["जी हाँ, कहिए क्या जानना है"], reader)
         assert call.end.outcome is Outcome.wrong_party
 
 
@@ -135,23 +149,27 @@ STAGES = {"recall": ORDINARY, "kind": AT_KIND, "premium": AT_PREMIUM, "read_back
 def test_a_sign_of_another_speaker_gets_the_who_check_first(arm, stage, sign):
     prefix = STAGES[stage]
     call = run_at(prefix, [sign], ARMS[arm](), language=HE if sign.isascii() else HI)
-    assert call.end is None and call.keys[-1] == "right_party.reask", call.keys
+    assert call.end is None and call.keys[-1] == "right_party.who_check", call.keys
     assert not any(word in call.utterances[-1].text for word in LEAK)
     assert "stop_check.decline" not in call.keys[-1:] and "verify.after_loan" not in call.keys[-1:]
     ended = run_at(prefix, [sign, "हाँ, मैं उनका भाई"], ARMS[arm]())
     assert ended.end.outcome is Outcome.wrong_party
-    resumed = run_at(prefix, [sign, "हाँ"], ARMS[arm]())  # known: a false "हाँ" passes
-    assert resumed.end is None and resumed.keys[-1] != "right_party.reask"
+    # Iteration 3 (decided): a bare "हाँ" does not answer the choice question and ends the call; only an
+    # explicit first-person claim resumes (known: a false explicit claim passes).
+    bare = run_at(prefix, [sign, "हाँ"], ARMS[arm]())
+    assert bare.end.outcome is Outcome.wrong_party and bare.end.speaker_confirmed is False
+    resumed = run_at(prefix, [sign, "हाँ, मैं ही बोल रहा हूँ"], ARMS[arm]())
+    assert resumed.end is None and resumed.keys[-1] != "right_party.who_check"
 
 
 def test_the_who_check_from_the_callback_question_asks_when_again():
-    call = run([*AT_CALLBACK, "मैं उनका बेटा हूँ, पापा शाम को आएँगे", "हाँ जी"])
-    assert call.keys[-2:] == ("right_party.reask", "callback.when"), call.keys
+    call = run([*AT_CALLBACK, "मैं उनका बेटा हूँ, पापा शाम को आएँगे", "हाँ जी, मैं ही बोल रहा हूँ"])
+    assert call.keys[-2:] == ("right_party.who_check", "callback.when"), call.keys
 
 
 def test_a_strong_sign_is_not_cleared_by_a_classifier_answer_and_is_ended_by_wrong_person():
     assert run_at(AT_KIND, ["hello main unka beta, papa chale gaye"], labelled("answer")).keys[-1] \
-        == "right_party.reask"  # fmt: skip
+        == "right_party.who_check"  # fmt: skip
     ended = run_at(AT_KIND, ["hello main unka beta, papa chale gaye"], labelled("wrong_person"))
     assert ended.end.outcome is Outcome.wrong_party
 
@@ -159,32 +177,32 @@ def test_a_strong_sign_is_not_cleared_by_a_classifier_answer_and_is_ended_by_wro
 def test_a_weak_sign_that_says_nothing_of_the_speaker_to_the_classifier_still_gets_the_who_check():
     for label in ("asks_repeat", "who_or_why", "off_topic"):
         call = run_at(AT_KIND, ["hello? kaun? kya chal raha hai?"], labelled(label), language=HE)
-        assert call.keys[-1] == "right_party.reask", (label, call.keys)
+        assert call.keys[-1] == "right_party.who_check", (label, call.keys)
 
 
 def test_after_a_weak_sign_the_classifier_let_pass_an_unjudged_turn_gets_the_who_check():
     answers_then_fails = Labels(lambda reply, stage: "answer")
     reader = LlmFallbackInterpreter(answers_then_fails)
     call = run_at(AT_KIND, ["मेरे बेटे ने सब भरा था, बीमा था"], reader)
-    assert call.end is None and call.keys[-1] != "right_party.reask" and call.state.speaker_doubt
+    assert call.end is None and call.keys[-1] != "right_party.who_check" and call.state.speaker_doubt
     answers_then_fails.error = TransportError("down")
     _, said = step(call.state, "हम्म, वो जो था ना", interpreter=reader)
-    assert said.lines[-1].key == "right_party.reask"
+    assert said.lines[-1].key == "right_party.who_check"
 
 
 def test_who_checks_have_their_own_cap_and_end_as_wrong_party():
     limits = Limits(max_who_checks=1)
-    call = run([*AT_KIND, TAKEOVER, "हाँ", "main unki wife hoon"], limits=limits)
+    call = run([*AT_KIND, TAKEOVER, "मैं ही बोल रहा हूँ", "main unki wife hoon"], limits=limits)
     assert call.end.outcome is Outcome.wrong_party and call.keys[-1] == "end.third_party"
     # A call that used its "shall I go on?" checks still gets a who-check.
     used = run([*AT_KIND, "रहने दो", "हाँ", TAKEOVER], limits=Limits(max_stop_checks=1))
-    assert used.keys[-1] == "right_party.reask", used.keys
+    assert used.keys[-1] == "right_party.who_check", used.keys
 
 
 @pytest.mark.parametrize("arm", ARMS)
 def test_a_plain_answer_is_not_a_sign(arm):
     for reply in ("एक बीमा है, एजेंट ने बताया था", "नॉमिनी मेरी पत्नी है", "लोन में से कट गया"):
-        assert run_at(AT_KIND, [reply], ARMS[arm]()).keys[-1] != "right_party.reask", reply
+        assert run_at(AT_KIND, [reply], ARMS[arm]()).keys[-1] != "right_party.who_check", reply
 
 
 # --- 3. The birth year: near-spellings ------------------------------------------------------------
@@ -252,7 +270,7 @@ def test_a_who_question_after_the_year_gets_the_after_loan_answer(arm):
 @pytest.mark.parametrize("reply", ["नहीं नहीं, अभी कर लीजिए।", "Na, later nahi, abhi karte hain."])
 def test_a_negated_later_with_a_now_word_resumes(arm, reply):
     call = run([*AT_CALLBACK, reply], ARMS[arm]())
-    assert call.end is None and call.keys[-1] == "kind.ask", call.keys
+    assert call.end is None and call.keys[-1] == "kind.ask_named", call.keys
 
 
 @pytest.mark.parametrize("reply", ["अभी नहीं, कल शाम", "abhi nahi, baad mein", "नहीं, अभी बिज़ी हूँ"])

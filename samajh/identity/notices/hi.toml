@@ -1,0 +1,32 @@
+# The written notice sent before a Samajh call (P8 contract section 6), Hindi. MOCKED: the demo
+# shows it as a card; no message is ever sent. Data, not code: samajh/identity/notice.py loads and
+# checks it (the bot-line bans, no loan or product word, no digit: the number series is the
+# {series} slot, which the code fills with 1600). Slots: {lender}, {series}. It names the lender
+# and never the borrower, the loan or a product: a message can be read on a locked screen.
+
+language = "hi"
+review = "written by the build agent; no fluent human reviewer yet"
+
+[[parts]]
+name = "who"
+text = "{lender} की ओर से: अगले कुछ दिनों में हम आपको एक छोटी फ़ीडबैक कॉल करेंगे।"
+
+[[parts]]
+name = "automated"
+text = "कॉल पर कंप्यूटर से चलने वाली आवाज़ बात करेगी, इंसान नहीं।"
+
+[[parts]]
+name = "not_sales"
+text = "यह सेल्स कॉल नहीं है।"
+
+[[parts]]
+name = "number"
+text = "कॉल {series} से शुरू होने वाले नंबर से आएगी।"
+
+[[parts]]
+name = "never_ask"
+text = "हम कभी ओ-टी-पी, पिन या पासवर्ड नहीं माँगेंगे।"
+
+[[parts]]
+name = "check"
+text = "शक हो तो फ़ोन रखकर अपने कागज़ों पर छपे {lender} कस्टमर केयर नंबर पर ख़ुद कॉल करके पूछ लें।"

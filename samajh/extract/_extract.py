@@ -2,12 +2,18 @@
 
 The answer call records the answer to the question the bot asked. The screening call reads the
 same reply for things said in passing: beliefs about the product and concerns about the sale.
-The change check, on a reply of two or more clauses to a checked question, asks separately
+The change check, on a reply to a checked question that has two or more clauses or holds a word
+that may take an answer back (`Reply.has_change_marker`), asks separately
 whether the customer gave an answer and then corrected or withdrew it (`Change`). It sees what
 the answer call sees and not the answer call's reading, so it is a second, independent look. A
 correction whose final answer stands keeps the earlier words (the clause runs code resolves from
 the check's clause numbers) in `also`; otherwise the stated answer is taken away. It adds no
-conflict and never creates or changes a value. A failed check makes the reply's stated answers `Unclear(extraction_failed)`.
+conflict and never creates or changes a value. A failed check makes the reply's stated answers
+`Unclear(extraction_failed)`. On a reply of one clause a correction cannot be pointed at (the two
+clause runs would overlap), so anything but `none` there makes its stated answers unusable. A
+one-clause reply whose answer is followed by a who-knows, forgot or don't-know tail ("41300 kya
+pata", "बीमा था भूल गया क्या था") is taken back by code whatever the check said
+(`Reply.has_take_back_tail`): the check's prompt reads such doubt as leaning to the answer.
 
 Code, not the model, decides which question a reply answers, which turn a quote comes from and
 which product an answer belongs to. The model sees one question and one reply and returns enums,
@@ -31,8 +37,8 @@ against what was named).
 A premium the bot read back without asking it (the customer gave it in open recall) is carried
 from the open-recall reply that `samajh.rules.normalise.carried_premiums` names, decided from the
 transcript alone: the whole reply is its quote and the parser's amount span its value.
-It is carried only when that reply's change check said `none` or the reply got no check (one
-clause); after a correction, a withdrawal or a failed call nothing is carried.
+It is carried only when that reply's change check said `none`, or the reply got no check (one
+clause and no marker word); after a correction, a withdrawal or a failed call nothing is carried.
 """
 
 import time
@@ -60,6 +66,7 @@ from samajh.extract._wire import (
     FrequencyReply,
     KindReply,
     PaymentReply,
+    PremiumReply,
     ReadbackReply,
     RecallReply,
     ScreenReply,
@@ -75,7 +82,7 @@ from samajh.rules.checks import (
     CANCEL_TOLERANCE_DAYS,
 )
 from samajh.rules.clauses import KIND_ON_RECORD
-from samajh.rules.normalise import CarriedPremium, carried_premiums
+from samajh.rules.normalise import ZERO_PREMIUM, CarriedPremium, carried_premiums
 from samajh.types import (
     Answer,
     AnswerConflict,
@@ -84,6 +91,7 @@ from samajh.types import (
     ConcernEvidence,
     DontKnow,
     Evidence,
+    FeatureClaim,
     GapReason,
     KindClaim,
     LoanRecord,
@@ -226,7 +234,11 @@ class _Grounder:
         self.reply = Reply(slot.turn.text)
         self.turn_id = slot.turn.id
         self.trace = trace
-        self.hedged = has_doubt_word(slot.turn.text)  # code decides the marker, not the model
+        # Code decides the marker, not the model. A doubt about exactness ("ठीक से याद नहीं") is a hedge
+        # too, except for a cover figure: `checks.cover` reads `hedged` as a tier input, so that
+        # marker stays as it was there (P5 fix round 2: marker only, no tier change).
+        exactness = slot.kind not in (SlotKind.cover, SlotKind.cover_readback)
+        self.hedged = has_doubt_word(slot.turn.text, exactness=exactness)
         # Wire field -> (first, last) clause the stated answer came from: the clauses the model
         # pointed at, or for a span the clauses the grounded span sits in. Read by the change check.
         self.where: dict[str, tuple[int, int]] = {}
@@ -295,6 +307,8 @@ _FAILED = GapReason.extraction_failed
 
 def _amount(text: str) -> tuple[int, int, int] | None:
     """(low, high, tolerance percent) of a spoken amount: the approximate tolerance for a hedge or range."""
+    if text == ZERO_PREMIUM:
+        return 0, 0, AMOUNT_TOLERANCE_PERCENT
     reading = amount_reading(text)
     if reading is None:
         return None
@@ -423,7 +437,8 @@ class _Assembly:
             found = g.find("claims", claim.span)
             quote = found.clauses if found else claim.span
             for pid in slot.products:
-                self._add(self.claims[pid], ClaimEvidence(claim=claim.claim, evidence=g.evidence(quote)))
+                said = ClaimEvidence(claim=FeatureClaim(claim.claim.value), evidence=g.evidence(quote))
+                self._add(self.claims[pid], said)
 
     @staticmethod
     def _add(items: list, item: object) -> None:
@@ -458,6 +473,15 @@ class _Assembly:
             return
         g.trace.change = wire.change.value
         if wire.change is Change.none:
+            return
+        if (
+            wire.change is Change.withdrawn
+            and slot.kind is SlotKind.provider_choice
+            and self._told_no(slot)
+            and g.reply.ends_in_dont_know_tail()
+        ):
+            # "नहीं बताया पता नहीं": not knowing follows from not being told, and keeping the "no"
+            # errs toward a referral (P5 fix round 2). A "yes" and every other question: as below.
             return
         first = g.run("first_clauses", wire.first_clauses)
         final = g.run("final_clauses", wire.final_clauses) if wire.change is Change.corrected else None
@@ -526,6 +550,34 @@ class _Assembly:
             self.recall_items = [x for k, x in enumerate(self.recall_items) if k not in dropped]
         self._add(self.unscreened, g.whole())
 
+    def tail(self, slot: Slot, g: _Grounder) -> None:
+        """A one-clause reply whose answer is followed by a who-knows, forgot or don't-know tail
+        (`_tail_takes_back`): taken back, whatever the change check said. Stated answers become
+        unusable; open recall drops the reply's items and lists it as unscreened.
+
+        Except "nobody told me" on the provider-choice question (P5 fix round): "किसी ने नहीं बताया,
+        पता नहीं" is one answer, since not knowing follows from not being told, and keeping the "no"
+        errs toward a referral (`bundled_no_choice_told`), never toward `clear`."""
+        if slot.kind is SlotKind.provider_choice and self._told_no(slot):
+            return
+        if slot.kind is SlotKind.recall:
+            here = {
+                k for k, (item, _) in enumerate(self.recall_items) if item.evidence.turn_id == slot.turn.id
+            }
+            if here:
+                self.recall_items = [x for k, x in enumerate(self.recall_items) if k not in here]
+                self._add(self.unscreened, g.whole())
+            return
+        self._unstate(slot, Unclear(evidence=g.whole()))
+
+    def _told_no(self, slot: Slot) -> bool:
+        """This reply's provider-choice answer is a stated "no, nobody told me"."""
+        return any(
+            isinstance(a, Stated) and a.value is False and a.evidence.turn_id == slot.turn.id
+            for pid in slot.products
+            for a in self.heard[pid].get("provider_choice_offered", [])
+        )
+
     def _within(self, reply: Reply, k: int, run: tuple[int, int]) -> bool:
         """Does recall item `k` (or its span, if not found in the reply) lie inside the clause run?"""
         item, grounded = self.recall_items[k]
@@ -570,6 +622,25 @@ class _Assembly:
         (name,) = _FIELDS[slot.kind]
         self.put(slot, name, g.spoken("span", wire.status, wire.span, wire.clauses))
 
+    def _premium(self, slot: Slot, wire: PremiumReply, g: _Grounder) -> None:
+        """An amount, or "it cost nothing" (`free`), recorded as `ZERO_PREMIUM` with the whole reply
+        as its evidence. The words the model gives for it must be in the reply. Whether 0 stands
+        (no other amount, nothing said about the loan or another payer) is decided in
+        `samajh.rules.normalise`, from the reply alone."""
+        if not (wire.free and wire.status is Status.stated):
+            self.put(slot, "premium", g.spoken("span", wire.status, wire.span, wire.clauses))
+            return
+        if not (wire.span and wire.span.strip()):
+            g.trace.inconsistent.append("free")
+            self.put(slot, "premium", Unclear(evidence=g.whole()))
+            return
+        found = g.find("span", wire.span)
+        if found is None:
+            self.put(slot, "premium", Unclear(reason=GapReason.quote_not_grounded))
+            return
+        g.where["span"] = found.numbers
+        self.put(slot, "premium", Stated(value=ZERO_PREMIUM, evidence=g.whole(), hedged=g.hedged))
+
     def _readback(self, slot: Slot, wire: ReadbackReply, g: _Grounder) -> None:
         self._read_back(slot, wire, g, "premium")
 
@@ -612,7 +683,9 @@ class _Assembly:
         """
         evidence = Evidence(quote=Reply(turn.text).whole(), turn_id=turn.id)
         heard = self.heard[pid].setdefault("premium", [])
-        heard.append(Stated(value=carried.span, evidence=evidence, hedged=has_doubt_word(turn.text)))
+        heard.append(
+            Stated(value=carried.span, evidence=evidence, hedged=has_doubt_word(turn.text, exactness=True))
+        )
 
     def _recall(self, slot: Slot, wire: RecallReply, g: _Grounder) -> None:
         """Every recall reply counts: the first answer is kept, and the last reply that denies."""
@@ -633,7 +706,7 @@ class _Assembly:
 _TAKE: dict[SlotKind, Callable] = {
     SlotKind.recall: _Assembly._recall,
     SlotKind.kind: _Assembly._kind,
-    SlotKind.premium: _Assembly._span,
+    SlotKind.premium: _Assembly._premium,
     SlotKind.readback: _Assembly._readback,
     SlotKind.cover_readback: _Assembly._cover_readback,
     SlotKind.payment_source: _Assembly._payment,
@@ -773,9 +846,11 @@ def _ask(
 def _plan(transcript: Transcript, record: LoanRecord) -> Iterator[tuple[Slot, _Call | None]]:
     """Each reply's calls in call order (None: silence, no call).
 
-    The change check goes with every answer call on a reply of two or more clauses, open recall
-    included (its result is used only when the reply named something). A reply of one clause gets
-    no check: within one clause there is nothing for code to point at.
+    The change check goes with every answer call on a reply of two or more clauses, and on a reply
+    of one clause that holds a marker word (`Reply.has_change_marker`), open recall included (its
+    result is used only when the reply named something). Speech-to-text can leave a withdrawal
+    unpunctuated, so the clause count alone would let it through. A one-clause reply with no marker
+    gets no check.
     """
     for slot in slots(transcript, record):
         if slot.step in _IDENTITY:
@@ -786,22 +861,47 @@ def _plan(transcript: Transcript, record: LoanRecord) -> Iterator[tuple[Slot, _C
             continue
         if slot.kind is not SlotKind.other:
             yield slot, _Call.answer
-            if len(reply.clauses()) >= 2:
+            if _needs_check(reply):
                 yield slot, _Call.check
         if reply.word_count >= _SCREEN_MIN_WORDS:
             yield slot, _Call.screen
 
 
-def _carries(got: dict[_Call, tuple[object, SlotTrace]]) -> bool:
+def _needs_check(reply: Reply) -> bool:
+    """Two or more clauses, or a word that may take an answer back."""
+    return len(reply.clauses()) >= 2 or reply.has_change_marker()
+
+
+# Questions whose answer is itself an amount, a duration or a date: a word such as "कितना" or "कब"
+# in the reply is about the answer, so it never exempts a tail.
+_ASKS_A_QUANTITY = frozenset(
+    {SlotKind.recall, SlotKind.premium, SlotKind.readback, SlotKind.cover, SlotKind.cover_readback,
+     SlotKind.term, SlotKind.cancel_window}
+)  # fmt: skip
+
+
+def _tail_takes_back(reply: Reply, kind: SlotKind) -> bool:
+    """One clause, and a who-knows, forgot or don't-know tail after the answer ("41300 kya pata").
+
+    On a question that does not ask for a quantity, a reply that names another detail ("बीमा है रकम
+    याद नहीं") is not taken back: the tail is about that detail.
+    """
+    exempt = kind not in _ASKS_A_QUANTITY
+    return len(reply.clauses()) == 1 and reply.has_take_back_tail(other_detail_exempts=exempt)
+
+
+def _carries(slot: Slot, got: dict[_Call, tuple[object, SlotTrace]]) -> bool:
     """May this reply's premium be carried forward? Only when its answer call gave output and its
-    change check said `none`, or the reply had one clause and so got no check. After a correction,
-    a withdrawal or a failed call nothing is carried, and the read-back then leaves the premium a gap.
+    change check said `none`, or the reply needed no check (one clause, no marker word). After a
+    correction, a withdrawal or a failed call nothing is carried, and the read-back then leaves the
+    premium a gap. A reply that needed a check and has none is never carried, nor is a one-clause
+    reply with a take-back tail (`_tail_takes_back`), whatever its check said.
     """
     answer = got.get(_Call.answer)
-    if answer is None or answer[0] is None:
+    if answer is None or answer[0] is None or _tail_takes_back(Reply(slot.turn.text), slot.kind):
         return False
     if _Call.check not in got:
-        return True
+        return not _needs_check(Reply(slot.turn.text))
     check = got[_Call.check][0]
     return isinstance(check, ChangeReply) and check.change is Change.none
 
@@ -846,7 +946,7 @@ def extract_traced(
         for _, call in calls:
             got[call] = next(asked)
             traces.append(got[call][1])
-        if _carries(got):
+        if _carries(slot, got):
             for pid, c in carried.items():
                 if c.reply == slot.turn.id:
                     assembly.carry(slot.turn, c, pid)
@@ -860,6 +960,8 @@ def extract_traced(
                 if _Call.check in got:
                     check, check_trace = got[_Call.check]
                     assembly.check(slot, check, _Grounder(slot, check_trace), grounder.where)
+                if _tail_takes_back(grounder.reply, slot.kind):
+                    assembly.tail(slot, grounder)
         if _Call.screen in got:
             wire, trace = got[_Call.screen]
             if wire is None:
