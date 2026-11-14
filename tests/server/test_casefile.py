@@ -323,3 +323,73 @@ def case_of_call(phone: TestClient, sid: str) -> dict:
     case = wait_case(phone, sid)
     assert case["status"] == "ready", case["steps"]
     return case
+
+
+# The case seal (samajh.evidence "Case seal"), on a whole call through the app.
+
+
+def _sealed_call(fake: FakeSpeech, state: Path):
+    from samajh.server.sessionlog import SessionStore
+
+    phone = phone_for(fake, state)
+    sid = run_call(phone, fake)
+    phone.post(f"/api/sessions/{sid}/case")
+    wait_case(phone, sid)
+    store = SessionStore(state / "sessions")
+    return store, sid, state / "sessions" / sid
+
+
+def test_the_written_case_is_sealed_and_verifies_against_its_session(fake: FakeSpeech, state: Path) -> None:
+    import json
+
+    from samajh.evidence.case_seal import verify_case
+    from samajh.evidence.session import verify_session_dir
+
+    store, sid, d = _sealed_call(fake, state)
+    case = json.loads(store.read_case(sid))
+    inputs = case["seal"]["inputs"]
+    assert case["seal"]["content_sha256"] and case["seal"]["inputs_sha256"]
+    assert inputs["recording_sha256"] == case["recording"]["sha256"]
+    assert inputs["session_head"] and inputs["extraction"]["prompt_sha256"]
+    assert inputs["code"]["source_sha256"]
+    assert verify_case(store.read_case(sid), d).status == "verified"
+    assert verify_session_dir(d).status == "verified", verify_session_dir(d).problem
+
+
+def test_an_edited_case_is_a_mismatch(fake: FakeSpeech, state: Path) -> None:
+    import json
+
+    from samajh.evidence.case_seal import verify_case
+
+    store, sid, d = _sealed_call(fake, state)
+    case = json.loads(store.read_case(sid))
+    case["tier"] = "clear"
+    check = verify_case(json.dumps(case).encode(), d)
+    assert check.status == "mismatch" and "content_sha256" in check.problem
+    case.pop("seal")
+    # The session is dated after the evidence epoch, so a missing seal is a downgrade, not legacy.
+    stripped = verify_case(json.dumps(case).encode(), d)
+    assert stripped.status == "mismatch" and stripped.problem == "dated after the evidence epoch but has no seal"
+
+
+def test_a_rewritten_session_chain_breaks_the_case(fake: FakeSpeech, state: Path) -> None:
+    from samajh.evidence.case_seal import verify_case
+
+    store, sid, d = _sealed_call(fake, state)
+    (d / "chain.jsonl").unlink()
+    store.save(store.load(sid))  # a fresh chain: a different head
+    check = verify_case(store.read_case(sid), d)
+    assert check.status == "mismatch" and "session_head" in check.problem
+
+
+def test_session_entries_after_the_seal_are_listed_not_a_mismatch(fake: FakeSpeech, state: Path) -> None:
+    from samajh.evidence.case_seal import verify_case
+    from samajh.server.sessionlog import BrowserPlayback
+
+    store, sid, d = _sealed_call(fake, state)
+    log = store.load(sid)
+    log.events[0].browser = BrowserPlayback(bot_start_ms=123.0)
+    store.save(log)
+    check = verify_case(store.read_case(sid), d)
+    assert check.status == "verified"
+    assert check.changed_after_seal and check.changed_after_seal[-1].endswith("event seq 0")

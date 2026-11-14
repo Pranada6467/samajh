@@ -13,6 +13,7 @@ const { values, positionals } = parseArgs({
     "hangover-ms": { type: "string", default: "700" },
     chunk: { type: "string", default: "128" },
     "initial-noise": { type: "string", default: "0" },
+    "pause-ms": { type: "string", default: "0" },
   },
 });
 if (positionals.length !== 1) {
@@ -61,6 +62,7 @@ const vad = createVad({
   sampleRate,
   hangoverMs: Number(values["hangover-ms"]),
   initialNoiseRms: Number(values["initial-noise"]),
+  pauseMs: Number(values["pause-ms"]),
 });
 
 const chunk = Math.max(1, Number(values.chunk));

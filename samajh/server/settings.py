@@ -12,7 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from samajh.identity import IdentityPolicy, parse_policy
 from samajh.server.dialogue import ListenKind
-from samajh.server.sessionlog import SttSettings, TtsSettings
+from samajh.server.sessionlog import LineRate, SttSettings, TtsSettings
 from samajh.types import Language
 
 DEFAULT_FILE = Path(__file__).with_name("settings.toml")
@@ -58,12 +58,41 @@ class BatchConfig(_Frozen):
     timeout_s: float = Field(default=600.0, gt=0, le=3600)
 
 
+class Prewarm(_Frozen):
+    """Which fixed lines the server makes before it accepts a call (`samajh.server.prompts`)."""
+
+    enabled: bool = True
+    languages: tuple[Language, ...] = (Language.hi, Language.hi_en)
+    line_rates: tuple[LineRate, ...] = (8000,)
+    # Refuse to start rather than spend more than this (estimated credits) making missing lines.
+    max_credits: float = 40.0
+
+
+class Streaming(_Frozen):
+    """Prisma WebSocket streaming for the primary reading of a turn (`samajh.server.stream`).
+
+    Off by default: streaming billing is unknown, and it has run on TTS audio only. When on, a
+    turn whose stream fails in any way falls back to the REST primary (`stream_fallback`)."""
+
+    enabled: bool = False
+    model: Literal["prisma-v3.0", "prisma-v2.5"] = "prisma-v3.0"
+    # The client owns the end of speech (the phone's VAD commits); the server's own 500 ms
+    # default split every 600-900 ms pause in the iteration 1 pilot, so its cut is set long.
+    min_silence_ms: int = Field(default=2000, ge=0, le=10_000)
+    commit_timeout_s: float = Field(default=1.5, gt=0, le=10)
+    # A budget in streamed audio seconds, summed over every `stt.stream` ledger row: meter and stop.
+    max_stream_seconds: float = Field(default=3000, gt=0)
+    idle_timeout_s: int | None = Field(default=None, ge=1, le=600)
+
+
 class Settings(_Frozen):
     tts: TtsConfig
     stt: SttSettings
     turn_taking: dict[ListenKind, Patience]
     fallback: Fallback
     batch: BatchConfig = BatchConfig()
+    prewarm: Prewarm = Prewarm()
+    streaming: Streaming = Streaming()
     # The lender's right-party setting (samajh.identity), read through `parse_policy`: only the menu.
     # A session request may override it for one call (the demo picker); absent, no second check.
     identity: IdentityPolicy = IdentityPolicy()

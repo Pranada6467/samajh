@@ -33,7 +33,7 @@ from samajh.dialogue._lexicon import (
     roman_key,
     tokens,
 )
-from samajh.dialogue._names import is_first_name
+from samajh.dialogue._names import NameMatch, judge_name, known_first_name
 from samajh.types import Language
 
 
@@ -71,6 +71,9 @@ class Intent(StrEnum):
     took_nothing = "took_nothing"  # "I took nothing with the loan"
     dont_know = "dont_know"
     said = "said"  # words the interpreter has no label for; an answer where one is open
+    # W4: "आप records में देख लीजिए": the speaker says the caller or the lender should know or look it up, without
+    # refusing to go on. A non-answer (one re-ask with `defer.reask`), never a decline.
+    defers = "defers"
     silence = "silence"
     asks_repeat = "asks_repeat"
     filler = "filler"
@@ -152,6 +155,21 @@ class Interpretation(BaseModel):
     # The classifier label this reading follows (`LlmFallbackInterpreter`); None when no label was used
     # (no classifier, a failure, a timeout, `unclear`, or a turn the word lists settled).
     classifier_label: str | None = None
+    # Iteration 4 (W4): the context classifier decided this reading at the opening (the name question or the
+    # go-ahead). The call then passes or not on `classifier_label`, with the word lists' third-party signs as vetoes.
+    judged: bool = False
+
+
+class TurnContext(BaseModel):
+    """What the context classifier sees beyond the turn (iteration 4, W4). Built by the call; never holds the
+    year question or its reply."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    first_name: str
+    previous_question: str | None = None
+    previous_reply: str | None = None
+    name_hints: tuple[str, ...] = ()
 
 
 class TurnInterpreter(Protocol):
@@ -507,6 +525,10 @@ def _year_in(text: str, words: Phrase, lexicon: Lexicon) -> tuple[int | None, bo
     return best, len(distinct) > 1
 
 
+_HOW_MUCH = frozenset(word for w in ("कितना", "कितने", "कितनी", "रकम", "kitna", "kitne", "kitni", "amount", "how much")
+                      for word in tokens(w))  # fmt: skip
+
+
 def _names_something(text: str, lexicon: Lexicon) -> bool:
     """Does any clause the customer does not deny name a figure, a thing or something done?
 
@@ -523,6 +545,11 @@ def _names_something(text: str, lexicon: Lexicon) -> bool:
                 continue
             said = tuple(clause)
             clause = []
+            # W4 fix round: "इन्शुरन्स लिया था कितने का याद नहीं": the don't-know is about the amount; the words before
+            # the how-much word are read on their own.
+            much = next((j for j, w in enumerate(said) if w in _HOW_MUCH), None)
+            if much and _has(said[much:], no) and not _has(said[:much], no):
+                said = said[:much]
             if not said or _has(said, no):
                 continue
             figure = parse_amount(" ".join(said))
@@ -825,8 +852,25 @@ _INTERJECTIONS = frozenset(tokens(w) for w in (
 
 
 def _is_name(word: str, first_name: str) -> bool:
-    """Is this spoken word the record's first name, in Devanagari or Latin spelling (`_names.is_first_name`)?"""
-    return is_first_name(word, first_name)
+    """May this spoken word be the record's first name: the name in either script and any spelling, or a word that is
+    no known first name and is phonetically near it (`_names.judge_name`, iteration 4)? A known first name that is not
+    the borrower's ("राजेश" on a record for Ramesh), or a word far from the name, is not; in the speaker's place such
+    a word still reads as someone else (`_another_name`, `names_another_speaker`, `_someone_else_speaks`)."""
+    return judge_name(word, first_name).is_the_name
+
+
+def _name_words(text: str, first_name: str) -> Phrase:
+    """`tokens`, with a compound name said in two words joined when the join is the record's name ("Laxmi Narayan"
+    for Lakshminarayan, "शिव शंकर" for Shivashankar; iteration 4). One part alone is not joined: a relative named
+    "लक्ष्मी" is still someone else."""
+    words = list(tokens(text))
+    k = 0
+    while k + 1 < len(words):
+        first, second = words[k], words[k + 1]
+        if not _is_name(first, first_name) and judge_name(first + second, first_name) is NameMatch.same:
+            words[k : k + 2] = [first + second]
+        k += 1
+    return tuple(words)
 
 
 def _denies(words: Phrase, lexicon: Lexicon) -> bool:
@@ -877,7 +921,7 @@ def affirms_self(text: str, language: Language, first_name: str) -> bool:
     (`points_elsewhere`). "हाँ", "हाँ जी बोलिए", "मैं Ramesh बोल रहा हूँ" pass; "हाँ, मैं उनका बेटा, बोलो" does not.
     """
     lexicon = LEXICONS[language]
-    words = _without_leading_no(tokens(text), lexicon)
+    words = _without_leading_no(_name_words(text, first_name), lexicon)
     if not words or points_elsewhere(text, language):
         return False
     rest = [word for word in _rest(words, _self_words(lexicon)) if not _is_name(word, first_name)]
@@ -893,13 +937,14 @@ _I_COMPLETES = frozenset(tokens(w) for w in ("ही", "हूं", "am", "here"
 def _another_name(words: Phrase, lexicon: Lexicon, first_name: str) -> bool:
     """ "सुरेश बोल रहा हूँ", "मैं सुरेश": a word that is not the borrower's first name and not in the closed
     vocabulary, straight before a speaking word or straight after "मैं"."""
-    closed = _self_words(lexicon)
+    closed = _self_words(lexicon) | _WHO_ASKS
 
     def other(word: str) -> bool:
         return phrase_at((word,), 0, closed) is None and not _is_name(word, first_name)
 
     for k, word in enumerate(words):
-        if k and phrase_at(words, k, lexicon.speak) is not None and other(words[k - 1]):
+        surname = k > 1 and _is_name(words[k - 2], first_name)  # "मैं कविता शर्मा बोल रही हूँ"
+        if k and phrase_at(words, k, lexicon.speak) is not None and other(words[k - 1]) and not surname:
             return True
         if (word,) in _I_WORD and k + 1 < len(words) and other(words[k + 1]):
             return True
@@ -966,7 +1011,7 @@ def who_check_claim(text: str, language: Language, first_name: str, *, closed: b
     lexicon = LEXICONS[language]
     kept: list[str] = []
     for part in _CLAUSE_MARKS.split(text):
-        words = tokens(part)
+        words = _name_words(part, first_name)
         if not words or _explains_phone(words, lexicon):
             continue
         for j in range(len(words) - 1, 1, -1):  # unpunctuated: an explanation, then the claim
@@ -990,6 +1035,9 @@ _NOT_A_NAME = frozenset(tokens(w) for w in ("सच", "झूठ", "सही", 
                                            "वो", "जो", "सब", "बस", "तो", "भी", "ही", "मैं", "हम", "आप", "sach", "jhooth",
                                            "jhoot", "sahi", "galat", "kya", "kuch", "sab", "bhi", "i", "im", "who", "is", "am", "are", "was",
                                            "not", "still", "you", "he", "she", "this", "it"))  # fmt: skip
+# W4 fix round: "कौन बोल रहा है?" asks who the CALLER is; the question word is never a name in the speaker's place.
+_WHO_ASKS = frozenset(tokens(w) for w in ("कौन", "कोन", "kaun", "koun", "kon", "कहाँ", "कहां", "kahan", "kahaan", "who"))
+_NOT_A_NAME = _NOT_A_NAME | _WHO_ASKS
 
 
 def names_another_speaker(text: str, language: Language, first_name: str) -> bool:
@@ -998,14 +1046,15 @@ def names_another_speaker(text: str, language: Language, first_name: str) -> boo
     lexicon = LEXICONS[language]
     if not lexicon.ack_ok:
         return False
-    words = tokens(text)
+    words = _name_words(text, first_name)
     closed = _self_words(lexicon) | _NOT_A_NAME
 
     def other(word: str) -> bool:
         return phrase_at((word,), 0, closed) is None and not _is_name(word, first_name) and not _number_word(word)
 
     for k, word in enumerate(words):
-        if k and phrase_at(words, k, _SPEAKING_NOW) is not None and other(words[k - 1]):
+        surname = k > 1 and _is_name(words[k - 2], first_name)  # "मैं कविता शर्मा बोल रही हूँ"
+        if k and phrase_at(words, k, _SPEAKING_NOW) is not None and other(words[k - 1]) and not surname:
             return True
         if words[k : k + 2] in (("मेरा", "नाम"), ("my", "name")) and k + 2 < len(words):
             following = words[k + 2 : k + 4]
@@ -1020,7 +1069,7 @@ def names_another_speaker(text: str, language: Language, first_name: str) -> boo
 def speaks_of_borrower(text: str, language: Language, first_name: str) -> bool:
     """Before the loan is named (iteration 3): does the reply name the borrower with no first-person word
     ("रमेश जी नहीं हैं, फोन मत करना")? Then the speaker is talking about the borrower, not as the borrower."""
-    words = tokens(text)
+    words = _name_words(text, first_name)
     return any(_is_name(word, first_name) for word in words) and not speaks_in_first_person(text, language)
 
 
@@ -1034,7 +1083,7 @@ def claims_self(text: str, language: Language, first_name: str, *, closed: bool 
     reply the classifier read as `confirms_self`, which still needs the explicit claim.
     """
     lexicon = LEXICONS[language]
-    words = _without_leading_no(tokens(text), lexicon)
+    words = _without_leading_no(_name_words(text, first_name), lexicon)
     if not words or points_elsewhere(text, language):
         return False
     if closed and [word for word in _rest(words, _self_words(lexicon)) if not _is_name(word, first_name)]:
@@ -1185,8 +1234,73 @@ def claim_with_tail(text: str, language: Language, first_name: str) -> bool:
     lexicon = LEXICONS[language]
     if not lexicon.ack_ok:
         return False
-    words = tokens(text)
+    words = _name_words(text, first_name)
     return bool(words) and _claim_form(words, lexicon, first_name) and not doubts_claim(text, language, first_name)
+
+
+_FRAME_WORDS = frozenset(word for phrase in _NAME_FRAMES for word in phrase) | frozenset(tokens("रहा रही रहे कर बात"))
+_SPEAK_FRAMES = frozenset(frame for frame in _NAME_FRAMES if frame != ("हूं",))
+_I_LEADS = tuple(sorted(_I_FIRST, key=len, reverse=True))
+_NAME_LEADS = (("मेरा", "नाम"), ("my", "name", "is"), ("my", "name"), ("myself",))
+_STRONG_LEADS = (("this", "is"), ("its",), ("it", "is"))
+
+
+def _claim_slots(words: Phrase) -> list[tuple[int, bool]]:
+    """Where a self-claim puts a name (iteration 4), and whether the frame is strong. Strong: "मेरा नाम X", "myself X",
+    "मैं (ही) X बोल रहा हूँ", "X बोल रहा हूँ", "X here", "X speaking", "मैं ही X हूँ", "this is X". Weak, because a
+    common word may stand there: "मैं X हूँ", "I am X" ("मैं फ्री हूँ", "I am busy")."""
+    n, slots = len(words), []
+    for k in range(n):
+        lead = next((p for p in _NAME_LEADS if words[k : k + len(p)] == p), None)
+        if lead is not None and k + len(lead) < n:
+            slots.append((k + len(lead), True))
+            continue
+        lead = next((p for p in _I_LEADS if words[k : k + len(p)] == p), None)
+        if lead is not None:
+            j = k + len(lead)
+            particles = j
+            while j < n and words[j] in _CLAIM_PARTICLES:
+                j += 1
+            if j < n:
+                after = j + 1
+                if after < n and phrase_at(words, after, _SPEAK_FRAMES) is not None:
+                    slots.append((j, True))
+                elif after >= n or words[after] == "हूं":
+                    slots.append((j, j > particles or lead in _STRONG_LEADS))
+        j = k + 1
+        while j < n and words[j] in _CLAIM_PARTICLES:
+            j += 1
+        frame = phrase_at(words, j, _SPEAK_FRAMES) if j < n else None
+        if frame is not None and (frame[-1] in ("हूं", "speaking", "here") or j + len(frame) >= n
+                                  or words[j + len(frame)] not in _THIRD_ENDING):  # fmt: skip
+            slots.append((k, True))
+    return slots
+
+
+def claims_another_name(text: str, language: Language, first_name: str) -> bool:
+    """At the name question (iteration 4): does the speaker claim a first name that is positively not the borrower's
+    ("हाँ, मैं ही राजेश हूँ" or "जी, राकेश बोल रहा हूँ" on a record for Ramesh; `_names.NameMatch.other`)? In a weak frame
+    ("मैं X हूँ") only a name of the strict lexicon counts. A word that is no known first name ("मैं ही कवीथा हूँ") is not
+    such a claim, and neither is a word straight after the borrower's own name (a surname). A reply that is one
+    open word beside fillers ("जी, राजू") counts as a weak frame. Hindi and Hinglish."""
+    lexicon = LEXICONS[language]
+    if not lexicon.ack_ok:
+        return False
+    words = _name_words(text, first_name)
+    closed = _self_words(lexicon) | _NOT_A_NAME | lexicon.address
+    slots = _claim_slots(words)
+    rest = [k for k, word in enumerate(words) if phrase_at((word,), 0, closed) is None and word not in _FRAME_WORDS]
+    if len(rest) == 1:  # a bare name ("राजू", "जी, राजू"): judged here too, not left to the classifier alone
+        slots.append((rest[0], False))
+    for j, strong in slots:
+        word = words[j]
+        if phrase_at((word,), 0, closed) is not None or word in _FRAME_WORDS or _number_word(word):
+            continue
+        if j and _is_name(words[j - 1], first_name):  # "मैं कविता शर्मा बोल रही हूँ": the surname
+            continue
+        if judge_name(word, first_name) is NameMatch.other and (strong or known_first_name(word, strict=True)):
+            return True
+    return False
 
 
 def doubts_claim(text: str, language: Language, first_name: str) -> bool:
@@ -1196,10 +1310,67 @@ def doubts_claim(text: str, language: Language, first_name: str) -> bool:
     lexicon = LEXICONS[language]
     if not lexicon.ack_ok:
         return False
+    return hedges_claim(text, language, first_name) or third_party_sign(text, language, first_name)
+
+
+def hedges_claim(text: str, language: Language, first_name: str) -> bool:
+    """The hedge part of `doubts_claim`: a hedge or don't-know word. Hindi and Hinglish; elsewhere False."""
+    lexicon = LEXICONS[language]
+    if not lexicon.ack_ok:
+        return False
+    return _has(_name_words(text, first_name), _IDENTITY_HEDGE | lexicon.dont_know)
+
+
+def name_hints(text: str, first_name: str) -> tuple[str, ...]:
+    """W4: hints for the context classifier. A word judged the borrower's name (`same`/`near`), or one that is a strict
+    lexicon first name and no frame, function or question word ("राजेश", never "बात" or "रही")."""
+    hints: list[str] = []
+    for word in dict.fromkeys(_name_words(text, first_name)):
+        match = judge_name(word, first_name)
+        if match.is_the_name:
+            hints.append(f"{word}: the borrower's name")
+        elif match is NameMatch.other and word not in _FRAME_WORDS and phrase_at((word,), 0, _NOT_A_NAME) is None \
+                and known_first_name(word, strict=True):  # fmt: skip
+            hints.append(f"{word}: a different first name")
+    return tuple(hints)
+
+
+def speaks_of_another(text: str, language: Language, first_name: str | None = None) -> bool:
+    """W4 fix round, at the year: a third-person, pointer-to-a-person, kin or relation word ("इनका", "उनकी", "पापा",
+    "wife"), or another name as the speaker."""
+    lexicon = LEXICONS[language]
     words = tokens(text)
-    if names_another_speaker(text, language, first_name):
+    people = lexicon.third_person | lexicon.kin | lexicon.relation | _CHILD | _SPOUSE | lexicon.possessive
+    if _has(words, people):
         return True
-    if _has(words, _IDENTITY_HEDGE | lexicon.dont_know):
+    return first_name is not None and names_another_speaker(text, language, first_name)
+
+
+def only_asks_whom(text: str, language: Language, first_name: str) -> bool:
+    """W4 fix round: is the reply's third-party sign only a whom/who question ("आप किससे बात करना चाहते हैं?"), with
+    no relation word, other name or third-person talk once the question clauses are set aside?"""
+    if not third_party_sign(text, language, first_name):
+        return False
+    lexicon = LEXICONS[language]
+    asks = lexicon.who | lexicon.asks_who | _WHOM
+    rest = [part for part in _CLAUSE_MARKS.split(text) if part.strip() and not _has(tokens(part), asks)]
+    if len(rest) == len([part for part in _CLAUSE_MARKS.split(text) if part.strip()]):
+        return False  # no question clause to set aside
+    remainder = ", ".join(rest)
+    return not third_party_sign(remainder, language, first_name) and not claims_another_name(
+        remainder, language, first_name
+    )
+
+
+def third_party_sign(text: str, language: Language, first_name: str) -> bool:
+    """The third-party part of `doubts_claim`: another name as the speaker, the borrower's name possessed, a no
+    straight after the claim, a question about whom the caller wants or about another person, a newcomer sign, or
+    someone else in the speaker's place. Hindi and Hinglish; elsewhere False."""
+    lexicon = LEXICONS[language]
+    if not lexicon.ack_ok:
+        return False
+    words = _name_words(text, first_name)
+    if names_another_speaker(text, language, first_name):
         return True
     if _POSSESSIVE_S.search(text) and any(m.group().casefold().replace("’", "'") not in _CONTRACTIONS
                                           for m in _POSSESSIVE_S.finditer(text)):  # fmt: skip
@@ -1258,6 +1429,70 @@ def speaks_in_first_person(text: str, language: Language) -> bool:
     return _has(words, lexicon.first_person) or _has(words, lexicon.is_self)
 
 
+# First-person possessives: "मेरा जन्म 1984 में हुआ था" gives the speaker's own year (iteration 4, W4).
+_MY = frozenset({"मेरा", "मेरी", "मेरे", "my", "mera", "meri", "mere", "apna", "अपना", "अपनी"})
+
+
+def speaks_of_own(text: str, language: Language) -> bool:
+    """`speaks_in_first_person`, or a first-person possessive ("मेरा", "my", "mera")."""
+    return speaks_in_first_person(text, language) or any(w.casefold() in _MY for w in tokens(text))
+
+
+# W4: "again"/"later" words that a negation inside an account of the sale can follow ("फिर कभी नहीं", "दोबारा किसी ने
+# नहीं"), and the hear/say/understand words that make a repeat request whatever else the reply holds.
+_AGAIN = frozenset({"फिर", "दोबारा", "कभी", "again", "phir", "fir", "dobara", "dubara", "kabhi", "ever"})
+_NEGATION = frozenset({"नहीं", "न", "ना", "मत", "nahi", "nahin", "nai", "na", "not", "never", "no"})
+_SAY_HEAR = ("बोल", "बता", "सुन", "समझ", "कहिए", "कहो", "repeat", "say", "tell", "hear", "bol", "bata", "sun", "samajh")
+
+
+def negated_again(words: Phrase, lexicon: Lexicon) -> bool:
+    """An again/later word with a negation within the next four words, and no hear/say/understand word."""
+    if any(word.startswith(_SAY_HEAR) for word in words):
+        return False
+    return any(
+        word in _AGAIN and any(w in _NEGATION for w in words[k + 1 : k + 5]) for k, word in enumerate(words)
+    )
+
+
+_DEFER_SUBJECT = frozenset({"आप", "आपको", "आपके", "आपकी", "आपका", "आपने", "बैंक", "बैंकवाले", "बैंकवालों", "रिकॉर्ड",
+                            "रिकॉर्ड्स", "रिकार्ड", "सिस्टम", "कंप्यूटर", "you", "your", "aap", "aapko", "aapke", "aapki",
+                            "bank", "record", "records", "system", "computer", "file", "फ़ाइल", "फाइल"})  # fmt: skip
+_DEFER_VERB = ("देख", "चेक", "पता होगा", "पता है", "पता ही", "पूछ", "लिखा", "check", "look", "know", "written",
+               "dekh", "pata hoga", "pata hai", "puch", "pooch", "likha", "find")  # fmt: skip
+# W4 fix round: a first-person promise to look it up oneself ("मैं ख़ुद देख लूँगा") is no deferral; "मैं" alone is no bar
+# ("main bata nahi sakta, bank waalon ko hi pucho" defers).
+_NOT_DEFERRAL = frozenset({"खुद", "khud", "myself"})
+# Refusal-to-continue or stop wording: a reply with any of it is no deferral (it keeps its refusal or stop reading, or
+# goes to the classifier).
+_STOPS_TOO = ("नहीं करनी", "नहीं करना", "नहीं करूंगा", "नहीं करूंगी", "जरूरत नहीं", "बस करो", "बस कीजिए", "रहने दो",
+              "रहने दीजिए", "मत पूछो", "मत पूछिए", "नहीं चाहिए", "और बात नहीं", "zaroorat nahi", "zarurat nahi",
+              "jarurat nahi", "discontinue", "bas karo", "rehne do", "rahne do", "mat pucho", "mat poocho",
+              "mat puchho", "aur baat nahi", "nahi karni", "nahi karna", "nahi chahiye", "dont want", "do not want",
+              "stop", "no more")  # fmt: skip
+# Longer than this, a deferral is not settled: the classifier is asked, and its end labels win.
+_DEFER_SETTLED_MAX = 8
+# Expectations at which a deferral is read: mid-call questions only, never the opening.
+_DEFER_AT = frozenset({Expecting.open, Expecting.told, Expecting.either_or, Expecting.amount, Expecting.confirmation})
+
+
+def defers_to_lender(text: str, language: Language) -> bool:
+    """W4: does the reply put the question back to the caller, the lender or the record ("आप records में देख लीजिए",
+    "बैंक वालों से पूछ लो", "you check your system")? Hindi and Hinglish; elsewhere False."""
+    if language not in (Language.hi, Language.hi_en):
+        return False
+    words = tokens(text)
+    joined = " ".join(words)
+    if any(word in _NOT_DEFERRAL for word in words) or any(" ".join(tokens(stop)) in joined for stop in _STOPS_TOO):
+        return False  # "मैं ख़ुद देख लूँगा", "... lekin ab aur baat nahi": a promise to look, or a refusal
+    if not any(word in _DEFER_SUBJECT or word.startswith(("बैंक", "रिकॉर्ड", "record", "bank")) for word in words):
+        return False
+    return any(verb in joined or " ".join(tokens(verb)) in joined for verb in _DEFER_VERB)
+
+
+# A reading a deferral may replace: no stop, no answer the word lists placed.
+_DEFER_OVER = frozenset({Intent.said, Intent.unclear, Intent.filler, Intent.dont_know, Intent.off_topic})
+
+
 class RuleInterpreter:
     """Word lists and `samajh.amounts`. Deterministic; reads nothing but the turn."""
 
@@ -1277,6 +1512,10 @@ class RuleInterpreter:
             # At the go-ahead the word lists end the call only on a reply with no yes-word and no go-on
             # word ("रुकिए मत, बोलते रहिए"): a conflicted reply is asked again, never ended.
             intent, extra = Intent.unclear, {"settled": False}
+        if expecting in _DEFER_AT and intent in _DEFER_OVER and defers_to_lender(text, language) \
+                and _amount(parse_amount(text)) is None:  # fmt: skip
+            # W4: a non-answer, never a decline; a long one is left to the classifier (fix round)
+            intent, extra = Intent.defers, {"settled": len(words) <= _DEFER_SETTLED_MAX}
         recall = expecting in (Expecting.open, Expecting.told)
         named = recall and _names_something(text, lexicon)
         # Round 4: the stop checks and the call-back question are answered mid-call too. Iteration 3 fix round:
@@ -1542,6 +1781,8 @@ class RuleInterpreter:
         recounted = after_loan and _has(words, lexicon.recounts)
         timed = _has(words, lexicon.time_words) and _has(words, lexicon.call_words)
         later = _has(words, lexicon.call_later) or timed
+        if later and after_loan and negated_again(words, lexicon) and not timed:
+            later = False  # W4: "फिर कभी नहीं देना पड़ा" is an account of the sale, not a call-back request
         busy = _has(words, lexicon.occupied) or (expecting in _NO_ACCOUNT_OF_THE_SALE and not_free(words, lexicon))
         goes_on = _has(words, lexicon.go_on | lexicon.hurry)
         if busy and expecting in _OPENING and not _has(words, lexicon.first_person) and not goes_on:
@@ -1553,6 +1794,8 @@ class RuleInterpreter:
             busy = False  # "थोड़ा बिज़ी हूँ, जल्दी बोलिए": busy, and still says go on
         human = _has(words, lexicon.wants_human)
         short = len(words) <= _STOP_TURN and _has(words, lexicon.decline_short)
+        if short and after_loan and len(words) >= 4 and negated_again(words, lexicon):
+            short = False  # W4: "फिर कभी नहीं देना पड़ा": "never again" about the sale, not "never" to this call
         dnc = _has(words, lexicon.do_not_call) or asks_no_calls(words, lexicon) or (
             bool(lexicon.ack_ok) and asks_removal(words)
         )
@@ -1604,12 +1847,15 @@ class RuleInterpreter:
             return Intent.said, {}
         affirms = _has(words, lexicon.yes_despite_no)
         denies = not affirms and (_has(words, lexicon.no) or _has(words, lexicon.no_at_start, at_start=True))
-        if len(words) <= _STOP_TURN and _has(words, lexicon.decline_short):
+        account = expecting not in _NO_ACCOUNT_OF_THE_SALE and len(words) >= 4 and negated_again(words, lexicon)
+        if len(words) <= _STOP_TURN and _has(words, lexicon.decline_short) and not account:
             # "नहीं, रहने दीजिए" to "may we go on?" is a plain no; elsewhere it is only a hint.
             return (Intent.no if denies and expecting is Expecting.go_ahead else Intent.maybe_decline), {}
         affirms = affirms or (not denies and _has(words, lexicon.yes))
         short = len(words) <= _REPEAT_TURN
         repeats = _only(words, lexicon.asks_repeat_whole) or (short and _has(words, lexicon.asks_repeat))
+        if repeats and expecting not in _NO_ACCOUNT_OF_THE_SALE and negated_again(words, lexicon):
+            repeats = False  # W4: "दोबारा किसी ने नहीं माँगा" is an account, not "say it again"
         if expecting is Expecting.identity:
             if self._claims_to_be_the_borrower(words, lexicon) and not denies:
                 return Intent.yes, {"settled": True}

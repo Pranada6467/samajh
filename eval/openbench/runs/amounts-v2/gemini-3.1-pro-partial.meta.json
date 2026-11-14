@@ -1,0 +1,8 @@
+{
+  "model": "google/gemini-3.1-pro-preview",
+  "prompt": "Transcribe this audio clip verbatim. It is Indian speech, mostly Hindi, sometimes mixed with English. Write every word in the script of the language it is spoken in: Hindi words in Devanagari, English words in Latin letters. Write numbers and amounts as the words that were spoken, not as digits. Do not translate, correct, summarise or add anything. If a word is unclear, write your best guess of what was said. Return only the transcript.",
+  "prompt_sha256": "e806b58e631d79470634572f6f0057a6d7b25e1e329f5ac535b7bb22d5ac2a7a",
+  "max_tokens": 8192,
+  "date": "2026-11-14",
+  "label": "closed reference"
+}

@@ -1,0 +1,9 @@
+{
+  "customers.jsonl": "19a5607de66f1b3f363b98f564ba0c8b782006a0ee65a117826fadc3c0616081",
+  "gold.jsonl": "231fad6f82842fba932bb1b4b90c2b55ebbc5b0d4e09d354c036a3762d7821f6",
+  "topics.json": "2f39a2fa14a88431d0eaa64efb47bcd7adff5b0c8ea71a3069365f2068ed4b0c",
+  "closed_statements.jsonl": "58f83c618c667db1c4873df09180e96508569d9a601de5f60071aa8d77afd77f",
+  "records": "bc177e90b0a7563663f00f3a528614443d438e97afe58b51589e80355ce9ec12",
+  "knowledge.jsonl": "7400ef6143e0927d4ed5b94be094ec9c4ace64dd3cecb2e98bb85ef981390063",
+  "writer_requests.jsonl": "e6d52e98f343f792f11a16327ebf413b9ce0b238ed2bb2dd74027a48b714c78f"
+}

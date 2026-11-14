@@ -1,0 +1,539 @@
+{
+ "customer_id": "ACQ-C001",
+ "kind": "informed",
+ "customer_kind": "informed",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "6b86d365768e90f3fbc12c3a2aee22b0c19f52bb05fa05a7911d036fb5953559",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं अमित नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं अमित नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी अमित जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक गोल्ड लोन लिया था। क्या आप बता सकते हैं कि आपको पता है कि आपने लोन के साथ एक इंश्योरेंस प्रोडक्ट भी लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी अमित जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक गोल्ड लोन लिया था। क्या आप बता सकते हैं कि आपको पता है कि आपने लोन के साथ एक इंश्योरेंस प्रोडक्ट भी लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "एक इंश्योरेंस प्रोडक्ट"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": "आपको पता है कि"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। ज़रूरी नहीं था, मेरी अपनी choice थी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "एक इंश्योरेंस प्रोडक्ट",
+     "stated_value": "insurance",
+     "belief_state": "correct",
+     "belief_value": "insurance",
+     "record_value": "insurance",
+     "draw_a": 0.8097758279182017,
+     "draw_r": 0.7963232558686286,
+     "source_topic": "what_is_it",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.36513071903027594,
+     "source_topic": "needed_or_choice",
+     "text": "ज़रूरी नहीं था, मेरी अपनी choice थी।"
+    },
+    {
+     "item": 3,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "बहुत बढ़िया। क्या आप बता सकते हैं कि यह इंश्योरेंस किस चीज़ के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "बहुत बढ़िया। क्या आप बता सकते हैं कि यह इंश्योरेंस किस चीज़ के लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "यह loan के ऊपर insurance cover है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8097758279182017,
+     "source_topic": "what_is_it",
+     "text": "यह loan के ऊपर insurance cover है।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "सही कहा। क्या आपको पता है कि इसका प्रीमियम कितना था और यह कैसे चुकाया गया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सही कहा। क्या आपको पता है कि इसका प्रीमियम कितना था और यह कैसे चुकाया गया?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी। exactly पच्चीस हज़ार रुपये दिए थे। loan amount से deduct हुआ था, कटकर पैसा मिला।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.24779590195976198,
+     "source_topic": "how_much",
+     "text": "exactly पच्चीस हज़ार रुपये दिए थे।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8994402061216533,
+     "source_topic": "how_paid",
+     "text": "loan amount से deduct हुआ था, कटकर पैसा मिला।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि यह कवर कितने समय के लिए है और क्या इसे cancel किया जा सकता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि यह कवर कितने समय के लिए है और क्या इसे cancel किया जा सकता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जब तक loan चलेगा, तब तक cover रहेगा। हाँ, thirty days के अंदर cancel कर सकते हैं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.4676377107389271,
+     "source_topic": "how_long",
+     "text": "जब तक loan चलेगा, तब तक cover रहेगा।"
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.4967483279760927,
+     "source_topic": "can_cancel",
+     "text": "हाँ, thirty days के अंदर cancel कर सकते हैं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "अच्छा। क्या आपको पता है कि अगर loan चुकाया गया तो क्या इस पर पैसा वापस मिलेगा?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अच्छा। क्या आपको पता है कि अगर loan चुकाया गया तो क्या इस पर पैसा वापस मिलेगा?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": "पैसा वापस मिलेगा"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "पैसा वापस नहीं आता, यह savings नहीं है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "money_back",
+     "span_dropped": "पैसा वापस मिलेगा",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.2511174154933542,
+     "source_topic": "money_back",
+     "text": "पैसा वापस नहीं आता, यह savings नहीं है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "how_long",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 3,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "बहुत बढ़िया। क्या आपको याद है कि आपने इस इंश्योरेंस के लिए हाँ कहा था एक रिकॉर्डेड कॉल पर?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "बहुत बढ़िया। क्या आपको याद है कि आपने इस इंश्योरेंस के लिए हाँ कहा था एक रिकॉर्डेड कॉल पर?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "हाँ"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। recorded phone call पर loan और insurance के लिए हाँ बोला था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "correct",
+     "belief_value": "insurance",
+     "record_value": "insurance",
+     "draw_a": 0.8097758279182017,
+     "draw_r": 0.7963232558686286,
+     "source_topic": "what_is_it",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "span_dropped": "हाँ",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9277777278330177,
+     "source_topic": "what_you_agreed_to",
+     "text": "recorded phone call पर loan और insurance के लिए हाँ बोला था।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "धन्यवाद अमित जी, आपकी जानकारी सही है। अगर कोई सवाल हो तो हमसे जरूर संपर्क करें। नमस्ते।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "clear",
+     "reason": "बorrower ने सभी महत्वपूर्ण जानकारी सही तरीके से बताई है।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "यह loan के ऊपर insurance cover है।"
+      },
+      {
+       "field": "premium",
+       "belief": "false",
+       "quote": "exactly पच्चीस हज़ार रुपये दिए थे।"
+      },
+      {
+       "field": "source",
+       "belief": "false",
+       "quote": "loan amount से deduct हुआ था, कटकर पैसा मिला।"
+      },
+      {
+       "field": "required",
+       "belief": "false",
+       "quote": "ज़रूरी नहीं था, मेरी अपनी choice थी।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "यह loan के ऊपर insurance cover है।"
+      },
+      {
+       "field": "term",
+       "belief": "false",
+       "quote": "जब तक loan चलेगा, तब तक cover रहेगा।"
+      },
+      {
+       "field": "cancel",
+       "belief": "false",
+       "quote": "हाँ, thirty days के अंदर cancel कर सकते हैं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "पैसा वापस नहीं आता, यह savings नहीं है।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "recorded phone call पर loan और insurance के लिए हाँ बोला था।"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद अमित जी, आपकी जानकारी सही है। अगर कोई सवाल हो तो हमसे जरूर संपर्क करें। नमस्ते।",
+   "agent_usd": 0.0
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "clear",
+  "reason": "बorrower ने सभी महत्वपूर्ण जानकारी सही तरीके से बताई है।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "यह loan के ऊपर insurance cover है।"
+   },
+   {
+    "field": "premium",
+    "belief": "false",
+    "quote": "exactly पच्चीस हज़ार रुपये दिए थे।"
+   },
+   {
+    "field": "source",
+    "belief": "false",
+    "quote": "loan amount से deduct हुआ था, कटकर पैसा मिला।"
+   },
+   {
+    "field": "required",
+    "belief": "false",
+    "quote": "ज़रूरी नहीं था, मेरी अपनी choice थी।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "यह loan के ऊपर insurance cover है।"
+   },
+   {
+    "field": "term",
+    "belief": "false",
+    "quote": "जब तक loan चलेगा, तब तक cover रहेगा।"
+   },
+   {
+    "field": "cancel",
+    "belief": "false",
+    "quote": "हाँ, thirty days के अंदर cancel कर सकते हैं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "पैसा वापस नहीं आता, यह savings नहीं है।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "recorded phone call पर loan और insurance के लिए हाँ बोला था।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 8,
+  "router": 7
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:11:29+00:00",
+ "agent_turns": 8,
+ "usd_total": 0.0,
+ "finished_utc": "2026-11-13T22:11:29+00:00"
+}

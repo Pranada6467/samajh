@@ -1,0 +1,89 @@
+{
+ "customer_id": "ACQ-C095",
+ "arm": "closed",
+ "kind": "informed",
+ "gold_class": "no_problem",
+ "language": "hi",
+ "gender": "m",
+ "record_id": "acq-c095",
+ "writer_model": "google/gemini-3.7-flash",
+ "r": 0.75,
+ "a": 0.0,
+ "status": "ok",
+ "answers": [
+  {
+   "field": "kind",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "आपने लोन के साथ नमूना लाइफ़ का एक जीवन बीमा लिया है, जो आपके लोन पर बीमा कवर है। क्या यह सही है?"
+  },
+  {
+   "field": "premium",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "इस बीमा का प्रीमियम आठ हज़ार रुपये था। क्या यह सही है?"
+  },
+  {
+   "field": "source",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह प्रीमियम लोन की रकम से नहीं काटा गया था, आपने इसे अलग से भरा था। क्या यह सही है?"
+  },
+  {
+   "field": "frequency",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह प्रीमियम एक ही बार भरा गया था, इसे बार-बार नहीं भरना है। क्या यह सही है?"
+  },
+  {
+   "field": "required",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह बीमा लेना आपकी अपनी मर्ज़ी थी, लोन के लिए ज़रूरी नहीं था, और आप इसे किसी भी कंपनी से ले सकते थे। क्या यह सही है?"
+  },
+  {
+   "field": "cover",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "अगर आपकी मृत्यु हो जाए, तो यह बीमा आपका लोन चुकाने के लिए पाँच लाख नब्बे हज़ार रुपये तक देता है। क्या यह सही है?"
+  },
+  {
+   "field": "term",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह बीमा दो साल तक चलता है। क्या यह सही है?"
+  },
+  {
+   "field": "cancel",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "आप यह बीमा पंद्रह दिन के अंदर रद्द करवा सकते थे। क्या यह सही है?"
+  },
+  {
+   "field": "money_back",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह बीमा कोई जमा या बचत नहीं है, और जो प्रीमियम भरा गया वह आख़िर में वापस नहीं मिलता। क्या यह सही है?"
+  },
+  {
+   "field": "consent",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "आपने इस बीमा के लिए एक फ़ॉर्म पर दस्तख़त करके हाँ कहा था। क्या यह सही है?"
+  }
+ ],
+ "outcome_strict": "confirmed",
+ "caught_fields_strict": [],
+ "outcome_lenient": "confirmed",
+ "caught_fields_lenient": []
+}

@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C134. Vinod took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c134",
+  "label": "Synthetic ACQ record. Vinod: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1999-05-28",
+      "language": "hi",
+      "name": "Vinod Namoona"
+    },
+    "disbursed_inr": 104500,
+    "disbursed_on": "2026-10-29",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-134",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-29",
+          "method": "digital_click"
+        },
+        "cover_inr": 130000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 25500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 130000,
+    "tenure_months": 36
+  }
+}

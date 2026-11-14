@@ -1,0 +1,799 @@
+{
+ "cells": {
+  "B0-r0-a0": [
+   {
+    "customer_id": "ACQ-C012",
+    "arm": "B0",
+    "cell": {
+     "r": 0.0,
+     "a": 0.0,
+     "third_party": false
+    },
+    "kind": "misled_with_gaps",
+    "class": "problem",
+    "status": "reported",
+    "outcome": "clear",
+    "ended_by": "end_call",
+    "agent_turns": 9,
+    "usd": {
+     "agent": 0.0024874800000000002,
+     "router": 0.00045407
+    },
+    "reported": true,
+    "no_report": false,
+    "error": false,
+    "miss": true,
+    "false_referral": false,
+    "refer": false,
+    "incomplete": false,
+    "clear": true,
+    "understanding_gap": false,
+    "gap_found": false,
+    "gap_found_any_quote": false,
+    "ground_match": false,
+    "ungrounded": false,
+    "router_states": 0,
+    "unmapped_turns": 0,
+    "reply_turns": 8,
+    "leading_candidates": [
+     {
+      "turn": 1,
+      "say": "जी सीमा जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आपको पता है कि आपने उस लोन के साथ क्रेडिट-लाइफ इंश्योरेंस भी लिया था?",
+      "hits": [
+       {
+        "field": "kind",
+        "words": [
+         "इंश्योरेंस"
+        ]
+       }
+      ]
+     },
+     {
+      "turn": 2,
+      "say": "सीमा जी, इंश्योरेंस का प्रीमियम 28,500 रुपये था, जो लोन अमाउंट से कटा था। क्या आपको यह पता था?",
+      "hits": [
+       {
+        "field": "premium",
+        "value": 28500
+       },
+       {
+        "field": "source",
+        "words": [
+         "कट",
+         "लोन अमाउंट से"
+        ]
+       }
+      ]
+     },
+     {
+      "turn": 3,
+      "say": "सीमा जी, यह इंश्योरेंस आपके लोन के लिए 12 महीने के लिए है। अगर आपकी मौत हो जाती है, तो यह लोन चुका देगा। क्या आपको यह बात पता थी?",
+      "hits": [
+       {
+        "field": "term",
+        "value": 12
+       }
+      ]
+     },
+     {
+      "turn": 5,
+      "say": "सीमा जी, इस इंश्योरेंस पॉलिसी को 15 दिन के अंदर कैंसल भी किया जा सकता है। क्या आपको यह बात पता थी?",
+      "hits": [
+       {
+        "field": "cancel",
+        "value": 15
+       }
+      ]
+     }
+    ],
+    "leads": true,
+    "findings": [
+     {
+      "field": "kind",
+      "belief": "false",
+      "quote": "हाँ जी, सही है। हाँ, लोन के साथ इन्श्योरेंस कवर लिया था, चौरासी हज़ार पाँच सौ रुपये का।"
+     },
+     {
+      "field": "premium",
+      "belief": "false",
+      "quote": "हाँ जी, सही है। पूरे चौरासी हज़ार पाँच सौ रुपये दिए थे।"
+     },
+     {
+      "field": "source",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "frequency",
+      "belief": "does_not_know",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "required",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "cover",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "term",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "cancel",
+      "belief": "false",
+      "quote": "हाँ जी।"
+     },
+     {
+      "field": "money_back",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "consent",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     }
+    ]
+   },
+   {
+    "customer_id": "ACQ-C030",
+    "arm": "B0",
+    "cell": {
+     "r": 0.0,
+     "a": 0.0,
+     "third_party": false
+    },
+    "kind": "misled",
+    "class": "problem",
+    "status": "reported",
+    "outcome": "refer",
+    "ended_by": "end_call",
+    "agent_turns": 12,
+    "usd": {
+     "agent": 0.0035082200000000003,
+     "router": 0.0007468950000000001
+    },
+    "reported": true,
+    "no_report": false,
+    "error": false,
+    "miss": false,
+    "false_referral": false,
+    "refer": true,
+    "incomplete": false,
+    "clear": false,
+    "understanding_gap": false,
+    "gap_found": false,
+    "gap_found_any_quote": false,
+    "ground_match": true,
+    "ungrounded": true,
+    "router_states": 0,
+    "unmapped_turns": 1,
+    "reply_turns": 11,
+    "leading_candidates": [
+     {
+      "turn": 2,
+      "say": "कोई बात नहीं नेहा जी, मैं आपको थोड़ी जानकारी देता हूँ। आपने 17 अक्टूबर 2026 को नमूना बैंक से 4 लाख 60 हजार रुपये का पर्सनल लोन लिया था। क्या आपको यह याद है?",
+      "hits": [
+       {
+        "field": "cover",
+        "value": 460000
+       }
+      ]
+     },
+     {
+      "turn": 3,
+      "say": "अच्छा जी, धन्यवाद। क्या आपने इस लोन के साथ क्रेडिट-लाइफ इंश्योरेंस भी ली थी, जो नमूना लाइफ से है?",
+      "hits": [
+       {
+        "field": "kind",
+        "words": [
+         "इंश्योरेंस"
+        ]
+       }
+      ]
+     },
+     {
+      "turn": 4,
+      "say": "बहुत बढ़िया। क्या आपको पता है कि इस इंश्योरेंस का प्रीमियम 43,000 रुपये एक बार में दिया गया था?",
+      "hits": [
+       {
+        "field": "premium",
+        "value": 43000
+       }
+      ]
+     },
+     {
+      "turn": 5,
+      "say": "नेहा जी, थोड़ा सुधार दूँ – प्रीमियम 43,000 रुपये था, एक बार के लिए। क्या आपको यह पता है कि यह राशि अलग से चुकाई गई थी, लोन के अलावा?",
+      "hits": [
+       {
+        "field": "premium",
+        "value": 43000
+       },
+       {
+        "field": "source",
+        "words": [
+         "अलग से"
+        ]
+       }
+      ]
+     },
+     {
+      "turn": 6,
+      "say": "नेहा जी, प्रीमियम 43,000 रुपये था, न कि 1,27,500 रुपये। क्या आपको पता है कि यह कवर 24 महीने के लिए है और अगर कुछ होता है तो लोन की रकम, 4 लाख 60 हजार रुपये, बीमा कंपनी द्वारा चुकता की जाएगी?",
+      "hits": [
+       {
+        "field": "premium",
+        "value": 43000
+       },
+       {
+        "field": "cover",
+        "value": 460000
+       },
+       {
+        "field": "term",
+        "value": 24
+       }
+      ]
+     },
+     {
+      "turn": 7,
+      "say": "नेहा जी, थोड़ा सुधार दूँ – बीमा कवर 4 लाख 60 हजार रुपये का है, न कि 1.5 लाख। और प्रीमियम 43,000 रुपये था। क्या आपको पता है कि इसे 30 दिनों के भीतर कैंसिल किया जा सकता है?",
+      "hits": [
+       {
+        "field": "premium",
+        "value": 43000
+       },
+       {
+        "field": "cover",
+        "value": 460000
+       },
+       {
+        "field": "cancel",
+        "value": 30
+       }
+      ]
+     }
+    ],
+    "leads": true,
+    "findings": [
+     {
+      "field": "premium",
+      "belief": "false",
+      "quote": "एक लाख सत्ताईस हज़ार पाँच सौ रुपये।"
+     },
+     {
+      "field": "cover",
+      "belief": "false",
+      "quote": "अगर मैं मर जाऊँ तो loan पर एक लाख पचास हज़ार रुपये तक देता है।"
+     },
+     {
+      "field": "source",
+      "belief": "does_not_know",
+      "quote": "नमूना लाइफ से है"
+     },
+     {
+      "field": "frequency",
+      "belief": "does_not_know",
+      "quote": "अलग से pay किया"
+     },
+     {
+      "field": "required",
+      "belief": "false",
+      "quote": "बोला था किसी भी कंपनी से ले सकती हूँ।"
+     },
+     {
+      "field": "term",
+      "belief": "does_not_know",
+      "quote": "तीस दिन के अंदर cancel कर सकती थी।"
+     },
+     {
+      "field": "cancel",
+      "belief": "false",
+      "quote": "हाँ, तीस दिन के अंदर cancel कर सकती थी।"
+     },
+     {
+      "field": "money_back",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "consent",
+      "belief": "false",
+      "quote": "loan के साथ insurance को हाँ कहा, phone पे button दबाया।"
+     }
+    ]
+   },
+   {
+    "customer_id": "ACQ-C052",
+    "arm": "B0",
+    "cell": {
+     "r": 0.0,
+     "a": 0.0,
+     "third_party": false
+    },
+    "kind": "misled_with_gaps",
+    "class": "problem",
+    "status": "reported",
+    "outcome": "understanding_gap",
+    "ended_by": "end_call",
+    "agent_turns": 9,
+    "usd": {
+     "agent": 0.002039,
+     "router": 0.000401235
+    },
+    "reported": true,
+    "no_report": false,
+    "error": false,
+    "miss": true,
+    "false_referral": false,
+    "refer": false,
+    "incomplete": false,
+    "clear": false,
+    "understanding_gap": true,
+    "gap_found": false,
+    "gap_found_any_quote": false,
+    "ground_match": false,
+    "ungrounded": false,
+    "router_states": 0,
+    "unmapped_turns": 0,
+    "reply_turns": 8,
+    "leading_candidates": [
+     {
+      "turn": 3,
+      "say": "सर, क्या आपको पता है कि ये इंश्योरेंस 36 महीने के लिए है?",
+      "hits": [
+       {
+        "field": "term",
+        "value": 36
+       }
+      ]
+     },
+     {
+      "turn": 4,
+      "say": "सर, क्या आपको पता है कि इंश्योरेंस का प्रीमियम एक बार में दिया गया था और वो लोन अमाउंट से कटा था?",
+      "hits": [
+       {
+        "field": "source",
+        "words": [
+         "कट",
+         "लोन अमाउंट से"
+        ]
+       }
+      ]
+     },
+     {
+      "turn": 5,
+      "say": "सर, क्या आपको पता है कि आपने इस इंश्योरेंस को 30 दिनों के अंदर कैंसल कर सकते थे?",
+      "hits": [
+       {
+        "field": "cancel",
+        "value": 30
+       }
+      ]
+     }
+    ],
+    "leads": true,
+    "findings": [
+     {
+      "field": "kind",
+      "belief": "false",
+      "quote": "हाँ, loan के साथ एक insurance cover भी लिया था।"
+     },
+     {
+      "field": "premium",
+      "belief": "does_not_know",
+      "quote": "कितने का, वो मुझे नहीं पता।"
+     },
+     {
+      "field": "source",
+      "belief": "false",
+      "quote": "हाँ जी, सही है। एक बार कटा या बार-बार, ये मुझे नहीं पता।"
+     },
+     {
+      "field": "frequency",
+      "belief": "does_not_know",
+      "quote": "एक बार कटा या बार-बार, ये मुझे नहीं पता।"
+     },
+     {
+      "field": "required",
+      "belief": "does_not_know",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "cover",
+      "belief": "false",
+      "quote": "अगर मैं मर जाऊँ तो loan पर पाँच लाख पचास हज़ार तक देता है।"
+     },
+     {
+      "field": "term",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "cancel",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "money_back",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "consent",
+      "belief": "false",
+      "quote": "हाँ बोला था, recorded call पर, loan के साथ ही।"
+     }
+    ]
+   },
+   {
+    "customer_id": "ACQ-C077",
+    "arm": "B0",
+    "cell": {
+     "r": 0.0,
+     "a": 0.0,
+     "third_party": false
+    },
+    "kind": "misled_with_gaps",
+    "class": "problem",
+    "status": "reported",
+    "outcome": "refer",
+    "ended_by": "end_call",
+    "agent_turns": 9,
+    "usd": {
+     "agent": 0.00226228,
+     "router": 0.0005877425000000001
+    },
+    "reported": true,
+    "no_report": false,
+    "error": false,
+    "miss": false,
+    "false_referral": false,
+    "refer": true,
+    "incomplete": false,
+    "clear": false,
+    "understanding_gap": false,
+    "gap_found": false,
+    "gap_found_any_quote": false,
+    "ground_match": true,
+    "ungrounded": false,
+    "router_states": 0,
+    "unmapped_turns": 0,
+    "reply_turns": 8,
+    "leading_candidates": [
+     {
+      "turn": 2,
+      "say": "जी रमेश जी, आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी ली थी। क्या आपको पता है कि यह क्या है?",
+      "hits": [
+       {
+        "field": "kind",
+        "words": [
+         "इंश्योरेंस"
+        ]
+       }
+      ]
+     }
+    ],
+    "leads": true,
+    "findings": [
+     {
+      "field": "kind",
+      "belief": "false",
+      "quote": "हाँ जी, सही है। यह loan के ऊपर insurance cover है।"
+     },
+     {
+      "field": "premium",
+      "belief": "false",
+      "quote": "मैंने exactly twenty thousand five hundred rupees pay किए थे।"
+     },
+     {
+      "field": "source",
+      "belief": "false",
+      "quote": "officer ने बोला था कि loan के लिए यह compulsory है। उन्होंने कहा था कि lender से ही लेना compulsory है।"
+     },
+     {
+      "field": "required",
+      "belief": "false",
+      "quote": "officer ने बोला था कि loan के लिए यह compulsory है। उन्होंने कहा था कि lender से ही लेना compulsory है।"
+     },
+     {
+      "field": "cover",
+      "belief": "does_not_know",
+      "quote": "अगर मेरी death हो जाए, तो three lakh eighty thousand rupees loan में cover होगा।"
+     },
+     {
+      "field": "term",
+      "belief": "does_not_know",
+      "quote": "यह कितने time तक चलेगा, मुझे बिल्कुल नहीं पता।"
+     },
+     {
+      "field": "cancel",
+      "belief": "does_not_know",
+      "quote": "हाँ, बताया था कि fifteen days में cancel करा सकते हैं।"
+     },
+     {
+      "field": "money_back",
+      "belief": "does_not_know",
+      "quote": "यह पैसा वापस नहीं मिलता, savings नहीं है।"
+     },
+     {
+      "field": "consent",
+      "belief": "does_not_know",
+      "quote": "मैंने loan के साथ insurance form sign करके yes बोला था।"
+     }
+    ]
+   },
+   {
+    "customer_id": "ACQ-C118",
+    "arm": "B0",
+    "cell": {
+     "r": 0.0,
+     "a": 0.0,
+     "third_party": false
+    },
+    "kind": "informed",
+    "class": "no_problem",
+    "status": "reported",
+    "outcome": "clear",
+    "ended_by": "end_call",
+    "agent_turns": 7,
+    "usd": {
+     "agent": 0.0015825799999999999,
+     "router": 0.000296575
+    },
+    "reported": true,
+    "no_report": false,
+    "error": false,
+    "miss": false,
+    "false_referral": false,
+    "refer": false,
+    "incomplete": false,
+    "clear": true,
+    "understanding_gap": false,
+    "gap_found": false,
+    "gap_found_any_quote": false,
+    "ground_match": false,
+    "ungrounded": false,
+    "router_states": 0,
+    "unmapped_turns": 0,
+    "reply_turns": 6,
+    "leading_candidates": [
+     {
+      "turn": 1,
+      "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में एक गोल्ड लोन लिया था। क्या आपने उसके साथ क्रेडिट-लाइफ इंश्योरेंस भी लिया था?",
+      "hits": [
+       {
+        "field": "kind",
+        "words": [
+         "इंश्योरेंस"
+        ]
+       }
+      ]
+     },
+     {
+      "turn": 4,
+      "say": "सर, क्या आपको पता है कि इस इंश्योरेंस को 30 दिनों के अंदर कैंसल किया जा सकता है?",
+      "hits": [
+       {
+        "field": "cancel",
+        "value": 30
+       }
+      ]
+     },
+     {
+      "turn": 5,
+      "say": "सर, क्या आपको पता है कि इस पर प्रीमियम अलग से चुकाया गया था?",
+      "hits": [
+       {
+        "field": "source",
+        "words": [
+         "अलग से"
+        ]
+       }
+      ]
+     }
+    ],
+    "leads": true,
+    "findings": [
+     {
+      "field": "kind",
+      "belief": "false",
+      "quote": "हाँ, लोन के साथ बत्तीस हज़ार पाँच सौ रुपये का इंश्योरेंस कवर लिया था।"
+     },
+     {
+      "field": "premium",
+      "belief": "false",
+      "quote": "बत्तीस हज़ार पाँच सौ रुपये"
+     },
+     {
+      "field": "source",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "frequency",
+      "belief": "does_not_know",
+      "quote": "नहीं जी, कोई सवाल नहीं।"
+     },
+     {
+      "field": "required",
+      "belief": "does_not_know",
+      "quote": "नहीं जी, कोई सवाल नहीं।"
+     },
+     {
+      "field": "cover",
+      "belief": "false",
+      "quote": "मेरे न रहने पर यह लोन के सात लाख साठ हज़ार रुपये तक चुकाएगा।"
+     },
+     {
+      "field": "term",
+      "belief": "false",
+      "quote": "यह पूरा एक साल तक चलेगा।"
+     },
+     {
+      "field": "cancel",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "money_back",
+      "belief": "does_not_know",
+      "quote": "नहीं जी, कोई सवाल नहीं।"
+     },
+     {
+      "field": "consent",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     }
+    ]
+   },
+   {
+    "customer_id": "ACQ-C142",
+    "arm": "B0",
+    "cell": {
+     "r": 0.0,
+     "a": 0.0,
+     "third_party": false
+    },
+    "kind": "knowledge_gap",
+    "class": "knowledge_gap_only",
+    "status": "reported",
+    "outcome": "understanding_gap",
+    "ended_by": "end_call",
+    "agent_turns": 12,
+    "usd": {
+     "agent": 0.0025717,
+     "router": 0.000756115
+    },
+    "reported": true,
+    "no_report": false,
+    "error": false,
+    "miss": false,
+    "false_referral": false,
+    "refer": false,
+    "incomplete": false,
+    "clear": false,
+    "understanding_gap": true,
+    "gap_found": true,
+    "gap_found_any_quote": true,
+    "ground_match": false,
+    "ungrounded": false,
+    "router_states": 0,
+    "unmapped_turns": 0,
+    "reply_turns": 11,
+    "leading_candidates": [
+     {
+      "turn": 2,
+      "say": "आपने हाल ही में एक क्रेडिट-लाइफ इंश्योरेंस लिया है। क्या आप बता सकते हैं कि आपको पता है यह क्या है?",
+      "hits": [
+       {
+        "field": "kind",
+        "words": [
+         "इंश्योरेंस"
+        ]
+       }
+      ]
+     },
+     {
+      "turn": 3,
+      "say": "अच्छा, क्या आप थोड़ा बता सकते हैं कि यह क्रेडिट-लाइफ इंश्योरेंस आपके लिए क्या करता है?",
+      "hits": [
+       {
+        "field": "kind",
+        "words": [
+         "इंश्योरेंस"
+        ]
+       }
+      ]
+     },
+     {
+      "turn": 7,
+      "say": "क्या आपको पता है कि इस इंश्योरेंस को 15 दिन के अंदर कैंसल किया जा सकता है?",
+      "hits": [
+       {
+        "field": "cancel",
+        "value": 15
+       }
+      ]
+     },
+     {
+      "turn": 8,
+      "say": "क्या आपको पता है कि इंश्योरेंस की अवधि 12 महीने की है?",
+      "hits": [
+       {
+        "field": "term",
+        "value": 12
+       }
+      ]
+     }
+    ],
+    "leads": true,
+    "findings": [
+     {
+      "field": "kind",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "cover",
+      "belief": "false",
+      "quote": "अगर मैं मर जाऊँ, तो loan पर छह लाख पचास हज़ार तक देता है।"
+     },
+     {
+      "field": "term",
+      "belief": "does_not_know",
+      "quote": "यह मुझे नहीं पता।"
+     },
+     {
+      "field": "premium",
+      "belief": "does_not_know",
+      "quote": "यह मुझे नहीं पता।"
+     },
+     {
+      "field": "source",
+      "belief": "false",
+      "quote": "Loan की रकम में से कट गया था।"
+     },
+     {
+      "field": "required",
+      "belief": "false",
+      "quote": "हाँ जी, सही है। मेरी अपनी मर्ज़ी थी, loan के लिए ज़रूरी नहीं था।"
+     },
+     {
+      "field": "cancel",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "money_back",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     },
+     {
+      "field": "consent",
+      "belief": "false",
+      "quote": "हाँ जी, सही है।"
+     }
+    ]
+   }
+  ]
+ },
+ "third_party": {},
+ "mcnemar_b0_vs_w3_open": {
+  "B0-r0-a0": {
+   "n": 1,
+   "b0_only": 0,
+   "w3_only": 0,
+   "p": 1.0,
+   "b0_found": 1,
+   "w3_found": 1,
+   "w3_available": 48
+  }
+ }
+}

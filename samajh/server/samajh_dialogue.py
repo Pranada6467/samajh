@@ -7,9 +7,13 @@ params and `step` gets the stored state.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import re
+import threading
+import time
+from collections import OrderedDict
 from collections.abc import Callable, Mapping, Sequence
 from functools import cache
 from typing import Protocol
@@ -22,7 +26,16 @@ from samajh.clients.gnani import TtsLanguage
 from samajh.clients.llm import LlmClient
 from samajh.dialogue.llm_fallback import LlmFallbackInterpreter
 from samajh.identity import IdentityPolicy, IdentityRecord, parse_policy
-from samajh.server.dialogue import BotLine, BotUtterance, Dialogue, DialogueFactory, Heard, ListenKind, Step
+from samajh.server.dialogue import (
+    BotLine,
+    BotUtterance,
+    ClassifierRecord,
+    Dialogue,
+    DialogueFactory,
+    Heard,
+    ListenKind,
+    Step,
+)
 from samajh.server.loanbook import LINK_PARAMS, LoanBook, resolve_record
 from samajh.server.records import CallRecord, RecordBook
 from samajh.server.sessionlog import BotEvent, BotLineLog, CustomerEvent, FollowedBy, SessionLog, SttReading
@@ -196,6 +209,7 @@ def _step(
     heard: str | None = None,
     agreed: bool | None = None,
     degraded: bool = False,
+    classifier: ClassifierRecord | None = None,
 ) -> Step:
     confirmed = speaker_confirmed(state)
     if isinstance(said, core.EndOfCall):
@@ -220,7 +234,109 @@ def _step(
         agreed=agreed,
         degraded=degraded,
         speaker_confirmed=confirmed,
+        classifier=classifier,
     )
+
+
+_BEGUN_LIMIT = 16  # begin times kept per call; older ones are dropped
+_BEGUN_MAX_AGE_S = 30.0  # a begin older than this is another turn's, not this one's
+
+
+def _turn_key(text: str, kwargs: Mapping[str, object]) -> str:
+    """A hash of one interpreter call's arguments: the begin-time table never holds text."""
+    parts = [text, *(f"{k}={kwargs[k]}" for k in sorted(kwargs))]
+    return hashlib.sha256("\x1f".join(parts).encode()).hexdigest()
+
+
+class _Recording:
+    """Wraps the interpreter for one `prefetch` or one `step`: delegates every call unchanged (same
+    arguments, return values and exceptions) and notes, apart, what the classifier did. A failure
+    of the noting is swallowed and leaves `record()` None. It keeps no text: begin times are keyed
+    by `_turn_key` in the dialogue's shared table."""
+
+    def __init__(
+        self, inner: core.TurnInterpreter, begun: OrderedDict[str, float], lock: threading.Lock
+    ) -> None:
+        self._inner, self._begun, self._lock = inner, begun, lock
+        self._calls: list[tuple[str | None, bool, float, float]] = []
+        self._broken = False
+        self._keys: set[str] = set()
+
+    def __getattr__(self, name: str):
+        attr = getattr(self._inner, name)  # AttributeError as before: `begin` stays optional
+        if name != "begin":
+            return attr
+
+        def begin(text, *args, **kwargs):
+            self._safely(self._note_begin, text, kwargs)
+            return attr(text, *args, **kwargs)
+
+        return begin
+
+    def interpret(self, text, *args, **kwargs):
+        started = time.monotonic()
+        result = self._inner.interpret(text, *args, **kwargs)
+        ended = time.monotonic()
+        self._safely(self._note_interpret, text, kwargs, started, ended, result)
+        return result
+
+    def _safely(self, note, *args) -> None:
+        try:
+            note(*args)
+        except Exception:
+            self._broken = True
+            log.warning("classifier recording failed", exc_info=True)
+
+    def _note_begin(self, text: str, kwargs: Mapping[str, object]) -> None:
+        key = _turn_key(text, kwargs)
+        self._keys.add(key)
+        with self._lock:
+            if key not in self._begun:  # the prefetch's begin, not the step's own, counts
+                self._begun[key] = time.monotonic()
+            while len(self._begun) > _BEGUN_LIMIT:
+                self._begun.popitem(last=False)
+
+    def _note_interpret(self, text, kwargs, started, ended, result) -> None:
+        with self._lock:
+            begun = self._begun.pop(_turn_key(text, kwargs), None)
+        fresh = begun is not None and started - begun <= _BEGUN_MAX_AGE_S
+        start = min(begun, started) if fresh else started
+        label = result.classifier_label
+        self._calls.append(
+            (
+                label if isinstance(label, str) else None,
+                bool(result.degraded),
+                (ended - start) * 1000,
+                (ended - started) * 1000,
+            )
+        )
+
+    def record(self) -> ClassifierRecord | None:
+        """The step's record; also drops the begin times this step noted."""
+        try:
+            with self._lock:
+                for key in self._keys:
+                    self._begun.pop(key, None)
+            if self._broken:
+                return None
+            model = getattr(self._inner, "_model", None)
+            model = model if isinstance(model, str) else None
+            if not self._calls:
+                return ClassifierRecord(ran=False, model=model)
+            labels = [label for label, _, _, _ in self._calls if label is not None]
+            degraded = any(d for _, d, _, _ in self._calls)
+            ran = bool(labels) or degraded
+            return ClassifierRecord(
+                ran=ran,
+                label=labels[-1] if labels else None,
+                latency_ms=round(max(ms for _, _, ms, _ in self._calls), 3) if ran else None,
+                model=model,
+                degraded=degraded,
+                wait_ms=round(sum(w for _, _, _, w in self._calls), 3) if ran else None,
+            )
+        except Exception:
+            log.warning("classifier record failed", exc_info=True)
+            return None
 
 
 class SamajhDialogue:
@@ -235,6 +351,11 @@ class SamajhDialogue:
     ) -> None:
         self._record, self._language, self._interpreter = record, language, interpreter
         self._identity = identity
+        self._begun: OrderedDict[str, float] = OrderedDict()
+        self._begun_lock = threading.Lock()
+
+    def _recording(self) -> _Recording:
+        return _Recording(self._interpreter(), self._begun, self._begun_lock)
 
     def start(self) -> Step:
         return _step(
@@ -251,22 +372,26 @@ class SamajhDialogue:
         `step` reuses the begun call when it reads the same text at the same question; it begins
         both readings itself, so the order `readings` gives does not matter. Never raises."""
         try:
-            core.prefetch(core.CallState.model_validate_json(state), text, interpreter=self._interpreter())
+            core.prefetch(core.CallState.model_validate_json(state), text, interpreter=self._recording())
         except Exception:
             log.warning("dialogue prefetch failed", exc_info=True)
 
     def step(self, state: str, heard: Heard) -> Step:
         text, second = readings(heard)
+        recording = self._recording()
         after, said = core.step(
             core.CallState.model_validate_json(state),
             text,
             second_reading=second,
-            interpreter=self._interpreter(),
+            interpreter=recording,
         )
         # The turn as the dialogue kept it: it may act on the other reading (only that one held a figure).
         reply = next(turn for turn in reversed(after.turns) if turn.speaker is Speaker.customer)
         agreed = next((r.agreed for r in after.second_readings if r.turn_id == reply.id), None)
-        return _step(after, said, heard=reply.text, agreed=agreed, degraded=reply.id in degraded_turns(after))
+        degraded = reply.id in degraded_turns(after)
+        return _step(
+            after, said, heard=reply.text, agreed=agreed, degraded=degraded, classifier=recording.record()
+        )
 
 
 def samajh_factory(

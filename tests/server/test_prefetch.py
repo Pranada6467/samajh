@@ -107,11 +107,13 @@ def test_a_classifier_begun_in_prefetch_is_not_asked_again_by_step(
     )
     for reply in before_recall:
         call.say(reply)
-    assert llm.asked == [] and call.bot["lines"][-1]["key"] == "open_recall.ask"
+    # The opening asks the classifier (W4); count its calls from the recall turn on.
+    assert call.bot["lines"][-1]["key"] == "open_recall.ask"
+    before = len(llm.asked)
 
     turn = call.say(UNSETTLED)
 
-    assert llm.asked == [UNSETTLED]  # once, from prefetch; `step` used that answer
+    assert llm.asked[before:] == [UNSETTLED]  # once, from prefetch; `step` used that answer
     assert turn["customer"]["transcript"] == UNSETTLED and not turn["customer"]["degraded"]
     assert [kind for kind, *_ in seen[-2:]] == ["prefetch", "step"]
 

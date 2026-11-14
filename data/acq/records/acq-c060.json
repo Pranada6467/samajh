@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C060. Priya took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c060",
+  "label": "Synthetic ACQ record. Priya: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1988-12-07",
+      "language": "hi",
+      "name": "Priya Namoona"
+    },
+    "disbursed_inr": 406000,
+    "disbursed_on": "2026-10-10",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-060",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-10",
+          "method": "otp"
+        },
+        "cover_inr": 430000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 24000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 430000,
+    "tenure_months": 12
+  }
+}

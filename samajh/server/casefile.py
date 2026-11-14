@@ -27,6 +27,8 @@ from typing import Any, Literal, Protocol
 from pydantic import BaseModel, ConfigDict, Field
 
 from samajh.clients.gnani import BatchOptions, BatchTranscript
+from samajh.evidence.case_seal import CaseSeal, SealInputs, prompt_sha256
+from samajh.evidence.digest import code_version, digest
 from samajh.extract import Llm
 from samajh.identity import describe
 from samajh.pipeline import run_text
@@ -193,6 +195,9 @@ class CaseFile(_Model):
     evidence: list[QuoteEvidence] = Field(default_factory=list)  # refer first
     result: dict[str, Any] | None = None  # samajh.types.CaseResult
     latency: list[LatencyRow] = Field(default_factory=list)
+    # samajh.evidence "Case seal": what the case was made from, and digests set when it is written
+    # (`SessionStore.write_case`). None in case files written before the seal.
+    seal: CaseSeal | None = None
 
 
 def _error(exc: BaseException) -> str:
@@ -284,6 +289,17 @@ def new_case(log: SessionLog, record: CallRecord) -> CaseFile:
         degraded_turns=list(degraded_turns(call_state(log))),
         ended_reason=log.ended_reason,
         customer_audio={kind: sum(e.source == kind for e in customers) for kind in ("mic", "file", "none")},
+        seal=CaseSeal(
+            inputs=SealInputs(
+                session_head=log.chain.head if log.chain else None,
+                session_entries=log.chain.entries if log.chain else None,
+                session_seal=log.chain.seal if log.chain else None,
+                recording_sha256=log.recording.sha256 if log.recording else None,
+                record_sha256=digest(record.model_dump(mode="json")),
+                extraction={"model": None, "prompt_sha256": prompt_sha256()},
+                code=code_version(),
+            )
+        ),
     )
 
 
@@ -369,6 +385,8 @@ def build_case(
 
     def do_recording() -> None:
         case.recording, audio["call"] = recording()
+        if case.seal is not None:
+            case.seal.inputs.recording_sha256 = case.recording.sha256
 
     def do_batch() -> None:
         options = batch_options(log, batch_model, num_speakers)
@@ -403,6 +421,8 @@ def build_case(
     def do_extract() -> None:
         client = llm()
         case.models["extraction"] = {"model": extraction_model or _model_name(client)}
+        if case.seal is not None:
+            case.seal.inputs.extraction["model"] = case.models["extraction"]["model"]
         found["run"] = run_text(found["transcript"], record.record, client, model=extraction_model)
 
     def do_summary() -> None:

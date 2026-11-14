@@ -1,0 +1,490 @@
+{
+ "customer_id": "ACQ-C009",
+ "kind": "knowledge_gap",
+ "customer_kind": "knowledge_gap",
+ "language": "hi",
+ "arm": "B1",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "92d52bcf86ffde2bd0e49c137efb12e1eadbcd1ff56228bc8c38364662517ca0",
+ "system_prompt_sha256": "a8a79fd1bfa3c04d9c4a6e2b57e5908843c5491b908a007317f1adcecb632c4c",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "क्या मैं बात कर रहा हूँ श्री दिनेश नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या मैं बात कर रहा हूँ श्री दिनेश नमूना से?",
+   "agent_usd": 0.0001666,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से एक लोन लिया था। क्या आप बता सकते हैं कि आपने कौन सा प्रोडक्ट खरीदा था उसके साथ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से एक लोन लिया था। क्या आप बता सकते हैं कि आपने कौन सा प्रोडक्ट खरीदा था उसके साथ?",
+   "agent_usd": 0.0002416,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.000100625,
+   "reply": "हाँ, लोन के साथ बीमा भी लिया था। उसके ग्यारह हज़ार रुपये दिए थे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.29224163317121565,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, लोन के साथ बीमा भी लिया था। उसके ग्यारह हज़ार रुपये दिए थे।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "सर, आपने बीमा के बारे में कुछ बताया। क्या आप बता सकते हैं कि यह बीमा किस चीज़ के लिए है और कब तक चलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, आपने बीमा के बारे में कुछ बताया। क्या आप बता सकते हैं कि यह बीमा किस चीज़ के लिए है और कब तक चलता है?",
+   "agent_usd": 0.0001666,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 2.841e-05,
+   "reply": "वो लोन के साथ बीमा कवर था। ये मुझे नहीं पता।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.29224163317121565,
+     "source_topic": "what_is_it",
+     "text": "वो लोन के साथ बीमा कवर था।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9462884063832462,
+     "source_topic": "how_long",
+     "text": "ये मुझे नहीं पता।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "सर, क्या आप बता सकते हैं कि यह बीमा खरीदना ज़रूरी था या आपने खुद चुना था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आप बता सकते हैं कि यह बीमा खरीदना ज़रूरी था या आपने खुद चुना था?",
+   "agent_usd": 0.00022694,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 9.771875e-05,
+   "reply": "नहीं, ज़रूरी नहीं था। मेरी अपनी मर्ज़ी थी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.038090376649051905,
+     "source_topic": "needed_or_choice",
+     "text": "नहीं, ज़रूरी नहीं था। मेरी अपनी मर्ज़ी थी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "सर, क्या आप बता सकते हैं कि बीमा का प्रीमियम एक बार में दिया था या हर महीने देना है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आप बता सकते हैं कि बीमा का प्रीमियम एक बार में दिया था या हर महीने देना है?",
+   "agent_usd": 0.00024992,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_often",
+     "asks": true,
+     "states_span": "एक बार में दिया था या हर महीने देना है"
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.711e-05,
+   "reply": "मुझे नहीं पता, एक बार है या बार-बार।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_often",
+     "span_dropped": "एक बार में दिया था या हर महीने देना है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.16703717014752328,
+     "source_topic": "how_often",
+     "text": "मुझे नहीं पता, एक बार है या बार-बार।"
+    },
+    {
+     "item": 2,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "सर, क्या आप बता सकते हैं कि अगर आपकी मृत्यु हो जाए तो यह बीमा क्या करता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आप बता सकते हैं कि अगर आपकी मृत्यु हो जाए तो यह बीमा क्या करता है?",
+   "agent_usd": 0.00018938,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.7875e-05,
+   "reply": "बताया था, मरने पर लोन के लिए पाँच लाख तक मिलेगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.35474539501592517,
+     "source_topic": "what_it_gives",
+     "text": "बताया था, मरने पर लोन के लिए पाँच लाख तक मिलेगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "सर, क्या आपको पता है कि इस बीमा को कब तक कैंसिल कर सकते हैं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आपको पता है कि इस बीमा को कब तक कैंसिल कर सकते हैं?",
+   "agent_usd": 0.00016292,
+   "router_items": [
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.745e-05,
+   "reply": "हाँ, बताया था पंद्रह दिन के अंदर रद्द कर सकते हैं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.628420801833272,
+     "source_topic": "can_cancel",
+     "text": "हाँ, बताया था पंद्रह दिन के अंदर रद्द कर सकते हैं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "सर, क्या आप बता सकते हैं कि बीमा खत्म होने के बाद पैसे वापस मिलते हैं या नहीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आप बता सकते हैं कि बीमा खत्म होने के बाद पैसे वापस मिलते हैं या नहीं?",
+   "agent_usd": 0.00020928,
+   "router_items": [
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.7625e-05,
+   "reply": "ये मुझे नहीं पता, पैसे वापसी का क्या होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "money_back",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8740094394888729,
+     "source_topic": "money_back",
+     "text": "ये मुझे नहीं पता, पैसे वापसी का क्या होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "सर, क्या आपने इस बीमा को ऐप पर स्वीकार किया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आपने इस बीमा को ऐप पर स्वीकार किया था?",
+   "agent_usd": 0.00015462,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "इस बीमा को ऐप पर स्वीकार किया था"
+    }
+   ],
+   "router_usd": 3.171e-05,
+   "reply": "वो बीमा था, लोन के साथ जुड़ा हुआ। मैंने लोन के साथ बीमा को हाँ कहा, फोन पर बटन दबाकर।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.29224163317121565,
+     "source_topic": "what_is_it",
+     "text": "वो बीमा था, लोन के साथ जुड़ा हुआ।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "span_dropped": "इस बीमा को ऐप पर स्वीकार किया था",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8076124405488372,
+     "source_topic": "what_you_agreed_to",
+     "text": "मैंने लोन के साथ बीमा को हाँ कहा, फोन पर बटन दबाकर।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "understanding_gap",
+     "reason": "बोरोअर को प्रोडक्ट के बारे में कुछ जानकारी है, लेकिन कुछ महत्वपूर्ण बातें जैसे प्रीमियम की आवृत्ति और पैसे वापसी के बारे में नहीं पता है।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "हाँ, लोन के साथ बीमा भी लिया था।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "उसके ग्यारह हज़ार रुपये दिए थे।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "मुझे नहीं पता, एक बार है या बार-बार।"
+      },
+      {
+       "field": "required",
+       "belief": "false",
+       "quote": "नहीं, ज़रूरी नहीं था। मेरी अपनी मर्ज़ी थी।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "मरने पर लोन के लिए पाँच लाख तक मिलेगा।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "ये मुझे नहीं पता।"
+      },
+      {
+       "field": "cancel",
+       "belief": "false",
+       "quote": "हाँ, बताया था पंद्रह दिन के अंदर रद्द कर सकते हैं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "ये मुझे नहीं पता, पैसे वापसी का क्या होगा।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "मैंने लोन के साथ बीमा को हाँ कहा, फोन पर बटन दबाकर।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.00085304
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "understanding_gap",
+  "reason": "बोरोअर को प्रोडक्ट के बारे में कुछ जानकारी है, लेकिन कुछ महत्वपूर्ण बातें जैसे प्रीमियम की आवृत्ति और पैसे वापसी के बारे में नहीं पता है।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "हाँ, लोन के साथ बीमा भी लिया था।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "उसके ग्यारह हज़ार रुपये दिए थे।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "मुझे नहीं पता, एक बार है या बार-बार।"
+   },
+   {
+    "field": "required",
+    "belief": "false",
+    "quote": "नहीं, ज़रूरी नहीं था। मेरी अपनी मर्ज़ी थी।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "मरने पर लोन के लिए पाँच लाख तक मिलेगा।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "ये मुझे नहीं पता।"
+   },
+   {
+    "field": "cancel",
+    "belief": "false",
+    "quote": "हाँ, बताया था पंद्रह दिन के अंदर रद्द कर सकते हैं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "ये मुझे नहीं पता, पैसे वापसी का क्या होगा।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "मैंने लोन के साथ बीमा को हाँ कहा, फोन पर बटन दबाकर।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0026209000000000002,
+  "router": 0.00052852375
+ },
+ "cache_hits": {
+  "agent": 0,
+  "router": 1
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:17:35+00:00",
+ "agent_turns": 10,
+ "usd_total": 0.00314942375,
+ "finished_utc": "2026-11-13T22:18:27+00:00"
+}

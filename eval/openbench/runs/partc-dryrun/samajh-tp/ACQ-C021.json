@@ -1,0 +1,60 @@
+{
+ "customer_id": "ACQ-C021",
+ "kind": "third_party",
+ "language": "hi",
+ "system": "samajh",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "नमस्ते, क्या आप Shobha जी हैं?"
+    }
+   ],
+   "reply": "नहीं जी, मैं उनकी बहन बोल रही हूँ, वो अभी घर पर नहीं हैं।"
+  }
+ ],
+ "status": "ended",
+ "errors": [],
+ "final_bot": [
+  {
+   "key": "end.third_party",
+   "text": "हम Shobha जी से बाद में बात कर लेंगे। धन्यवाद।"
+  }
+ ],
+ "outcome": "wrong_party",
+ "bot_lines": [
+  {
+   "key": "right_party.ask",
+   "text": "नमस्ते, क्या आप Shobha जी हैं?"
+  },
+  {
+   "key": "end.third_party",
+   "text": "हम Shobha जी से बाद में बात कर लेंगे। धन्यवाद।"
+  }
+ ],
+ "disclosure_candidates": [],
+ "named_loan_product_or_figure": false,
+ "interpreter": {
+  "class": "LlmFallbackInterpreter",
+  "rules": "RuleInterpreter",
+  "model": "mistralai/mistral-small-3.2-24b-instruct",
+  "timeout_s": null,
+  "entry_too": true
+ },
+ "identity": "default (no second check)",
+ "samajh_dialogue_sha256": "ecbf0e7d4c2ea515ca7a8435994ac1a259399dcb59c4eabdcb65bf0833fc2a95",
+ "samajh_dialogue_files": {
+  "__init__.py": "b491de87f57e7c330e8f91d825ea6b5b3dee90091b0e8d7a748f22ddffb3effd",
+  "__main__.py": "babb4d2a9dc8a0639a281624ae7182c0c9b0c270c23d10f8c715d3ae6ddcdbfc",
+  "_lexicon.py": "b3c174dd9a6ce383dbb31303d4d8c541dc8f5ceab63531614c0ec0e14ba7a655",
+  "_names.py": "bc607e34f245a4d32c2c0a5ce5bd605c09793299998aa3a5ea9cb2ac760bf64e",
+  "interpret.py": "7c7c16230773dc8e41834e0968c8aa83ce2823a023e7a6501c5f4cecbe3ba912",
+  "lint.py": "f9e22b7bce6d99f806b08cfa37f859b7071c5aa53cca7fb7f0e12e1f4fe9654f",
+  "llm_fallback.py": "aa62fd76a1d89de38014238fbca17f2e02b1188a72eeba1d89cb773f83c1830a",
+  "machine.py": "759f41312658d8964cf7163f4fb02595a3f60a997be9b228ce9e6702663471ca",
+  "prompts.py": "d03f1a86aa7f5477cb8794dd8c35134493b6e15f2542e8f4fdb7531e07918305"
+ },
+ "git_status_samajh_dialogue": " M samajh/dialogue/interpret.py\n M samajh/dialogue/llm_fallback.py\n M samajh/dialogue/machine.py\n",
+ "usd": 0.0
+}

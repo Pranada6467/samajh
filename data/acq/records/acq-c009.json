@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C009. Dinesh took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c009",
+  "label": "Synthetic ACQ record. Dinesh: a gold loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1986-07-17",
+      "language": "hi",
+      "name": "Dinesh Namoona"
+    },
+    "disbursed_inr": 500000,
+    "disbursed_on": "2026-10-10",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-009",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-10",
+          "method": "digital_click"
+        },
+        "cover_inr": 500000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 11000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 500000,
+    "tenure_months": 36
+  }
+}

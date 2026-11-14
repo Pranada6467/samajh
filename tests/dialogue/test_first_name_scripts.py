@@ -1,137 +1,97 @@
-"""A borrower saying their own first name in the other script from the record's is the same name.
+"""Is a spoken word the borrower's first name, another person's, or neither? (`samajh.dialogue._names.judge_name`)
 
-The fault (2026-11-13): with the record's first name in Latin letters, "मैं ही रामप्रसाद हूँ" at the direct question was
-read as another name, so the claim was doubted and the call ended `not_confirmed`, even with the classifier saying
-`confirms_self`. The comparison now holds across Devanagari and Latin spellings of one name and stays strict on
-consonants and written vowels: a different name, or the borrower's relative, never passes.
-
-Builder-written typed inputs; arms: the word lists alone and a classifier that labels every turn `confirms_self`.
+Iteration 4 replaced 1,109 builder-written phrase cases (which missed "Kavitha"/"कविता") with:
+- a property test over the first names in `data/names/first-names.tsv`, each written in Latin and in Devanagari by
+  Wikidata editors (not by our transliterator): every pair must match itself, except the listed misses
+  (`known-misses.tsv`, each with its class), so a new miss or a fixed one shows here;
+- the development list `dev-pairs.tsv` that `SAME_MAX` was chosen on, with its error counts pinned;
+- a few behaviour cases. Call-level behaviour is in `test_right_party_names.py`.
 """
 
 from __future__ import annotations
 
-import pytest
-from dialogue_kit import NO_CHECK, play, product, record
-from test_p2_round3 import Labels
+import csv
+from pathlib import Path
 
-from samajh.dialogue import Outcome
-from samajh.dialogue.interpret import claim_with_tail, doubts_claim
-from samajh.dialogue.llm_fallback import LlmFallbackInterpreter
-from samajh.types import Language
+from samajh.dialogue._names import (
+    NEAR_MAX,
+    SAME_MAX,
+    NameMatch,
+    judge_name,
+    keyterms_for,
+    known_first_name,
+)
 
-HI, HE = Language.hi, Language.hi_en
+NAMES = Path(__file__).resolve().parents[2] / "data" / "names"
 
-# (the record's first name in Latin, the name said in Devanagari). The first block failed before the fix.
-NAMES = [
-    ("Ramprasad", "रामप्रसाद"), ("Bhupendra", "भूपेंद्र"), ("Bhupendra", "भूपेन्द्र"), ("Mamta", "ममता"),
-    ("Ganesh", "गणेश"), ("Kamla", "कमला"), ("Laxmi", "लक्ष्मी"), ("Krishna", "कृष्ण"), ("Krishna", "कृष्णा"),
-    ("Arun", "अरुण"), ("Pranav", "प्रणव"), ("Champa", "चंपा"), ("Gyanendra", "ज्ञानेन्द्र"), ("Aditya", "आदित्य"),
-    ("Rajendra", "राजेंद्र"), ("Surendra", "सुरेन्द्र"), ("Sarla", "सरला"), ("Kiran", "किरण"), ("Rajkumar", "राजकुमार"),
-    ("Ramkishan", "रामकिशन"), ("Jagdish", "जगदीश"), ("Sapna", "सपना"), ("Farhan", "फ़रहान"), ("Zoya", "ज़ोया"),
-    ("Ramesh", "रमेश"), ("Sameer", "समीर"), ("Meena", "मीना"), ("Suresh", "सुरेश"), ("Mahesh", "महेश"),
-    ("Santosh", "संतोष"), ("Lakshmi", "लक्ष्मी"), ("Anand", "आनन्द"), ("Sanjay", "संजय"), ("Pooja", "पूजा"),
-    ("Priya", "प्रिया"), ("Sunita", "सुनीता"), ("Geeta", "गीता"), ("Seema", "सीमा"), ("Usha", "उषा"),
-    ("Kavita", "कविता"), ("Deepak", "दीपक"), ("Mukesh", "मुकेश"), ("Sushila", "सुशीला"), ("Shyam", "श्याम"),
-    ("Siddharth", "सिद्धार्थ"), ("Pushpa", "पुष्पा"), ("Nirmala", "निर्मला"), ("Shanti", "शांति"), ("Vandana", "वंदना"),
-    ("Gaurav", "गौरव"), ("Ritu", "ऋतु"), ("Manju", "मंजू"), ("Kamal", "कमल"), ("Durga", "दुर्गा"), ("Radha", "राधा"),
-]  # fmt: skip
-# "हाँ भाई, मैं ही <name> हूँ, क्या बात है?" is left out: an address form that is also a kin word plus a question word is
-# doubted for every name in either script (`P2-report.md` §8a, the known failing pattern), not a script mismatch.
-CLAIMS = ("मैं ही {} हूँ", "{} ही हूँ", "हाँ, मैं ही {} हूँ, क्या बात है?", "हाँ भाई, मैं ही {} हूँ, बोलिए")
-
-# (the record's first name in Devanagari, the name said in Latin letters).
-NAMES_LATIN_SAID = [
-    ("रामप्रसाद", "Ramprasad"), ("भूपेंद्र", "Bhupendra"), ("ममता", "Mamta"), ("ममता", "Mamata"), ("गणेश", "Ganesh"),
-    ("कमला", "Kamla"), ("रमेश", "Ramesh"), ("समीर", "Sameer"), ("मीना", "Meena"), ("कृष्ण", "Krishna"),
-    ("लक्ष्मी", "Laxmi"), ("सुनीता", "Sunita"),
-]  # fmt: skip
-CLAIMS_LATIN = ("main hi {} hoon", "{} hi hoon", "haan, main hi {} hoon, kya baat hai?", "haan bhai, main hi {} hoon, boliye")
-
-# (the record's first name, a reply that must not pass as the borrower's own claim).
-OTHERS = [
-    ("Ramesh", "मैं ही सुरेश हूँ"), ("Ramesh", "मैं ही राकेश हूँ"), ("Ramesh", "मैं ही राजेश हूँ"), ("Ramesh", "मैं ही महेश हूँ"),
-    ("Ramesh", "मैं सुरेश हूँ"), ("Ramesh", "मैं रमेश का भाई हूँ"), ("Ramesh", "main hi Suresh hoon"),
-    ("Meena", "मैं ही मीरा हूँ"), ("Meena", "मैं ही रीना हूँ"), ("Kamla", "मैं ही कमल हूँ"), ("Kamal", "मैं ही कमला हूँ"),
-    ("Sunita", "मैं ही सुमिता हूँ"), ("Anil", "मैं ही सुनील हूँ"), ("Sunil", "मैं ही अनिल हूँ"), ("Mohan", "मैं ही रोहन हूँ"),
-    ("Priya", "मैं ही पूजा हूँ"), ("Pooja", "मैं ही प्रिया हूँ"), ("Ram", "मैं ही रमा हूँ"), ("Shiv", "मैं ही शिवा हूँ"),
-    ("Mamta", "मैं ममता की बहन हूँ"), ("Ramprasad", "मैं रामप्रसाद का बेटा हूँ"), ("Ganesh", "मैं ही गणपत हूँ"),
-    ("Bhupendra", "मैं ही सुरेन्द्र हूँ"), ("Rajesh", "मैं ही रमेश हूँ"), ("रमेश", "main hi Rakesh hoon"),
-]  # fmt: skip
+# Error counts on `dev-pairs.tsv` at SAME_MAX and NEAR_MAX (2026-11-14): variants not taken as the name, different
+# names taken as the name (`same` or `near`: the loan would be named to them), different names judged `unknown` (not in
+# the lexicon and far from the name).
+DEV_ERRORS = {"variant_not_the_name": 0, "different_taken_as_the_name": 0, "different_unknown": 2}
 
 
-def confirms_self() -> LlmFallbackInterpreter:
-    return LlmFallbackInterpreter(Labels(lambda reply, stage: "confirms_self"))
+def _tsv(name: str) -> list[dict[str, str]]:
+    with (NAMES / name).open(encoding="utf-8") as handle:
+        return list(csv.DictReader(handle, delimiter="\t"))
 
 
-ARMS = {"rules": lambda: None, "confirms_self": confirms_self}
+def test_every_wikidata_name_matches_itself_across_scripts():
+    pairs = {(row["latin"], row["devanagari"]) for row in _tsv("first-names.tsv")}
+    known = {(row["latin"], row["devanagari"]) for row in _tsv("known-misses.tsv")}
+    assert len(pairs) - len(known & pairs) >= 1500
+    missed = {
+        (latin, devanagari)
+        for latin, devanagari in pairs
+        if judge_name(devanagari, latin) is not NameMatch.same or judge_name(latin, devanagari) is not NameMatch.same
+    }
+    assert sorted(missed - known) == [], "new misses: add a fold, or list them in known-misses.tsv with a class"
+    assert sorted((known & pairs) - missed) == [], "fixed misses: remove them from known-misses.tsv"
 
 
-def run(first_name: str, replies: list[str], arm: str):
-    reader = ARMS[arm]()
-    extra = {"interpreter": reader} if reader is not None else {}
-    language = HE if replies[-1].isascii() else HI
-    return play(record(product(), name=f"{first_name} Kalpit"), language, replies, identity=NO_CHECK, **extra)
+def test_dev_list_error_counts_at_the_frozen_thresholds():
+    assert (SAME_MAX, NEAR_MAX) == (0.5, 1.5)
+    rows = _tsv("dev-pairs.tsv")
+    judged = [(row["label"], judge_name(row["spoken"], row["record"])) for row in rows]
+    errors = {
+        "variant_not_the_name": sum(label == "same" and not got.is_the_name for label, got in judged),
+        "different_taken_as_the_name": sum(label == "different" and got.is_the_name for label, got in judged),
+        "different_unknown": sum(label == "different" and got is NameMatch.unknown for label, got in judged),
+    }
+    assert errors == DEV_ERRORS
 
 
-def passed(call) -> bool:
-    return call.end is None and call.state.speaker_confirmed and call.keys[-1] == "disclosure.go_ahead"
+def test_the_names_the_review_found_failing_are_the_same_name():
+    for latin, devanagari in [("Kavitha", "कविता"), ("Shiva", "शिव"), ("Surinder", "सुरेन्द्र"),
+                              ("Mahender", "महेंद्र"), ("Pinky", "पिंकी")]:  # fmt: skip
+        assert judge_name(devanagari, latin) is NameMatch.same, (latin, devanagari)
 
 
-def _said(cases, forms):
-    return [(name, form.format(said)) for name, said in cases for form in forms]
+def test_near_miss_names_are_another_person():
+    for record, spoken in [("Ramesh", "राजेश"), ("Ramesh", "Rajesh"), ("Sunita", "Sunil"), ("Meena", "Meenal"),
+                           ("Ramesh", "Rakesh"), ("Mahesh", "Mukesh"), ("Suresh", "Naresh"), ("Anil", "Sunil"),
+                           ("Kamal", "Komal"), ("Amit", "अमिता"), ("Kamal", "कमला"), ("Vijay", "Vijaya")]:  # fmt: skip
+        assert judge_name(spoken, record) is NameMatch.other, (record, spoken)
 
 
-SAID_DEVANAGARI = _said(NAMES, CLAIMS)
-SAID_LATIN = _said(NAMES_LATIN_SAID, CLAIMS_LATIN)
+def test_spelling_variants_of_one_name_are_the_same():
+    for record, spoken in [("Meena", "Mina"), ("Pooja", "Puja"), ("Laxmi", "लक्ष्मी"), ("Krishna", "कृष्ण"),
+                           ("Pardeep", "प्रदीप"), ("Binod", "विनोद"), ("Ahmed", "अहमद")]:  # fmt: skip
+        assert judge_name(spoken, record) is NameMatch.same, (record, spoken)
 
 
-def _id(case) -> str:
-    return f"{case[0]}:{case[1]}"
+def test_a_word_that_is_no_known_name_is_near_or_unknown_not_another_person():
+    assert judge_name("Zorblat", "Ramesh") is NameMatch.unknown
+    assert judge_name("क्ष्यज्ञ", "Ramesh") is NameMatch.unknown
+    assert judge_name("Kavithaa", "Kavitha") is NameMatch.same
+    assert judge_name("Kavihta", "Kavitha") is NameMatch.near  # a misspelling no lexicon holds
 
 
-@pytest.mark.parametrize("case", SAID_DEVANAGARI + SAID_LATIN, ids=_id)
-def test_the_own_name_in_the_other_script_is_a_claim_not_a_doubt(case):
-    name, reply = case
-    language = HE if reply.isascii() else HI
-    assert not doubts_claim(reply, language, name)
-    assert claim_with_tail(reply, language, name)
+def test_honorifics_and_suffixes_are_not_first_names():
+    for word in ("देवी", "Devi", "कुमार", "सिंह", "जी", "भाई", "श्री", "साहब"):
+        assert not known_first_name(word), word
 
 
-@pytest.mark.parametrize("arm", ARMS)
-@pytest.mark.parametrize("case", SAID_DEVANAGARI + SAID_LATIN, ids=_id)
-def test_the_own_name_in_the_other_script_passes_at_the_direct_question(arm, case):
-    name, reply = case
-    call = run(name, ["हाँ जी", reply], arm)
-    assert passed(call), (call.end and call.end.outcome, call.keys)
-
-
-@pytest.mark.parametrize("arm", ARMS)
-@pytest.mark.parametrize("case", SAID_DEVANAGARI[::3] + SAID_LATIN[::3], ids=_id)
-def test_the_own_name_in_the_other_script_passes_at_the_name_question(arm, case):
-    name, reply = case
-    call = run(name, [reply], arm)
-    assert passed(call), (call.end and call.end.outcome, call.keys)
-
-
-@pytest.mark.parametrize("case", OTHERS, ids=_id)
-def test_another_name_or_a_relative_is_a_doubt(case):
-    name, reply = case
-    assert doubts_claim(reply, HE if reply.isascii() else HI, name)
-
-
-@pytest.mark.parametrize("arm", ARMS)
-@pytest.mark.parametrize("case", OTHERS, ids=_id)
-def test_another_name_or_a_relative_never_passes_at_the_direct_question(arm, case):
-    name, reply = case
-    call = run(name, ["हाँ जी", reply], arm)
-    assert not call.state.speaker_confirmed and call.end is not None, call.keys
-    assert call.end.outcome in (Outcome.wrong_party, Outcome.not_confirmed), call.end.outcome
-
-
-@pytest.mark.parametrize("arm", ARMS)
-@pytest.mark.parametrize("case", OTHERS, ids=_id)
-def test_another_name_or_a_relative_never_passes_at_the_name_question(arm, case):
-    name, reply = case
-    call = run(name, [reply, "हम्म"], arm)
-    assert not call.state.speaker_confirmed, call.keys
-    assert "disclosure.go_ahead" not in call.keys, call.keys
+def test_keyterms_start_with_the_record_spelling_and_hold_the_devanagari_one():
+    terms = keyterms_for("Kavitha")
+    assert terms[0] == "Kavitha" and "कविता" in terms and len(terms) <= 10
+    assert all(judge_name(term, "Kavitha") is NameMatch.same for term in terms)

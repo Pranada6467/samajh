@@ -1,0 +1,949 @@
+{
+ "customer_id": "ACQ-C125",
+ "kind": "knowledge_gap",
+ "customer_kind": "knowledge_gap",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "7f4fba64878f8f5003e4945e3b20be0d0cbb5384c06afaa3ae57d45822ec9783",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ सुनीता नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ सुनीता नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी बहुत बढ़िया। मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल में हमारे साथ एक गोल्ड लोन लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी बहुत बढ़िया। मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल में हमारे साथ एक गोल्ड लोन लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "जी बहुत बढ़िया। आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी लिया था। क्या आपको पता है कि यह क्या है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी बहुत बढ़िया। आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी लिया था। क्या आपको पता है कि यह क्या है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": "जी बहुत बढ़िया। आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी लिया था।"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आप system में देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08538341778330505,
+     "source_topic": "what_is_it",
+     "text": "आप system में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "जी, हमने देख लिया है। बस आपसे पुष्टि कर रहे हैं। क्या आप बता सकती हैं कि यह इंश्योरेंस क्या करता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, हमने देख लिया है। बस आपसे पुष्टि कर रहे हैं। क्या आप बता सकती हैं कि यह इंश्योरेंस क्या करता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आप system में देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08538341778330505,
+     "source_topic": "what_is_it",
+     "text": "आप system में देख लीजिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "जी, लेकिन हम आपसे यह जानना चाहते हैं कि आपको इसके बारे में क्या पता है। क्या आप बता सकती हैं कि यह इंश्योरेंस क्या करता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, लेकिन हम आपसे यह जानना चाहते हैं कि आपको इसके बारे में क्या पता है। क्या आप बता सकती हैं कि यह इंश्योरेंस क्या करता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आप system में देख लीजिए। papers में देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08538341778330505,
+     "source_topic": "what_is_it",
+     "text": "आप system में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.1759864764753729,
+     "source_topic": "what_it_gives",
+     "text": "papers में देख लीजिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "जी, हमने system और papers दोनों देख लिए हैं। बस आपसे पूछ रहे हैं कि आपको इस इंश्योरेंस के बारे में क्या पता है। क्या आप बता सकती हैं कि यह क्या है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, हमने system और papers दोनों देख लिए हैं। बस आपसे पूछ रहे हैं कि आपको इस इंश्योरेंस के बारे में क्या पता है। क्या आप बता सकती हैं कि यह क्या है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आप system में देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08538341778330505,
+     "source_topic": "what_is_it",
+     "text": "आप system में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "जी, बहुत बढ़िया। क्या आप चाहेंगी कि आपको एक इंसानी एजेंट से बात करने का विकल्प दिया जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, बहुत बढ़िया। क्या आप चाहेंगी कि आपको एक इंसानी एजेंट से बात करने का विकल्प दिया जाए?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "human",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "नहीं, आप ही पूछिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "human",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं, आप ही पूछिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "ठीक है। क्या आप बता सकती हैं कि यह इंश्योरेंस किस स्थिति में पैसा देता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आप बता सकती हैं कि यह इंश्योरेंस किस स्थिति में पैसा देता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "papers में देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.1759864764753729,
+     "source_topic": "what_it_gives",
+     "text": "papers में देख लीजिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "जी, लेकिन हम आपसे जानना चाहते हैं कि आपको क्या पता है। क्या आप बता सकती हैं कि अगर कुछ हो जाए तो यह इंश्योरेंस क्या करता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, लेकिन हम आपसे जानना चाहते हैं कि आपको क्या पता है। क्या आप बता सकती हैं कि अगर कुछ हो जाए तो यह इंश्योरेंस क्या करता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "papers में देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.1759864764753729,
+     "source_topic": "what_it_gives",
+     "text": "papers में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "जी, बहुत बढ़िया। क्या आप चाहेंगी कि आपको एक इंसानी एजेंट से बात करने का विकल्प दिया जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, बहुत बढ़िया। क्या आप चाहेंगी कि आपको एक इंसानी एजेंट से बात करने का विकल्प दिया जाए?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "human",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "नहीं, आप ही पूछिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "human",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं, आप ही पूछिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि इंश्योरेंस का प्रीमियम कितना था और कैसे चुकाया गया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि इंश्योरेंस का प्रीमियम कितना था और कैसे चुकाया गया?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "file में check कर लीजिए। अलग से pay किया था, loan amount से कुछ नहीं कटा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.49952759966254234,
+     "source_topic": "how_much",
+     "text": "file में check कर लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9819697896018624,
+     "source_topic": "how_paid",
+     "text": "अलग से pay किया था, loan amount से कुछ नहीं कटा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 11,
+   "agent": {
+    "say": "जी बहुत बढ़िया। क्या आपको पता है कि यह इंश्योरेंस कितने समय के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी बहुत बढ़िया। क्या आपको पता है कि यह इंश्योरेंस कितने समय के लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "कितने समय के लिए है"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "tenure तो आपके record में होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "span_dropped": "कितने समय के लिए है",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.17639732151292264,
+     "source_topic": "how_long",
+     "text": "tenure तो आपके record में होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 12,
+   "agent": {
+    "say": "जी, लेकिन हम आपसे पूछ रहे हैं कि आपको क्या पता है। क्या आप बता सकती हैं कि यह इंश्योरेंस कितने महीने के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, लेकिन हम आपसे पूछ रहे हैं कि आपको क्या पता है। क्या आप बता सकती हैं कि यह इंश्योरेंस कितने महीने के लिए है?",
+   "agent_usd": 0.00042552,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.8525e-05,
+   "reply": "tenure तो आपके record में होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.17639732151292264,
+     "source_topic": "how_long",
+     "text": "tenure तो आपके record में होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 13,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि अगर आप चाहें तो इस इंश्योरेंस को कैंसल कर सकते हैं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि अगर आप चाहें तो इस इंश्योरेंस को कैंसल कर सकते हैं?",
+   "agent_usd": 0.0004244,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": "अगर आप चाहें तो इस इंश्योरेंस को कैंसल कर सकते हैं"
+    },
+    {
+     "kind": "understood_check",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.907e-05,
+   "reply": "terms and conditions में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "span_dropped": "अगर आप चाहें तो इस इंश्योरेंस को कैंसल कर सकते हैं",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.32808169536292553,
+     "source_topic": "can_cancel",
+     "text": "terms and conditions में लिखा होगा।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "not_asked",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 14,
+   "agent": {
+    "say": "जी, लेकिन हम आपसे पूछ रहे हैं कि आपको क्या पता है। क्या आप बता सकती हैं कि क्या आप इसे कैंसल कर सकते हैं और कितने दिनों के अंदर?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, लेकिन हम आपसे पूछ रहे हैं कि आपको क्या पता है। क्या आप बता सकती हैं कि क्या आप इसे कैंसल कर सकते हैं और कितने दिनों के अंदर?",
+   "agent_usd": 0.0006004,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": "क्या आप इसे कैंसल कर सकते हैं और कितने दिनों के अंदर"
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "कितने दिनों के अंदर"
+    }
+   ],
+   "router_usd": 4.341e-05,
+   "reply": "terms and conditions में लिखा होगा। tenure तो आपके record में होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "span_dropped": "क्या आप इसे कैंसल कर सकते हैं और कितने दिनों के अंदर",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.32808169536292553,
+     "source_topic": "can_cancel",
+     "text": "terms and conditions में लिखा होगा।"
+    },
+    {
+     "item": 2,
+     "kind": "how_long",
+     "span_dropped": "कितने दिनों के अंदर",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.17639732151292264,
+     "source_topic": "how_long",
+     "text": "tenure तो आपके record में होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 15,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि अगर आप जीवित रहें और लोन चुकता हो जाए, तो क्या आपको इंश्योरेंस के पैसे वापस मिलेंगे?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि अगर आप जीवित रहें और लोन चुकता हो जाए, तो क्या आपको इंश्योरेंस के पैसे वापस मिलेंगे?",
+   "agent_usd": 0.00027786,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "जीवित रहें और लोन चुकता हो जाए"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस मिलेंगे"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.101e-05,
+   "reply": "papers में देख लीजिए। जो भी company की policy हो। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "जीवित रहें और लोन चुकता हो जाए",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.1759864764753729,
+     "source_topic": "what_it_gives",
+     "text": "papers में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "asks_inferred": true,
+     "span_dropped": "पैसे वापस मिलेंगे",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.4824553190264851,
+     "source_topic": "money_back",
+     "text": "जो भी company की policy हो।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 16,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि यह इंश्योरेंस लेना अनिवार्य था या आपने खुद चुना था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि यह इंश्योरेंस लेना अनिवार्य था या आपने खुद चुना था?",
+   "agent_usd": 0.0002464,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "यह इंश्योरेंस"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "rule तो आपको पता ही होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.16235693031921983,
+     "source_topic": "needed_or_choice",
+     "text": "rule तो आपको पता ही होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 17,
+   "agent": {
+    "say": "जी, लेकिन हम आपसे पूछ रहे हैं कि आपको क्या पता है। क्या आप बता सकती हैं कि यह इंश्योरेंस लेना अनिवार्य था या आपने खुद चुना था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, लेकिन हम आपसे पूछ रहे हैं कि आपको क्या पता है। क्या आप बता सकती हैं कि यह इंश्योरेंस लेना अनिवार्य था या आपने खुद चुना था?",
+   "agent_usd": 0.0006984,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 9.921875e-05,
+   "reply": "rule तो आपको पता ही होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.16235693031921983,
+     "source_topic": "needed_or_choice",
+     "text": "rule तो आपको पता ही होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 18,
+   "agent": {
+    "say": "ठीक है। क्या आपको याद है कि आपने इस इंश्योरेंस के लिए एप्लीकेशन में 'एक्सेप्ट' क्लिक किया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको याद है कि आपने इस इंश्योरेंस के लिए एप्लीकेशन में 'एक्सेप्ट' क्लिक किया था?",
+   "agent_usd": 0.0002398,
+   "router_items": [
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.051e-05,
+   "reply": "system में देख लीजिए। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_you_agreed_to",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.47075211303308606,
+     "source_topic": "what_you_agreed_to",
+     "text": "system में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 19,
+   "agent": {
+    "say": "जी बहुत बढ़िया। आपका समय देने के लिए धन्यवाद। अगर कोई सवाल हो तो हमसे संपर्क करें। नमस्ते।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower ने कोई विशिष्ट जानकारी नहीं दी, केवल system, papers या terms में देखने को कहा। वे नहीं बता सके कि उन्होंने क्या खरीदा, इसकी अवधि, कवर, या कैंसिल करने का विकल्प।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "papers में देख लीजिए।"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "papers में देख लीजिए।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "tenure तो आपके record में होगा।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "terms and conditions में लिखा होगा।"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "papers में देख लीजिए। जो भी company की policy हो। हाँ जी।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "rule तो आपको पता ही होगा।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "system में देख लीजिए। हाँ जी।"
+      }
+     ]
+    }
+   },
+   "say": "जी बहुत बढ़िया। आपका समय देने के लिए धन्यवाद। अगर कोई सवाल हो तो हमसे संपर्क करें। नमस्ते।",
+   "agent_usd": 0.0005408
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower ने कोई विशिष्ट जानकारी नहीं दी, केवल system, papers या terms में देखने को कहा। वे नहीं बता सके कि उन्होंने क्या खरीदा, इसकी अवधि, कवर, या कैंसिल करने का विकल्प।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "papers में देख लीजिए।"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "papers में देख लीजिए।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "tenure तो आपके record में होगा।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "terms and conditions में लिखा होगा।"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "papers में देख लीजिए। जो भी company की policy हो। हाँ जी।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "rule तो आपको पता ही होगा।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "system में देख लीजिए। हाँ जी।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0034535800000000004,
+  "router": 0.00033174374999999994
+ },
+ "cache_hits": {
+  "agent": 12,
+  "router": 13
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:31:56+00:00",
+ "agent_turns": 20,
+ "usd_total": 0.00378532375,
+ "finished_utc": "2026-11-13T22:32:41+00:00"
+}

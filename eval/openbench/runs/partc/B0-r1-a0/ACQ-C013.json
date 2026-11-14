@@ -1,0 +1,555 @@
+{
+ "customer_id": "ACQ-C013",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "e0749337ba8c4ae8e76ebb4c5eabf868afbb3ea0ebae492ea25975373f4be042",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ सीमा नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ सीमा नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी बहुत बढ़िया, मैं नमूना बैंक से बोल रहा हूँ। कृपया बताइए, क्या आपने हाल ही में हमारे यहाँ से 1,20,000 रुपये का पर्सनल लोन लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी बहुत बढ़िया, मैं नमूना बैंक से बोल रहा हूँ। कृपया बताइए, क्या आपने हाल ही में हमारे यहाँ से 1,20,000 रुपये का पर्सनल लोन लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": "क्या आपने हाल ही में हमारे यहाँ से 1,20,000 रुपये का पर्सनल लोन लिया था?"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "जी बहुत बढ़िया। क्या आपने उस लोन से क्रेडिट-लाइफ इंश्योरेंस खरीदी थी, जो आपकी मौत की स्थिति में लोन चुका देती है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी बहुत बढ़िया। क्या आपने उस लोन से क्रेडिट-लाइफ इंश्योरेंस खरीदी थी, जो आपकी मौत की स्थिति में लोन चुका देती है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "लोन चुका देती है"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो fixed deposit है, loan के against रखी हुई। अगर मैं मर जाऊँ तो loan के against एक लाख बीस हज़ार रुपये तक देती है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.16299046203494072,
+     "draw_r": 0.06461970205418766,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "वो fixed deposit है, loan के against रखी हुई।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "लोन चुका देती है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7302061498630792,
+     "source_topic": "what_it_gives",
+     "text": "अगर मैं मर जाऊँ तो loan के against एक लाख बीस हज़ार रुपये तक देती है।"
+    },
+    {
+     "item": 2,
+     "kind": "needed_or_choice",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "क्या आपको पता है कि इस इंश्योरेंस का प्रीमियम 16,500 रुपये एक बार में दिया गया था और वो लोन अमाउंट से कटा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि इस इंश्योरेंस का प्रीमियम 16,500 रुपये एक बार में दिया गया था और वो लोन अमाउंट से कटा था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "16,500 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "लोन अमाउंट से कटा था"
+    },
+    {
+     "kind": "how_often",
+     "asks": false,
+     "states_span": "एक बार में"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "16,500 रुपये",
+     "stated_value": 16500,
+     "belief_state": "correct",
+     "belief_value": 16500,
+     "record_value": 16500,
+     "draw_a": 0.49616333935409784,
+     "draw_r": 0.3429206954315305,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन अमाउंट से कटा था",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.5299313922878355,
+     "draw_r": 0.30245401337742805,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "how_often",
+     "rule": "stated",
+     "stated": "एक बार में",
+     "stated_value": "one_time",
+     "belief_state": "correct",
+     "belief_value": "one_time",
+     "record_value": "one_time",
+     "draw_a": 0.21891143335960805,
+     "draw_r": 0.5080252508632839,
+     "source_topic": "how_often",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "क्या आपको पता है कि यह इंश्योरेंस लोन के लिए अनिवार्य नहीं थी और आप किसी दूसरी कंपनी से भी ले सकते थे?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि यह इंश्योरेंस लोन के लिए अनिवार्य नहीं थी और आप किसी दूसरी कंपनी से भी ले सकते थे?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": "इंश्योरेंस लोन के लिए अनिवार्य नहीं थी"
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। कहा गया था किसी भी company से ले सकती हूँ, सिर्फ़ इस lender से नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "stated",
+     "stated": "इंश्योरेंस लोन के लिए अनिवार्य नहीं थी",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.46978944865986705,
+     "draw_r": 0.5947073854040354,
+     "source_topic": "needed_or_choice",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "where_to_take_it_from",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.46978944865986705,
+     "source_topic": "where_to_take_it_from",
+     "text": "कहा गया था किसी भी company से ले सकती हूँ, सिर्फ़ इस lender से नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "क्या आपको पता है कि यह कवर 24 महीने के लिए है और 30 दिनों के भीतर इसे कैंसिल किया जा सकता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि यह कवर 24 महीने के लिए है और 30 दिनों के भीतर इसे कैंसिल किया जा सकता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "24 महीने"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": "30 दिनों के भीतर"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "24 महीने",
+     "stated_value": 24,
+     "belief_state": "correct",
+     "belief_value": 24,
+     "record_value": 24,
+     "draw_a": 0.2012126725167036,
+     "draw_r": 0.313407348934561,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "30 दिनों के भीतर",
+     "stated_value": 30,
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": 30,
+     "draw_a": 0.4206942596938461,
+     "draw_r": 0.5395174631848931,
+     "source_topic": "can_cancel",
+     "decided": "dk_r",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "क्या आपको पता है कि इस पर अंत में कोई पैसा वापस नहीं मिलता?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि इस पर अंत में कोई पैसा वापस नहीं मिलता?",
+   "agent_usd": 0.00025872,
+   "router_items": [
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": "कोई पैसा वापस नहीं मिलता"
+    }
+   ],
+   "router_usd": 9.8625e-05,
+   "reply": "मुझे लगता है loan ख़त्म होने पर ये पैसा मुझे वापस मिल जाएगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "कोई पैसा वापस नहीं मिलता",
+     "stated_value": "no",
+     "belief_state": "false",
+     "belief_value": "yes",
+     "record_value": "no",
+     "draw_a": 0.28874484333209693,
+     "draw_r": 0.6803739699535072,
+     "source_topic": "money_back",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "मुझे लगता है loan ख़त्म होने पर ये पैसा मुझे वापस मिल जाएगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "धन्यवाद, सीमा जी। अब कॉल समाप्त करता हूँ।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "The borrower believes they will get money back at the end of the loan, which contradicts the product record.",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "वो fixed deposit है, loan के against रखी हुई। अगर मैं मर जाऊँ तो loan के against एक लाख बीस हज़ार रुपये तक देती है।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है। कहा गया था किसी भी company से ले सकती हूँ, सिर्फ़ इस lender से नहीं।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "वो fixed deposit है, loan के against रखी हुई। अगर मैं मर जाऊँ तो loan के against एक लाख बीस हज़ार रुपये तक देती है।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "मुझे लगता है loan ख़त्म होने पर ये पैसा मुझे वापस मिल जाएगा।"
+      },
+      {
+       "field": "consent",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद, सीमा जी। अब कॉल समाप्त करता हूँ।",
+   "agent_usd": 0.000828
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "The borrower believes they will get money back at the end of the loan, which contradicts the product record.",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "वो fixed deposit है, loan के against रखी हुई। अगर मैं मर जाऊँ तो loan के against एक लाख बीस हज़ार रुपये तक देती है।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है। कहा गया था किसी भी company से ले सकती हूँ, सिर्फ़ इस lender से नहीं।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "वो fixed deposit है, loan के against रखी हुई। अगर मैं मर जाऊँ तो loan के against एक लाख बीस हज़ार रुपये तक देती है।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "मुझे लगता है loan ख़त्म होने पर ये पैसा मुझे वापस मिल जाएगा।"
+   },
+   {
+    "field": "consent",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.00108672,
+  "router": 9.8625e-05
+ },
+ "cache_hits": {
+  "agent": 6,
+  "router": 6
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:23:57+00:00",
+ "agent_turns": 8,
+ "usd_total": 0.001185345,
+ "finished_utc": "2026-11-13T22:24:29+00:00"
+}

@@ -243,8 +243,29 @@ MEANINGS: dict[str, tuple[str, str]] = {
         'Ends the call after a request for a later call ("I am driving", "call in the evening").',
     ),
     "end.language": (
-        "All right, we will try to call again in your language. Thank you, goodbye.",
-        "Ends the call when the customer asks for another language (no live switch).",
+        "Sorry, this call cannot go on in that language now. We will try to call again in your language. Thank you, "
+        "goodbye.",
+        "Ends the call when the customer asks for a language the call has no lines for, or past the switch limit (W4).",
+    ),
+    "consent.follow_what": (
+        "And what was that yes for?",
+        "The one follow-up when the consent reply said only how the customer agreed (W4).",
+    ),
+    "consent.follow_how": (
+        "And how did you give that yes?",
+        "The one follow-up when the consent reply said only what was agreed to (W4).",
+    ),
+    "kind.follow_what": (
+        "And what would you call that thing, what is it?",
+        "The one follow-up when the kind reply gave a figure or what it does, and no name for it (W4).",
+    ),
+    "defer.reask": (
+        "We want to know what you yourself remember, not what is in the record.",
+        "Said once before the re-ask when the customer says the lender or the record should know (W4).",
+    ),
+    "language.switched": (
+        "All right, let us talk in <the new language> now.",
+        "Said in the new language when the call switches live, before the pending question is put again (W4).",
     ),
     "end.no_response": (
         "I cannot hear you. We will try again later. Goodbye.",

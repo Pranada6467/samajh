@@ -180,8 +180,9 @@ MIXED_NOTICE = (
     "calls marked Phone call were made on the browser phone with synthetic records."
 )
 ACCESS_NOTICE = (
-    "Demo limitation: these pages have no sign-in. Anyone who can reach this server can record a decision, "
-    "and the reviewer's name is free text that nobody checks."
+    "Demo limitation: a reviewer signs in with a token made on the server, and each decision records "
+    "the token's name and the case as it was seen. The call recording link is not covered by the token, "
+    "and nothing audits the server itself: whoever runs it can add tokens or change the files."
 )
 
 INTERVAL_LIMIT = (

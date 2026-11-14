@@ -1,0 +1,461 @@
+{
+ "customer_id": "ACQ-C089",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "5828c9ef123c7b642021fabc5fb6710980da6e8add2e7fa2b3dda6fd7dd583f7",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं संजय जी से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं संजय जी से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "संजय जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था। क्या आप बता सकते हैं कि आपने वो पैसा किस चीज़ पर खर्च किया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "संजय जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था। क्या आप बता सकते हैं कि आपने वो पैसा किस चीज़ पर खर्च किया?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ, साथ में एक एफडी खुलवाई थी, सत्तावन हज़ार पाँच सौ रुपये की।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6801688577979803,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, साथ में एक एफडी खुलवाई थी, सत्तावन हज़ार पाँच सौ रुपये की।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "संजय जी, वो एफडी नहीं, आपने क्रेडिट-लाइफ इंश्योरेंस ली थी। क्या आपको पता है कि ये क्या है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "संजय जी, वो एफडी नहीं, आपने क्रेडिट-लाइफ इंश्योरेंस ली थी। क्या आपको पता है कि ये क्या है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वह फिक्स्ड डिपॉज़िट है, एफडी, लोन के साथ बंधी हुई। हाँ, साथ में एक एफडी खुलवाई थी, सत्तावन हज़ार पाँच सौ रुपये की।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6801688577979803,
+     "source_topic": "what_is_it",
+     "text": "वह फिक्स्ड डिपॉज़िट है, एफडी, लोन के साथ बंधी हुई।"
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "stated",
+     "stated": "क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.6801688577979803,
+     "draw_r": 0.20609197625890374,
+     "source_topic": "what_did_you_take",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "हाँ, साथ में एक एफडी खुलवाई थी, सत्तावन हज़ार पाँच सौ रुपये की।"
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "संजय जी, वो एफडी नहीं, ये एक इंश्योरेंस थी। अगर आपकी मौत हो जाती है, तो ये लोन चुका देगी। क्या आपको ये बात पता थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "संजय जी, वो एफडी नहीं, ये एक इंश्योरेंस थी। अगर आपकी मौत हो जाती है, तो ये लोन चुका देगी। क्या आपको ये बात पता थी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "ये एक इंश्योरेंस थी"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "अगर आपकी मौत हो जाती है, तो ये लोन चुका देगी"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "अगर मर जाऊँ तो आठ लाख रुपये तक लोन में काम आते हैं। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "अगर आपकी मौत हो जाती है, तो ये लोन चुका देगी",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.1717257099226117,
+     "source_topic": "what_it_gives",
+     "text": "अगर मर जाऊँ तो आठ लाख रुपये तक लोन में काम आते हैं।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "सही कहा, ये रकम लोन चुकाने में आएगी। क्या आपको पता है कि ये प्रीमियम लोन अमाउंट से कटा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सही कहा, ये रकम लोन चुकाने में आएगी। क्या आपको पता है कि ये प्रीमियम लोन अमाउंट से कटा था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "लोन की रकम में से काट लिया था, अलग से नहीं दिया।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6478139932733029,
+     "source_topic": "how_paid",
+     "text": "लोन की रकम में से काट लिया था, अलग से नहीं दिया।"
+    },
+    {
+     "item": 1,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "बिल्कुल सही। क्या आपको पता है कि इसे 15 दिन के अंदर कैंसल किया जा सकता था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "बिल्कुल सही। क्या आपको पता है कि इसे 15 दिन के अंदर कैंसल किया जा सकता था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "15 दिन"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "तीन साल का है। हाँ, पंद्रह दिन के अंदर रद्द कर सकते हैं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "span_dropped": "15 दिन",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.37373260175809264,
+     "source_topic": "how_long",
+     "text": "तीन साल का है।"
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5077645122073591,
+     "source_topic": "can_cancel",
+     "text": "हाँ, पंद्रह दिन के अंदर रद्द कर सकते हैं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि इस पर पैसा वापस नहीं मिलता, अगर तीन साल में कुछ ना हो तो?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि इस पर पैसा वापस नहीं मिलता, अगर तीन साल में कुछ ना हो तो?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": "पैसा वापस नहीं मिलता"
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "तीन साल"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। मुझे लगता है लोन पूरा होने पर यह पैसा मुझे वापस मिल जाता है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसा वापस नहीं मिलता",
+     "stated_value": "no",
+     "belief_state": "false",
+     "belief_value": "yes",
+     "record_value": "no",
+     "draw_a": 0.9643059580121189,
+     "draw_r": 0.2977635732386261,
+     "source_topic": "money_back",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "मुझे लगता है लोन पूरा होने पर यह पैसा मुझे वापस मिल जाता है।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "तीन साल",
+     "stated_value": 36,
+     "belief_state": "correct",
+     "belief_value": 36,
+     "record_value": 36,
+     "draw_a": 0.37373260175809264,
+     "draw_r": 0.9950901097618043,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "संजय जी, वो पैसा वापस नहीं आता। क्या आपको ये बात समझ में आई?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "संजय जी, वो पैसा वापस नहीं आता। क्या आपको ये बात समझ में आई?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "वो पैसा वापस नहीं आता"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मुझे लगता है लोन पूरा होने पर यह पैसा मुझे वापस मिल जाता है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "वो पैसा वापस नहीं आता",
+     "stated_value": "no",
+     "belief_state": "false",
+     "belief_value": "yes",
+     "record_value": "no",
+     "draw_a": 0.9643059580121189,
+     "draw_r": 0.2977635732386261,
+     "source_topic": "money_back",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "मुझे लगता है लोन पूरा होने पर यह पैसा मुझे वापस मिल जाता है।"
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "संजय जी, धन्यवाद। हम आपके केस को एक एजेंट के पास ट्रांसफर कर रहे हैं ताकि आपको सही जानकारी मिल सके।",
+    "end_call": false,
+    "transfer_to_human": true,
+    "report": null
+   },
+   "say": "संजय जी, धन्यवाद। हम आपके केस को एक एजेंट के पास ट्रांसफर कर रहे हैं ताकि आपको सही जानकारी मिल सके।",
+   "agent_usd": 0.0
+  }
+ ],
+ "status": "no_report",
+ "report": null,
+ "ended_by": "transfer_to_human",
+ "usd": {
+  "agent": 0.0,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 9,
+  "router": 8
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:24:59+00:00",
+ "agent_turns": 9,
+ "usd_total": 0.0,
+ "finished_utc": "2026-11-13T22:24:59+00:00"
+}

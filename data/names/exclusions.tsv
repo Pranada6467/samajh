@@ -1,0 +1,11 @@
+latin	devanagari	reason
+India	भारत	not a name pair: the English label holds "India", the Hindi label a translation
+Mysore	मैसूर	a place name used as a first token (title of a ruler), not a first name
+Naheed	आबिदी	labels misaligned: the Hindi label starts with the surname
+Jadabharata	भरत	labels misaligned: the Hindi label drops "Jada"
+Jagdish	जे	the Hindi label starts with an initial (जे)
+Madan	एम	the Hindi label starts with an initial (एम)
+Raghunandan	आर	the Hindi label starts with an initial (आर)
+Cahit	जाहिद	two different names (Turkish Cahit, Hindi label for Zahid)
+Gitanjali	गीताजंली	misspelt Hindi label (anusvara on the wrong letter; गीतांजलि is the name)
+Manzoor	मंजर	misspelt Hindi label (मंजर is "scene"; the name is मंज़ूर)

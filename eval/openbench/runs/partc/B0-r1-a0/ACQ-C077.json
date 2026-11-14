@@ -1,0 +1,524 @@
+{
+ "customer_id": "ACQ-C077",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "2d8be274b0dd060c84df816b9f8de881fc80d55e2c35a89247abd9f0d937fe6e",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्री रमेश नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्री रमेश नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी रमेश जी, मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल में हमारे बैंक से एक पर्सनल लोन लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी रमेश जी, मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल में हमारे बैंक से एक पर्सनल लोन लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "जी रमेश जी, आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी ली थी। क्या आपको पता है कि यह क्या है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी रमेश जी, आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी ली थी। क्या आपको पता है कि यह क्या है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। यह loan के ऊपर insurance cover है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.3369216176215559,
+     "source_topic": "what_is_it",
+     "text": "यह loan के ऊपर insurance cover है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "stated",
+     "stated": "क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "correct",
+     "belief_value": "insurance",
+     "record_value": "insurance",
+     "draw_a": 0.3369216176215559,
+     "draw_r": 0.06272189319133759,
+     "source_topic": "what_did_you_take",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "ठीक है रमेश जी। क्या आपको पता है कि इस इंश्योरेंस का प्रीमियम कितना था और यह कैसे चुकाया गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है रमेश जी। क्या आपको पता है कि इस इंश्योरेंस का प्रीमियम कितना था और यह कैसे चुकाया गया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मैंने exactly twenty thousand five hundred rupees pay किए थे। मैंने separately pay किया था, loan amount से कुछ नहीं कटा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7513298911508173,
+     "source_topic": "how_much",
+     "text": "मैंने exactly twenty thousand five hundred rupees pay किए थे।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8768237456679344,
+     "source_topic": "how_paid",
+     "text": "मैंने separately pay किया था, loan amount से कुछ नहीं कटा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "जी रमेश जी, क्या आपको पता है कि यह इंश्योरेंस लेना लोन के लिए जरूरी था या आपको कोई दूसरा ऑप्शन भी मिल सकता था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी रमेश जी, क्या आपको पता है कि यह इंश्योरेंस लेना लोन के लिए जरूरी था या आपको कोई दूसरा ऑप्शन भी मिल सकता था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "officer ने बोला था कि loan के लिए यह compulsory है। उन्होंने कहा था कि lender से ही लेना compulsory है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.19060727022588253,
+     "source_topic": "needed_or_choice",
+     "text": "officer ने बोला था कि loan के लिए यह compulsory है।"
+    },
+    {
+     "item": 1,
+     "kind": "where_to_take_it_from",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.19060727022588253,
+     "source_topic": "where_to_take_it_from",
+     "text": "उन्होंने कहा था कि lender से ही लेना compulsory है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "ठीक है रमेश जी। क्या आपको पता है कि यह इंश्योरेंस कितने टाइम के लिए है और अगर आपकी मौत हो जाए तो कितना कवर मिलेगा?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है रमेश जी। क्या आपको पता है कि यह इंश्योरेंस कितने टाइम के लिए है और अगर आपकी मौत हो जाए तो कितना कवर मिलेगा?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "यह कितने time तक चलेगा, मुझे बिल्कुल नहीं पता। अगर मेरी death हो जाए, तो three lakh eighty thousand rupees loan में cover होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.12552390899509192,
+     "source_topic": "how_long",
+     "text": "यह कितने time तक चलेगा, मुझे बिल्कुल नहीं पता।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.3213136703707278,
+     "source_topic": "what_it_gives",
+     "text": "अगर मेरी death हो जाए, तो three lakh eighty thousand rupees loan में cover होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "जी रमेश जी, क्या आपको पता है कि इस इंश्योरेंस को कैंसल करने का कोई ऑप्शन था और क्या इसके खत्म होने पर कोई पैसा वापस मिलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी रमेश जी, क्या आपको पता है कि इस इंश्योरेंस को कैंसल करने का कोई ऑप्शन था और क्या इसके खत्म होने पर कोई पैसा वापस मिलता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ, बताया था कि fifteen days में cancel करा सकते हैं। यह पैसा वापस नहीं मिलता, savings नहीं है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.48167868214659393,
+     "source_topic": "can_cancel",
+     "text": "हाँ, बताया था कि fifteen days में cancel करा सकते हैं।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8577187869232148,
+     "source_topic": "money_back",
+     "text": "यह पैसा वापस नहीं मिलता, savings नहीं है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "ठीक है रमेश जी, अंत में कृपया बताइए कि क्या आपने इस इंश्योरेंस के लिए कोई फॉर्म भरा था या साइन किया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है रमेश जी, अंत में कृपया बताइए कि क्या आपने इस इंश्योरेंस के लिए कोई फॉर्म भरा था या साइन किया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मैंने loan के साथ insurance form sign करके yes बोला था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_you_agreed_to",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5984458888415247,
+     "source_topic": "what_you_agreed_to",
+     "text": "मैंने loan के साथ insurance form sign करके yes बोला था।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "Borrower believes the insurance was compulsory and only available from the lender, which contradicts the record. Also, the premium mentioned by borrower does not match the record.",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "हाँ जी, सही है। यह loan के ऊपर insurance cover है।"
+      },
+      {
+       "field": "premium",
+       "belief": "false",
+       "quote": "मैंने exactly twenty thousand five hundred rupees pay किए थे।"
+      },
+      {
+       "field": "source",
+       "belief": "false",
+       "quote": "officer ने बोला था कि loan के लिए यह compulsory है। उन्होंने कहा था कि lender से ही लेना compulsory है।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "मुझे बिल्कुल नहीं पता।"
+      },
+      {
+       "field": "required",
+       "belief": "false",
+       "quote": "officer ने बोला था कि loan के लिए यह compulsory है। उन्होंने कहा था कि lender से ही लेना compulsory है।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "अगर मेरी death हो जाए, तो three lakh eighty thousand rupees loan में cover होगा।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "मुझे बिल्कुल नहीं पता।"
+      },
+      {
+       "field": "cancel",
+       "belief": "false",
+       "quote": "हाँ, बताया था कि fifteen days में cancel करा सकते हैं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "यह पैसा वापस नहीं मिलता, savings नहीं है।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "मैंने loan के साथ insurance form sign करके yes बोला था।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.0
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "Borrower believes the insurance was compulsory and only available from the lender, which contradicts the record. Also, the premium mentioned by borrower does not match the record.",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "हाँ जी, सही है। यह loan के ऊपर insurance cover है।"
+   },
+   {
+    "field": "premium",
+    "belief": "false",
+    "quote": "मैंने exactly twenty thousand five hundred rupees pay किए थे।"
+   },
+   {
+    "field": "source",
+    "belief": "false",
+    "quote": "officer ने बोला था कि loan के लिए यह compulsory है। उन्होंने कहा था कि lender से ही लेना compulsory है।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "मुझे बिल्कुल नहीं पता।"
+   },
+   {
+    "field": "required",
+    "belief": "false",
+    "quote": "officer ने बोला था कि loan के लिए यह compulsory है। उन्होंने कहा था कि lender से ही लेना compulsory है।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "अगर मेरी death हो जाए, तो three lakh eighty thousand rupees loan में cover होगा।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "मुझे बिल्कुल नहीं पता।"
+   },
+   {
+    "field": "cancel",
+    "belief": "false",
+    "quote": "हाँ, बताया था कि fifteen days में cancel करा सकते हैं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "यह पैसा वापस नहीं मिलता, savings नहीं है।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "मैंने loan के साथ insurance form sign करके yes बोला था।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 9,
+  "router": 8
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:11:37+00:00",
+ "agent_turns": 9,
+ "usd_total": 0.0,
+ "finished_utc": "2026-11-13T22:11:37+00:00"
+}

@@ -1,6 +1,16 @@
 """Gnani speech client: Prisma STT (REST and batch) and Timbre TTS behind one lock, cache and ledger."""
 
 from samajh.clients.gnani.client import BatchTimeout, GnaniClient, parse_error
+from samajh.clients.gnani.stream import (
+    PrismaStream,
+    StreamBudgetExceeded,
+    StreamError,
+    StreamResult,
+    StreamSession,
+    StreamTimeout,
+    stream_language,
+    stream_session,
+)
 from samajh.clients.gnani.types import (
     VOICES,
     AudioFormat,
@@ -31,11 +41,17 @@ __all__ = [
     "CallInfo",
     "Container",
     "GnaniClient",
+    "PrismaStream",
     "PrismaV25",
     "PrismaV30",
     "SampleRate",
     "Segment",
     "Speech",
+    "StreamBudgetExceeded",
+    "StreamError",
+    "StreamResult",
+    "StreamSession",
+    "StreamTimeout",
     "SttLanguage",
     "SttOptions",
     "Timbre",
@@ -44,6 +60,8 @@ __all__ = [
     "Voice",
     "fix_wav_header",
     "parse_error",
+    "stream_language",
+    "stream_session",
     "wav_sample_rate",
     "wav_seconds",
 ]

@@ -112,7 +112,7 @@ CUSTOMERS: dict[Language, Customer] = {
             "नहीं बताया",
             "एक साल बाद निकाल सकते हैं",
         ),
-        consent="फॉर्म पर साइन किया था बस",
+        consent="उसके लिए हाँ कहा था, फॉर्म पर साइन किया था बस",  # W4: both halves, so no follow-up
         confirm="हाँ, सही है",
         reject="नहीं, गलत है",
         correction="नहीं, पचपन हज़ार",
@@ -143,7 +143,7 @@ CUSTOMERS: dict[Language, Customer] = {
             "नहीं बताया",
             "one year बाद withdraw कर सकते हैं",
         ),
-        consent="form पर sign किया था बस",
+        consent="उसके लिए हाँ कहा था, form पर sign किया था बस",  # W4: both halves, so no follow-up
         confirm="yes, correct",
         reject="no, wrong है",
         correction="नहीं, fifty five thousand",

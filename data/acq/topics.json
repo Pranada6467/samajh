@@ -1,0 +1,130 @@
+{
+  "about": "The topics an ACQ customer answers in the open call. The caller text is copied from the P-five open-call topics (a paraphrase of each question, never a value). Everything the writer model is told about the call apart from the customer's own fact sheet.",
+  "variants": {
+    "own": "what this person says when they answer for themselves, from what they know; when they do not know, they say so in their own words",
+    "again": "what they say when the caller asks the same thing a second time in other words: the same content, worded differently",
+    "defer": "what they say when they do not answer for themselves and leave it to the lender, for example 'whatever is in your records': a few words that carry no fact, no figure and no name of anything"
+  },
+  "open_call": [
+    {
+      "id": "what_did_you_take",
+      "field": "kind",
+      "caller": "The caller mentions the loan you took recently and asks: did you take anything else along with the loan, and if so, what and for how much?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "what_is_it",
+      "field": "kind",
+      "caller": "The caller asks: in your own words, what is that thing you took with the loan?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "how_much",
+      "field": "premium",
+      "caller": "The caller asks: how much did you pay for it?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "how_paid",
+      "field": "source",
+      "caller": "The caller asks: where did the money for it come from, and how was it paid?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "how_often",
+      "field": "frequency",
+      "caller": "The caller asks: was it one payment, or do you pay again and again?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "needed_or_choice",
+      "field": "required",
+      "caller": "The caller asks: was it needed to get the loan, or was it your own choice?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "where_to_take_it_from",
+      "field": "required",
+      "caller": "The caller asks: what were you told about where, or from whom, you could take it?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "what_it_gives",
+      "field": "cover",
+      "caller": "The caller asks: what does it give you, and up to what amount?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "how_long",
+      "field": "term",
+      "caller": "The caller asks: how long does it run?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "can_cancel",
+      "field": "cancel",
+      "caller": "The caller asks: can it be cancelled, and until when?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "money_back",
+      "field": "money_back",
+      "caller": "The caller asks: if you wanted this money back, what would happen?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    },
+    {
+      "id": "what_you_agreed_to",
+      "field": "consent",
+      "caller": "The caller asks: when you took the loan, what did you say yes to, and how did you say yes?",
+      "variants": [
+        "own",
+        "again",
+        "defer"
+      ]
+    }
+  ]
+}

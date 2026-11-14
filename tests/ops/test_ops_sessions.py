@@ -8,6 +8,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import pytest
+from opskit import add_reviewer
 from serverkit import FakeSpeech
 from starlette.testclient import TestClient
 
@@ -173,7 +174,10 @@ def test_a_phone_call_on_a_sampled_loan_enters_the_funnel_queue_and_report_as_a_
     assert after.batch.referred == before.batch.referred + 1
     assert any(r.key.startswith("Phone call") for r in after.reading)
 
-    client = TestClient(create_app(gnani=FakeSpeech(), state=state, web_dir=None, clips_dir=None))
+    client = TestClient(
+        create_app(gnani=FakeSpeech(), state=state, web_dir=None, clips_dir=None),
+        headers=add_reviewer(state),
+    )
     queue = QueueView.model_validate(client.get("/api/review/queue").json())
     item = next(i for i in queue.items if i.case_id == case["session_id"])
     assert item.in_report and not item.simulated

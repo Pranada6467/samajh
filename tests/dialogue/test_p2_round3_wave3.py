@@ -95,7 +95,9 @@ ARMS = {
     "rules": dict,
     "raises": lambda: {"interpreter": LlmFallbackInterpreter(Labels(error=TransportError("down")))},
     "answers": lambda: {"interpreter": LlmFallbackInterpreter(Labels(sensible))},
-    "who_or_why": lambda: {"interpreter": LlmFallbackInterpreter(Labels(lambda r, s: "who_or_why"))},
+    # W4: the setup claim and go-ahead now reach the classifier; they get the labels a classifier would give.
+    "who_or_why": lambda: {"interpreter": LlmFallbackInterpreter(
+        Labels(lambda r, s: sensible(r, s) if "first_name" in s or "go_ahead" in s else "who_or_why"))},
 }
 
 

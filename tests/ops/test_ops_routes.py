@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from opskit import add_reviewer
 from serverkit import FakeSpeech
 from starlette.testclient import TestClient
 
@@ -17,8 +18,11 @@ from samajh.server.review_routes import BAD_DISPOSITION
 SESSION_ID = "20261110T142233-9f2c4e1ab07d"
 
 
-def _client(state: Path) -> TestClient:
-    return TestClient(create_app(gnani=FakeSpeech(), state=state, web_dir=None, clips_dir=None))
+def _client(state: Path, signed_in: bool = True) -> TestClient:
+    headers = add_reviewer(state) if signed_in else {}
+    return TestClient(
+        create_app(gnani=FakeSpeech(), state=state, web_dir=None, clips_dir=None), headers=headers
+    )
 
 
 @pytest.fixture
@@ -26,7 +30,12 @@ def client(state: Path) -> TestClient:
     return _client(state)
 
 
+def _digest(client: TestClient, case_id: str) -> str:
+    return client.get(f"/api/review/cases/{case_id}").json()["case_digest"]
+
+
 def _decide(client: TestClient, case_id: str, **body) -> CaseView:
+    body.setdefault("case_digest", _digest(client, case_id))
     reply = client.post(f"/api/review/cases/{case_id}/disposition", json=body)
     assert reply.status_code == 200, reply.text
     return CaseView.model_validate(reply.json())
@@ -40,7 +49,7 @@ def test_every_page_gets_the_contract_it_reads(client: TestClient) -> None:
     report = ReportView.model_validate(client.get("/api/review/report").json())
 
     assert batch.simulated and batch.simulated_notice == wording.SIMULATED_NOTICE
-    assert batch.access_notice == wording.ACCESS_NOTICE and "no sign-in" in batch.access_notice
+    assert batch.access_notice == wording.ACCESS_NOTICE and "token" in batch.access_notice
     assert batch.meta.book.synthetic and report.batch == batch
     assert len(queue.items) == batch.referred == batch.open_cases == report.open_referrals.count > 0
     assert len(log.loans) == batch.sampled == sum(len(d.drawn) for d in draws)
@@ -75,13 +84,13 @@ def test_a_server_with_no_batch_says_so(tmp_path: Path) -> None:
         reply = client.get(f"/api/review/{path}")
         assert reply.status_code == 409, path
         assert "no review batch yet" in reply.json()["error"]["message"]
-    body = {"decision": "concern_supported", "note": "n", "reviewer": "r"}
+    body = {"decision": "concern_supported", "note": "n", "case_digest": "0" * 64}
     assert client.post("/api/review/cases/TEST-CALL-x/disposition", json=body).status_code == 409
 
 
 def test_only_a_referred_call_is_a_case(client: TestClient, store: OpsStore) -> None:
     not_referred = next(s.call.call_id for s in load_batch(store).completed if not s.referred)
-    body = {"decision": "concern_supported", "note": "n", "reviewer": "r"}
+    body = {"decision": "concern_supported", "note": "n", "case_digest": "0" * 64}
     for case_id in (not_referred, "TEST-CALL-SYN-GL-000000-9999-tb", "..%2Fbatch"):
         assert client.get(f"/api/review/cases/{case_id}").status_code == 404
         assert client.post(f"/api/review/cases/{case_id}/disposition", json=body).status_code == 404
@@ -130,11 +139,10 @@ def test_a_decision_persists_and_a_later_one_replaces_it_while_the_history_keeps
 @pytest.mark.parametrize(
     "body",
     [
-        {"decision": "guilty", "note": "a note", "reviewer": "someone"},
-        {"decision": "concern_supported", "note": "   ", "reviewer": "r"},
-        {"decision": "concern_supported", "note": "n", "reviewer": ""},
+        {"decision": "guilty", "note": "a note", "case_digest": "x"},
+        {"decision": "concern_supported", "note": "   ", "case_digest": "x"},
         {"decision": "concern_supported", "note": "n"},
-        {"decision": "concern_supported", "note": "n", "reviewer": "r", "case_id": "other"},
+        {"decision": "concern_supported", "note": "n", "case_digest": "x", "case_id": "other"},
     ],
 )
 def test_an_invalid_decision_is_refused_without_repeating_it_and_nothing_is_recorded(

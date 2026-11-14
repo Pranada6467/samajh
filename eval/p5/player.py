@@ -99,6 +99,10 @@ OPEN_TOPIC: dict[str, str] = {
     "features.reask": "money_back",
     "consent.ask": "what_you_agreed_to",
     "consent.reask": "what_you_agreed_to",
+    # W4: one follow-up for the missing half of an answer; answered from the same frozen topic as the question.
+    "consent.follow_what": "what_you_agreed_to",
+    "consent.follow_how": "what_you_agreed_to",
+    "kind.follow_what": "what_is_it",
     "stop_check.decline": "carry_on",
     "stop_check.disengaged": "carry_on",
     "stop_check.human": "want_a_person",
@@ -118,6 +122,8 @@ NO_REPLY: frozenset[str] = frozenset({
     "disclosure.never_ask", "disclosure.rights", "verify.before_loan", "verify.after_loan", "verify.short",
     "context.loan", "teach_back.intro", "teach_back.intro_nth", "bridge.moving_on",
     "ack.neutral",  # "जी।" said only before a teach-back question line (machine._ack), never last
+    # W4: said only before the question line they lead into (a re-put question, a re-ask), never last.
+    "language.switched", "defer.reask",
     "end.third_party", "end.neutral", "end.check_failed", "end.declined", "end.human", "end.call_back",
     "end.language", "end.no_response", "end.do_not_call", "end.written",
     "close.thanks", "close.may_call_back", "close.verify", "close.bye",

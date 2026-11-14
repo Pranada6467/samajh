@@ -427,6 +427,11 @@ class Disposition(Frozen):
     note: Note
     reviewer: Reviewer
     recorded_at: datetime
+    case_digest: str | None = None  # samajh.evidence.decisions.case_digest when decided; None on old lines
+    prev_sha256: str | None = None  # sha256 of the previous line's raw bytes (set by OpsStore)
+    reviewer_auth: Literal["token"] | None = None  # None: an old entry whose name was free text
+
+    added_later: ClassVar[frozenset[str]] = frozenset({"case_digest", "prev_sha256", "reviewer_auth"})
 
 
 # --- the batch -----------------------------------------------------------------

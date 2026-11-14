@@ -5,6 +5,7 @@ Nothing here reads the simulation's hidden truth (`sim-customers.jsonl`).
 """
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from samajh.ops.model import (
     FINAL_DECISIONS,
@@ -98,6 +99,7 @@ class Batch:
     outside: tuple[Outside, ...] = ()  # phone calls that are not attempts in the sample: never counted
     book: tuple[BookLoan, ...] = ()  # every loan on the book
     ingest: IngestSummary | None = None  # the last ingest of phone sessions; None if none has run
+    root: Path | None = None  # the store's directory (`OpsStore.root`), for case digests
 
     @property
     def phone_sessions(self) -> tuple[PhoneSession, ...]:
@@ -199,4 +201,5 @@ def load_batch(store: OpsStore) -> Batch:
         outside=tuple(outside),
         book=book,
         ingest=store.ingest_summary(),
+        root=store.root,
     )

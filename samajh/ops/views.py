@@ -24,6 +24,7 @@ from typing import ClassVar, Literal
 from pydantic import Field, model_validator
 
 from samajh.evalkit.score import wilson
+from samajh.evidence.decisions import case_digest
 from samajh.ops import wording
 from samajh.ops.batch import Batch, Outside, Sampled, load_batch
 from samajh.ops.model import (
@@ -150,6 +151,8 @@ class DispositionView(Frozen):
     note: str
     reviewer: str
     recorded_at: datetime
+    case_digest: str | None  # the case digest the decision was made on; None on an older entry
+    reviewer_auth: Literal["token"] | None  # "token": the name is the signed-in reviewer's; None: free text
 
 
 class QueueItem(Frozen):
@@ -278,12 +281,14 @@ class CaseView(Frozen):
     referral_basis: Basis  # what the referral rests on
     basis_label: str  # wording.BASIS_LABEL
     first_line: str | None  # shown above the summary lines; set only on a referral on the record alone
+    case_digest: str | None  # samajh.evidence.decisions.case_digest; a decision must send it back
 
 
 class DispositionIn(Frozen):
     decision: Decision
     note: Note
-    reviewer: Reviewer
+    case_digest: str  # the case_digest of the case as the reviewer saw it
+    reviewer: Reviewer | None = None  # accepted from older pages and ignored: the token names the reviewer
 
 
 # --- the attempt log ------------------------------------------------------------
@@ -602,6 +607,10 @@ class NotAReferral(LookupError):
     """No referred call has this case id."""
 
 
+class CaseChanged(Exception):
+    """The case's digest differs from the one the decision was made on."""
+
+
 def proportion(count: int, n: int) -> Proportion:
     """`count` of `n` with its Wilson 95% interval; no share and no bounds when n is 0."""
     if n == 0:
@@ -666,6 +675,8 @@ def _disposition_view(d: Disposition | None) -> DispositionView | None:
         note=d.note,
         reviewer=d.reviewer,
         recorded_at=d.recorded_at,
+        case_digest=d.case_digest,
+        reviewer_auth=d.reviewer_auth,
     )
 
 
@@ -894,19 +905,44 @@ def case_view(batch: Batch, case_id: str, sessions: Path | None = None) -> CaseV
         referral_basis=_basis(c),
         basis_label=wording.BASIS_LABEL[_basis(c)],
         first_line=c.triage.first_line,
+        case_digest=case_digest(batch.root, sessions, case_id) if batch.root is not None else None,
     )
 
 
 def record_disposition(
-    store: OpsStore, case_id: str, body: DispositionIn, now: datetime, sessions: Path | None = None
+    store: OpsStore,
+    case_id: str,
+    body: DispositionIn,
+    now: datetime,
+    sessions: Path | None = None,
+    *,
+    reviewer: str | None = None,
+    reviewer_auth: Literal["token"] | None = None,
 ) -> CaseView:
-    """Append a reviewer's decision on a referred call and return the case as it now stands."""
-    case_view(load_batch(store), case_id)  # only a referral can be decided
-    store.add_disposition(
-        Disposition(
-            case_id=case_id, decision=body.decision, note=body.note, reviewer=body.reviewer, recorded_at=now
+    """Append a reviewer's decision on a referred call and return the case as it now stands.
+
+    `reviewer`: the signed-in reviewer's name (the route passes the token's name with
+    reviewer_auth="token"); without it, the body's free-text name. Raises `CaseChanged` when
+    `body.case_digest` is not the case's digest now: nothing is appended."""
+    name = reviewer if reviewer is not None else body.reviewer
+    if name is None:
+        raise ValueError("a decision needs a reviewer")
+    with store.locked():
+        case_view(load_batch(store), case_id)  # only a referral can be decided
+        current = case_digest(store.root, sessions, case_id)
+        if body.case_digest != current:
+            raise CaseChanged(case_id)
+        store.add_disposition(
+            Disposition(
+                case_id=case_id,
+                decision=body.decision,
+                note=body.note,
+                reviewer=name,
+                recorded_at=now,
+                case_digest=current,
+                reviewer_auth=reviewer_auth,
+            )
         )
-    )
     return case_view(load_batch(store), case_id, sessions)
 
 

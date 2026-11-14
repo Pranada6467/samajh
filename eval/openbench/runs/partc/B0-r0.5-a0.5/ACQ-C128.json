@@ -1,0 +1,843 @@
+{
+ "customer_id": "ACQ-C128",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "3809cf4a07b7b645f3edda8657569c1a1970cae6f5717f99b7dbbd54fa0739e0",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं अजय नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं अजय नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से लोन लिया था। क्या आपको पता है कि उस लोन के साथ आपने क्रेडिट-लाइफ इंश्योरेंस भी लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से लोन लिया था। क्या आपको पता है कि उस लोन के साथ आपने क्रेडिट-लाइफ इंश्योरेंस भी लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से लोन लिया था।"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "stated",
+     "stated": "क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "correct",
+     "belief_value": "insurance",
+     "record_value": "insurance",
+     "draw_a": 0.22458479786291718,
+     "draw_r": 0.7799193111713976,
+     "source_topic": "what_did_you_take",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "what_is_it",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 3,
+     "kind": "needed_or_choice",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 4,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 5,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "यह इंश्योरेंस आपके लोन के लिए है। अगर आपकी मौत हो जाती है, तो यह इंश्योरेंस कंपनी लोन का पैसा चुका देगी। क्या आपको यह बात समझ में आई?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "यह इंश्योरेंस आपके लोन के लिए है। अगर आपकी मौत हो जाती है, तो यह इंश्योरेंस कंपनी लोन का पैसा चुका देगी। क्या आपको यह बात समझ में आई?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": false,
+     "states_span": "लोन के लिए"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "लोन का पैसा"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आप नियम देख लीजिए। Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "needed_or_choice",
+     "asks_inferred": true,
+     "span_dropped": "लोन के लिए",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.2405901646707207,
+     "source_topic": "needed_or_choice",
+     "text": "आप नियम देख लीजिए।"
+    },
+    {
+     "item": 2,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "लोन का पैसा",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8446936313994229,
+     "source_topic": "what_it_gives",
+     "text": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।"
+    },
+    {
+     "item": 3,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "सर, थोड़ा सुधार दूँ — इंश्योरेंस कवर 3 लाख 40 हज़ार रुपये का है, न कि 1 लाख 30 हज़ार। क्या आपको यह बताया गया था कि प्रीमियम 31,000 रुपये का एक बार दिया जाएगा?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, थोड़ा सुधार दूँ — इंश्योरेंस कवर 3 लाख 40 हज़ार रुपये का है, न कि 1 लाख 30 हज़ार। क्या आपको यह बताया गया था कि प्रीमियम 31,000 रुपये का एक बार दिया जाएगा?",
+   "agent_usd": 0.0002984,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "3 लाख 40 हज़ार रुपये"
+    },
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": "31,000 रुपये"
+    },
+    {
+     "kind": "how_often",
+     "asks": false,
+     "states_span": "एक बार"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.000101875,
+   "reply": "हाँ जी, सही है। Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "stated",
+     "stated": "3 लाख 40 हज़ार रुपये",
+     "stated_value": 340000,
+     "belief_state": "false",
+     "belief_value": 130000,
+     "record_value": 340000,
+     "draw_a": 0.8446936313994229,
+     "draw_r": 0.9321139368694276,
+     "source_topic": "what_it_gives",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "31,000 रुपये",
+     "stated_value": 31000,
+     "belief_state": "correct",
+     "belief_value": 31000,
+     "record_value": 31000,
+     "draw_a": 0.5843346442561597,
+     "draw_r": 0.7191384071484208,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "how_often",
+     "rule": "stated",
+     "stated": "एक बार",
+     "stated_value": "one_time",
+     "belief_state": "correct",
+     "belief_value": "one_time",
+     "record_value": "one_time",
+     "draw_a": 0.13182962336577475,
+     "draw_r": 0.8534253586549312,
+     "source_topic": "how_often",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "सर, फिर से बता दूँ — कवर 3 लाख 40 हज़ार रुपये का है, जो पूरे लोन को कवर करता है। क्या आपको यह पता था कि प्रीमियम लोन अमाउंट से कटा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, फिर से बता दूँ — कवर 3 लाख 40 हज़ार रुपये का है, जो पूरे लोन को कवर करता है। क्या आपको यह पता था कि प्रीमियम लोन अमाउंट से कटा था?",
+   "agent_usd": 0.0003556,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "कवर 3 लाख 40 हज़ार रुपये का है"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "प्रीमियम लोन अमाउंट से कटा था"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.591e-05,
+   "reply": "हाँ जी, सही है। Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "stated",
+     "stated": "कवर 3 लाख 40 हज़ार रुपये का है",
+     "stated_value": 340000,
+     "belief_state": "false",
+     "belief_value": 130000,
+     "record_value": 340000,
+     "draw_a": 0.8446936313994229,
+     "draw_r": 0.9321139368694276,
+     "source_topic": "what_it_gives",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "प्रीमियम लोन अमाउंट से कटा था",
+     "stated_value": "from_loan",
+     "belief_state": "false",
+     "belief_value": "separately",
+     "record_value": "from_loan",
+     "draw_a": 0.308879068819806,
+     "draw_r": 0.7445068173110485,
+     "source_topic": "how_paid",
+     "decided": "false_record_a",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "सर, मैं समझ रहा हूँ, लेकिन एक गलतफहमी है। इंश्योरेंस कवर 3 लाख 40 हज़ार रुपये का है, न कि 1 लाख 30 हज़ार। क्या आपको यह बताया गया था कि यह इंश्योरेंस ज़रूरी नहीं थी और आप किसी दूसरी कंपनी से भी ले सकते थे?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं समझ रहा हूँ, लेकिन एक गलतफहमी है। इंश्योरेंस कवर 3 लाख 40 हज़ार रुपये का है, न कि 1 लाख 30 हज़ार। क्या आपको यह बताया गया था कि यह इंश्योरेंस ज़रूरी नहीं थी और आप किसी दूसरी कंपनी से भी ले सकते थे?",
+   "agent_usd": 0.00031662,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "3 लाख 40 हज़ार रुपये"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": "क्या आपको यह बताया गया था कि यह इंश्योरेंस ज़रूरी नहीं थी और आप किसी दूसरी कंपनी से भी ले सकते थे?"
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": true,
+     "states_span": "क्या आपको यह बताया गया था कि ... आप किसी दूसरी कंपनी से भी ले सकते थे?"
+    }
+   ],
+   "router_usd": 6.001e-05,
+   "reply": "हाँ जी, सही है। Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "stated",
+     "stated": "3 लाख 40 हज़ार रुपये",
+     "stated_value": 340000,
+     "belief_state": "false",
+     "belief_value": 130000,
+     "record_value": 340000,
+     "draw_a": 0.8446936313994229,
+     "draw_r": 0.9321139368694276,
+     "source_topic": "what_it_gives",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।"
+    },
+    {
+     "item": 1,
+     "kind": "needed_or_choice",
+     "rule": "stated",
+     "stated": "क्या आपको यह बताया गया था कि यह इंश्योरेंस ज़रूरी नहीं थी और आप किसी दूसरी कंपनी से भी ले सकते थे?",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.2405901646707207,
+     "draw_r": 0.9492278853431344,
+     "source_topic": "needed_or_choice",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "where_to_take_it_from",
+     "rule": "stated",
+     "stated": "क्या आपको यह बताया गया था कि ... आप किसी दूसरी कंपनी से भी ले सकते थे?",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.2405901646707207,
+     "draw_r": 0.9492278853431344,
+     "source_topic": "where_to_take_it_from",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "सर, मैं आपकी बात समझ रहा हूँ, लेकिन रिकॉर्ड के मुताबिक कवर 3 लाख 40 हज़ार रुपये का है। क्या आपको यह पता है कि पॉलिसी 24 महीने के लिए है और 15 दिन के अंदर इसे कैंसिल भी किया जा सकता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं आपकी बात समझ रहा हूँ, लेकिन रिकॉर्ड के मुताबिक कवर 3 लाख 40 हज़ार रुपये का है। क्या आपको यह पता है कि पॉलिसी 24 महीने के लिए है और 15 दिन के अंदर इसे कैंसिल भी किया जा सकता है?",
+   "agent_usd": 0.00029986,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "3 लाख 40 हज़ार रुपये"
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "24 महीने"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": "15 दिन"
+    }
+   ],
+   "router_usd": 9.61e-05,
+   "reply": "हाँ जी, सही है। Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "stated",
+     "stated": "3 लाख 40 हज़ार रुपये",
+     "stated_value": 340000,
+     "belief_state": "false",
+     "belief_value": 130000,
+     "record_value": 340000,
+     "draw_a": 0.8446936313994229,
+     "draw_r": 0.9321139368694276,
+     "source_topic": "what_it_gives",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "24 महीने",
+     "stated_value": 24,
+     "belief_state": "correct",
+     "belief_value": 24,
+     "record_value": 24,
+     "draw_a": 0.14540540101006627,
+     "draw_r": 0.5377844511531293,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "15 दिन",
+     "stated_value": 15,
+     "belief_state": "correct",
+     "belief_value": 15,
+     "record_value": 15,
+     "draw_a": 0.26645878865383565,
+     "draw_r": 0.8043913315050304,
+     "source_topic": "can_cancel",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "सर, आप बार-बार 1 लाख 30 हज़ार रुपये कह रहे हैं, लेकिन सही कवर 3 लाख 40 हज़ार रुपये है। क्या आप चाहते हैं कि मैं आपको इसकी डिटेल्स भेज दूँ या किसी एजेंट से बात करवाऊँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, आप बार-बार 1 लाख 30 हज़ार रुपये कह रहे हैं, लेकिन सही कवर 3 लाख 40 हज़ार रुपये है। क्या आप चाहते हैं कि मैं आपको इसकी डिटेल्स भेज दूँ या किसी एजेंट से बात करवाऊँ?",
+   "agent_usd": 0.00043688,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "3 लाख 40 हज़ार रुपये"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "human",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.091e-05,
+   "reply": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा। नहीं जी, कोई सवाल नहीं। नहीं, आप ही पूछिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "stated",
+     "stated": "3 लाख 40 हज़ार रुपये",
+     "stated_value": 340000,
+     "belief_state": "false",
+     "belief_value": 130000,
+     "record_value": 340000,
+     "draw_a": 0.8446936313994229,
+     "draw_r": 0.9321139368694276,
+     "source_topic": "what_it_gives",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    },
+    {
+     "item": 2,
+     "kind": "human",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं, आप ही पूछिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "सर, धन्यवाद। क्या आपको यह भी पता है कि प्रीमियम एक बार का है और इसमें पैसा वापस नहीं मिलता?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, धन्यवाद। क्या आपको यह भी पता है कि प्रीमियम एक बार का है और इसमें पैसा वापस नहीं मिलता?",
+   "agent_usd": 0.00025746,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_often",
+     "asks": false,
+     "states_span": "एक बार का"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं मिलता"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.901e-05,
+   "reply": "हाँ जी, सही है। Rules में देख लीजिए। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "how_often",
+     "rule": "stated",
+     "stated": "एक बार का",
+     "stated_value": "one_time",
+     "belief_state": "correct",
+     "belief_value": "one_time",
+     "record_value": "one_time",
+     "draw_a": 0.13182962336577475,
+     "draw_r": 0.8534253586549312,
+     "source_topic": "how_often",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "money_back",
+     "asks_inferred": true,
+     "span_dropped": "पैसे वापस नहीं मिलता",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.48764925450086594,
+     "source_topic": "money_back",
+     "text": "Rules में देख लीजिए।"
+    },
+    {
+     "item": 4,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower को कवर के बारे में गलत जानकारी है; वे बार-बार one lakh thirty thousand rupees कह रहे हैं, जबकि सही कवर 3 लाख 40 हज़ार रुपये है।",
+     "findings": [
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।"
+      },
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "consent",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.00080532
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower को कवर के बारे में गलत जानकारी है; वे बार-बार one lakh thirty thousand rupees कह रहे हैं, जबकि सही कवर 3 लाख 40 हज़ार रुपये है।",
+  "findings": [
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "Death होने पर one lakh thirty thousand rupees तक loan चुकाएगा।"
+   },
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "consent",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.00277014,
+  "router": 0.000393815
+ },
+ "cache_hits": {
+  "agent": 3,
+  "router": 3
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:32:09+00:00",
+ "agent_turns": 10,
+ "usd_total": 0.003163955,
+ "finished_utc": "2026-11-13T22:32:53+00:00"
+}

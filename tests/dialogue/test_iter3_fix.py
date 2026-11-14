@@ -26,8 +26,19 @@ NAMING = ("verify.after_loan", "context.loan", "disclosure.reask", "kind.reask",
           "teach_back.intro_nth", "required_for_loan", "close.verify")  # fmt: skip
 
 
+# W4: the context classifier is now asked about the setup claim too; it answers that one as a classifier would, so a
+# fixed label still lands on the turn under test.
+SETUP_CLAIMS = ("हाँ जी, बोल रहा हूँ", "हाँ जी, बोल रही हूँ")
+
+
+def _setup_or(label: str, reply: str, stage: str) -> str:
+    if "first_name" in stage and reply in SETUP_CLAIMS:
+        return "confirms_self"
+    return "yes" if "go_ahead" in stage and reply == "हाँ ठीक है" else label
+
+
 def labelled(label: str) -> LlmFallbackInterpreter:
-    return LlmFallbackInterpreter(Labels(lambda reply, stage: label))
+    return LlmFallbackInterpreter(Labels(lambda reply, stage: _setup_or(label, reply, stage)))
 
 
 def raises() -> LlmFallbackInterpreter:

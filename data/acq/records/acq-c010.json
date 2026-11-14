@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C010. Ravi took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c010",
+  "label": "Synthetic ACQ record. Ravi: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1971-06-08",
+      "language": "hi",
+      "name": "Ravi Namoona"
+    },
+    "disbursed_inr": 550000,
+    "disbursed_on": "2026-10-05",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-010",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-05",
+          "method": "signed_form"
+        },
+        "cover_inr": 550000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 41500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 550000,
+    "tenure_months": 36
+  }
+}

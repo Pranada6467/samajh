@@ -1,0 +1,180 @@
+[
+ {
+  "started_utc": "2026-11-13T20:39:35+00:00",
+  "git_commit": "9c67da63dd972e49c3fce95669fd9d344527d19b",
+  "git_status_samajh_prompts": " M samajh/dialogue/_names.py\n M samajh/dialogue/interpret.py\n M samajh/dialogue/machine.py\n M samajh/server/app.py\n M samajh/server/dialogue.py\n M samajh/server/samajh_dialogue.py\n M samajh/server/sessionlog.py\n?? samajh/human/",
+  "label": "dry run 2, unfrozen, not a result",
+  "frozen": false,
+  "frozen_digests": null,
+  "knowledge": "data/acq/knowledge.jsonl",
+  "knowledge_sha256": "7400ef6143e0927d4ed5b94be094ec9c4ace64dd3cecb2e98bb85ef981390063",
+  "source_sha256": "9c89e292670b7b2cf8d83a30542721d28e08111de5361a43de31d3e128785064",
+  "source_files": [
+   [
+    "samajh/dialogue/__init__.py",
+    "b491de87f57e7c330e8f91d825ea6b5b3dee90091b0e8d7a748f22ddffb3effd"
+   ],
+   [
+    "samajh/dialogue/__main__.py",
+    "babb4d2a9dc8a0639a281624ae7182c0c9b0c270c23d10f8c715d3ae6ddcdbfc"
+   ],
+   [
+    "samajh/dialogue/_lexicon.py",
+    "b3c174dd9a6ce383dbb31303d4d8c541dc8f5ceab63531614c0ec0e14ba7a655"
+   ],
+   [
+    "samajh/dialogue/_names.py",
+    "9747078bc8109a088f6946f35f112a111764cb789c5b4104e717f6ef7b7ff222"
+   ],
+   [
+    "samajh/dialogue/interpret.py",
+    "3a76a14eed77f494df9d8ac87bfa4b397576e43d608b628d70521deaa02c4fd8"
+   ],
+   [
+    "samajh/dialogue/lint.py",
+    "f9e22b7bce6d99f806b08cfa37f859b7071c5aa53cca7fb7f0e12e1f4fe9654f"
+   ],
+   [
+    "samajh/dialogue/llm_fallback.py",
+    "becd054ae2a810bff5da5afbbf8d275f22499ee99fa21f8f748d1c2ceaa8aa85"
+   ],
+   [
+    "samajh/dialogue/machine.py",
+    "14be7a77b52c57a4b585eb17996d5ebff26982adbc70a21645c6521c989d67b5"
+   ],
+   [
+    "samajh/dialogue/prompts.py",
+    "d03f1a86aa7f5477cb8794dd8c35134493b6e15f2542e8f4fdb7531e07918305"
+   ],
+   [
+    "samajh/extract/__init__.py",
+    "c012834c8a609d322b3d0d2c2ccc89db4d5dcca6920cd6a74233e4c991362ba5"
+   ],
+   [
+    "samajh/extract/_extract.py",
+    "e97c948c75765ffad71bdc8506d6b047f6d2933391d82ccf60034d9a8e24747d"
+   ],
+   [
+    "samajh/extract/_ground.py",
+    "1559602b3419b42cd313aa148a324bc948e615e04081722037d2889c4fff3cb7"
+   ],
+   [
+    "samajh/extract/_prompt.py",
+    "5868a72059a206069e3f50299ec65eecb1142ad08bfdc229e67aed6daeeb28eb"
+   ],
+   [
+    "samajh/extract/_wire.py",
+    "4f5080d9e8b40478d4023c2a6fae9ea7fa4a718e45b0a3a87e07d3e7ddeb7226"
+   ],
+   [
+    "samajh/rules/__init__.py",
+    "9cdc1bb5805699cf5f220b1af11c7b25c85453a82b06e26b505b4faedbdc15df"
+   ],
+   [
+    "samajh/rules/checks.py",
+    "13b5230632c7a52e4b567cc6516314b015c65b78885cbed5e14e2af115a598af"
+   ],
+   [
+    "samajh/rules/clauses.py",
+    "14de95958cd0596c4a0b5b7c3f86b1768b86fd15e5fde7d24712332edda02aa3"
+   ],
+   [
+    "samajh/rules/engine.py",
+    "f121bb0734b2e09808403b1ac70ae3ada34be8c157d8b1c608db69524b9d1ee6"
+   ],
+   [
+    "samajh/rules/normalise.py",
+    "7f12ecef5ff77a6277b2176863856bb9edaed635749675af3f3e5e8708ba38e4"
+   ],
+   [
+    "samajh/rules/summary.py",
+    "09fb5ecd5e0f023f7c641df9aa6a1ec4de0c0a4620fdce45bf2952ef8b724ab0"
+   ]
+  ],
+  "source_tree_sha256": "99ee9532f0e0bdfb48dc4e1a8b27b07be71eb8b5770d5e36da7c5266c0cd1470",
+  "harness_sha256": {
+   "eval/acq/acq_build.py": "91c443e37cfd95d6a955e43a42cb7b2344e3ec3b601d5f1344fc2dd63c12f3fd",
+   "eval/acq/acq_common.py": "a70c0ab85ffc8bb9c17be0943d6f9e6d97441a62258bdadf79ca01256b541618",
+   "eval/acq/acq_player.py": "8b67602315d2d25181bbd2caf0efdaa6d8f1915226f6302b6ce10d541edf5970",
+   "eval/acq/acq_run.py": "1196f26d8d7cd906208373d0e959b00dbe5d6887241f1b6df4130be94441b521",
+   "eval/acq/acq_score.py": "d474b9af001cca0ec184acb12bc35dc1f84442dfecb8b61e642d3fed4a84cf70",
+   "eval/acq/acq_write.py": "14cfcc7c2c4c7cb12de2ab2e1159ab595e194a9a72f580692b3b6d31a4a4a09c"
+  },
+  "preflight": {
+   "reached_open_recall": 160,
+   "of": 160
+  },
+  "interpreter": {
+   "entry": "RuleInterpreter",
+   "class": "LlmFallbackInterpreter",
+   "model": "mistralai/mistral-small-3.2-24b-instruct",
+   "timeout_s": null
+  },
+  "extraction_model": "openai/gpt-6-luna",
+  "second_reading": null,
+  "a_levels": [
+   0.0,
+   1.0
+  ],
+  "r_levels": [
+   0.0,
+   0.25,
+   0.5,
+   0.75,
+   1.0
+  ],
+  "customers": [
+   "ACQ-C005",
+   "ACQ-C011",
+   "ACQ-C021",
+   "ACQ-C032"
+  ],
+  "planned_open_calls": 8,
+  "plan": [
+   [
+    "ACQ-C005",
+    0.0
+   ],
+   [
+    "ACQ-C005",
+    1.0
+   ],
+   [
+    "ACQ-C011",
+    0.0
+   ],
+   [
+    "ACQ-C011",
+    1.0
+   ],
+   [
+    "ACQ-C021",
+    0.0
+   ],
+   [
+    "ACQ-C021",
+    1.0
+   ],
+   [
+    "ACQ-C032",
+    0.0
+   ],
+   [
+    "ACQ-C032",
+    1.0
+   ]
+  ],
+  "closed_files_written": 100,
+  "usd_budget": 0.05,
+  "client_usd_cap": 0.2,
+  "finished_utc": "2026-11-13T20:39:37+00:00",
+  "usd_spent_this_process": 0.0,
+  "budget_reached": false,
+  "complete": true,
+  "done": 8,
+  "skipped": 0,
+  "no_result": 0,
+  "entry_failed": 0,
+  "not_started": 0
+ }
+]

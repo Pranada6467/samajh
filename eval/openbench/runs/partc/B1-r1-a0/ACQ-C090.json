@@ -1,0 +1,370 @@
+{
+ "customer_id": "ACQ-C090",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi",
+ "arm": "B1",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "92d52bcf86ffde2bd0e49c137efb12e1eadbcd1ff56228bc8c38364662517ca0",
+ "system_prompt_sha256": "4cbb69e766000b4035f13b8a22d52913b3bcea318014a0368c6c450cf939c00f",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं अमित नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं अमित नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.00013678,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल में हमारे यहाँ से लोन लिया है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल में हमारे यहाँ से लोन लिया है?",
+   "agent_usd": 0.00017374,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.275e-05,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "कृपया बताएं, आपने लोन के साथ कौन सा प्रोडक्ट खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "कृपया बताएं, आपने लोन के साथ कौन सा प्रोडक्ट खरीदा था?",
+   "agent_usd": 0.000168,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.855e-05,
+   "reply": "हाँ, लोन के साथ बीमा भी लिया था। कितने का, ये मुझे नहीं पता।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.42335105314850807,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, लोन के साथ बीमा भी लिया था। कितने का, ये मुझे नहीं पता।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "ठीक है। कृपया बताएं, यह बीमा किस चीज़ के लिए है और इसका प्रीमियम कैसे चुकाया गया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। कृपया बताएं, यह बीमा किस चीज़ के लिए है और इसका प्रीमियम कैसे चुकाया गया?",
+   "agent_usd": 0.00021246,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.3675e-05,
+   "reply": "लोन के साथ बीमा कवर है। अपने पैसे से, अलग से दिया था। लोन की रकम से कुछ नहीं कटा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.42335105314850807,
+     "source_topic": "what_is_it",
+     "text": "लोन के साथ बीमा कवर है।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.22520643356256187,
+     "source_topic": "how_paid",
+     "text": "अपने पैसे से, अलग से दिया था। लोन की रकम से कुछ नहीं कटा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "कृपया बताएं, यह बीमा कितने समय के लिए है और क्या आपको पैसे वापस मिलेंगे?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "कृपया बताएं, यह बीमा कितने समय के लिए है और क्या आपको पैसे वापस मिलेंगे?",
+   "agent_usd": 0.00022994,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.2825e-05,
+   "reply": "ये मुझे नहीं पता। मुझे लगता है लोन खत्म होने पर पैसा वापस आ जाता है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.008349037263542414,
+     "source_topic": "how_long",
+     "text": "ये मुझे नहीं पता।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.1293321701232344,
+     "source_topic": "money_back",
+     "text": "मुझे लगता है लोन खत्म होने पर पैसा वापस आ जाता है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "क्या आपको याद है कि आपने इस बीमा के लिए कॉल पर हाँ कहा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको याद है कि आपने इस बीमा के लिए कॉल पर हाँ कहा था?",
+   "agent_usd": 0.0002972,
+   "router_items": [
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 2.881e-05,
+   "reply": "लोन के साथ बीमा को हाँ कहा था, रिकॉर्डेड फोन कॉल पर। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_you_agreed_to",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7011599875986576,
+     "source_topic": "what_you_agreed_to",
+     "text": "लोन के साथ बीमा को हाँ कहा था, रिकॉर्डेड फोन कॉल पर।"
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "Borrower believes the premium was paid separately and not deducted from the loan, and believes money will come back at the end, both of which contradict the record.",
+     "findings": [
+      {
+       "field": "premium",
+       "belief": "false",
+       "quote": "अपने पैसे से, अलग से दिया था। लोन की रकम से कुछ नहीं कटा।"
+      },
+      {
+       "field": "source",
+       "belief": "false",
+       "quote": "अपने पैसे से, अलग से दिया था। लोन की रकम से कुछ नहीं कटा।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "मुझे लगता है लोन खत्म होने पर पैसा वापस आ जाता है।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "ये मुझे नहीं पता।"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "लोन के साथ बीमा कवर है।"
+      },
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "लोन के साथ बीमा भी लिया था।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "लोन के साथ बीमा को हाँ कहा था, रिकॉर्डेड फोन कॉल पर। हाँ जी।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.0005583
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "Borrower believes the premium was paid separately and not deducted from the loan, and believes money will come back at the end, both of which contradict the record.",
+  "findings": [
+   {
+    "field": "premium",
+    "belief": "false",
+    "quote": "अपने पैसे से, अलग से दिया था। लोन की रकम से कुछ नहीं कटा।"
+   },
+   {
+    "field": "source",
+    "belief": "false",
+    "quote": "अपने पैसे से, अलग से दिया था। लोन की रकम से कुछ नहीं कटा।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "मुझे लगता है लोन खत्म होने पर पैसा वापस आ जाता है।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "ये मुझे नहीं पता।"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "लोन के साथ बीमा कवर है।"
+   },
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "लोन के साथ बीमा भी लिया था।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "लोन के साथ बीमा को हाँ कहा था, रिकॉर्डेड फोन कॉल पर। हाँ जी।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.00177642,
+  "router": 0.00035661000000000004
+ },
+ "cache_hits": {
+  "agent": 0,
+  "router": 1
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:20:33+00:00",
+ "agent_turns": 7,
+ "usd_total": 0.00213303,
+ "finished_utc": "2026-11-13T22:21:03+00:00"
+}

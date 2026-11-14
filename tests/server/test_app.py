@@ -125,7 +125,14 @@ def test_a_full_stub_call(phone: TestClient, fake: FakeSpeech) -> None:
     assert created["bot"] == {
         "seq": 0,
         "text": StubDialogue.QUESTIONS[0],
-        "lines": [{"key": "stub.q1", "text": StubDialogue.QUESTIONS[0]}],
+        "lines": [
+            {
+                "key": "stub.q1",
+                "text": StubDialogue.QUESTIONS[0],
+                "audio_url": f"/api/sessions/{sid}/lines/0/0.wav",
+            }
+        ],
+        "line_gap_ms": 150,
         "language": "hi-IN",
         "end_call": False,
         "audio_url": f"/api/sessions/{sid}/audio/bot-000.wav",
@@ -233,7 +240,7 @@ def test_the_turn_response_shape(phone: TestClient) -> None:
         "longest_pause_ms": 0,
     }
     assert set(turn["bot"]) == {
-        "seq", "text", "lines", "language", "end_call", "audio_url", "listen", "second_reading",
+        "seq", "text", "lines", "line_gap_ms", "language", "end_call", "audio_url", "listen", "second_reading",
     }  # fmt: skip
     assert phone.get(customer["audio_url"]).content == ANSWER  # a canonical upload keeps its bytes
     logged = events(phone, sid, "customer")[0]
@@ -292,7 +299,8 @@ def test_bot_audio_is_synthesised_on_first_fetch_and_then_served_from_the_sessio
 ) -> None:
     created = start(phone)
     sid, url = created["session_id"], created["bot"]["audio_url"]
-    assert fake.tts_calls == []
+    # The opening's line may already be made in the background; nothing is committed until fetched.
+    assert len(fake.tts_calls) <= 1
     before = events(phone, sid)[0]
     assert (before["audio"], before["synth_ms"], before["lines"][0]["tts"]) == (None, None, None)
 
@@ -381,9 +389,9 @@ def test_timbre_audio_with_a_streaming_header_is_stored_repaired(phone: TestClie
 
 
 def test_a_tts_failure_is_logged_and_the_fetch_can_be_repeated(phone: TestClient, fake: FakeSpeech) -> None:
+    fake.tts_error = TransportError("ConnectTimeout on all 2 attempts")  # before the line is made
     created = start(phone)
     sid, url = created["session_id"], created["bot"]["audio_url"]
-    fake.tts_error = TransportError("ConnectTimeout on all 2 attempts")
     error = error_of(phone.get(url), 504, "gnani_unreachable")
     assert (error["stage"], error["retryable"]) == ("tts", True)
     assert [(e["stage"], e["audio"]) for e in events(phone, sid, "error")] == [("tts", None)]
@@ -393,8 +401,8 @@ def test_a_tts_failure_is_logged_and_the_fetch_can_be_repeated(phone: TestClient
 
 
 def test_a_failed_prompt_fetched_many_times_is_logged_once(phone: TestClient, fake: FakeSpeech) -> None:
-    created = start(phone)
     fake.tts_error = ServerError(status=503, code="DOWN", message="timbre is down", attempts=2)
+    created = start(phone)  # the error is armed before the opening's line is made
     for _ in range(5):
         error_of(phone.get(created["bot"]["audio_url"]), 502, "gnani_server_error")
     assert len(events(phone, created["session_id"], "error")) == 1
@@ -653,7 +661,17 @@ def test_a_reply_that_was_superseded_before_it_was_spoken_is_never_spoken(
     take_one = say(phone, sid, reply_to=0)
     say(phone, sid, make_wav(0.9), reply_to=0, part=2)
     error_of(phone.get(take_one["bot"]["audio_url"]), 409, "turn_superseded")
-    assert fake.tts_calls == []
+    for line in take_one["bot"]["lines"]:
+        error_of(phone.get(line["audio_url"]), 409, "turn_superseded")
+    log = phone.get(f"/api/sessions/{sid}").json()
+    superseded = log["events"][take_one["bot"]["seq"]]
+    assert superseded["superseded"] and superseded["audio"] is None
+    assert all(line["tts"] is None for line in superseded["lines"])
+    # Bounded waste: at most that one utterance's lines were made for it, each once.
+    wasted = [
+        text for text, _ in fake.tts_calls if text in {line["text"] for line in take_one["bot"]["lines"]}
+    ]
+    assert len(wasted) <= len(take_one["bot"]["lines"])
 
 
 def test_a_later_take_reopens_a_call_that_the_earlier_take_had_ended(fake: FakeSpeech, state: Path) -> None:
@@ -1072,8 +1090,15 @@ def test_nothing_is_spoken_after_a_hang_up(phone: TestClient, fake: FakeSpeech) 
     turn = say(phone, sid)
     assert phone.post(f"/api/sessions/{sid}/end").json()["recording_seconds"] == 0.5
     error_of(phone.get(turn["bot"]["audio_url"]), 409, "session_not_active")
-    assert fake.tts_calls == []
-    assert phone.get(f"/api/sessions/{sid}").json()["recording"]["seconds"] == 0.5
+    for line in turn["bot"]["lines"]:
+        error_of(phone.get(line["audio_url"]), 409, "session_not_active")
+    log = phone.get(f"/api/sessions/{sid}").json()
+    assert log["events"][turn["bot"]["seq"]]["audio"] is None
+    assert log["recording"]["seconds"] == 0.5  # the customer's turn only: no bot audio was added
+    # Bounded waste: nothing beyond the opening and the lines of the one reply, each once.
+    allowed = [StubDialogue.QUESTIONS[0], *(line["text"] for line in turn["bot"]["lines"])]
+    made = [text for text, _ in fake.tts_calls]
+    assert set(made) <= set(allowed) and len(made) <= len(allowed)
 
 
 def test_a_recording_of_a_call_in_progress_is_assembled_on_demand(phone: TestClient) -> None:

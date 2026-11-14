@@ -1,0 +1,1493 @@
+{
+ "customer_id": "ACQ-C159",
+ "arm": "open",
+ "kind": "knowledge_gap",
+ "gold_class": "knowledge_gap_only",
+ "language": "hi-en",
+ "gender": "f",
+ "record_id": "acq-c159",
+ "writer_model": "deepseek/deepseek-v4.1-flash",
+ "a": 1.0,
+ "second_reading": null,
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "Hello, क्या आप Jyoti जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी।",
+    "line_key": "right_party.ask"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "acknowledges",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "right_party.reask",
+     "text": "यह Jyoti जी के लिए एक automated customer care call है। क्या आप ख़ुद Jyoti जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी, मैं ख़ुद ही बात कर रही हूँ।",
+    "line_key": "right_party.reask"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "said",
+     "settled": false,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह sales नहीं, feedback call है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन minute बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी, बोलिए।",
+    "line_key": "disclosure.go_ahead"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "go_ahead",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "context.loan",
+     "text": "Thank you। आपने हाल ही में नमूना फ़ाइनेंस से जो loan लिया, उसके बारे में कुछ questions हैं।",
+     "step": "context",
+     "asks": null
+    },
+    {
+     "key": "disclosure.rights",
+     "text": "रुकना हो या किसी इंसान से बात करनी हो, तो कभी भी बोल दीजिए।",
+     "step": "context",
+     "asks": null
+    },
+    {
+     "key": "open_recall.ask",
+     "text": "Loan के साथ आपने कुछ और भी लिया था क्या? अगर हाँ, तो क्या, और कितने का?",
+     "step": "open_recall",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "what_did_you_take",
+    "variant": "defer",
+    "text": "जो आपके records में हो, वही सही।",
+    "line_key": "open_recall.ask",
+    "mapped": true,
+    "note": null,
+    "field": "kind",
+    "draw_a": 0.20851227082312107,
+    "readback": null,
+    "recall_rule": "defer",
+    "source_topic": "what_did_you_take"
+   },
+   "field": "kind",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "teach_back.intro",
+     "text": "ठीक है, उसके बारे में कुछ छोटे questions हैं।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "kind.ask",
+     "text": "वो क्या है? अपने words में बताइए।",
+     "step": "teach_back",
+     "asks": "kind"
+    }
+   ],
+   "reply": {
+    "topic": "what_is_it",
+    "variant": "defer",
+    "text": "जो कागज़ में लिखा है वही।",
+    "line_key": "kind.ask",
+    "mapped": true,
+    "note": null,
+    "field": "kind",
+    "draw_a": 0.20851227082312107,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "what_is_it"
+   },
+   "field": "kind",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "premium.ask",
+     "text": "उसके लिए आपने कितना pay किया?",
+     "step": "teach_back",
+     "asks": "premium"
+    }
+   ],
+   "reply": {
+    "topic": "how_much",
+    "variant": "defer",
+    "text": "जो आपके records में है।",
+    "line_key": "premium.ask",
+    "mapped": true,
+    "note": null,
+    "field": "premium",
+    "draw_a": 0.23709255130961537,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_much"
+   },
+   "field": "premium",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "premium.reask",
+     "text": "मतलब, उसका amount कितना था? जितना याद हो, उतना बताइए।",
+     "step": "teach_back",
+     "asks": "premium"
+    }
+   ],
+   "reply": {
+    "topic": "how_much",
+    "variant": "defer",
+    "text": "जो आपके records में है।",
+    "line_key": "premium.reask",
+    "mapped": true,
+    "note": null,
+    "field": "premium",
+    "draw_a": 0.23709255130961537,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_much"
+   },
+   "field": "premium",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "bridge.moving_on",
+     "text": "कोई बात नहीं, आगे बढ़ते हैं।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "payment_source.ask",
+     "text": "वो payment कहाँ से और कैसे हुई?",
+     "step": "teach_back",
+     "asks": "payment_source"
+    }
+   ],
+   "reply": {
+    "topic": "how_paid",
+    "variant": "defer",
+    "text": "जैसा आपके papers में हो।",
+    "line_key": "payment_source.ask",
+    "mapped": true,
+    "note": null,
+    "field": "source",
+    "draw_a": 0.33222498442046344,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_paid"
+   },
+   "field": "source",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "payment_frequency.ask",
+     "text": "यह payment एक ही बार की थी, या आगे भी करनी होगी?",
+     "step": "teach_back",
+     "asks": "payment_frequency"
+    }
+   ],
+   "reply": {
+    "topic": "how_often",
+    "variant": "defer",
+    "text": "जो record कहे।",
+    "line_key": "payment_frequency.ask",
+    "mapped": true,
+    "note": null,
+    "field": "frequency",
+    "draw_a": 0.7805861297529191,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_often"
+   },
+   "field": "frequency",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "either_or",
+     "intent": "dont_know",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "dont_know",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "required_for_loan.ask",
+     "text": "आपको क्या बताया गया था: loan के लिए यह लेना ज़रूरी है, या आपकी choice है?",
+     "step": "teach_back",
+     "asks": "required_for_loan"
+    }
+   ],
+   "reply": {
+    "topic": "needed_or_choice",
+    "variant": "defer",
+    "text": "जो आपके कागज़ में हो।",
+    "line_key": "required_for_loan.ask",
+    "mapped": true,
+    "note": null,
+    "field": "required",
+    "draw_a": 0.589798423461616,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "needed_or_choice"
+   },
+   "field": "required",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "either_or",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "provider_choice.ask",
+     "text": "क्या आपको बताया गया था कि यह आप कहीं और से भी ले सकते हैं, या नहीं?",
+     "step": "teach_back",
+     "asks": "provider_choice"
+    }
+   ],
+   "reply": {
+    "topic": "where_to_take_it_from",
+    "variant": "defer",
+    "text": "जो आपने बताया हो।",
+    "line_key": "provider_choice.ask",
+    "mapped": true,
+    "note": null,
+    "field": "required",
+    "draw_a": 0.589798423461616,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "where_to_take_it_from"
+   },
+   "field": "required",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "told",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "cover.ask",
+     "text": "उससे आपको क्या मिलता है? कोई amount जुड़ा हो, तो वो भी बताइए।",
+     "step": "teach_back",
+     "asks": "cover"
+    }
+   ],
+   "reply": {
+    "topic": "what_it_gives",
+    "variant": "defer",
+    "text": "जो आपके records में लिखा हो।",
+    "line_key": "cover.ask",
+    "mapped": true,
+    "note": null,
+    "field": "cover",
+    "draw_a": 0.2658564185258001,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "what_it_gives"
+   },
+   "field": "cover",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "term.ask",
+     "text": "वो कितने time के लिए है?",
+     "step": "teach_back",
+     "asks": "term"
+    }
+   ],
+   "reply": {
+    "topic": "how_long",
+    "variant": "defer",
+    "text": "जो कागज़ में हो।",
+    "line_key": "term.ask",
+    "mapped": true,
+    "note": null,
+    "field": "term",
+    "draw_a": 0.3404360609129071,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_long"
+   },
+   "field": "term",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "cancel_window.ask",
+     "text": "उसे बंद या cancel कराने के बारे में आपको क्या बताया गया था?",
+     "step": "teach_back",
+     "asks": "cancel_window"
+    }
+   ],
+   "reply": {
+    "topic": "can_cancel",
+    "variant": "defer",
+    "text": "जो नियम में हो।",
+    "line_key": "cancel_window.ask",
+    "mapped": true,
+    "note": null,
+    "field": "cancel",
+    "draw_a": 0.22247427538968623,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "can_cancel"
+   },
+   "field": "cancel",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "told",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "features.ask",
+     "text": "अगर आप उसमें लगे पैसे वापस चाहें, तो क्या होगा? आपको क्या लगता है?",
+     "step": "teach_back",
+     "asks": "features"
+    }
+   ],
+   "reply": {
+    "topic": "money_back",
+    "variant": "defer",
+    "text": "जो आपके papers में हो।",
+    "line_key": "features.ask",
+    "mapped": true,
+    "note": null,
+    "field": "money_back",
+    "draw_a": 0.23097025183960795,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "money_back"
+   },
+   "field": "money_back",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "consent.ask",
+     "text": "Loan लेते time आपने किन-किन चीज़ों के लिए हाँ बोला था? और वो हाँ आपने किस तरह दी थी?",
+     "step": "consent_check",
+     "asks": "consent"
+    }
+   ],
+   "reply": {
+    "topic": "what_you_agreed_to",
+    "variant": "defer",
+    "text": "जो recording में है।",
+    "line_key": "consent.ask",
+    "mapped": true,
+    "note": null,
+    "field": "consent",
+    "draw_a": 0.033450876362621784,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "what_you_agreed_to"
+   },
+   "field": "consent",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "anything_else_turns": 0,
+ "scored_from_turn": 3,
+ "final_bot": [
+  {
+   "key": "close.thanks",
+   "text": "आपके time और जवाबों के लिए thank you।",
+   "step": "close",
+   "asks": null
+  },
+  {
+   "key": "close.may_call_back",
+   "text": "ज़रूरत पड़ने पर हमारी team आपको दोबारा call कर सकती है।",
+   "step": "close",
+   "asks": null
+  },
+  {
+   "key": "close.verify",
+   "text": "कोई doubt हो, तो loan papers पर छपे नमूना फ़ाइनेंस customer care number पर पूछ सकते हैं।",
+   "step": "close",
+   "asks": null
+  },
+  {
+   "key": "close.bye",
+   "text": "नमस्ते।",
+   "step": "close",
+   "asks": null
+  }
+ ],
+ "outcome": "completed",
+ "speaker_confirmed": true,
+ "degraded_turns": 0,
+ "unresolved": [
+  {
+   "step": "teach_back",
+   "asks": "premium",
+   "product_id": "P1"
+  }
+ ],
+ "tier": "incomplete",
+ "flags": [
+  {
+   "rule_id": "recall",
+   "reason": "recall_not_named",
+   "tier": "understanding_gap",
+   "basis": "customer_statement",
+   "product_id": "P1",
+   "quote": "जो आपके records में हो, वही सही।",
+   "field": "kind"
+  }
+ ],
+ "gaps": [
+  {
+   "rule_id": "kind",
+   "reason": "no_usable_answer",
+   "tier": "incomplete",
+   "quote": "जो कागज़ में लिखा है वही।",
+   "field": "kind"
+  },
+  {
+   "rule_id": "premium",
+   "reason": "no_usable_answer",
+   "tier": "incomplete",
+   "quote": "जो आपके records में है।",
+   "field": "premium"
+  },
+  {
+   "rule_id": "cover",
+   "reason": "no_usable_answer",
+   "tier": "understanding_gap",
+   "quote": "जो आपके records में लिखा हो।",
+   "field": "cover"
+  },
+  {
+   "rule_id": "term",
+   "reason": "no_usable_answer",
+   "tier": "understanding_gap",
+   "quote": "जो कागज़ में हो।",
+   "field": "term"
+  },
+  {
+   "rule_id": "cancel_window",
+   "reason": "no_usable_answer",
+   "tier": "understanding_gap",
+   "quote": "जो नियम में हो।",
+   "field": "cancel"
+  },
+  {
+   "rule_id": "consent",
+   "reason": "no_usable_answer",
+   "tier": "incomplete",
+   "quote": "जो recording में है।",
+   "field": "consent"
+  },
+  {
+   "rule_id": "loan_funded",
+   "reason": "no_usable_answer",
+   "tier": "incomplete",
+   "quote": "जैसा आपके papers में हो।",
+   "field": "source"
+  },
+  {
+   "rule_id": "bundling",
+   "reason": "no_usable_answer",
+   "tier": "incomplete",
+   "quote": "जो आपके कागज़ में हो।",
+   "field": "required"
+  },
+  {
+   "rule_id": "belief_mismatch",
+   "reason": "no_usable_answer",
+   "tier": "incomplete",
+   "quote": "जो आपके papers में हो।",
+   "field": "money_back"
+  },
+  {
+   "rule_id": "belief_mismatch",
+   "reason": "no_usable_answer",
+   "tier": "incomplete",
+   "quote": "जो record कहे।",
+   "field": "money_back"
+  }
+ ],
+ "referral_basis": null,
+ "summary": {
+  "loan_id": "TEST-ACQ-LN-159",
+  "call_id": "acq-ACQ-C159-a1",
+  "tier": "incomplete",
+  "lines": [
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call left what the product is undecided.",
+    "record_value": "credit-life insurance from Namoona Life (synthetic)",
+    "quote": "जो कागज़ में लिखा है वही।",
+    "turn_id": 18,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "kind"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call left the premium undecided.",
+    "record_value": "premium ₹44,500, deducted from the loan",
+    "quote": "जो आपके records में है।",
+    "turn_id": 23,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "premium"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call left how they agreed to it undecided.",
+    "record_value": "consent on record: recorded call on 2026-10-25",
+    "quote": "जो recording में है।",
+    "turn_id": 46,
+    "clauses": [
+     "101G"
+    ],
+    "rule_ids": [
+     "consent"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call left how it was paid for undecided.",
+    "record_value": "premium ₹44,500, deducted from the loan",
+    "quote": "जैसा आपके papers में हो।",
+    "turn_id": 26,
+    "clauses": [
+     "101W"
+    ],
+    "rule_ids": [
+     "loan_funded"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call left whether it was required and the choice of provider undecided.",
+    "record_value": "required for the loan: no; risk mitigant: yes; choice of provider offered: yes",
+    "quote": "जो आपके कागज़ में हो।",
+    "turn_id": 31,
+    "clauses": [
+     "101V"
+    ],
+    "rule_ids": [
+     "bundling"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call left getting the money back undecided; the call left how often it is paid undecided.",
+    "record_value": "features on record: a single payment",
+    "quote": "जो आपके papers में हो।",
+    "turn_id": 44,
+    "clauses": [
+     "6(9A)(ii)"
+    ],
+    "rule_ids": [
+     "belief_mismatch"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "Customer did not name this product unprompted.",
+    "record_value": "credit-life insurance from Namoona Life (synthetic)",
+    "quote": "जो आपके records में हो, वही सही।",
+    "turn_id": 15,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "recall"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call left the cover undecided.",
+    "record_value": "cover ₹1,50,000",
+    "quote": "जो आपके records में लिखा हो।",
+    "turn_id": 36,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cover"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call left the term undecided.",
+    "record_value": "term 24 months",
+    "quote": "जो कागज़ में हो।",
+    "turn_id": 39,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "term"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call left the cancellation window undecided.",
+    "record_value": "cancellation window 30 days",
+    "quote": "जो नियम में हो।",
+    "turn_id": 41,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cancel_window"
+    ],
+    "record_only": false,
+    "note": false
+   }
+  ]
+ },
+ "transcript": {
+  "call_id": "acq-ACQ-C159-a1",
+  "loan_id": "TEST-ACQ-LN-159",
+  "language": "hi-en",
+  "turns": [
+   {
+    "id": 1,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "Hello, क्या आप Jyoti जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 2,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "हाँ जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 3,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "यह Jyoti जी के लिए एक automated customer care call है। क्या आप ख़ुद Jyoti जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 4,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "हाँ जी, मैं ख़ुद ही बात कर रही हूँ।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 5,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 6,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "यह sales नहीं, feedback call है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 7,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 8,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 9,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 10,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "क्या दो-तीन minute बात करें?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 11,
+    "speaker": "customer",
+    "step": "disclosure",
+    "text": "हाँ जी, बोलिए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 12,
+    "speaker": "bot",
+    "step": "context",
+    "text": "Thank you। आपने हाल ही में नमूना फ़ाइनेंस से जो loan लिया, उसके बारे में कुछ questions हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 13,
+    "speaker": "bot",
+    "step": "context",
+    "text": "रुकना हो या किसी इंसान से बात करनी हो, तो कभी भी बोल दीजिए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 14,
+    "speaker": "bot",
+    "step": "open_recall",
+    "text": "Loan के साथ आपने कुछ और भी लिया था क्या? अगर हाँ, तो क्या, और कितने का?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 15,
+    "speaker": "customer",
+    "step": "open_recall",
+    "text": "जो आपके records में हो, वही सही।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 16,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "ठीक है, उसके बारे में कुछ छोटे questions हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 17,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "वो क्या है? अपने words में बताइए।",
+    "asks": "kind",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 18,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो कागज़ में लिखा है वही।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 19,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 20,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "उसके लिए आपने कितना pay किया?",
+    "asks": "premium",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 21,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो आपके records में है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 22,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "मतलब, उसका amount कितना था? जितना याद हो, उतना बताइए।",
+    "asks": "premium",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 23,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो आपके records में है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 24,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "कोई बात नहीं, आगे बढ़ते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 25,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "वो payment कहाँ से और कैसे हुई?",
+    "asks": "payment_source",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 26,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जैसा आपके papers में हो।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 27,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 28,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "यह payment एक ही बार की थी, या आगे भी करनी होगी?",
+    "asks": "payment_frequency",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 29,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो record कहे।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 30,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "आपको क्या बताया गया था: loan के लिए यह लेना ज़रूरी है, या आपकी choice है?",
+    "asks": "required_for_loan",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 31,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो आपके कागज़ में हो।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 32,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 33,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "क्या आपको बताया गया था कि यह आप कहीं और से भी ले सकते हैं, या नहीं?",
+    "asks": "provider_choice",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 34,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो आपने बताया हो।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 35,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "उससे आपको क्या मिलता है? कोई amount जुड़ा हो, तो वो भी बताइए।",
+    "asks": "cover",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 36,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो आपके records में लिखा हो।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 37,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 38,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "वो कितने time के लिए है?",
+    "asks": "term",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 39,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो कागज़ में हो।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 40,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "उसे बंद या cancel कराने के बारे में आपको क्या बताया गया था?",
+    "asks": "cancel_window",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 41,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो नियम में हो।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 42,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 43,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "अगर आप उसमें लगे पैसे वापस चाहें, तो क्या होगा? आपको क्या लगता है?",
+    "asks": "features",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 44,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जो आपके papers में हो।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 45,
+    "speaker": "bot",
+    "step": "consent_check",
+    "text": "Loan लेते time आपने किन-किन चीज़ों के लिए हाँ बोला था? और वो हाँ आपने किस तरह दी थी?",
+    "asks": "consent",
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 46,
+    "speaker": "customer",
+    "step": "consent_check",
+    "text": "जो recording में है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 47,
+    "speaker": "bot",
+    "step": "close",
+    "text": "आपके time और जवाबों के लिए thank you।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 48,
+    "speaker": "bot",
+    "step": "close",
+    "text": "ज़रूरत पड़ने पर हमारी team आपको दोबारा call कर सकती है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 49,
+    "speaker": "bot",
+    "step": "close",
+    "text": "कोई doubt हो, तो loan papers पर छपे नमूना फ़ाइनेंस customer care number पर पूछ सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 50,
+    "speaker": "bot",
+    "step": "close",
+    "text": "नमस्ते।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   }
+  ]
+ },
+ "llm_requests": 35,
+ "llm_cache_hits": 32,
+ "usd_this_call": 9.2e-05,
+ "degraded_turn_count": 0,
+ "finished_utc": "2026-11-13T21:34:54+00:00"
+}

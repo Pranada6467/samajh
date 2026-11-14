@@ -41,8 +41,10 @@ class GatedLlm:
             self.release.wait(30)
         else:
             time.sleep(self.delay)
-        go_ahead = "Stage: go_ahead" in messages[-1].content
-        return SimpleNamespace(value=schema(label="yes" if go_ahead else "answer"))
+        content = messages[-1].content
+        # W4: the name question now reaches the classifier too, with its own closed label set.
+        label = "yes" if "Stage: go_ahead" in content else "confirms_self" if "Stage: first_name" in content else "answer"
+        return SimpleNamespace(value=schema(label=label))
 
 
 @pytest.fixture

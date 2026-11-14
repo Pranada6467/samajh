@@ -1,0 +1,769 @@
+{
+ "customer_id": "ACQ-C082",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "7a412381d17c8b8f8ec91aff05de5ae80b8c272f84abb8c101bff7086f7fce34",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं अनीता नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं अनीता नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी अनीता जी, मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल में हमारे यहाँ से एक लोन लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी अनीता जी, मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल में हमारे यहाँ से एक लोन लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जी, लोन के साथ एक एफडी कराई थी, बाईस हज़ार रुपये की।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.3875952581875026,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "जी, लोन के साथ एक एफडी कराई थी, बाईस हज़ार रुपये की।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "अनीता जी, वो एफडी नहीं, क्रेडिट-लाइफ इंश्योरेंस है। क्या आपको याद है कि आपने लोन के साथ इंश्योरेंस ली थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनीता जी, वो एफडी नहीं, क्रेडिट-लाइफ इंश्योरेंस है। क्या आपको याद है कि आपने लोन के साथ इंश्योरेंस ली थी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "ठीक है। क्या आप बता सकती हैं कि ये इंश्योरेंस किस चीज़ के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आप बता सकती हैं कि ये इंश्योरेंस किस चीज़ के लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो एक फिक्स्ड डिपॉजिट है, जो लोन के बदले में रखी है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.3875952581875026,
+     "source_topic": "what_is_it",
+     "text": "वो एक फिक्स्ड डिपॉजिट है, जो लोन के बदले में रखी है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "अनीता जी, ये फिक्स्ड डिपॉजिट नहीं, बल्कि क्रेडिट-लाइफ इंश्योरेंस है। अगर आपकी मृत्यु हो जाती है, तो ये इंश्योरेंस आपके लोन की रकम चुका देगी। क्या आपको ये बात पता थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनीता जी, ये फिक्स्ड डिपॉजिट नहीं, बल्कि क्रेडिट-लाइफ इंश्योरेंस है। अगर आपकी मृत्यु हो जाती है, तो ये इंश्योरेंस आपके लोन की रकम चुका देगी। क्या आपको ये बात पता थी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस है"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "आपके लोन की रकम चुका देगी"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "अगर मैं न रहूँ, तो लोन में एक लाख तीस हज़ार रुपये तक भरेगा। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "आपके लोन की रकम चुका देगी",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.17881238646805286,
+     "source_topic": "what_it_gives",
+     "text": "अगर मैं न रहूँ, तो लोन में एक लाख तीस हज़ार रुपये तक भरेगा।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "बिल्कुल सही। क्या आपको पता है कि इंश्योरेंस की प्रीमियम, 22,000 रुपये, लोन अमाउंट से कटी थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "बिल्कुल सही। क्या आपको पता है कि इंश्योरेंस की प्रीमियम, 22,000 रुपये, लोन अमाउंट से कटी थी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "22,000 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "लोन अमाउंट से कटी थी"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "22,000 रुपये",
+     "stated_value": 22000,
+     "belief_state": "correct",
+     "belief_value": 22000,
+     "record_value": 22000,
+     "draw_a": 0.8697007040027529,
+     "draw_r": 0.6883657260332257,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन अमाउंट से कटी थी",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.9476529490202665,
+     "draw_r": 0.6581026318017393,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "ठीक है। क्या आपको ये भी पता है कि ये इंश्योरेंस लेना अनिवार्य नहीं था और आप किसी दूसरी कंपनी का भी चुन सकती थीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको ये भी पता है कि ये इंश्योरेंस लेना अनिवार्य नहीं था और आप किसी दूसरी कंपनी का भी चुन सकती थीं?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": false,
+     "states_span": "अनिवार्य नहीं था"
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": false,
+     "states_span": "किसी दूसरी कंपनी का भी चुन सकती थीं"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "needed_or_choice",
+     "rule": "stated",
+     "stated": "अनिवार्य नहीं था",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.867869621841237,
+     "draw_r": 0.180764336604625,
+     "source_topic": "needed_or_choice",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "where_to_take_it_from",
+     "rule": "stated",
+     "stated": "किसी दूसरी कंपनी का भी चुन सकती थीं",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.867869621841237,
+     "draw_r": 0.180764336604625,
+     "source_topic": "where_to_take_it_from",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "ठीक है। क्या आपको ये बताया गया था कि अगर आप 15 दिन के अंदर इंश्योरेंस को कैंसिल कर दें, तो पैसे वापस मिल जाएंगे?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको ये बताया गया था कि अगर आप 15 दिन के अंदर इंश्योरेंस को कैंसिल कर दें, तो पैसे वापस मिल जाएंगे?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "15 दिन"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": false,
+     "states_span": "15 दिन के अंदर"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस मिल जाएंगे"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। ये दो साल के लिए है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "asks_inferred": true,
+     "span_dropped": "15 दिन",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.15306589868851006,
+     "source_topic": "how_long",
+     "text": "ये दो साल के लिए है।"
+    },
+    {
+     "item": 2,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "15 दिन के अंदर",
+     "stated_value": 15,
+     "belief_state": "correct",
+     "belief_value": 15,
+     "record_value": 15,
+     "draw_a": 0.767446695594117,
+     "draw_r": 0.3882396323606372,
+     "source_topic": "can_cancel",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस मिल जाएंगे",
+     "stated_value": "yes",
+     "belief_state": "false",
+     "belief_value": "yes",
+     "record_value": "no",
+     "draw_a": 0.9793158282991499,
+     "draw_r": 0.07009164895862341,
+     "source_topic": "money_back",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 4,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "बहुत बढ़िया। क्या आपको ये भी पता है कि इंश्योरेंस की अवधि 24 महीने की है और इसमें पैसे वापस नहीं मिलते?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "बहुत बढ़िया। क्या आपको ये भी पता है कि इंश्योरेंस की अवधि 24 महीने की है और इसमें पैसे वापस नहीं मिलते?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "24 महीने"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं मिलते"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। मुझे लगता है लोन खत्म होने पर वो पैसा वापस मिल जाएगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "24 महीने",
+     "stated_value": 24,
+     "belief_state": "correct",
+     "belief_value": 24,
+     "record_value": 24,
+     "draw_a": 0.15306589868851006,
+     "draw_r": 0.7268261476419866,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस नहीं मिलते",
+     "stated_value": "no",
+     "belief_state": "false",
+     "belief_value": "yes",
+     "record_value": "no",
+     "draw_a": 0.9793158282991499,
+     "draw_r": 0.07009164895862341,
+     "source_topic": "money_back",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "मुझे लगता है लोन खत्म होने पर वो पैसा वापस मिल जाएगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "अनीता जी, इंश्योरेंस के पैसे वापस नहीं आते, चाहे लोन खत्म हो जाए। क्या आपको ये बात पहले बताई गई थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनीता जी, इंश्योरेंस के पैसे वापस नहीं आते, चाहे लोन खत्म हो जाए। क्या आपको ये बात पहले बताई गई थी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं आते"
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "लोन खत्म हो जाए"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मुझे लगता है लोन खत्म होने पर वो पैसा वापस मिल जाएगा। जी, दो साल तक चलेगी वो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस नहीं आते",
+     "stated_value": "no",
+     "belief_state": "false",
+     "belief_value": "yes",
+     "record_value": "no",
+     "draw_a": 0.9793158282991499,
+     "draw_r": 0.07009164895862341,
+     "source_topic": "money_back",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "मुझे लगता है लोन खत्म होने पर वो पैसा वापस मिल जाएगा।"
+    },
+    {
+     "item": 2,
+     "kind": "how_long",
+     "asks_inferred": true,
+     "span_dropped": "लोन खत्म हो जाए",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.15306589868851006,
+     "source_topic": "how_long",
+     "text": "जी, दो साल तक चलेगी वो।"
+    },
+    {
+     "item": 3,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "ठीक है। क्या आपने इस इंश्योरेंस के लिए हाँ कहा था, जब आपको फोन पर पूछा गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपने इस इंश्योरेंस के लिए हाँ कहा था, जब आपको फोन पर पूछा गया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "हाँ"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो एक फिक्स्ड डिपॉजिट है, जो लोन के बदले में रखी है। मैंने फोन पर रिकॉर्डिंग वाली कॉल में लोन और एफडी दोनों के लिए हाँ बोला था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.3875952581875026,
+     "draw_r": 0.4718543279450387,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "वो एक फिक्स्ड डिपॉजिट है, जो लोन के बदले में रखी है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "span_dropped": "हाँ",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.038222808158025146,
+     "source_topic": "what_you_agreed_to",
+     "text": "मैंने फोन पर रिकॉर्डिंग वाली कॉल में लोन और एफडी दोनों के लिए हाँ बोला था।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 11,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower believes the product is a fixed deposit and that money will be returned at the end, which contradicts the record.",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "वो एक फिक्स्ड डिपॉजिट है, जो लोन के बदले में रखी है।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "मुझे लगता है लोन खत्म होने पर वो पैसा वापस मिल जाएगा।"
+      },
+      {
+       "field": "consent",
+       "belief": "does_not_know",
+       "quote": "मैंने फोन पर रिकॉर्डिंग वाली कॉल में लोन और एफडी दोनों के लिए हाँ बोला था।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.0
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower believes the product is a fixed deposit and that money will be returned at the end, which contradicts the record.",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "वो एक फिक्स्ड डिपॉजिट है, जो लोन के बदले में रखी है।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "मुझे लगता है लोन खत्म होने पर वो पैसा वापस मिल जाएगा।"
+   },
+   {
+    "field": "consent",
+    "belief": "does_not_know",
+    "quote": "मैंने फोन पर रिकॉर्डिंग वाली कॉल में लोन और एफडी दोनों के लिए हाँ बोला था।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 12,
+  "router": 11
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:24:59+00:00",
+ "agent_turns": 12,
+ "usd_total": 0.0,
+ "finished_utc": "2026-11-13T22:24:59+00:00"
+}

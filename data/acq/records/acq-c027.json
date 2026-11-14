@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C027. Sunil took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c027",
+  "label": "Synthetic ACQ record. Sunil: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1970-12-01",
+      "language": "hi-en",
+      "name": "Sunil Namoona"
+    },
+    "disbursed_inr": 146000,
+    "disbursed_on": "2026-10-16",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-027",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-16",
+          "method": "signed_form"
+        },
+        "cover_inr": 170000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 24000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 170000,
+    "tenure_months": 24
+  }
+}

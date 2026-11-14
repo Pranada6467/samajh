@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C053. Deepak took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c053",
+  "label": "Synthetic ACQ record. Deepak: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1983-09-15",
+      "language": "hi",
+      "name": "Deepak Namoona"
+    },
+    "disbursed_inr": 92000,
+    "disbursed_on": "2026-10-01",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-053",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-01",
+          "method": "recorded_call"
+        },
+        "cover_inr": 110000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 18000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 110000,
+    "tenure_months": 36
+  }
+}

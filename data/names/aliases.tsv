@@ -1,0 +1,6 @@
+# Per-name alias groups (iteration 4 fix round): spellings of one name that no general fold joins and that a general
+# rule would make unsafe. One group per line, spellings tab-separated. Added only for a named convention, never to
+# pass a test case by itself: the -ian / -iam / -yam ending of Tamil names, and the Arabic Ayesha/Aisha.
+Balasubramanian	Balasubramaniam	Balasubramanyam	बालसुब्रमण्यम	बालसुब्रमणियन	बालासुब्रमण्यम
+Subramanian	Subramaniam	Subramanyam	सुब्रमण्यम	सुब्रमणियन	सुब्रह्मण्यम
+Ayesha	Aisha	Aysha	Ayisha	आयशा	आइशा	आयेशा	ऐशा

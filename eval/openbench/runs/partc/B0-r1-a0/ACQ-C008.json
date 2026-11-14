@@ -1,0 +1,727 @@
+{
+ "customer_id": "ACQ-C008",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "669adf08b2a7506a39d61d683b410b00ee460b880ea1e3e37dea106c036aea2c",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्री राकेश नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्री राकेश नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी राकेश जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से एक लोन लिया था। क्या आप बता सकते हैं कि आपने लोन के साथ कौन सा प्रोडक्ट खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राकेश जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से एक लोन लिया था। क्या आप बता सकते हैं कि आपने लोन के साथ कौन सा प्रोडक्ट खरीदा था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ। loan के साथ एक FD ली थी, पच्चीस हज़ार रुपये की।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.23755284934304655,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "loan के साथ एक FD ली थी, पच्चीस हज़ार रुपये की।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "जी राकेश जी, थोड़ा स्पष्ट कर दूँ – क्या आपको याद है कि आपने लोन के साथ एक इंश्योरेंस प्रोडक्ट खरीदा था, जिसका नाम क्रेडिट-लाइफ इंश्योरेंस था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राकेश जी, थोड़ा स्पष्ट कर दूँ – क्या आपको याद है कि आपने लोन के साथ एक इंश्योरेंस प्रोडक्ट खरीदा था, जिसका नाम क्रेडिट-लाइफ इंश्योरेंस था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो एक FD है, fixed deposit, जो loan के against रखी है। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "span_dropped": "क्रेडिट-लाइफ इंश्योरेंस",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.23755284934304655,
+     "source_topic": "what_is_it",
+     "text": "वो एक FD है, fixed deposit, जो loan के against रखी है।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "जी राकेश जी, थोड़ा स्पष्ट करूँ – आपने जो प्रोडक्ट खरीदा, वो कोई फिक्स्ड डिपॉजिट नहीं था, बल्कि क्रेडिट-लाइफ इंश्योरेंस था। क्या आपको ये याद है कि अगर आपकी मृत्यु हो जाए तो ये इंश्योरेंस लोन की रकम चुका देगी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राकेश जी, थोड़ा स्पष्ट करूँ – आपने जो प्रोडक्ट खरीदा, वो कोई फिक्स्ड डिपॉजिट नहीं था, बल्कि क्रेडिट-लाइफ इंश्योरेंस था। क्या आपको ये याद है कि अगर आपकी मृत्यु हो जाए तो ये इंश्योरेंस लोन की रकम चुका देगी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस था"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "अगर आपकी मृत्यु हो जाए तो ये इंश्योरेंस लोन की रकम चुका देगी"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "death होने पर loan के लिए एक लाख सत्तर हज़ार रुपये तक मिलते हैं। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "अगर आपकी मृत्यु हो जाए तो ये इंश्योरेंस लोन की रकम चुका देगी",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7821192264091223,
+     "source_topic": "what_it_gives",
+     "text": "death होने पर loan के लिए एक लाख सत्तर हज़ार रुपये तक मिलते हैं।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "जी बिल्कुल सही, अगर कुछ हो जाए तो ये इंश्योरेंस लोन की रकम, एक लाख सत्तर हज़ार रुपये, चुका देगी। क्या आपको याद है कि इस पर आपने पच्चीस हज़ार रुपये का प्रीमियम एक बार में दिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी बिल्कुल सही, अगर कुछ हो जाए तो ये इंश्योरेंस लोन की रकम, एक लाख सत्तर हज़ार रुपये, चुका देगी। क्या आपको याद है कि इस पर आपने पच्चीस हज़ार रुपये का प्रीमियम एक बार में दिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "एक लाख सत्तर हज़ार रुपये"
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "पच्चीस हज़ार रुपये"
+    },
+    {
+     "kind": "how_often",
+     "asks": false,
+     "states_span": "एक बार में"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "stated",
+     "stated": "एक लाख सत्तर हज़ार रुपये",
+     "stated_value": 170000,
+     "belief_state": "correct",
+     "belief_value": 170000,
+     "record_value": 170000,
+     "draw_a": 0.7821192264091223,
+     "draw_r": 0.5204882968682796,
+     "source_topic": "what_it_gives",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "पच्चीस हज़ार रुपये",
+     "stated_value": 25000,
+     "belief_state": "correct",
+     "belief_value": 25000,
+     "record_value": 25000,
+     "draw_a": 0.5305324366781861,
+     "draw_r": 0.4268958803731948,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "how_often",
+     "rule": "stated",
+     "stated": "एक बार में",
+     "stated_value": "one_time",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "one_time",
+     "draw_a": 0.984974607359618,
+     "draw_r": 0.38544467301107943,
+     "source_topic": "how_often",
+     "decided": "dk_r",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "जी राकेश जी, क्या आपको ये भी पता है कि ये इंश्योरेंस तीन साल के लिए है, और अगर आप चाहें तो खरीदने के 15 दिनों के अंदर इसे कैंसिल भी कर सकते हैं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राकेश जी, क्या आपको ये भी पता है कि ये इंश्योरेंस तीन साल के लिए है, और अगर आप चाहें तो खरीदने के 15 दिनों के अंदर इसे कैंसिल भी कर सकते हैं?",
+   "agent_usd": 0.00035616,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "तीन साल"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": false,
+     "states_span": "15 दिनों के अंदर"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 9.26e-05,
+   "reply": "हाँ जी, सही है। हाँ, पंद्रह दिन के अंदर cancel कर सकते हैं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "तीन साल",
+     "stated_value": 36,
+     "belief_state": "correct",
+     "belief_value": 36,
+     "record_value": 36,
+     "draw_a": 0.6393984332680702,
+     "draw_r": 0.34162506833672523,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "duplicate",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8203340317122638,
+     "source_topic": "can_cancel",
+     "text": "हाँ, पंद्रह दिन के अंदर cancel कर सकते हैं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "जी राकेश जी, और एक बात – क्या आपको ये पता है कि इस इंश्योरेंस पर आखिर में कोई पैसा वापस नहीं मिलता?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राकेश जी, और एक बात – क्या आपको ये पता है कि इस इंश्योरेंस पर आखिर में कोई पैसा वापस नहीं मिलता?",
+   "agent_usd": 0.00035078,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "कोई पैसा वापस नहीं मिलता"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "कोई पैसा वापस नहीं मिलता"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.031e-05,
+   "reply": "मरने पर loan चुकाने के लिए एक लाख सत्तर हज़ार रुपये तक देती है। loan खत्म होने पर वो पैसा वापस मिल जाएगा। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "कोई पैसा वापस नहीं मिलता",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.7821192264091223,
+     "source_topic": "what_it_gives",
+     "text": "मरने पर loan चुकाने के लिए एक लाख सत्तर हज़ार रुपये तक देती है।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "asks_inferred": true,
+     "span_dropped": "कोई पैसा वापस नहीं मिलता",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.760447854641825,
+     "source_topic": "money_back",
+     "text": "loan खत्म होने पर वो पैसा वापस मिल जाएगा।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "जी राकेश जी, थोड़ा स्पष्ट कर दूँ – इस इंश्योरेंस पर, अगर आप जीवित रहते हैं और लोन खत्म हो जाता है, तो आपको कोई पैसा वापस नहीं मिलता। क्या आपको ये पहले से पता था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राकेश जी, थोड़ा स्पष्ट कर दूँ – इस इंश्योरेंस पर, अगर आप जीवित रहते हैं और लोन खत्म हो जाता है, तो आपको कोई पैसा वापस नहीं मिलता। क्या आपको ये पहले से पता था?",
+   "agent_usd": 0.00027868,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "कोई पैसा वापस नहीं मिलता"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "कोई पैसा वापस नहीं मिलता"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.771e-05,
+   "reply": "मरने पर loan चुकाने के लिए एक लाख सत्तर हज़ार रुपये तक देती है। loan खत्म होने पर वो पैसा वापस मिल जाएगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "कोई पैसा वापस नहीं मिलता",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.7821192264091223,
+     "source_topic": "what_it_gives",
+     "text": "मरने पर loan चुकाने के लिए एक लाख सत्तर हज़ार रुपये तक देती है।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "कोई पैसा वापस नहीं मिलता",
+     "stated_value": "no",
+     "belief_state": "false",
+     "belief_value": "yes",
+     "record_value": "no",
+     "draw_a": 0.760447854641825,
+     "draw_r": 0.5483709631953388,
+     "source_topic": "money_back",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "loan खत्म होने पर वो पैसा वापस मिल जाएगा।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 3,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "जी राकेश जी, मैं समझ गया। मैं आपको इस बात का स्पष्टीकरण दे देता हूँ कि ये इंश्योरेंस केवल मृत्यु के मामले में लोन चुकाती है, और अगर लोन पूरा हो जाता है या आप जीवित रहते हैं, तो प्रीमियम वापस नहीं मिलता। क्या आप चाहेंगे कि मैं आपको इसका विवरण भेज दूँ या किसी एजेंट से बात करवाऊँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राकेश जी, मैं समझ गया। मैं आपको इस बात का स्पष्टीकरण दे देता हूँ कि ये इंश्योरेंस केवल मृत्यु के मामले में लोन चुकाती है, और अगर लोन पूरा हो जाता है या आप जीवित रहते हैं, तो प्रीमियम वापस नहीं मिलता। क्या आप चाहेंगे कि मैं आपको इसका विवरण भेज दूँ या किसी एजेंट से बात करवाऊँ?",
+   "agent_usd": 0.00039252,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "मृत्यु के मामले में लोन चुकाती है"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "अगर लोन पूरा हो जाता है या आप जीवित रहते हैं, तो प्रीमियम वापस नहीं मिलता"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": false,
+     "states_span": "इस बात का स्पष्टीकरण"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "human",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "closing",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.251e-05,
+   "reply": "मरने पर loan चुकाने के लिए एक लाख सत्तर हज़ार रुपये तक देती है। loan खत्म होने पर वो पैसा वापस मिल जाएगा। loan और FD दोनों के लिए phone पर OTP देकर yes कहा था। नहीं जी, कोई सवाल नहीं। नहीं, आप ही पूछिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "मृत्यु के मामले में लोन चुकाती है",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.7821192264091223,
+     "source_topic": "what_it_gives",
+     "text": "मरने पर loan चुकाने के लिए एक लाख सत्तर हज़ार रुपये तक देती है।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "अगर लोन पूरा हो जाता है या आप जीवित रहते हैं, तो प्रीमियम वापस नहीं मिलता",
+     "stated_value": "no",
+     "belief_state": "false",
+     "belief_value": "yes",
+     "record_value": "no",
+     "draw_a": 0.760447854641825,
+     "draw_r": 0.5483709631953388,
+     "source_topic": "money_back",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "loan खत्म होने पर वो पैसा वापस मिल जाएगा।"
+    },
+    {
+     "item": 2,
+     "kind": "what_you_agreed_to",
+     "asks_inferred": true,
+     "span_dropped": "इस बात का स्पष्टीकरण",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7399251936003566,
+     "source_topic": "what_you_agreed_to",
+     "text": "loan और FD दोनों के लिए phone पर OTP देकर yes कहा था।"
+    },
+    {
+     "item": 3,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    },
+    {
+     "item": 4,
+     "kind": "human",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं, आप ही पूछिए।"
+    },
+    {
+     "item": 5,
+     "kind": "closing",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "जी राकेश जी, धन्यवाद। अगर कोई सवाल आए तो हमसे संपर्क करें। आपका दिन शुभ रहे।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower believes they bought an FD and that the premium will be returned at the end, which contradicts the record.",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "loan के साथ एक FD ली थी, पच्चीस हज़ार रुपये की।"
+      },
+      {
+       "field": "source",
+       "belief": "false",
+       "quote": "loan और FD दोनों के लिए phone पर OTP देकर yes कहा था।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "loan खत्म होने पर वो पैसा वापस मिल जाएगा।"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "मरने पर loan चुकाने के लिए एक लाख सत्तर हज़ार रुपये तक देती है।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "हाँ, पंद्रह दिन के अंदर cancel कर सकते हैं।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "हाँ, पंद्रह दिन के अंदर cancel कर सकते हैं।"
+      }
+     ]
+    }
+   },
+   "say": "जी राकेश जी, धन्यवाद। अगर कोई सवाल आए तो हमसे संपर्क करें। आपका दिन शुभ रहे।",
+   "agent_usd": 0.00079896
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower believes they bought an FD and that the premium will be returned at the end, which contradicts the record.",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "loan के साथ एक FD ली थी, पच्चीस हज़ार रुपये की।"
+   },
+   {
+    "field": "source",
+    "belief": "false",
+    "quote": "loan और FD दोनों के लिए phone पर OTP देकर yes कहा था।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "loan खत्म होने पर वो पैसा वापस मिल जाएगा।"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "मरने पर loan चुकाने के लिए एक लाख सत्तर हज़ार रुपये तक देती है।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "हाँ, पंद्रह दिन के अंदर cancel कर सकते हैं।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "हाँ, पंद्रह दिन के अंदर cancel कर सकते हैं।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0021771,
+  "router": 0.00025312999999999996
+ },
+ "cache_hits": {
+  "agent": 5,
+  "router": 5
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:23:56+00:00",
+ "agent_turns": 10,
+ "usd_total": 0.00243023,
+ "finished_utc": "2026-11-13T22:24:32+00:00"
+}

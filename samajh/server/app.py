@@ -9,6 +9,8 @@ file plus the lock that orders the requests of one call.
 from __future__ import annotations
 
 import asyncio
+import io
+import json
 import logging
 import math
 import os
@@ -16,8 +18,10 @@ import queue
 import re
 import threading
 import time
-from collections.abc import AsyncIterator, Callable, Mapping, Sequence
-from contextlib import asynccontextmanager
+import wave
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping, Sequence
+from concurrent.futures import Future
+from contextlib import asynccontextmanager, contextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import cache
@@ -26,7 +30,7 @@ from typing import TYPE_CHECKING, Any, Literal, TypeVar, get_args
 from urllib.parse import urlsplit
 
 import anyio
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, ValidationError
@@ -36,7 +40,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from samajh.clients._runtime import state_dir
 from samajh.clients.errors import BadResponse, ConfigError
-from samajh.clients.gnani import PrismaV25, PrismaV30, Transcript, wav_seconds
+from samajh.clients.gnani import PrismaV25, PrismaV30, Timbre, Transcript, wav_seconds
 from samajh.extract import Llm
 from samajh.identity import parse_policy
 from samajh.server.audio import (
@@ -67,6 +71,9 @@ from samajh.server.sessionlog import (
     AUDIO_NAME,
     BotEvent,
     BotLineLog,
+    BrowserListen,
+    BrowserPlayback,
+    ClassifierCall,
     CustomerEvent,
     ErrorEvent,
     LineRate,
@@ -92,6 +99,7 @@ from samajh.server.speech import (
     stt_params,
     tts_options,
 )
+from samajh.server.stream import StreamFactory, StreamHub
 from samajh.types import Language
 
 if TYPE_CHECKING:
@@ -140,6 +148,9 @@ class CreateSession(_Body):
     # `samajh.identity.IdentityPolicy`; None: the server's `[identity]`. Anything outside the menu
     # is refused (422 invalid_identity). Stored in the session params as canonical JSON.
     identity: dict[str, Any] | None = None
+    # False: this call never streams its primary reading. Absent or true: it streams when the
+    # server's `[streaming]` is on; a session can turn streaming off, never on.
+    streaming: bool | None = None
 
 
 class EndSession(_Body):
@@ -153,6 +164,7 @@ class _TurnRequest:
     part: int
     eos_wait_ms: float | None
     phone: PhoneTurn | None
+    stream: bool = False  # `stream=1`: the phone streamed this reply (samajh.server.stream)
 
 
 class _Gnani:
@@ -188,6 +200,8 @@ class _Live:
     # buffered at a time and a duplicate request finds the first one's stored reply.
     turns: asyncio.Lock = field(default_factory=asyncio.Lock)
     users: int = 0  # requests in flight; a session in use is never dropped from memory
+    # Bot events whose lines are being made or were made in this server run, by seq.
+    speech: dict[int, _SpeechJob] = field(default_factory=dict)
 
     @classmethod
     def resumed(cls, log: SessionLog) -> _Live:
@@ -204,6 +218,97 @@ class _Live:
 
 class _TooLate(Exception):
     pass
+
+
+_Line = tuple[bytes, TtsCall]  # one line's canonical WAV at the line rate, and its Timbre call
+
+
+@dataclass(frozen=True)
+class _Spoken:
+    """An event's lines joined as `_speak` always joined them, ready to commit."""
+
+    wav: bytes
+    spans: list[tuple[float, float]]
+    calls: list[TtsCall]
+    synth_ms: float
+
+
+class _SpeechJob:
+    """One bot event's lines, made in order in a worker thread: a future per line and one for
+    the joined audio. The last line's future is set after `done`, so whoever waits for the last
+    line finds the joined audio ready to commit. A failure fails that line and every later one."""
+
+    def __init__(self, seq: int, count: int, made: Mapping[int, _Line]) -> None:
+        self.seq = seq
+        self.lines: list[Future[_Line]] = [Future() for _ in range(count)]
+        self.done: Future[_Spoken] = Future()
+        # Set once a request has answered with this job's failure: only then does the next
+        # request start a fresh job, so a failure made before anyone asked is still reported.
+        self.reported = False
+        # Set when a later take of the turn this event answers begins: no further line is started.
+        self.cancelled = False
+        for index, line in made.items():
+            self.lines[index].set_result(line)
+
+    def failed(self) -> bool:
+        return self.done.done() and self.done.exception() is not None
+
+    def made(self) -> dict[int, _Line]:
+        return {i: f.result() for i, f in enumerate(self.lines) if f.done() and f.exception() is None}
+
+    def fail_from(self, index: int, exc: BaseException) -> None:
+        for future in [*self.lines[index:], self.done]:
+            if not future.done():
+                future.set_exception(exc)
+
+
+async def _wait(future: Future[T]) -> T:
+    # Shielded: a request that goes away must not cancel a line another request is waiting for.
+    return await asyncio.shield(asyncio.wrap_future(future))
+
+
+def _line_wav(pcm: bytes, rate: int) -> bytes:
+    out = io.BytesIO()
+    with wave.open(out, "wb") as f:
+        f.setnchannels(1)
+        f.setsampwidth(2)
+        f.setframerate(rate)
+        f.writeframes(pcm)
+    return out.getvalue()
+
+
+def _cut(wav: bytes, rate: int, start_s: float, end_s: float) -> bytes:
+    """One line out of an event's joined audio (a canonical mono 16-bit WAV)."""
+    with wave.open(io.BytesIO(wav)) as f:
+        frames = f.readframes(f.getnframes())
+    return _line_wav(frames[2 * round(start_s * rate) : 2 * round(end_s * rate)], rate)
+
+
+class _Gate:
+    """Foreground speech requests (a turn's STT, a line made on demand) in flight or waiting. No
+    speech request runs in the background: a line in flight cannot be pre-empted, and the account
+    has one REST slot, so a background line could make a customer's turn wait past its lock bound
+    (session 20261113T231244-5156873b7fce: 503 `gnani_busy` behind a 7 s line)."""
+
+    def __init__(self) -> None:
+        self._busy = 0
+        self._idle = threading.Condition()
+
+    @contextmanager
+    def foreground(self) -> Iterator[None]:
+        with self._idle:
+            self._busy += 1
+        try:
+            yield
+        finally:
+            with self._idle:
+                self._busy -= 1
+                self._idle.notify_all()
+
+    def wait_idle(self, stop: threading.Event) -> None:
+        with self._idle:
+            while self._busy and not stop.is_set():
+                self._idle.wait(0.2)
 
 
 log = logging.getLogger(__name__)
@@ -290,7 +395,8 @@ def _reading(
     return SttReading(
         role=role,
         model=options.model,
-        params=stt_params(options),
+        # A flag, not the words: the name is not stored a second time.
+        params=stt_params(options) | ({"keyterms": "1"} if getattr(options, "keyterms", ()) else {}),
         text=transcript.text,
         literal=transcript.literal,
         detected_language=transcript.detected_language,
@@ -299,7 +405,39 @@ def _reading(
         attempts=transcript.call.attempts,
         est_credits=transcript.call.est_credits,
         request_id=transcript.request_id,
+        cache_key=transcript.call.cache_key,
+        http_status=None if transcript.call.cache_hit else 200,
     )
+
+
+def position_of(state: str | None) -> dict[str, str | int | float | bool | None] | None:
+    """The scalar values of the dialogue state's `position` object; None when there is none.
+    Never more of the state: it holds every turn's text."""
+    try:
+        position = json.loads(state)["position"]  # type: ignore[arg-type]
+    except Exception:  # noqa: BLE001 - any unreadable state has no position
+        return None
+    if not isinstance(position, dict):
+        return None
+    return {
+        k: v
+        for k, v in position.items()
+        if isinstance(k, str) and (v is None or isinstance(v, str | int | float | bool))
+    }
+
+
+def _classifier(step: Step) -> ClassifierCall | None:
+    found = getattr(step, "classifier", None)
+    if isinstance(found, ClassifierCall):
+        return found
+    if isinstance(found, BaseModel | dict):
+        try:
+            return ClassifierCall.model_validate(
+                found.model_dump() if isinstance(found, BaseModel) else found
+            )
+        except ValidationError:
+            return None
+    return None
 
 
 def _acted_on(readings: list[SttReading], text: str) -> SttReading | None:
@@ -338,6 +476,9 @@ def _plan(
     return "supersede"
 
 
+WARM_BOUND_S = 8.0  # session create stops starting first-name lines after this
+
+
 class Sessions:
     """The calls this server can reach: those in memory, and every log on disk.
 
@@ -359,6 +500,14 @@ class Sessions:
         self.dialogues, self.settings, self.default_dialogue = dialogues, settings, default_dialogue
         self.loans = loans
         self.live: dict[str, _Live] = {}
+        self.gate = _Gate()
+        # Set by `create_app` when prewarming is on: given a new session's log, its first-name
+        # lines, made inside `create` (before the response) when not already cached.
+        self.warm_plan: Callable[[SessionLog], Sequence[tuple[str, Timbre]]] | None = None
+        # Set by `create_app`: the record book, for the first name sent as a Prisma keyterm.
+        self.records: RecordBook | None = None
+        # Set by `create_app`: the primary reading by streaming, when `[streaming]` is on.
+        self.streams: StreamHub | None = None
 
     @asynccontextmanager
     async def use(self, session_id: str) -> AsyncIterator[_Live]:
@@ -412,7 +561,15 @@ class Sessions:
         return {
             "seq": event.seq,
             "text": event.text,
-            "lines": [{"key": line.key, "text": line.text} for line in event.lines],
+            "lines": [
+                {
+                    "key": line.key,
+                    "text": line.text,
+                    "audio_url": f"/api/sessions/{log.session_id}/lines/{event.seq}/{i}.wav",
+                }
+                for i, line in enumerate(event.lines)
+            ],
+            "line_gap_ms": round(LINE_GAP_SECONDS * 1000),
             "language": event.language,
             "end_call": event.end_call,
             "audio_url": _audio_url(log.session_id, f"bot-{event.seq:03d}.wav"),
@@ -536,7 +693,50 @@ class Sessions:
         except Exception as exc:
             raise problem_from(exc, "dialogue") from exc
         self.save(log)
+        if request.streaming is False and self.streams is not None:
+            self.streams.off.add(log.session_id)
+        if self.warm_plan is not None:
+            self._warm(self.warm_plan(log))
+        self._job(live, 0)
         return live
+
+    def _keyterms(
+        self, log: SessionLog, asked: BotEvent, options: PrismaV30 | PrismaV25
+    ) -> PrismaV30 | PrismaV25:
+        """A REST v3.0 reply to a right-party line gets the record's first name as its one keyterm
+        (the first name only: it is not a value under test). Anything else is left as it is."""
+        if not isinstance(options, PrismaV30) or not any(
+            (line.key or "").startswith("right_party.") for line in asked.lines
+        ):
+            return options
+        try:
+            record, _ = resolve_record(log.params, self.records, self.loans)
+        except ValueError:
+            return options
+        first = record.record.borrower.name.split()[0]
+        return options.model_copy(update={"keyterms": (first,)})
+
+    def _warm(self, lines: Sequence[tuple[str, Timbre]]) -> None:
+        """Make the lines not yet cached, in the foreground, before the session's first response.
+        No new line starts after `WARM_BOUND_S`; a failure stops the rest. Either way it is
+        logged and the call goes on: the reply job makes a missing line on demand."""
+        from samajh.server.prompts import is_cached
+
+        deadline = time.monotonic() + WARM_BOUND_S
+        try:
+            client = self.gnani.get()
+            for text, options in lines:
+                if is_cached(client, text, options):
+                    continue
+                if time.monotonic() > deadline:
+                    log.warning(
+                        "session create: first-name lines past %.0f s; the rest on demand", WARM_BOUND_S
+                    )
+                    return
+                with self.gate.foreground():
+                    client.tts(text, options)
+        except Exception as exc:  # noqa: BLE001 - the reply job makes the line on demand
+            log.warning("session create: a first-name line failed; the rest on demand: %s", exc)
 
     def _dialogue(self, live: _Live) -> Dialogue:
         if live.dialogue is None:
@@ -577,6 +777,8 @@ class Sessions:
     def _second(self, log: SessionLog, asked: BotEvent, wav: bytes) -> SttReading:
         """The second model's reading, or a missing one: it never fails the turn, and never
         holds it for longer than the session's bound."""
+        status: int | None = None
+        attempts = 0  # unknown for a timed-out reading
         options = stt_options(log.stt, asked.language, "second")
         clock = time.perf_counter()
         try:
@@ -584,7 +786,12 @@ class Sessions:
         except _TooLate:
             error = "timeout"
         except Exception as exc:  # noqa: BLE001 - any failure is a missing reading, by its code
-            error = problem_from(exc, "stt").code
+            problem = problem_from(exc, "stt")
+            error, status = problem.code, problem.upstream_status
+            cause: BaseException | None = exc
+            while cause is not None and not isinstance(getattr(cause, "attempts", None), int):
+                cause = cause.__cause__
+            attempts = cause.attempts if cause is not None else 0  # type: ignore[attr-defined]
         else:
             return _reading("second", options, transcript)
         return SttReading(
@@ -594,7 +801,46 @@ class Sessions:
             ok=False,
             error=error,
             seconds=round(time.perf_counter() - clock, 3),
+            http_status=status,
+            attempts=attempts,
         )
+
+    def _streams_hands_free(self, live: _Live, request: _TurnRequest) -> bool:
+        """The phone streams every hands-free microphone take when the session streams (it never
+        sends `stream=1`), so a missing stream on such a turn is a fallback to mark, not plain REST."""
+        return (
+            self.streams is not None
+            and self.streams.enabled_for(live.log.session_id)
+            and request.source == "mic"
+            and request.phone is not None
+            and request.phone.mode == "vad"
+        )
+
+    def _primary(
+        self, live: _Live, request: _TurnRequest, options: PrismaV30 | PrismaV25, wav: bytes, received: float
+    ) -> SttReading:
+        """The stream's reading when this reply was streamed, else REST (marked with why the
+        stream was not used, when one was expected)."""
+        fallback: str | None = None
+        if self.streams is not None:
+            wait = self.streams.config.commit_timeout_s + 0.5 - (time.perf_counter() - received)
+            got = self.streams.take(
+                live.log.session_id,
+                request.reply_to,
+                request.part,
+                requested=request.stream or self._streams_hands_free(live, request),
+                received=received,
+                wait_s=max(wait, 0),
+            )
+            if isinstance(got, SttReading):
+                return got
+            fallback = got
+        with self.gate.foreground():
+            transcript = self.gnani.get().stt(wav, options)
+        reading = _reading("primary", options, transcript)
+        if fallback is not None:
+            reading = reading.model_copy(update={"params": reading.params | {"stream_fallback": fallback}})
+        return reading
 
     def turn(self, live: _Live, request: _TurnRequest, body: bytes | None, received: float) -> dict[str, Any]:
         log = live.log
@@ -614,6 +860,12 @@ class Sessions:
             if plan == "supersede"
             else None
         )
+        if earlier is not None:
+            # The earlier take's reply is being replaced: stop making its lines before this
+            # take's STT needs the one slot. If this take fails, a fetch restarts that job.
+            pending = live.speech.get(earlier.seq + 1)
+            if pending is not None:
+                pending.cancelled = True
         seq, at = len(log.events), live.now()
         audio: dict[str, Any] = {}
         readings: list[SttReading] = []
@@ -634,15 +886,16 @@ class Sessions:
                 }
                 pauses = pause_stats(wav)
                 stage = "stt"
-                options = stt_options(log.stt, asked.language)
+                options = self._keyterms(log, asked, stt_options(log.stt, asked.language))
                 clock = time.perf_counter()
-                readings.append(_reading("primary", options, self.gnani.get().stt(wav, options)))
+                readings.append(self._primary(live, request, options, wav, received))
                 stt_ms = _ms(clock)
                 _prefetch(dialogue, state, readings[0].text)
                 second: str | None = None
                 if asked.second_reading:
                     clock = time.perf_counter()
-                    readings.append(self._second(log, asked, wav))
+                    with self.gate.foreground():
+                        readings.append(self._second(log, asked, wav))
                     second_ms = _ms(clock)
                     second = readings[1].text if readings[1].ok else ""
                 heard = Heard(
@@ -684,6 +937,9 @@ class Sessions:
             ),
             pauses=pauses,
             phone=request.phone,
+            classifier=_classifier(step),
+            state_before=position_of(state),
+            state_after=position_of(step.state),
             **audio,
         )
         if answers_year_question(asked.lines):  # never logged or sent: `samajh_dialogue.WITHHELD`
@@ -703,11 +959,123 @@ class Sessions:
                 draft.status, draft.ended_reason = "ended", "dialogue"
 
         self._commit(live, apply)
+        self._job(live, bot.seq)
         return self.turn_json(live.log, customer, bot)
 
-    def audio(self, live: _Live, name: str) -> bytes:
-        """One event's audio. Served only if the log refers to it; a bot prompt that has not been
-        spoken yet is synthesised now."""
+    def _refuse(self, log: SessionLog, event: BotEvent) -> None:
+        """After a hang-up nothing more is spoken; the prompt that ends a call still is, until the
+        case file is started, because from then on the recording must not change."""
+        if log.ended_reason == "hangup" or log.closed:
+            raise _not_active()
+        if event.superseded:
+            raise ApiProblem(409, "session", "turn_superseded", "a later take replaced this reply")
+
+    def _job(self, live: _Live, seq: int) -> _SpeechJob:
+        """The job making event `seq`'s lines; started now if there is none, or if the last one
+        failed (a fresh job keeps the lines already made)."""
+        job = live.speech.get(seq)
+        if job is not None and not (job.failed() and (job.reported or job.cancelled)):
+            return job
+        event = live.log.events[seq]
+        assert isinstance(event, BotEvent)
+        job = _SpeechJob(seq, len(event.lines), job.made() if job else {})
+        live.speech[seq] = job
+        threading.Thread(
+            target=self._make, args=(live, event, job), name=f"samajh-speak-{seq}", daemon=True
+        ).start()
+        return job
+
+    def _make(self, live: _Live, event: BotEvent, job: _SpeechJob) -> None:
+        """Every line is its own Timbre call, so the client's cache serves a line that another
+        call has spoken; the clips are joined into the event's one audio file. Runs in its own
+        thread, holding no lock; each line is a foreground request (`_Gate`)."""
+        clock = time.perf_counter()
+        rate = live.log.line_rate
+        index = 0
+        try:
+            options = tts_options(live.log.tts, event.language, rate)
+            made: list[_Line] = []
+            for index, line in enumerate(event.lines):
+                if job.lines[index].done():
+                    made.append(job.lines[index].result())
+                    continue
+                current = live.log.events[event.seq]
+                self._refuse(live.log, current)  # type: ignore[arg-type]
+                if job.cancelled:
+                    raise ApiProblem(409, "session", "turn_superseded", "a later take is being heard")
+                line_clock = time.perf_counter()
+                with self.gate.foreground():
+                    speech = self.gnani.get().tts(line.text, options)
+                try:
+                    clip = to_line_pcm(speech.audio, rate, MAX_BOT_SECONDS)[0]
+                except AudioRejected:
+                    raise BadResponse("Timbre: the audio could not be read as PCM WAV") from None
+                call = TtsCall(
+                    model=options.model,
+                    voice=options.voice,
+                    language=options.language,
+                    sample_rate=options.sample_rate,
+                    cache_hit=speech.call.cache_hit,
+                    seconds=speech.call.seconds,
+                    attempts=speech.call.attempts,
+                    est_credits=speech.call.est_credits,
+                    request_id=speech.request_id,
+                    synth_ms=_ms(line_clock),
+                )
+                made.append((clip, call))
+                if index < len(event.lines) - 1:
+                    job.lines[index].set_result((clip, call))
+            index = len(event.lines) - 1
+            wav, spans = join_clips([clip for clip, _ in made], rate, LINE_GAP_SECONDS)
+            job.done.set_result(_Spoken(wav, spans, [call for _, call in made], _ms(clock)))
+            if not job.lines[index].done():
+                job.lines[index].set_result(made[index])
+        except BaseException as exc:  # noqa: BLE001 - handed to whoever waits for these lines
+            job.fail_from(index, exc)
+
+    def _commit_spoken(self, live: _Live, job: _SpeechJob) -> None:
+        """Write the joined audio and its line fields once. Nothing is committed (409) once the
+        call was hung up or closed or the event superseded: audio made before then counts only
+        if it was committed."""
+        log = live.log
+        event = log.events[job.seq]
+        assert isinstance(event, BotEvent)
+        if event.audio is not None:
+            return
+        self._refuse(log, event)
+        spoken = job.done.result()
+        reference = self.store.write_audio(log.session_id, f"bot-{job.seq:03d}.wav", spoken.wav)
+
+        def apply(draft: SessionLog) -> None:
+            said = draft.events[job.seq]
+            assert isinstance(said, BotEvent)
+            said.audio, said.audio_seconds = reference, spoken.spans[-1][1]
+            said.synth_ms = spoken.synth_ms
+            for line, call, (start, end) in zip(said.lines, spoken.calls, spoken.spans, strict=True):
+                line.tts, line.start_s, line.end_s = call, round(start, 6), round(end, 6)
+
+        self._commit(live, apply)
+
+    async def _settle(self, live: _Live, job: _SpeechJob, future: Future[T]) -> T:
+        """Wait, without the session's lock, for one of `job`'s futures; then, under the lock,
+        log a failure (`_fail` dedups repeats) or commit the joined audio if it is ready."""
+        try:
+            result = await _wait(future)
+        except ApiProblem:
+            raise
+        except Exception as exc:
+            job.reported = True
+            async with live.lock:
+                problem = await anyio.to_thread.run_sync(self._fail, live, exc, "tts")
+            raise problem from exc
+        if job.done.done() and job.done.exception() is None:
+            async with live.lock:
+                await anyio.to_thread.run_sync(self._commit_spoken, live, job)
+        return result
+
+    def audio(self, live: _Live, name: str) -> bytes | _SpeechJob:
+        """One event's audio, or the job to wait for when a bot prompt has not been spoken yet.
+        Served only if the log refers to it. The caller holds the session's lock."""
         log = live.log
         if not AUDIO_NAME.fullmatch(name):
             raise _not_found("audio")
@@ -719,57 +1087,53 @@ class Sessions:
         unspoken = [e for e in log.events if isinstance(e, BotEvent) and name == f"bot-{e.seq:03d}.wav"]
         if not unspoken:
             raise _not_found("audio")
-        # After a hang-up nothing more is spoken; the prompt that ends a call still is, until the
-        # case file is started, because from then on the recording must not change.
-        if log.ended_reason == "hangup" or log.closed:
-            raise _not_active()
-        if unspoken[0].superseded:
-            raise ApiProblem(409, "session", "turn_superseded", "a later take replaced this reply")
-        return self._speak(live, unspoken[0], name)
+        self._refuse(log, unspoken[0])
+        return self._job(live, unspoken[0].seq)
 
-    def _speak(self, live: _Live, event: BotEvent, name: str) -> bytes:
-        """Every line is its own Timbre call, so the client's cache serves a line that another
-        call has spoken; the clips are joined into the event's one audio file."""
+    async def joined(self, live: _Live, name: str) -> bytes:
+        async with live.lock:
+            got = await anyio.to_thread.run_sync(self.audio, live, name)
+        if isinstance(got, bytes):
+            return got
+        return (await self._settle(live, got, got.done)).wav
+
+    def _line(self, live: _Live, seq: int, index: int) -> bytes | tuple[_SpeechJob, Future[_Line]]:
         log = live.log
-        clock = time.perf_counter()
-        calls: list[TtsCall] = []
-        clips: list[bytes] = []
-        try:
-            options = tts_options(log.tts, event.language, log.line_rate)
-            for line in event.lines:
-                speech = self.gnani.get().tts(line.text, options)
-                try:
-                    clips.append(to_line_pcm(speech.audio, log.line_rate, MAX_BOT_SECONDS)[0])
-                except AudioRejected:
-                    raise BadResponse("Timbre: the audio could not be read as PCM WAV") from None
-                calls.append(
-                    TtsCall(
-                        model=options.model,
-                        voice=options.voice,
-                        language=options.language,
-                        sample_rate=options.sample_rate,
-                        cache_hit=speech.call.cache_hit,
-                        seconds=speech.call.seconds,
-                        attempts=speech.call.attempts,
-                        est_credits=speech.call.est_credits,
-                        request_id=speech.request_id,
-                    )
-                )
-            wav, spans = join_clips(clips, log.line_rate, LINE_GAP_SECONDS)
-        except Exception as exc:
-            raise self._fail(live, exc, "tts") from exc
-        reference = self.store.write_audio(log.session_id, name, wav)
+        event = log.events[seq] if 0 <= seq < len(log.events) else None
+        if not isinstance(event, BotEvent) or not 0 <= index < len(event.lines):
+            raise _not_found("line")
+        job = live.speech.get(seq)
+        if event.audio is not None:
+            if job is not None and job.lines[index].done() and job.lines[index].exception() is None:
+                return job.lines[index].result()[0]
+            line = event.lines[index]
+            data = self.store.read_audio(log.session_id, event.audio.removeprefix("audio/"))
+            if data is None or line.start_s is None or line.end_s is None:
+                raise _not_found("line")
+            return _cut(data, log.line_rate, line.start_s, line.end_s)
+        self._refuse(log, event)
+        job = self._job(live, seq)
+        return job, job.lines[index]
 
-        def apply(draft: SessionLog) -> None:
-            spoken = draft.events[event.seq]
-            assert isinstance(spoken, BotEvent)
-            spoken.audio, spoken.audio_seconds = reference, spans[-1][1]
-            spoken.synth_ms = _ms(clock)
-            for line, call, (start, end) in zip(spoken.lines, calls, spans, strict=True):
-                line.tts, line.start_s, line.end_s = call, round(start, 6), round(end, 6)
+    async def line(self, live: _Live, seq: int, index: int) -> bytes:
+        """One line of a bot event as its own WAV, as soon as it is made."""
+        async with live.lock:
+            got = await anyio.to_thread.run_sync(self._line, live, seq, index)
+        if isinstance(got, bytes):
+            return got
+        return (await self._settle(live, *got))[0]
 
-        self._commit(live, apply)
-        return wav
+    def note_browser(self, live: _Live, seq: int, report: BrowserListen | BrowserPlayback) -> None:
+        """Store the phone's report on event `seq`. Only session.json is rewritten: never the
+        recording, the dialogue state or the status, whatever the call's status."""
+        draft = live.log.model_copy(deep=True)
+        event = draft.events[seq]
+        fits = {CustomerEvent: BrowserListen, BotEvent: BrowserPlayback}.get(type(event))
+        if fits is None or not isinstance(report, fits):
+            raise ApiProblem(422, "request", "wrong_event", "this report does not fit that event")
+        event.browser = report  # type: ignore[union-attr]
+        self.store.save(draft)
+        live.log = draft
 
     def end(self, live: _Live) -> dict[str, Any]:
         def apply(draft: SessionLog) -> None:
@@ -903,6 +1267,24 @@ class CaseJobs:
         return case.model_dump(mode="json")
 
 
+def _stream_hub(settings: Settings, client: _Gnani, factory: StreamFactory | None) -> StreamHub:
+    """Streams through the real client's key, ledger and cap unless a factory is injected."""
+    config = settings.streaming
+    if factory is None and config.enabled:
+        from samajh.clients.gnani.stream import stream_session
+
+        def factory(options: Any) -> Any:
+            return stream_session(client.get(), options, max_stream_seconds=config.max_stream_seconds)
+
+    rate = 0.010
+    if config.enabled and factory is not None:
+        try:
+            rate = float(getattr(client.get(), "_stt_rate", rate))
+        except ConfigError:
+            pass
+    return StreamHub(config, factory, rate)
+
+
 def sessions_of(app: FastAPI) -> Sessions:
     """The seam for a router that lives outside this module (the after-call case file)."""
     sessions: Sessions = app.state.sessions
@@ -948,7 +1330,10 @@ def _turn_request(query: QueryParams) -> _TurnRequest:
         if mode not in PHONE_MODES:
             raise ApiProblem(422, "request", "invalid_mode", "mode must be vad, ptt or file")
         phone = PhoneTurn(mode=mode, cut_ms=cut_ms, grace_ms=grace_ms)
-    return _TurnRequest(source, reply_to, 1 if part is None else part, eos_wait_ms, phone)
+    stream = query.get("stream", "0")
+    if stream not in ("0", "1"):
+        raise ApiProblem(422, "request", "invalid_stream", "stream must be 0 or 1")
+    return _TurnRequest(source, reply_to, 1 if part is None else part, eos_wait_ms, phone, stream == "1")
 
 
 async def _read(request: Request, limit: int) -> bytes | None:
@@ -989,7 +1374,7 @@ class _LocalOnly:
         self.app, self.hosts = app, hosts
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] == "http":
+        if scope["type"] in ("http", "websocket"):
             headers = dict(scope["headers"])
             host = headers.get(b"host", b"").decode("latin-1").lower()
             name = host if host.endswith("]") else host.rsplit(":", 1)[0] if ":" in host else host
@@ -1005,6 +1390,10 @@ class _LocalOnly:
                 problem = ApiProblem(
                     403, "request", "foreign_origin", "requests from another site are refused"
                 )
+            if problem is not None and scope["type"] == "websocket":
+                await receive()  # websocket.connect; a close before accept is a 403 to the browser
+                await send({"type": "websocket.close", "code": 1008, "reason": problem.code})
+                return
             if problem is not None:
                 await JSONResponse(problem.body(), status_code=problem.status)(scope, receive, send)
                 return
@@ -1036,6 +1425,92 @@ def _default_clips_dir() -> Path | None:
     return fixtures if fixtures.is_dir() else None
 
 
+def _prewarm_lifespan(
+    calls: Sessions, gnani: _Gnani, settings: Settings, records: RecordBook | None, loans: LoanBook
+) -> Callable[[FastAPI], Any]:
+    from samajh.server import prompts
+    from samajh.server.samajh_dialogue import TTS_LANGUAGE
+
+    sources = prompts.servable(records, loans)
+
+    def plan(log: SessionLog) -> list[tuple[str, Timbre]]:
+        """A new session's first-name lines in its call language and line rate (cached already
+        for a record-book record in a prewarm language and rate; a loan's are made at create)."""
+        language = _call_language(log.params)
+        options = tts_options(log.tts, TTS_LANGUAGE[language], log.line_rate)
+        try:
+            record, _ = resolve_record(log.params, records, loans)
+        except ValueError:
+            return []  # a dialogue without a record (the stub) has no first-name lines
+        return [(text, options) for _, text in prompts.record_lines(language, prompts.Slots.of(record))]
+
+    def startup() -> None:
+        if not gnani.configured():
+            missing = prompts.missing_static(prompts.offline_reader(), settings, sources)
+            log.warning(
+                "prewarm: NO GNANI KEY: %d static and first-name bot lines are not in the cache and cannot be made; "
+                "calls will fail",
+                len(missing),
+            )
+            return
+        report = prompts.prewarm_static(
+            gnani.get(), settings, sources
+        )  # PrewarmFailed, PrewarmOverBudget: no start
+        log.warning(
+            "prewarm: %d static and record-book first-name lines checked, %d missing, %d made, about %.2f credits (an estimate)",
+            report.checked,
+            report.missing,
+            report.made,
+            report.est_credits,
+        )
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        await anyio.to_thread.run_sync(startup)
+        calls.warm_plan = plan
+        try:
+            yield
+        finally:
+            calls.warm_plan = None
+
+    return lifespan
+
+
+def _warm_ledgers(calls: Sessions) -> None:
+    """Have each live client read the shared ledger once now, so the credit-cap check of a
+    call's first uncached request reads only appended rows. A client without a key, or one
+    without `warm_ledger` (a fake), is skipped; a failure is logged, never raised."""
+    seen: list[SpeechClient] = []
+    for gnani in (calls.gnani, calls.second):
+        try:
+            client = gnani.get()
+        except ConfigError:
+            continue
+        if any(client is other for other in seen):
+            continue
+        seen.append(client)
+        warm = getattr(client, "warm_ledger", None)
+        if warm is None:
+            continue
+        try:
+            warm()
+        except Exception as exc:  # noqa: BLE001 - the first capped request reads it instead
+            log.warning("could not read the Gnani ledger at start: %s", exc)
+
+
+def _ledger_lifespan(calls: Sessions, inner: Callable[[FastAPI], Any] | None) -> Callable[[FastAPI], Any]:
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        await anyio.to_thread.run_sync(_warm_ledgers, calls)
+        if inner is None:
+            yield
+            return
+        async with inner(app):
+            yield
+
+    return lifespan
+
+
 def create_app(
     *,
     gnani: SpeechClient | None = None,
@@ -1050,11 +1525,18 @@ def create_app(
     allowed_hosts: Sequence[str] = LOCAL_HOSTS,
     batch: SpeechClient | None = None,
     llm: Callable[[], Llm] | None = None,
+    prewarm: bool | None = None,
+    stream_factory: StreamFactory | None = None,
 ) -> FastAPI:
     """`second` is the client for the second reading of a turn; without it an injected `gnani`
     serves both, and the real second client gives up at the settings' bound. `batch` runs Prisma
     Batch after the call (an injected `gnani` by default, else the patient real client), and
-    `llm` builds the extraction client (default `samajh.pipeline.default_llm`)."""
+    `llm` builds the extraction client (default `samajh.pipeline.default_llm`).
+
+    `prewarm` (None: on when the settings enable it and no `gnani` was injected) makes the static
+    bot lines and the record book's first-name lines before the server accepts a connection,
+    refusing to start if one cannot be made; a session whose first-name lines are not cached makes
+    them inside its create. Nothing is synthesised in the background (`samajh.server.prompts`)."""
     settings = settings or load_settings()
     # Sessions, the review batch and the loan book live under `state`. The Gnani and OpenRouter
     # clients keep their lock, cache and ledger under `samajh.clients._runtime.state_dir()`
@@ -1081,9 +1563,16 @@ def create_app(
         "samajh" if "samajh" in registry else next(iter(registry)),
         loans,
     )
+    calls.streams = _stream_hub(settings, client, stream_factory)
+    calls.records = records
     jobs = CaseJobs(calls, records, _Gnani(batch or gnani, PATIENT), llm or _default_llm, loans)
     clips_dir = clips_dir or _default_clips_dir()
-    app = FastAPI(title="Samajh voice transport", docs_url=None, redoc_url=None, openapi_url=None)
+    warm = settings.prewarm.enabled and gnani is None if prewarm is None else prewarm
+    prewarming = _prewarm_lifespan(calls, _Gnani(gnani, PATIENT), settings, records, loans) if warm else None
+    lifespan = _ledger_lifespan(calls, prewarming) if gnani is None else prewarming
+    app = FastAPI(
+        title="Samajh voice transport", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan
+    )
     app.state.sessions = calls
     app.state.cases = jobs
     app.add_middleware(_LocalOnly, hosts=frozenset(h.lower() for h in allowed_hosts))
@@ -1117,7 +1606,7 @@ def create_app(
                 "tts": {"model": settings.tts.model},
                 "batch": {"model": settings.batch.model},
             },
-            "streaming": False,
+            "streaming": settings.streaming.enabled,
             "languages": list(LANGUAGES),
             "turn_taking": {kind: p.model_dump() for kind, p in settings.turn_taking.items()},
             "limits": {
@@ -1160,8 +1649,39 @@ def create_app(
             "session_id": log.session_id,
             "dialogue": log.dialogue,
             "line_rate": log.line_rate,
+            "streaming": calls.streams is not None and calls.streams.enabled_for(log.session_id),
             "bot": calls.bot_json(log, first),
         }
+
+    @app.websocket("/api/sessions/{session_id}/stream")
+    async def stream(ws: WebSocket, session_id: str) -> None:
+        """The phone's audio for one reply, streamed to Prisma (`samajh.server.stream`). Closed
+        with 1008 before accepting when streaming is off, the session is not active, or the reply
+        is not the prompt now awaiting an answer."""
+        hub = calls.streams
+        raw = ws.query_params.get("reply_to", "")
+        options = None
+        if hub is not None and hub.enabled_for(session_id) and raw.isascii() and raw.isdigit():
+            reply_to = int(raw)
+            try:
+                async with calls.use(session_id) as live, live.lock:
+                    log = live.log
+                    current = [e for e in log.events if not isinstance(e, ErrorEvent) and not e.superseded]
+                    asked = current[-1] if current else None  # the one prompt the call waits on
+                    if (
+                        log.status == "active"
+                        and isinstance(asked, BotEvent)
+                        and asked.seq == reply_to
+                        and not asked.end_call
+                    ):
+                        options = hub.options(asked.language, log.line_rate)
+            except (ApiProblem, ValueError):
+                options = None
+        if hub is None or options is None:
+            await ws.close(code=1008)
+            return
+        await ws.accept()
+        await hub.serve(ws, session_id, reply_to, options)
 
     @app.post("/api/sessions/{session_id}/turns")
     async def turn(session_id: str, request: Request) -> dict[str, Any]:
@@ -1191,13 +1711,37 @@ def create_app(
 
     @app.get("/api/sessions/{session_id}/audio/{name}")
     async def audio(session_id: str, name: str) -> Response:
-        async with calls.use(session_id) as live, live.lock:
-            data = await anyio.to_thread.run_sync(calls.audio, live, name)
+        async with calls.use(session_id) as live:
+            data = await calls.joined(live, name)
         return Response(data, media_type="audio/wav")
+
+    @app.get("/api/sessions/{session_id}/lines/{seq}/{name}")
+    async def line_audio(session_id: str, seq: str, name: str) -> Response:
+        index = name.removesuffix(".wav")
+        if not (re.fullmatch(r"\d{1,3}", seq) and name.endswith(".wav") and re.fullmatch(r"\d{1,2}", index)):
+            raise _not_found("line")
+        async with calls.use(session_id) as live:
+            data = await calls.line(live, int(seq), int(index))
+        return Response(data, media_type="audio/wav")
+
+    @app.post("/api/sessions/{session_id}/events/{seq}/browser")
+    async def browser_report(session_id: str, seq: int, request: Request) -> dict[str, Any]:
+        async with calls.use(session_id) as live, live.lock:
+            events = live.log.events
+            if not 0 <= seq < len(events):
+                raise _not_found("event")
+            kind = {"customer": BrowserListen, "bot": BrowserPlayback}.get(events[seq].type)
+            if kind is None:
+                raise ApiProblem(422, "request", "wrong_event", "only bot and customer events take a report")
+            report = await _json(request, kind)
+            await anyio.to_thread.run_sync(calls.note_browser, live, seq, report)
+        return {"ok": True}
 
     @app.post("/api/sessions/{session_id}/end")
     async def end(session_id: str, request: Request) -> dict[str, Any]:
         await _json(request, EndSession)
+        if calls.streams is not None:
+            calls.streams.cancel(session_id, "ended")
         async with calls.use(session_id) as live, live.lock:
             return await anyio.to_thread.run_sync(calls.end, live)
 

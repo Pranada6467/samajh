@@ -134,3 +134,16 @@ def test_room_noise_learned_in_one_turn_is_not_taken_for_speech_in_the_next(tmp_
     assert kinds(cold)[:1] == ["speech_start"]  # a detector that starts from the floor is fooled
     learned = cold["state"]["noiseRms"]
     assert kinds(run_vad(wav, "--tail-ms", "0", "--initial-noise", str(min(learned, 0.02)))) == []
+
+
+def test_pauses_are_reported_only_when_asked(tmp_path: Path) -> None:
+    wav = write_wav(
+        tmp_path / "pauses.wav",
+        [("quiet", 300), ("tone", 600), ("quiet", 400), ("tone", 600), ("quiet", 100), ("tone", 300)],
+    )
+    assert kinds(run_vad(wav)) == ["speech_start", "speech_end"]
+    result = run_vad(wav, "--pause-ms", "150")
+    assert kinds(result) == ["speech_start", "pause", "speech_end"]
+    pause = result["events"][1]
+    assert pause["fromMs"] == pytest.approx(900, abs=TOLERANCE_MS)
+    assert pause["toMs"] == pytest.approx(1300, abs=TOLERANCE_MS)

@@ -1,0 +1,675 @@
+{
+ "customer_id": "ACQ-C051",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 0.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "b2e637c11128a51ea137b61ba8cba6c316129c107f2392df051868cbdf54dea1",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं जीता नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं जीता नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.00013464,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आप बता सकती हैं कि आपने लोन के साथ जो प्रोडक्ट खरीदा, उसके बारे में आपको क्या पता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आप बता सकती हैं कि आपने लोन के साथ जो प्रोडक्ट खरीदा, उसके बारे में आपको क्या पता है?",
+   "agent_usd": 0.0002434,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.61e-05,
+   "reply": "हाँ, लोन के साथ इंश्योरेंस लिया था, तेरह हज़ार रुपये का।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5234463501255959,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, लोन के साथ इंश्योरेंस लिया था, तेरह हज़ार रुपये का।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "ठीक है, जीता जी। वो इंश्योरेंस क्रेडिट-लाइफ इंश्योरेंस था, जो अगर आपकी मौत हो जाए तो लोन चुका देता है। क्या आपको पता है कि इसका प्रीमियम 50,500 रुपये था और वो लोन अमाउंट से कटा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, जीता जी। वो इंश्योरेंस क्रेडिट-लाइफ इंश्योरेंस था, जो अगर आपकी मौत हो जाए तो लोन चुका देता है। क्या आपको पता है कि इसका प्रीमियम 50,500 रुपये था और वो लोन अमाउंट से कटा था?",
+   "agent_usd": 0.000312,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "अगर आपकी मौत हो जाए तो लोन चुका देता है"
+    },
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": "50,500 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": "लोन अमाउंट से कटा था"
+    },
+    {
+     "kind": "identity",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0001423125,
+   "reply": "हाँ जी, सही है। अगर मुझे कुछ हो जाए, तो दो लाख पचास हज़ार तक का लोन भरेगा। तेरह हज़ार रुपये दिए थे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "अगर आपकी मौत हो जाए तो लोन चुका देता है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6207571567501873,
+     "source_topic": "what_it_gives",
+     "text": "अगर मुझे कुछ हो जाए, तो दो लाख पचास हज़ार तक का लोन भरेगा।"
+    },
+    {
+     "item": 2,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "50,500 रुपये",
+     "stated_value": 50500,
+     "belief_state": "false",
+     "belief_value": 13000,
+     "record_value": 50500,
+     "draw_a": 0.0852353812661022,
+     "draw_r": 0.02654615300707519,
+     "source_topic": "how_much",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "तेरह हज़ार रुपये दिए थे।"
+    },
+    {
+     "item": 3,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन अमाउंट से कटा था",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.9636795148253441,
+     "draw_r": 0.2733535764273256,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 4,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "जीता जी, आपको बता दूँ कि प्रीमियम 50,500 रुपये था, न कि 13,000। ये रकम लोन में से कटी थी। क्या आपको ये पता था कि ये इंश्योरेंस जरूरी नहीं था और आप किसी दूसरी कंपनी का भी ले सकती थीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जीता जी, आपको बता दूँ कि प्रीमियम 50,500 रुपये था, न कि 13,000। ये रकम लोन में से कटी थी। क्या आपको ये पता था कि ये इंश्योरेंस जरूरी नहीं था और आप किसी दूसरी कंपनी का भी ले सकती थीं?",
+   "agent_usd": 0.0002042,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "प्रीमियम 50,500 रुपये था"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "ये रकम लोन में से कटी थी"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": "क्या आपको ये पता था कि ये इंश्योरेंस जरूरी नहीं था"
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": true,
+     "states_span": "और आप किसी दूसरी कंपनी का भी ले सकती थीं"
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.361e-05,
+   "reply": "हाँ जी, सही है। तेरह हज़ार रुपये दिए थे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "प्रीमियम 50,500 रुपये था",
+     "stated_value": 50500,
+     "belief_state": "false",
+     "belief_value": 13000,
+     "record_value": 50500,
+     "draw_a": 0.0852353812661022,
+     "draw_r": 0.02654615300707519,
+     "source_topic": "how_much",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "तेरह हज़ार रुपये दिए थे।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "ये रकम लोन में से कटी थी",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.9636795148253441,
+     "draw_r": 0.2733535764273256,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "needed_or_choice",
+     "rule": "stated",
+     "stated": "क्या आपको ये पता था कि ये इंश्योरेंस जरूरी नहीं था",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.7349192735273391,
+     "draw_r": 0.9104881358798593,
+     "source_topic": "needed_or_choice",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "where_to_take_it_from",
+     "rule": "stated",
+     "stated": "और आप किसी दूसरी कंपनी का भी ले सकती थीं",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.7349192735273391,
+     "draw_r": 0.9104881358798593,
+     "source_topic": "where_to_take_it_from",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 4,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 5,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "जीता जी, मैं आपको फिर से बता दूँ – इंश्योरेंस का प्रीमियम 50,500 रुपये था, जो लोन अमाउंट से कटा था। क्या आपको ये पता है कि इसकी कवर अवधि 12 महीने की है और इसे खरीदने के 30 दिन के भीतर कैंसल भी किया जा सकता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जीता जी, मैं आपको फिर से बता दूँ – इंश्योरेंस का प्रीमियम 50,500 रुपये था, जो लोन अमाउंट से कटा था। क्या आपको ये पता है कि इसकी कवर अवधि 12 महीने की है और इसे खरीदने के 30 दिन के भीतर कैंसल भी किया जा सकता है?",
+   "agent_usd": 0.0002204,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "50,500 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "लोन अमाउंट से कटा था"
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "12 महीने"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": false,
+     "states_span": "30 दिन के भीतर"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 6.591e-05,
+   "reply": "हाँ जी, सही है। तेरह हज़ार रुपये दिए थे। यह मुझे नहीं पता कि रद्द हो सकता है या नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "50,500 रुपये",
+     "stated_value": 50500,
+     "belief_state": "false",
+     "belief_value": 13000,
+     "record_value": 50500,
+     "draw_a": 0.0852353812661022,
+     "draw_r": 0.02654615300707519,
+     "source_topic": "how_much",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "तेरह हज़ार रुपये दिए थे।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन अमाउंट से कटा था",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.9636795148253441,
+     "draw_r": 0.2733535764273256,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "12 महीने",
+     "stated_value": 12,
+     "belief_state": "correct",
+     "belief_value": 12,
+     "record_value": 12,
+     "draw_a": 0.4902120076585561,
+     "draw_r": 0.8178371754474938,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 4,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "30 दिन के भीतर",
+     "stated_value": 30,
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": 30,
+     "draw_a": 0.421033944003284,
+     "draw_r": 0.9610000122338533,
+     "source_topic": "can_cancel",
+     "decided": "dk_r",
+     "variant": "own",
+     "text": "यह मुझे नहीं पता कि रद्द हो सकता है या नहीं।"
+    },
+    {
+     "item": 5,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "ठीक है, जीता जी। क्या आपको ये पता है कि इंश्योरेंस के खत्म होने पर या अवधि पूरी होने पर कोई पैसा वापस नहीं मिलता?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, जीता जी। क्या आपको ये पता है कि इंश्योरेंस के खत्म होने पर या अवधि पूरी होने पर कोई पैसा वापस नहीं मिलता?",
+   "agent_usd": 0.0003108,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "कोई पैसा वापस नहीं मिलता"
+    }
+   ],
+   "router_usd": 0.0001151875,
+   "reply": "पैसे वापस मिलेंगे या नहीं, मुझे बिल्कुल नहीं मालूम।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "कोई पैसा वापस नहीं मिलता",
+     "stated_value": "no",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "no",
+     "draw_a": 0.1789793528150767,
+     "draw_r": 0.18586824997328222,
+     "source_topic": "money_back",
+     "decided": "dk_r",
+     "variant": "own",
+     "text": "पैसे वापस मिलेंगे या नहीं, मुझे बिल्कुल नहीं मालूम।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "जीता जी, इस इंश्योरेंस में पैसा वापस नहीं मिलता। क्या आपको याद है कि 25 अक्टूबर को आपने इसके लिए ओटीपी डालकर सहमति दी थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जीता जी, इस इंश्योरेंस में पैसा वापस नहीं मिलता। क्या आपको याद है कि 25 अक्टूबर को आपने इसके लिए ओटीपी डालकर सहमति दी थी?",
+   "agent_usd": 0.00038646,
+   "router_items": [
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसा वापस नहीं मिलता"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "OTP डालकर सहमति दी थी"
+    }
+   ],
+   "router_usd": 8.9075e-05,
+   "reply": "पैसे वापस मिलेंगे या नहीं, मुझे बिल्कुल नहीं मालूम। लोन और बीमा दोनों के लिए हाँ किया था, फोन पर ओटीपी देकर।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसा वापस नहीं मिलता",
+     "stated_value": "no",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "no",
+     "draw_a": 0.1789793528150767,
+     "draw_r": 0.18586824997328222,
+     "source_topic": "money_back",
+     "decided": "dk_r",
+     "variant": "own",
+     "text": "पैसे वापस मिलेंगे या नहीं, मुझे बिल्कुल नहीं मालूम।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "span_dropped": "OTP डालकर सहमति दी थी",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.2643821048550308,
+     "source_topic": "what_you_agreed_to",
+     "text": "लोन और बीमा दोनों के लिए हाँ किया था, फोन पर ओटीपी देकर।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "धन्यवाद, जीता जी। हमारी बातचीत यहीं खत्म कर रहे हैं। अगर आपको कोई सहायता चाहिए, तो हमारे ऑफिस से संपर्क करें।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower को प्रीमियम राशि के बारे में गलत जानकारी है और वो रद्दीकरण अवधि और पैसा वापस न मिलने के बारे में नहीं जानती।",
+     "findings": [
+      {
+       "field": "premium",
+       "belief": "false",
+       "quote": "तेरह हज़ार रुपये दिए थे।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "तेरह हज़ार रुपये दिए थे।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "यह मुझे नहीं पता कि रद्द हो सकता है या नहीं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "पैसे वापस मिलेंगे या नहीं, मुझे बिल्कुल नहीं मालूम।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "लोन और बीमा दोनों के लिए हाँ किया था, फोन पर ओटीपी देकर।"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद, जीता जी। हमारी बातचीत यहीं खत्म कर रहे हैं। अगर आपको कोई सहायता चाहिए, तो हमारे ऑफिस से संपर्क करें।",
+   "agent_usd": 0.0006248
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower को प्रीमियम राशि के बारे में गलत जानकारी है और वो रद्दीकरण अवधि और पैसा वापस न मिलने के बारे में नहीं जानती।",
+  "findings": [
+   {
+    "field": "premium",
+    "belief": "false",
+    "quote": "तेरह हज़ार रुपये दिए थे।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "तेरह हज़ार रुपये दिए थे।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "यह मुझे नहीं पता कि रद्द हो सकता है या नहीं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "पैसे वापस मिलेंगे या नहीं, मुझे बिल्कुल नहीं मालूम।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "लोन और बीमा दोनों के लिए हाँ किया था, फोन पर ओटीपी देकर।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0024367,
+  "router": 0.0005721950000000001
+ },
+ "cache_hits": {
+  "agent": 0,
+  "router": 1
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T21:57:42+00:00",
+ "agent_turns": 8,
+ "usd_total": 0.003008895,
+ "finished_utc": "2026-11-13T21:58:42+00:00"
+}

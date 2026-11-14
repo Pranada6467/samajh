@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C140. Pooja took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c140",
+  "label": "Synthetic ACQ record. Pooja: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1997-02-19",
+      "language": "hi-en",
+      "name": "Pooja Namoona"
+    },
+    "disbursed_inr": 577500,
+    "disbursed_on": "2026-10-31",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-140",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-31",
+          "method": "digital_click"
+        },
+        "cover_inr": 610000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 32500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 610000,
+    "tenure_months": 12
+  }
+}

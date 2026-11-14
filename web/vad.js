@@ -13,6 +13,10 @@
 //
 // Event = { type: "speech_start", atMs, voicedFromMs }
 //       | { type: "speech_end", atMs, lastVoicedMs }
+//       | { type: "pause", atMs, fromMs, toMs }   (only with pauseMs > 0)
+// A "pause" is an unvoiced run of at least `pauseMs` inside speech that a voiced frame ended
+// before the hangover did: fromMs is the end of the last voiced frame before the gap, toMs the
+// start of the voiced frame that ended it. `pauseMs` 0 (the default) reports none.
 // atMs: when the decision was made. voicedFromMs: start of the voiced run that triggered the
 // start. lastVoicedMs: end of the last voiced frame.
 
@@ -27,6 +31,7 @@ export function createVad({
   startFactor = 3.0,
   floorRms = 0.004,
   initialNoiseRms = 0,
+  pauseMs = 0,
 } = {}) {
   if (!(sampleRate > 0)) throw new TypeError("createVad needs a positive sampleRate");
   const frameLen = Math.max(1, Math.round((sampleRate * frameMs) / 1000));
@@ -54,6 +59,9 @@ export function createVad({
     frames += 1;
     const endMs = frames * frameDur;
     if (rms >= threshold()) {
+      if (pauseMs > 0 && speaking && quietRun > 0 && startMs - lastVoicedMs >= pauseMs - 1e-9) {
+        events.push({ type: "pause", atMs: endMs, fromMs: lastVoicedMs, toMs: startMs });
+      }
       noise = Math.max(noise, floorRms) * creep;
       if (voicedRun === 0) runStartMs = startMs;
       voicedRun += 1;

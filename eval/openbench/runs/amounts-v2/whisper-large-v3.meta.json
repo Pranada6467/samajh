@@ -1,0 +1,28 @@
+{
+  "system": "whisper-large-v3",
+  "hf_repo": "mlx-community/whisper-large-v3-mlx",
+  "revision": "49e6aa286ad60c14352c404340ded53710378a11",
+  "settings": {
+    "language": "hi",
+    "task": "transcribe",
+    "temperature": 0.0,
+    "condition_on_previous_text": false,
+    "initial_prompt": null,
+    "decoding": "greedy, no temperature fallback"
+  },
+  "versions": {
+    "python": "3.11.5",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "mlx": "0.26.1",
+    "mlx-whisper": "0.4.2",
+    "torch": "2.5.1",
+    "torchaudio": "2.5.1",
+    "transformers": "4.46.3",
+    "onnxruntime": "1.20.1",
+    "onnx": "1.17.0",
+    "soundfile": "0.12.1",
+    "numpy": "1.26.4",
+    "huggingface-hub": "0.26.5"
+  },
+  "date": "2026-11-13T21:36:33+00:00"
+}

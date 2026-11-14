@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C159. Jyoti took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c159",
+  "label": "Synthetic ACQ record. Jyoti: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1998-08-24",
+      "language": "hi-en",
+      "name": "Jyoti Namoona"
+    },
+    "disbursed_inr": 105500,
+    "disbursed_on": "2026-10-25",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-159",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-25",
+          "method": "recorded_call"
+        },
+        "cover_inr": 150000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 44500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 150000,
+    "tenure_months": 24
+  }
+}

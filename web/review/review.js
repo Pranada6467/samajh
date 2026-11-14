@@ -15,10 +15,78 @@ class ApiError extends Error {
   }
 }
 
-async function api(path, options) {
-  let res;
+// The reviewer's token (made on the server by `python -m samajh.ops reviewer add NAME`). Kept in
+// sessionStorage only, so it goes when the tab closes; the page works (asking each time) without it.
+const TOKEN_KEY = "samajh.review.token";
+let memoryToken = "";
+
+function token(value) {
   try {
-    res = await fetch(API + path, { headers: { Accept: "application/json" }, ...options });
+    if (value === undefined) return window.sessionStorage.getItem(TOKEN_KEY) || "";
+    if (value === null) window.sessionStorage.removeItem(TOKEN_KEY);
+    else window.sessionStorage.setItem(TOKEN_KEY, value);
+  } catch {
+    // storage is off: the token lives only in this variable for this page
+  }
+  memoryToken = value === undefined ? memoryToken : value || "";
+  return memoryToken;
+}
+
+// A small sign-in form over the page; resolves once a token has been pasted.
+function askForToken(message) {
+  return new Promise((resolve) => {
+    const input = h("input", { id: "signin-token", type: "password", autocomplete: "off", required: true });
+    const box = h(
+      "form",
+      {
+        class: "panel signin",
+        role: "dialog",
+        "aria-labelledby": "signin-h",
+        onsubmit: (ev) => {
+          ev.preventDefault();
+          const value = input.value.trim();
+          if (!value) return input.focus();
+          box.remove();
+          resolve(value);
+        },
+      },
+      h("h2", { id: "signin-h" }, "Sign in"),
+      h("p", null, message),
+      h("p", { class: "small muted" }, "A token is made on the server with ", h("code", null, "uv run python -m samajh.ops reviewer add NAME"), "."),
+      h("label", { class: "field", for: "signin-token" }, "Reviewer token"),
+      input,
+      h("div", { class: "form-row" }, h("button", { class: "btn primary", type: "submit" }, "Sign in")),
+    );
+    document.body.prepend(box);
+    input.focus();
+  });
+}
+
+async function api(path, options) {
+  for (;;) {
+    const held = token() || memoryToken;
+    const res = await apiOnce(path, options, held);
+    if (res.status !== 401) return res.body;
+    token(null);
+    token(await askForToken(held ? "That token was not accepted. Paste a reviewer token." : res.message));
+  }
+}
+
+async function apiOnce(path, options, bearer) {
+  try {
+    return { status: 200, body: await apiFetch(path, options, bearer) };
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 401) return { status: 401, message: err.message };
+    throw err;
+  }
+}
+
+async function apiFetch(path, options, bearer) {
+  let res;
+  const headers = { Accept: "application/json", ...((options && options.headers) || {}) };
+  if (bearer) headers.Authorization = `Bearer ${bearer}`;
+  try {
+    res = await fetch(API + path, { ...options, headers });
   } catch {
     throw new ApiError(0, "no_answer", "The review server did not answer.");
   }
@@ -155,16 +223,6 @@ const splitText = (split) =>
 const splitSub = (split) => h("span", { class: "sub split" }, splitText(split));
 const basisTag = (basis, label) => h("span", { class: `tag basis basis-${basis}` }, label);
 
-function remember(key, value) {
-  try {
-    if (value === undefined) return window.localStorage.getItem(key) || "";
-    window.localStorage.setItem(key, value);
-  } catch {
-    // storage is off or full: the page works without it
-  }
-  return "";
-}
-
 // ---------------------------------------------------------------- header
 
 const NAV = [
@@ -201,8 +259,18 @@ function renderHeader(batch, page) {
           h("p", { class: "access" }, batch.access_notice),
         )
       : null,
+    h("p", { class: "signed-in small muted", id: "signed-in" }),
   );
   header.replaceChildren(...parts.childNodes);
+  if (batch)
+    api("/whoami")
+      .then((me) => {
+        const el = document.getElementById("signed-in");
+        if (el) el.textContent = `Signed in as ${me.reviewer}`;
+      })
+      .catch(() => {
+        // the name is a convenience; the pages work without it
+      });
 }
 
 function showError(main, err) {
@@ -427,7 +495,7 @@ function quoteFigure(q, ctx) {
       q.start_s !== null && ctx.recording
         ? h(
             "a",
-            { href: `${ctx.recording}#t=${q.start_s}`, onclick: (ev) => ctx.playFrom(ev, q.start_s) },
+            { href: `${ctx.recording}#t=${q.start_s}`, onclick: (ev) => ctx.playFrom(ev, q.start_s, q.end_s) },
             `Play the recording from ${mmss(q.start_s)}`,
           )
         : q.start_s !== null
@@ -488,10 +556,9 @@ function decisionSection(first) {
   const history = h("div", null);
   const msg = h("p", { class: "form-msg", role: "status", "aria-live": "polite" });
   const note = h("textarea", { id: "d-note", name: "note", required: true, maxlength: "2000", rows: "4" });
-  const who = h("input", { id: "d-who", name: "reviewer", type: "text", required: true, maxlength: "80", autocomplete: "name" });
-  who.value = remember("samajh.review.reviewer");
   const submit = h("button", { class: "btn primary", type: "submit" }, "Record decision");
   const caseId = first.case_id;
+  const caseDigest = first.case_digest; // the case as this page loaded it; a changed case gives 409
 
   const show = (c) => {
     now.className = `panel decision-now${c.disposition && c.disposition.final ? " final" : ""}`;
@@ -519,13 +586,11 @@ function decisionSection(first) {
           ? "Choose one of the decisions."
           : !note.value.trim()
             ? "Write a note that says what you looked at and why you decided this."
-            : !who.value.trim()
-              ? "Enter your name."
-              : "";
+            : "";
         msg.className = problem ? "form-msg bad" : "form-msg";
         msg.textContent = problem || "Saving\u2026";
         if (problem) {
-          (!picked ? form.querySelector('input[name="decision"]') : !note.value.trim() ? note : who).focus();
+          (!picked ? form.querySelector('input[name="decision"]') : note).focus();
           return;
         }
         submit.disabled = true;
@@ -533,9 +598,8 @@ function decisionSection(first) {
           const saved = await api(`/cases/${encodeURIComponent(caseId)}/disposition`, {
             method: "POST",
             headers: { Accept: "application/json", "Content-Type": "application/json" },
-            body: JSON.stringify({ decision: picked.value, note: note.value.trim(), reviewer: who.value.trim() }),
+            body: JSON.stringify({ decision: picked.value, note: note.value.trim(), case_digest: caseDigest }),
           });
-          remember("samajh.review.reviewer", who.value.trim());
           show(saved);
           note.value = "";
           picked.checked = false;
@@ -543,7 +607,12 @@ function decisionSection(first) {
           msg.textContent = saved.disposition ? `Saved: ${saved.disposition.decision_label}.` : "Saved.";
         } catch (err) {
           msg.className = "form-msg bad";
-          msg.textContent = err instanceof ApiError ? `Not saved. ${err.message}` : "Not saved. The page met a problem.";
+          msg.textContent =
+            err instanceof ApiError && err.status === 409
+              ? "Not saved. The case has changed since this page was opened: reload the page, read it again and decide."
+              : err instanceof ApiError
+                ? `Not saved. ${err.message}`
+                : "Not saved. The page met a problem.";
         } finally {
           submit.disabled = false;
         }
@@ -557,7 +626,7 @@ function decisionSection(first) {
       first.decisions.map((d) => h("label", { class: "choice" }, h("input", { type: "radio", name: "decision", value: d.key, required: true }), h("span", null, d.label))),
     ),
     h("div", null, h("label", { class: "field", for: "d-note" }, "Note (required): what you looked at and why"), note),
-    h("div", null, h("label", { class: "field", for: "d-who" }, "Your name"), who),
+    h("p", { class: "small muted" }, "The decision is recorded under the name of the signed-in reviewer."),
     h("div", { class: "form-row" }, submit, msg),
   );
 
@@ -574,14 +643,18 @@ async function pageCase(main) {
   const call = c.call;
   const audio = call.recording_url ? h("audio", { controls: true, preload: "none", src: call.recording_url }) : null;
   const transcript = h("details", { class: "transcript", id: "transcript" });
+  let stopAtEnd = null;
   const ctx = {
     lang: LANG_ATTR[call.language] || null,
     recording: call.recording_url,
     openTranscript: () => {
       transcript.open = true;
     },
-    playFrom: (ev, start) => {
+    playFrom: (ev, start, end) => {
       ev.preventDefault();
+      // Stop at the quote's end: one listener at a time, removed on pause and on the next play.
+      if (stopAtEnd) audio.removeEventListener("timeupdate", stopAtEnd);
+      stopAtEnd = null;
       // The #t fragment asks the browser to start there; the listener covers a browser that ignores it.
       audio.addEventListener(
         "loadedmetadata",
@@ -592,6 +665,27 @@ async function pageCase(main) {
       );
       audio.src = `${call.recording_url}#t=${start}`;
       audio.load();
+      if (end !== null && end !== undefined && end > start) {
+        const listener = () => {
+          if (audio.currentTime >= end) audio.pause();
+        };
+        stopAtEnd = listener;
+        audio.addEventListener("timeupdate", listener);
+        // load() may queue a "pause" of the earlier playback: the removal is armed once this one plays.
+        audio.addEventListener(
+          "playing",
+          () =>
+            audio.addEventListener(
+              "pause",
+              () => {
+                audio.removeEventListener("timeupdate", listener);
+                if (stopAtEnd === listener) stopAtEnd = null;
+              },
+              { once: true },
+            ),
+          { once: true },
+        );
+      }
       audio.play().catch(() => {
         // the browser refused to start playback: the controls are still there
       });

@@ -1,0 +1,842 @@
+{
+ "customer_id": "ACQ-C051",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "b2e637c11128a51ea137b61ba8cba6c316129c107f2392df051868cbdf54dea1",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं जीता नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं जीता नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आप बता सकती हैं कि आपने लोन के साथ जो प्रोडक्ट खरीदा, उसके बारे में आपको क्या पता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आप बता सकती हैं कि आपने लोन के साथ जो प्रोडक्ट खरीदा, उसके बारे में आपको क्या पता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "यह लोन का बीमा है, सुरक्षा के लिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5234463501255959,
+     "recall_rule": "what_is_it_for_premium_defer",
+     "source_topic": "what_is_it",
+     "text": "यह लोन का बीमा है, सुरक्षा के लिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "ठीक है। क्या आप बता सकती हैं कि यह बीमा किस कंपनी का है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आप बता सकती हैं कि यह बीमा किस कंपनी का है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": true,
+     "states_span": "क्या आप बता सकती हैं कि यह बीमा किस कंपनी का है?"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "कहा था कि किसी भी कंपनी से ले सकते हैं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "where_to_take_it_from",
+     "span_dropped": "क्या आप बता सकती हैं कि यह बीमा किस कंपनी का है?",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7349192735273391,
+     "source_topic": "where_to_take_it_from",
+     "text": "कहा था कि किसी भी कंपनी से ले सकते हैं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि बीमा का प्रीमियम कितना था और वह कैसे चुकाया गया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि बीमा का प्रीमियम कितना था और वह कैसे चुकाया गया?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आप खाते में देख लीजिए। लोन के पैसों में से ही कट गया था, बाकी मुझे मिला।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.0852353812661022,
+     "source_topic": "how_much",
+     "text": "आप खाते में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9636795148253441,
+     "source_topic": "how_paid",
+     "text": "लोन के पैसों में से ही कट गया था, बाकी मुझे मिला।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि बीमा कवर कितना है और यह कितने समय के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि बीमा कवर कितना है और यह कितने समय के लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "बीमा कवर कितना है"
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "कितने समय के लिए है"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "अगर मुझे कुछ हो जाए, तो दो लाख पचास हज़ार तक का लोन भरेगा। जितने समय का लिखा हो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "बीमा कवर कितना है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6207571567501873,
+     "source_topic": "what_it_gives",
+     "text": "अगर मुझे कुछ हो जाए, तो दो लाख पचास हज़ार तक का लोन भरेगा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "asks_inferred": true,
+     "span_dropped": "कितने समय के लिए है",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.4902120076585561,
+     "source_topic": "how_long",
+     "text": "जितने समय का लिखा हो।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि इस बीमा को 30 दिनों के भीतर रद्द किया जा सकता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि इस बीमा को 30 दिनों के भीतर रद्द किया जा सकता है?",
+   "agent_usd": 0.00026696,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "can_cancel",
+     "asks": false,
+     "states_span": "30 दिनों के भीतर रद्द किया जा सकता है"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.647e-05,
+   "reply": "यह मुझे नहीं पता कि रद्द हो सकता है या नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "30 दिनों के भीतर रद्द किया जा सकता है",
+     "stated_value": 30,
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": 30,
+     "draw_a": 0.421033944003284,
+     "draw_r": 0.9610000122338533,
+     "source_topic": "can_cancel",
+     "decided": "dk_r",
+     "variant": "own",
+     "text": "यह मुझे नहीं पता कि रद्द हो सकता है या नहीं।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "ठीक है। क्या आपको बताया गया था कि अगर आप जीवित रहीं, तो बीमा के पैसे वापस मिलेंगे?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको बताया गया था कि अगर आप जीवित रहीं, तो बीमा के पैसे वापस मिलेंगे?",
+   "agent_usd": 0.00016926,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "जीवित रहीं, तो बीमा के पैसे वापस मिलेंगे"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस मिलेंगे"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.061e-05,
+   "reply": "हाँ जी, सही है। मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "जीवित रहीं, तो बीमा के पैसे वापस मिलेंगे",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.6207571567501873,
+     "source_topic": "what_it_gives",
+     "text": "मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस मिलेंगे",
+     "stated_value": "yes",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "no",
+     "draw_a": 0.1789793528150767,
+     "draw_r": 0.18586824997328222,
+     "source_topic": "money_back",
+     "decided": "dk_r",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+   "agent_usd": 0.0002292,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "बीमा के पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.911e-05,
+   "reply": "हाँ जी, सही है। मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "बीमा के पैसे वापस नहीं मिलेंगे",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.6207571567501873,
+     "source_topic": "what_it_gives",
+     "text": "मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस नहीं मिलेंगे",
+     "stated_value": "no",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "no",
+     "draw_a": 0.1789793528150767,
+     "draw_r": 0.18586824997328222,
+     "source_topic": "money_back",
+     "decided": "dk_r",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+   "agent_usd": 0.0004452,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "बीमा के पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "बीमा के पैसे वापस नहीं मिलेंगे",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.6207571567501873,
+     "source_topic": "what_it_gives",
+     "text": "मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस नहीं मिलेंगे",
+     "stated_value": "no",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "no",
+     "draw_a": 0.1789793528150767,
+     "draw_r": 0.18586824997328222,
+     "source_topic": "money_back",
+     "decided": "dk_r",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+   "agent_usd": 0.0001866,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "बीमा के पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "बीमा के पैसे वापस नहीं मिलेंगे",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.6207571567501873,
+     "source_topic": "what_it_gives",
+     "text": "मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस नहीं मिलेंगे",
+     "stated_value": "no",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "no",
+     "draw_a": 0.1789793528150767,
+     "draw_r": 0.18586824997328222,
+     "source_topic": "money_back",
+     "decided": "dk_r",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+   "agent_usd": 0.0001968,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "बीमा के पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "बीमा के पैसे वापस नहीं मिलेंगे",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.6207571567501873,
+     "source_topic": "what_it_gives",
+     "text": "मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस नहीं मिलेंगे",
+     "stated_value": "no",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "no",
+     "draw_a": 0.1789793528150767,
+     "draw_r": 0.18586824997328222,
+     "source_topic": "money_back",
+     "decided": "dk_r",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 11,
+   "agent": {
+    "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको यह बताया गया था कि बीमा के पैसे वापस नहीं मिलेंगे अगर आप जीवित रहीं?",
+   "agent_usd": 0.0002046,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "बीमा के पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं मिलेंगे"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "बीमा के पैसे वापस नहीं मिलेंगे",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.6207571567501873,
+     "source_topic": "what_it_gives",
+     "text": "मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस नहीं मिलेंगे",
+     "stated_value": "no",
+     "belief_state": "dk",
+     "belief_value": null,
+     "record_value": "no",
+     "draw_a": 0.1789793528150767,
+     "draw_r": 0.18586824997328222,
+     "source_topic": "money_back",
+     "decided": "dk_r",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 12,
+   "agent": {
+    "say": "धन्यवाद, जीता जी। हमारी बात हो गई है। अगर कोई सवाल हो, तो हमसे संपर्क करें।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "understanding_gap",
+     "reason": "बोरोअर को बीमा की कंपनी, प्रीमियम राशि, भुगतान की बारंबारता, और रद्दीकरण की अवधि के बारे में नहीं पता है। पैसे वापस न मिलने के बारे में स्पष्ट नहीं है।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "यह लोन का बीमा है, सुरक्षा के लिए।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "आप खाते में देख लीजिए। लोन के पैसों में से ही कट गया था, बाकी मुझे मिला।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "कहा था कि किसी भी कंपनी से ले सकते हैं।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "आप खाते में देख लीजिए। लोन के पैसों में से ही कट गया था, बाकी मुझे मिला।"
+      },
+      {
+       "field": "required",
+       "belief": "false",
+       "quote": "कहा था कि किसी भी कंपनी से ले सकते हैं।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "अगर मुझे कुछ हो जाए, तो दो लाख पचास हज़ार तक का लोन भरेगा। जितने समय का लिखा हो।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "जितने समय का लिखा हो।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "यह मुझे नहीं पता कि रद्द हो सकता है या नहीं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है। मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद, जीता जी। हमारी बात हो गई है। अगर कोई सवाल हो, तो हमसे संपर्क करें।",
+   "agent_usd": 0.0006588
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "understanding_gap",
+  "reason": "बोरोअर को बीमा की कंपनी, प्रीमियम राशि, भुगतान की बारंबारता, और रद्दीकरण की अवधि के बारे में नहीं पता है। पैसे वापस न मिलने के बारे में स्पष्ट नहीं है।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "यह लोन का बीमा है, सुरक्षा के लिए।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "आप खाते में देख लीजिए। लोन के पैसों में से ही कट गया था, बाकी मुझे मिला।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "कहा था कि किसी भी कंपनी से ले सकते हैं।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "आप खाते में देख लीजिए। लोन के पैसों में से ही कट गया था, बाकी मुझे मिला।"
+   },
+   {
+    "field": "required",
+    "belief": "false",
+    "quote": "कहा था कि किसी भी कंपनी से ले सकते हैं।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "अगर मुझे कुछ हो जाए, तो दो लाख पचास हज़ार तक का लोन भरेगा। जितने समय का लिखा हो।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "जितने समय का लिखा हो।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "यह मुझे नहीं पता कि रद्द हो सकता है या नहीं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है। मेरे न रहने पर दो लाख पचास हज़ार रुपये तक लोन में चुकेंगे।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.00235742,
+  "router": 0.00011619000000000001
+ },
+ "cache_hits": {
+  "agent": 5,
+  "router": 9
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:27:59+00:00",
+ "agent_turns": 13,
+ "usd_total": 0.00247361,
+ "finished_utc": "2026-11-13T22:28:41+00:00"
+}

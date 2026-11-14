@@ -1,0 +1,512 @@
+{
+ "customer_id": "ACQ-C135",
+ "kind": "knowledge_gap",
+ "customer_kind": "knowledge_gap",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "b282fe1faa15f7d1cf500e6ef18db03f05917717825365487683a357f7fe91b9",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "क्या मैं बात कर रहा हूँ श्री दिनेश नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या मैं बात कर रहा हूँ श्री दिनेश नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से एक गोल्ड लोन लिया था। क्या आपको वो प्रोडक्ट याद है जो आपने लोन के साथ खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से एक गोल्ड लोन लिया था। क्या आपको वो प्रोडक्ट याद है जो आपने लोन के साथ खरीदा था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": "क्या आपको वो प्रोडक्ट याद है जो आपने लोन के साथ खरीदा था?"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आपको तो पता ही होगा। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24067477346397936,
+     "source_topic": "what_is_it",
+     "text": "आपको तो पता ही होगा।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "जी सर, बस हम चेक कर रहे हैं कि आपको सब कुछ समझ में आया कि नहीं। क्या आप बता सकते हैं कि आपने लोन के साथ क्या प्रोडक्ट खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी सर, बस हम चेक कर रहे हैं कि आपको सब कुछ समझ में आया कि नहीं। क्या आप बता सकते हैं कि आपने लोन के साथ क्या प्रोडक्ट खरीदा था?",
+   "agent_usd": 0.00022826,
+   "router_items": [
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.53e-05,
+   "reply": "हाँ जी। आपके records में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24067477346397936,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आपके records में लिखा होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "जी सर, लेकिन हम आपसे यही पूछ रहे हैं कि आपको क्या खरीदा था, ये याद है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी सर, लेकिन हम आपसे यही पूछ रहे हैं कि आपको क्या खरीदा था, ये याद है?",
+   "agent_usd": 0.00022522,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 2.871e-05,
+   "reply": "आपके records में लिखा होगा। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24067477346397936,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आपके records में लिखा होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "जी सर, हम आपकी मदद करने के लिए बोल रहे हैं। कृपया बताएं, आपको याद है कि आपने लोन के साथ कौन-सा प्रोडक्ट खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी सर, हम आपकी मदद करने के लिए बोल रहे हैं। कृपया बताएं, आपको याद है कि आपने लोन के साथ कौन-सा प्रोडक्ट खरीदा था?",
+   "agent_usd": 0.00021732,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.5775e-05,
+   "reply": "आपके records में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24067477346397936,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आपके records में लिखा होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "not_asked",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "जी सर, हम आपसे पूछ रहे हैं कि आपको खुद कोई जानकारी है क्या आपने लोन के साथ कुछ खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी सर, हम आपसे पूछ रहे हैं कि आपको खुद कोई जानकारी है क्या आपने लोन के साथ कुछ खरीदा था?",
+   "agent_usd": 0.00015986,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 2.871e-05,
+   "reply": "आपके records में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24067477346397936,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आपके records में लिखा होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "जी सर, हम आपकी बात समझ रहे हैं। क्या आप हमें बता सकते हैं कि आपको लगता है आपने क्या खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी सर, हम आपकी बात समझ रहे हैं। क्या आप हमें बता सकते हैं कि आपको लगता है आपने क्या खरीदा था?",
+   "agent_usd": 0.00019646,
+   "router_items": [
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 2.941e-05,
+   "reply": "हाँ जी। आपके records में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24067477346397936,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आपके records में लिखा होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "जी सर, हम आपकी मदद करना चाहते हैं। क्या आपको ये बताना ठीक लगेगा कि आपको क्या खरीदा था, ये याद है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी सर, हम आपकी मदद करना चाहते हैं। क्या आपको ये बताना ठीक लगेगा कि आपको क्या खरीदा था, ये याद है?",
+   "agent_usd": 0.000232,
+   "router_items": [
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.4875e-05,
+   "reply": "हाँ जी, बोलिए। आपके records में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24067477346397936,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आपके records में लिखा होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "जी सर, हम आपसे यही पूछ रहे हैं कि आपको क्या खरीदा था, ये याद है? कृपया थोड़ा बताएं।",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी सर, हम आपसे यही पूछ रहे हैं कि आपको क्या खरीदा था, ये याद है? कृपया थोड़ा बताएं।",
+   "agent_usd": 0.00028106,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.46e-05,
+   "reply": "आपके records में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24067477346397936,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आपके records में लिखा होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "जी सर, हम आपकी बात समझ रहे हैं। क्या आप चाहेंगे कि हम आपको थोड़ी जानकारी दें?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी सर, हम आपकी बात समझ रहे हैं। क्या आप चाहेंगे कि हम आपको थोड़ी जानकारी दें?",
+   "agent_usd": 0.0002202,
+   "router_items": [
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.315e-05,
+   "reply": "हाँ जी। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "ठीक है सर, धन्यवाद।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "borrower does not know what product they bought and repeatedly defers to bank records without providing any information",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "आपके records में लिखा होगा।"
+      }
+     ]
+    }
+   },
+   "say": "ठीक है सर, धन्यवाद।",
+   "agent_usd": 0.0002289
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "borrower does not know what product they bought and repeatedly defers to bank records without providing any information",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "आपके records में लिखा होगा।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0019892800000000004,
+  "router": 0.00051053
+ },
+ "cache_hits": {
+  "agent": 2,
+  "router": 2
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:16:16+00:00",
+ "agent_turns": 11,
+ "usd_total": 0.0024998100000000003,
+ "finished_utc": "2026-11-13T22:16:57+00:00"
+}

@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C106. Lata took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c106",
+  "label": "Synthetic ACQ record. Lata: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1995-08-20",
+      "language": "hi-en",
+      "name": "Lata Namoona"
+    },
+    "disbursed_inr": 330000,
+    "disbursed_on": "2026-10-26",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-106",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-26",
+          "method": "otp"
+        },
+        "cover_inr": 330000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 34500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 330000,
+    "tenure_months": 36
+  }
+}

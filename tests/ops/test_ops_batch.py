@@ -26,7 +26,7 @@ from samajh.ops.model import Decision, FinalStatus
 from samajh.ops.report import build_report
 from samajh.ops.simulate import run_draw, scripted_analysis
 from samajh.ops.store import NoBatch, OpsStore
-from samajh.ops.views import Count, DispositionIn, queue_view, record_disposition
+from samajh.ops.views import Count, DispositionIn, case_view, queue_view, record_disposition
 from samajh.scenarios.model import DONT_KNOW
 from samajh.types import RuleId, Tier
 
@@ -233,7 +233,15 @@ def test_the_queue_holds_only_referrals_open_first_then_severity_then_oldest_cal
 
     def decide(of, decision: Decision) -> None:
         record_disposition(
-            store, case_of(of), DispositionIn(decision=decision, note="seen", reviewer="R1"), NOW
+            store,
+            case_of(of),
+            DispositionIn(
+                decision=decision,
+                note="seen",
+                reviewer="R1",
+                case_digest=case_view(load_batch(store), case_of(of)).case_digest,
+            ),
+            NOW,
         )
 
     decide(decided, Decision.concern_not_supported)

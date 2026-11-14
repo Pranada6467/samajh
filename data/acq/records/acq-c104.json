@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C104. Vijay took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c104",
+  "label": "Synthetic ACQ record. Vijay: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1980-03-09",
+      "language": "hi",
+      "name": "Vijay Namoona"
+    },
+    "disbursed_inr": 606000,
+    "disbursed_on": "2026-10-29",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-104",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-29",
+          "method": "recorded_call"
+        },
+        "cover_inr": 620000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 14000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 620000,
+    "tenure_months": 24
+  }
+}

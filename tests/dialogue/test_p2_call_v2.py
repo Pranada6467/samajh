@@ -316,7 +316,7 @@ def at_go_ahead():
         # the judge's six
         ("ठीक है, जल्दी बोलिए थोड़ा बिज़ी हूँ", "second_check.ask"),
         ("ये फ्रॉड कॉल तो नहीं है? आप कहाँ से बोल रहे हो?", "verify.before_loan"),
-        ("मुझे हिंदी ठीक से नहीं आती, तमिल में बोलिए", Outcome.language_switch),
+        ("मुझे हिंदी ठीक से नहीं आती, तमिल में बोलिए", "language.switched"),  # W4: Tamil has lines: a live switch
         ("अभी गाड़ी चला रहा हूँ, शाम को कॉल करना", Outcome.call_back_later),
         ("हाँ बोलो, पर लोन का पैसा तो मैंने भर दिया है", "second_check.ask"),
         ("किस चीज़ का फ़ीडबैक? मैंने तो कोई शिकायत नहीं की", "disclosure.reask"),
@@ -324,7 +324,7 @@ def at_go_ahead():
         ("हाँ पर जल्दी कीजिए, मुझे निकलना है", "second_check.ask"),
         ("ये असली कॉल है? मुझे कैसे पता चलेगा?", "verify.before_loan"),
         ("aap kaun bol rahe ho, bank se ho?", "verify.before_loan"),
-        ("can you speak in English please", Outcome.language_switch),
+        ("can you speak in English please", "language.switched"),  # W4: English goes to the Hinglish lines
         ("मराठी में बात कर सकते हैं?", Outcome.language_switch),
         ("अभी नहीं, एक घंटे बाद कॉल कीजिए", Outcome.call_back_later),
     ],
@@ -335,7 +335,7 @@ def test_a_reply_at_the_go_ahead_that_is_not_a_refusal_is_not_taken_as_one(text,
         assert isinstance(said, EndOfCall) and said.outcome is wanted
     else:
         assert not isinstance(said, EndOfCall), said.outcome
-        assert said.lines[-1].key in (wanted, "disclosure.go_ahead", "second_check.ask")
+        assert said.lines[-1].key in (wanted, "disclosure.go_ahead", "second_check.ask", "right_party.ask")
         assert wanted in [line.key for line in said.lines]
 
 
@@ -355,8 +355,9 @@ def test_call_later_without_a_time_asks_when_and_keeps_the_answer():
 
 
 def test_a_language_request_records_the_language():
-    _state, said = step(at_go_ahead(), "मुझे हिंदी ठीक से नहीं आती, तमिल में बोलिए")
-    assert said.requested_language == "tamil" and said.utterance.lines[-1].key == "end.language"
+    # W4: a language with no prompt file ends the call and records it; one with a file switches live (test_w4_language).
+    _state, said = step(at_go_ahead(), "मुझे हिंदी ठीक से नहीं आती, मराठी में बोलिए")
+    assert said.requested_language == "marathi" and said.utterance.lines[-1].key == "end.language"
 
 
 def test_a_verification_question_after_the_loan_is_named_gets_the_papers_answer_then_the_question_again():
@@ -466,7 +467,7 @@ TOOK_NOTHING = {HI: "कुछ नहीं लिया, बस लोन ल�
 @pytest.mark.parametrize("language", [HI, HE])
 def test_a_customer_who_took_nothing_gets_one_follow_up_then_consent_then_the_close(language):
     nothing = TOOK_NOTHING[language]
-    call = play(record(), language, [*OPENING[language], nothing, "नहीं, कुछ नहीं", "लोन के लिए हाँ की थी बस"])
+    call = play(record(), language, [*OPENING[language], nothing, "नहीं, कुछ नहीं", "लोन के लिए हाँ की थी, फॉर्म पर साइन किया था"])  # W4: both halves
     assert call.end is not None and call.end.outcome is Outcome.completed
     asked = [line.key for line in call.lines if line.asks is not None or line.key.startswith("open_recall")]
     assert asked == ["open_recall.ask", "open_recall.nothing", "consent.ask"]

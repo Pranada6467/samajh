@@ -427,3 +427,11 @@ tr.uncounted { opacity: 0.85; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; }
 .stats .split { display: block; font-size: 0.75rem; }
 .first-line { font-weight: 600; margin: 0 0 12px; max-width: 80ch; }
+
+/* sign-in form, shown over the page when the API answers 401 */
+.signin { position: fixed; z-index: 10; top: 16px; left: 50%; transform: translateX(-50%); width: min(420px, calc(100vw - 32px)); box-shadow: 0 8px 24px rgb(0 0 0 / 0.25); }
+.signin h2 { margin-top: 0; }
+.signin input { width: 100%; box-sizing: border-box; }
+.signin p + p, .signin .field { margin-top: 8px; display: block; }
+.signin .form-row { margin-top: 12px; }
+.signed-in:empty { display: none; }

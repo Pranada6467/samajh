@@ -29,8 +29,11 @@ class FakeLlm:
         self.options.append(kwargs)
         if self.error:
             raise self.error
-        go_ahead = "Stage: go_ahead" in messages[-1].content and self.label not in ("yes", "no", "unclear")
-        return SimpleNamespace(value=schema(label="yes" if go_ahead else self.label))
+        content = messages[-1].content
+        go_ahead = "Stage: go_ahead" in content and self.label not in ("yes", "no", "unclear")
+        # W4: the setup claim of a whole call now reaches the classifier too; it is answered as a classifier would.
+        setup = "Stage: first_name" in content and content.endswith(f"Reply: {CUSTOMERS[HI].identity}")
+        return SimpleNamespace(value=schema(label="yes" if go_ahead else "confirms_self" if setup else self.label))
 
 
 def read(llm, text: str, expecting: Expecting, question: str = "वो क्या है?"):
@@ -40,10 +43,9 @@ def read(llm, text: str, expecting: Expecting, question: str = "वो क्य
 @pytest.mark.parametrize(
     "text, expecting",
     [
-        ("हाँ जी, बोल रहा हूँ", Expecting.identity),  # a tight claim
-        ("जी", Expecting.identity),  # a tight acknowledgement: re-asked, never confirmed
-        ("मैं उनकी पत्नी बोल रही हूँ", Expecting.identity),  # a tight relation word
+        ("मैं उनकी पत्नी बोल रही हूँ", Expecting.identity),  # a tight relation word: a veto (W4)
         ("1984", Expecting.birth_year),
+        ("हमारे ये तो 1984 के हैं", Expecting.birth_year),  # W4: the year question never reaches a model
         ("मुझे बात नहीं करनी", Expecting.open),
         ("किसी इंसान से बात कराइए", Expecting.open),
         ("पता नहीं", Expecting.open),
@@ -65,7 +67,8 @@ def test_the_classifier_is_not_called_when_the_rules_settle_the_turn(text, expec
         ("हाँ जी, थोड़ा जल्दी", Expecting.go_ahead),  # round 3: a go-ahead reply with more than yes-words
         ("ji main Ramesh", Expecting.identity),  # a name: not tight
         ("हाँ साहब बोलिए", Expecting.identity),  # a title: not tight
-        ("हमारे ये तो 1984 के हैं", Expecting.birth_year),  # a year among other words (wave 5: "जी अपना तो 1984 का है" now passes)
+        ("हाँ जी, बोल रहा हूँ", Expecting.identity),  # W4: a tight claim is judged by the context classifier too
+        ("जी", Expecting.identity),  # W4: a tight acknowledgement too
         ("आज बहुत गर्मी है", Expecting.open),  # a free reply later in the call
     ],
 )
@@ -91,7 +94,6 @@ def test_the_classifier_sees_the_stage_the_question_and_the_reply():
         ("wrong_person", Expecting.identity, Intent.wrong_person),  # honoured, no longer ignored
         ("third_party_handoff", Expecting.identity, Intent.wrong_person),
         ("who_or_why", Expecting.identity, Intent.asks_who),
-        ("wrong_person", Expecting.birth_year, Intent.wrong_person),
         ("refuse", Expecting.open, Intent.decline),
         ("stop", Expecting.amount, Intent.decline),
         ("human_request", Expecting.told, Intent.wants_human),
@@ -123,10 +125,10 @@ def test_every_label_becomes_its_intent(label, expecting, intent):
 
 def test_a_year_is_confirmed_only_when_the_classifier_reads_it_as_the_speakers_own():
     text = "हमारे ये तो 1984 के हैं"  # wave 5: a year the word lists leave loose
-    assert read(FakeLlm("answer"), text, Expecting.birth_year).year == 1984
-    assert read(FakeLlm("wrong_person"), text, Expecting.birth_year).intent is Intent.wrong_person
-    assert read(FakeLlm("unclear"), text, Expecting.birth_year).year is None
-    assert read(FakeLlm(error=TransportError("down")), text, Expecting.birth_year).year is None
+    # W4: no classifier is asked at the year; a loose year with no first-person word confirms nobody.
+    for llm in (FakeLlm("answer"), FakeLlm(error=TransportError("down"))):
+        heard = read(llm, text, Expecting.birth_year)
+        assert heard.year is None and not heard.degraded and llm.calls == []
 
 
 def test_the_fallback_names_its_own_model_and_leaves_room_for_the_reply():
@@ -265,8 +267,6 @@ def test_a_go_on_word_against_an_end_label_asks_once_instead_of_ending():
 @pytest.mark.parametrize(
     "label, text, language, expecting",
     [
-        ("dont_know", "याद नहीं आ रहा अभी", HI, Expecting.birth_year),  # verify-P2-r4 G3-11
-        ("dont_know", "pata nahi yaar, yaad nahi", Language.hi_en, Expecting.birth_year),  # G3-12
         ("no", "nahi ji", Language.hi_en, Expecting.identity),  # G4-12
     ],
 )
@@ -288,4 +288,6 @@ def test_dont_know_at_the_birth_year_takes_the_same_path_as_a_failed_classifier_
     judged = play(record(), HI, replies, interpreter=LlmFallbackInterpreter(FakeLlm("dont_know")))
     down = play(record(), HI, replies, interpreter=LlmFallbackInterpreter(FakeLlm(error=TransportError("x"))))
     assert judged.keys == down.keys
-    assert judged.state.degraded_turns == () and down.state.degraded_turns != ()
+    # W4: the year reply reaches no classifier, so neither arm marks it degraded.
+    year_turn = [t for t in judged.state.turns if t.speaker.value == "customer"][-1].id
+    assert year_turn not in judged.state.degraded_turns and year_turn not in down.state.degraded_turns

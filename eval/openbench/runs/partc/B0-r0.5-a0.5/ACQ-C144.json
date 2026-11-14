@@ -1,0 +1,586 @@
+{
+ "customer_id": "ACQ-C144",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "71d4578bc3c0ca1b8c3cab3505df4b1d1cba5c5a8d07ff60e8a232570465675f",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "क्या मैं रानी नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या मैं रानी नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल में हमारे बैंक से एक पर्सनल लोन लिया है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल में हमारे बैंक से एक पर्सनल लोन लिया है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी खरीदा है। क्या आप बता सकती हैं कि यह क्या है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी खरीदा है। क्या आप बता सकती हैं कि यह क्या है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "एक क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "एक क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "correct",
+     "belief_value": "insurance",
+     "record_value": "insurance",
+     "draw_a": 0.32605986506678164,
+     "draw_r": 0.5755816521123052,
+     "source_topic": "what_is_it",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "क्या आप बता सकती हैं कि यह इंश्योरेंस क्या करती है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आप बता सकती हैं कि यह इंश्योरेंस क्या करती है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जो कागज में लिखा है वही।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.21692964294925332,
+     "source_topic": "what_it_gives",
+     "text": "जो कागज में लिखा है वही।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "क्या आप बता सकती हैं कि इंश्योरेंस कवर कितने रुपये का है और किसे मिलता है अगर कुछ हो जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आप बता सकती हैं कि इंश्योरेंस कवर कितने रुपये का है और किसे मिलता है अगर कुछ हो जाए?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जो कागज में लिखा है वही। आपके कागज में जो है, वही होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.21692964294925332,
+     "source_topic": "what_it_gives",
+     "text": "जो कागज में लिखा है वही।"
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.011467801639810205,
+     "source_topic": "how_much",
+     "text": "आपके कागज में जो है, वही होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "क्या आपको पता है कि इंश्योरेंस का प्रीमियम कितना था और कैसे भरा गया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि इंश्योरेंस का प्रीमियम कितना था और कैसे भरा गया?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आपके कागज में जो है, वही होगा। जैसा आपके रिकॉर्ड में हो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.011467801639810205,
+     "source_topic": "how_much",
+     "text": "आपके कागज में जो है, वही होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.20626957528293133,
+     "source_topic": "how_paid",
+     "text": "जैसा आपके रिकॉर्ड में हो।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "क्या आपको याद है कि आपने इस इंश्योरेंस के लिए हाँ कहा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको याद है कि आपने इस इंश्योरेंस के लिए हाँ कहा था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जो रिकॉर्ड में है वही। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_you_agreed_to",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.42645453475415707,
+     "source_topic": "what_you_agreed_to",
+     "text": "जो रिकॉर्ड में है वही।"
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "क्या आपको पता है कि यह इंश्योरेंस कितने समय के लिए है और क्या इसे कैंसल किया जा सकता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि यह इंश्योरेंस कितने समय के लिए है और क्या इसे कैंसल किया जा सकता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "कितने समय के लिए है"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": false,
+     "states_span": "इसे कैंसल किया जा सकता है"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "एक साल का है। हाँ, पंद्रह दिन में रद्द हो सकता है, ऐसा कहा था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "asks_inferred": true,
+     "span_dropped": "कितने समय के लिए है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8880609679035842,
+     "source_topic": "how_long",
+     "text": "एक साल का है।"
+    },
+    {
+     "item": 2,
+     "kind": "can_cancel",
+     "asks_inferred": true,
+     "span_dropped": "इसे कैंसल किया जा सकता है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.550591889070347,
+     "source_topic": "can_cancel",
+     "text": "हाँ, पंद्रह दिन में रद्द हो सकता है, ऐसा कहा था।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "क्या आपको पता है कि प्रीमियम कितना था और क्या इंश्योरेंस के खत्म होने पर पैसे वापस मिलते हैं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि प्रीमियम कितना था और क्या इंश्योरेंस के खत्म होने पर पैसे वापस मिलते हैं?",
+   "agent_usd": 0.00031208,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": "पैसे वापस मिलते हैं"
+    },
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": "पैसे वापस मिलते हैं"
+    }
+   ],
+   "router_usd": 3.881e-05,
+   "reply": "आपके कागज में जो है, वही होगा। जो कागज में लिखा है वही। आपके रिकॉर्ड में जो लिखा है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.011467801639810205,
+     "source_topic": "how_much",
+     "text": "आपके कागज में जो है, वही होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "span_dropped": "पैसे वापस मिलते हैं",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.21692964294925332,
+     "source_topic": "what_it_gives",
+     "text": "जो कागज में लिखा है वही।"
+    },
+    {
+     "item": 2,
+     "kind": "money_back",
+     "span_dropped": "पैसे वापस मिलते हैं",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08311432134360075,
+     "source_topic": "money_back",
+     "text": "आपके रिकॉर्ड में जो लिखा है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "धन्यवाद, रानी जी। अगर आपको कोई सवाल हो, तो हमारे ग्राहक सेवा पर संपर्क करें।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower does not demonstrate actual knowledge; repeatedly refers to records without stating any specific detail",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "जो कागज में लिखा है वही।"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "आपके कागज में जो है, वही होगा। जैसा आपके रिकॉर्ड में हो।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "आपके कागज में जो है, वही होगा। जो कागज में लिखा है वही। आपके रिकॉर्ड में जो लिखा है।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "आपके कागज में जो है, वही होगा।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "आपके कागज में जो है, वही होगा।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "आपके कागज में जो है, वही होगा।"
+      },
+      {
+       "field": "term",
+       "belief": "false",
+       "quote": "एक साल का है।"
+      },
+      {
+       "field": "cancel",
+       "belief": "false",
+       "quote": "हाँ, पंद्रह दिन में रद्द हो सकता है, ऐसा कहा था।"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "आपके कागज में जो है, वही होगा।"
+      },
+      {
+       "field": "consent",
+       "belief": "does_not_know",
+       "quote": "जो रिकॉर्ड में है वही। हाँ जी।"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद, रानी जी। अगर आपको कोई सवाल हो, तो हमारे ग्राहक सेवा पर संपर्क करें।",
+   "agent_usd": 0.0008206
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower does not demonstrate actual knowledge; repeatedly refers to records without stating any specific detail",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "जो कागज में लिखा है वही।"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "आपके कागज में जो है, वही होगा। जैसा आपके रिकॉर्ड में हो।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "आपके कागज में जो है, वही होगा। जो कागज में लिखा है वही। आपके रिकॉर्ड में जो लिखा है।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "आपके कागज में जो है, वही होगा।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "आपके कागज में जो है, वही होगा।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "आपके कागज में जो है, वही होगा।"
+   },
+   {
+    "field": "term",
+    "belief": "false",
+    "quote": "एक साल का है।"
+   },
+   {
+    "field": "cancel",
+    "belief": "false",
+    "quote": "हाँ, पंद्रह दिन में रद्द हो सकता है, ऐसा कहा था।"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "आपके कागज में जो है, वही होगा।"
+   },
+   {
+    "field": "consent",
+    "belief": "does_not_know",
+    "quote": "जो रिकॉर्ड में है वही। हाँ जी।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.00113268,
+  "router": 3.881e-05
+ },
+ "cache_hits": {
+  "agent": 8,
+  "router": 8
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:33:08+00:00",
+ "agent_turns": 10,
+ "usd_total": 0.00117149,
+ "finished_utc": "2026-11-13T22:33:19+00:00"
+}

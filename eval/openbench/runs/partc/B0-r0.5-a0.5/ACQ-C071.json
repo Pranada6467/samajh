@@ -1,0 +1,1008 @@
+{
+ "customer_id": "ACQ-C071",
+ "kind": "informed",
+ "customer_kind": "informed",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "e1502a0cca4fd7aee6f360df0ffe77a98aa26b769e8496e566e1b3eb796cc639",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं राधा नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं राधा नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी राधा जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक गोल्ड लोन लिया था। क्या आप बता सकती हैं कि आपने उस लोन से क्या खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राधा जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक गोल्ड लोन लिया था। क्या आप बता सकती हैं कि आपने उस लोन से क्या खरीदा था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आप records में देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24414340569637716,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आप records में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "जी राधा जी, मैं आपसे यही जानना चाह रहा हूँ कि आपको क्या खरीदने के बारे में याद है। क्या आप बता सकती हैं कि लोन के साथ आपने कोई इंश्योरेंस खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राधा जी, मैं आपसे यही जानना चाह रहा हूँ कि आपको क्या खरीदने के बारे में याद है। क्या आप बता सकती हैं कि लोन के साथ आपने कोई इंश्योरेंस खरीदा था?",
+   "agent_usd": 0.000279,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": "क्या आप बता सकती हैं कि लोन के साथ आपने कोई इंश्योरेंस खरीदा था"
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": "जी राधा जी, मैं आपसे यही जानना चाह रहा हूँ कि आपको क्या खरीदने के बारे में याद है।"
+    }
+   ],
+   "router_usd": 7.071e-05,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "stated",
+     "stated": "क्या आप बता सकती हैं कि लोन के साथ आपने कोई इंश्योरेंस खरीदा था",
+     "stated_value": "insurance",
+     "belief_state": "correct",
+     "belief_value": "insurance",
+     "record_value": "insurance",
+     "draw_a": 0.24414340569637716,
+     "draw_r": 0.16397861391305923,
+     "source_topic": "what_did_you_take",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 3,
+     "kind": "needed_or_choice",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 4,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 5,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "ठीक है, राधा जी। क्या आप बता सकती हैं कि यह इंश्योरेंस किस चीज़ के लिए था? जैसे, अगर कुछ हो जाए तो क्या कवर मिलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, राधा जी। क्या आप बता सकती हैं कि यह इंश्योरेंस किस चीज़ के लिए था? जैसे, अगर कुछ हो जाए तो क्या कवर मिलता है?",
+   "agent_usd": 0.0001448,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.9775e-05,
+   "reply": "system में check कर लीजिए। system में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24414340569637716,
+     "source_topic": "what_is_it",
+     "text": "system में check कर लीजिए।"
+    },
+    {
+     "item": 2,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.32208945020101964,
+     "source_topic": "what_it_gives",
+     "text": "system में लिखा होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "जी राधा जी, मैं आपसे यही पूछ रहा हूँ कि आपको क्या पता है। क्या आपको लगता है कि यह इंश्योरेंस आपकी जान के लिए था, और अगर कुछ हो जाए तो लोन चुकता हो जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राधा जी, मैं आपसे यही पूछ रहा हूँ कि आपको क्या पता है। क्या आपको लगता है कि यह इंश्योरेंस आपकी जान के लिए था, और अगर कुछ हो जाए तो लोन चुकता हो जाए?",
+   "agent_usd": 0.00031254,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 5.561e-05,
+   "reply": "system में लिखा होगा। papers में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.32208945020101964,
+     "source_topic": "what_it_gives",
+     "text": "system में लिखा होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.4747743005864322,
+     "source_topic": "needed_or_choice",
+     "text": "papers में लिखा होगा।"
+    },
+    {
+     "item": 3,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 4,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 5,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "जी राधा जी, मैं आपसे यही पूछ रहा हूँ कि आपको क्या याद है। क्या आपको लगता है कि यह इंश्योरेंस आपकी जान के लिए था और अगर कुछ हो जाए तो लोन चुकता हो जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी राधा जी, मैं आपसे यही पूछ रहा हूँ कि आपको क्या याद है। क्या आपको लगता है कि यह इंश्योरेंस आपकी जान के लिए था और अगर कुछ हो जाए तो लोन चुकता हो जाए?",
+   "agent_usd": 0.000218,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": "आपकी जान के लिए था"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 5.017e-05,
+   "reply": "system में लिखा होगा। papers में लिखा होगा। form sign करके loan और insurance दोनों के लिए हाँ किया था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.32208945020101964,
+     "source_topic": "what_it_gives",
+     "text": "system में लिखा होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "needed_or_choice",
+     "span_dropped": "आपकी जान के लिए था",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.4747743005864322,
+     "source_topic": "needed_or_choice",
+     "text": "papers में लिखा होगा।"
+    },
+    {
+     "item": 2,
+     "kind": "what_you_agreed_to",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6879992706235498,
+     "source_topic": "what_you_agreed_to",
+     "text": "form sign करके loan और insurance दोनों के लिए हाँ किया था।"
+    },
+    {
+     "item": 3,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 4,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "ठीक है, राधा जी। क्या आपको याद है कि इंश्योरेंस के लिए कितना प्रीमियम दिया गया था और वह पैसा कैसे दिया गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, राधा जी। क्या आपको याद है कि इंश्योरेंस के लिए कितना प्रीमियम दिया गया था और वह पैसा कैसे दिया गया था?",
+   "agent_usd": 0.0001796,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.521e-05,
+   "reply": "वो तो file में होगा। records में details होंगी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.27111940854229033,
+     "source_topic": "how_much",
+     "text": "वो तो file में होगा।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.024984559742733836,
+     "source_topic": "how_paid",
+     "text": "records में details होंगी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "राधा जी, मैं आपसे यही पूछ रहा हूँ कि आपको क्या याद है। क्या आपको लगता है कि इंश्योरेंस का प्रीमियम लोन अमाउंट से कटा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "राधा जी, मैं आपसे यही पूछ रहा हूँ कि आपको क्या याद है। क्या आपको लगता है कि इंश्योरेंस का प्रीमियम लोन अमाउंट से कटा था?",
+   "agent_usd": 0.0001878,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": "लोन अमाउंट से कटा था"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.551e-05,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन अमाउंट से कटा था",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.024984559742733836,
+     "draw_r": 0.9527741414494812,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "ठीक है, राधा जी। क्या आपको याद है कि यह इंश्योरेंस लोन के लिए अनिवार्य था या आपने खुद से चुना था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, राधा जी। क्या आपको याद है कि यह इंश्योरेंस लोन के लिए अनिवार्य था या आपने खुद से चुना था?",
+   "agent_usd": 0.0001816,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.4e-05,
+   "reply": "papers में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.4747743005864322,
+     "source_topic": "needed_or_choice",
+     "text": "papers में लिखा होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "राधा जी, क्या आपको लगता है कि आपने खुद चुनकर यह इंश्योरेंस लिया था, या यह लोन लेने के लिए ज़रूरी था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "राधा जी, क्या आपको लगता है कि आपने खुद चुनकर यह इंश्योरेंस लिया था, या यह लोन लेने के लिए ज़रूरी था?",
+   "agent_usd": 0.0001938,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "यह इंश्योरेंस"
+    },
+    {
+     "kind": "any_questions",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.731e-05,
+   "reply": "papers में लिखा होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.4747743005864322,
+     "source_topic": "needed_or_choice",
+     "text": "papers में लिखा होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "ठीक है, राधा जी। क्या आपको याद है कि इंश्योरेंस कितने समय के लिए था और अगर कुछ हो जाए तो कितना कवर मिलता था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, राधा जी। क्या आपको याद है कि इंश्योरेंस कितने समय के लिए था और अगर कुछ हो जाए तो कितना कवर मिलता था?",
+   "agent_usd": 0.0002006,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.521e-05,
+   "reply": "system में लिखा होगा। जब तक loan चलेगा, तब तक रहेगा cover।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.32208945020101964,
+     "source_topic": "what_it_gives",
+     "text": "system में लिखा होगा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.531748402165249,
+     "source_topic": "how_long",
+     "text": "जब तक loan चलेगा, तब तक रहेगा cover।"
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 11,
+   "agent": {
+    "say": "राधा जी, क्या आपको याद है कि इंश्योरेंस को 30 दिनों के अंदर कैंसल किया जा सकता था? और क्या आपको लगता है कि इंश्योरेंस खत्म होने के बाद पैसा वापस मिलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "राधा जी, क्या आपको याद है कि इंश्योरेंस को 30 दिनों के अंदर कैंसल किया जा सकता था? और क्या आपको लगता है कि इंश्योरेंस खत्म होने के बाद पैसा वापस मिलता है?",
+   "agent_usd": 0.00047544,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "can_cancel",
+     "asks": false,
+     "states_span": "30 दिनों के अंदर"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसा वापस मिलता है"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.761e-05,
+   "reply": "हाँ जी, सही है। ये पैसा वापस नहीं आता, savings थोड़ी है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "30 दिनों के अंदर",
+     "stated_value": 30,
+     "belief_state": "correct",
+     "belief_value": 30,
+     "record_value": 30,
+     "draw_a": 0.6341151795350015,
+     "draw_r": 0.04642101260833442,
+     "source_topic": "can_cancel",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "money_back",
+     "asks_inferred": true,
+     "span_dropped": "पैसा वापस मिलता है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6148003332782537,
+     "source_topic": "money_back",
+     "text": "ये पैसा वापस नहीं आता, savings थोड़ी है।"
+    },
+    {
+     "item": 3,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 12,
+   "agent": {
+    "say": "ठीक है, राधा जी। क्या आपको याद है कि आपने इंश्योरेंस के लिए फॉर्म कब भरा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, राधा जी। क्या आपको याद है कि आपने इंश्योरेंस के लिए फॉर्म कब भरा था?",
+   "agent_usd": 0.0002432,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": "क्या आपको याद है"
+    }
+   ],
+   "router_usd": 3.387e-05,
+   "reply": "system में check कर लीजिए। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.24414340569637716,
+     "source_topic": "what_is_it",
+     "text": "system में check कर लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 13,
+   "agent": {
+    "say": "राधा जी, धन्यवाद। अब मैं बात समाप्त करता हूँ।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "understanding_gap",
+     "reason": "बorrower को कुछ जानकारी याद नहीं है और वे system या papers की ओर इशारा कर रही हैं, लेकिन कुछ बातों को सही बताया है।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "system में लिखा होगा।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "वो तो file में होगा।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "system में लिखा होगा।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "papers में लिखा होगा।"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "जब तक loan चलेगा, तब तक रहेगा cover।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "system में लिखा होगा।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "system में लिखा होगा।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "हाँ जी, सही है। ये पैसा वापस नहीं आता, savings थोड़ी है।"
+      },
+      {
+       "field": "consent",
+       "belief": "does_not_know",
+       "quote": "system में लिखा होगा।"
+      }
+     ]
+    }
+   },
+   "say": "राधा जी, धन्यवाद। अब मैं बात समाप्त करता हूँ।",
+   "agent_usd": 0.000491
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "understanding_gap",
+  "reason": "बorrower को कुछ जानकारी याद नहीं है और वे system या papers की ओर इशारा कर रही हैं, लेकिन कुछ बातों को सही बताया है।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "system में लिखा होगा।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "वो तो file में होगा।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "system में लिखा होगा।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "papers में लिखा होगा।"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "जब तक loan चलेगा, तब तक रहेगा cover।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "system में लिखा होगा।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "system में लिखा होगा।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "हाँ जी, सही है। ये पैसा वापस नहीं आता, savings थोड़ी है।"
+   },
+   {
+    "field": "consent",
+    "belief": "does_not_know",
+    "quote": "system में लिखा होगा।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0031073800000000003,
+  "router": 0.000584985
+ },
+ "cache_hits": {
+  "agent": 2,
+  "router": 2
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:14:31+00:00",
+ "agent_turns": 14,
+ "usd_total": 0.0036923650000000004,
+ "finished_utc": "2026-11-13T22:15:28+00:00"
+}

@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C011. Ravi took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c011",
+  "label": "Synthetic ACQ record. Ravi: a gold loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1987-04-06",
+      "language": "hi-en",
+      "name": "Ravi Namoona"
+    },
+    "disbursed_inr": 210000,
+    "disbursed_on": "2026-10-06",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-011",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-06",
+          "method": "digital_click"
+        },
+        "cover_inr": 210000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 32000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 210000,
+    "tenure_months": 24
+  }
+}

@@ -268,8 +268,12 @@ design = "§5 step 2: the customer asked for another time; no time is promised"
 text = "ಸರಿ, ನಂತರ ಕರೆ ಮಾಡಲು ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ. ಧನ್ಯವಾದ, ನಮಸ್ಕಾರ."
 
 [lines."end.language"]
-design = "§5: the customer asked for another language; the call does not switch live"
-text = "ಸರಿ, ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಮತ್ತೆ ಕರೆ ಮಾಡಲು ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ. ಧನ್ಯವಾದ, ನಮಸ್ಕಾರ."
+design = "§5, W4: the customer asked for a language the call has no lines for, or past the switch limit; the call ends and a call in that language is tried later (not human-reviewed)"
+text = "ಕ್ಷಮಿಸಿ, ಈ ಕರೆಯನ್ನು ಈಗ ಆ ಭಾಷೆಯಲ್ಲಿ ಮುಂದುವರಿಸಲು ಆಗುವುದಿಲ್ಲ. ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಮತ್ತೆ ಕರೆ ಮಾಡಲು ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ. ಧನ್ಯವಾದ, ನಮಸ್ಕಾರ."
+
+[lines."language.switched"]
+design = "§5, W4: said in the new language when the call switches live, before the pending question is put again (not human-reviewed)"
+text = "ಸರಿ, ಈಗ ಕನ್ನಡದಲ್ಲಿ ಮಾತನಾಡೋಣ."
 
 [lines."end.no_response"]
 design = "§5: nothing heard twice in a row; the call ends and says nothing about a loan"
@@ -298,3 +302,19 @@ text = "ಈ ಕರೆಯ ಬಗ್ಗೆ ಅನುಮಾನವಿದ್ದರೆ
 [lines."close.bye"]
 design = "§5 step 9"
 text = "ನಮಸ್ಕಾರ."
+
+[lines."consent.follow_what"]
+design = "§9, W4: the one follow-up when the consent reply said only how; asks only what the yes was for (not human-reviewed)"
+text = "ಆ ಒಪ್ಪಿಗೆ ಯಾವುದಕ್ಕಾಗಿ ಕೊಟ್ಟಿದ್ದಿರಿ?"
+
+[lines."consent.follow_how"]
+design = "§9, W4: the one follow-up when the consent reply said only what; asks only how, naming no way (not human-reviewed)"
+text = "ಆ ಒಪ್ಪಿಗೆಯನ್ನು ಹೇಗೆ ಕೊಟ್ಟಿದ್ದಿರಿ?"
+
+[lines."kind.follow_what"]
+design = "§8, W4: the one follow-up when the kind reply gave a figure or what it does but no name for it (not human-reviewed)"
+text = "ಅದನ್ನು ನೀವು ಏನೆಂದು ಕರೆಯುತ್ತೀರಿ, ಅದು ಏನು?"
+
+[lines."defer.reask"]
+design = "§8, W4: said once before the re-ask when the customer defers to the lender or the record; asks for their own memory (not human-reviewed)"
+text = "ದಾಖಲೆಯಲ್ಲಿ ಏನಿದೆ ಎಂಬುದಲ್ಲ, ನಿಮಗೆ ಸ್ವತಃ ಏನು ನೆನಪಿದೆ ಎಂಬುದನ್ನು ತಿಳಿಯಲು ಬಯಸುತ್ತೇವೆ."

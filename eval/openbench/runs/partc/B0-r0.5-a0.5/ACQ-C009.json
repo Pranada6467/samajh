@@ -1,0 +1,222 @@
+{
+ "customer_id": "ACQ-C009",
+ "kind": "knowledge_gap",
+ "customer_kind": "knowledge_gap",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "dbc2e66835024b255fd85e7b1f28702e1a6f25321caf5038de1863af9d1b6e37",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "क्या मैं बात कर रहा हूँ श्री दिनेश नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या मैं बात कर रहा हूँ श्री दिनेश नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में 5 लाख रुपये का गोल्ड लोन लिया था। क्या आपने उसके साथ क्रेडिट-लाइफ इंश्योरेंस भी लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में 5 लाख रुपये का गोल्ड लोन लिया था। क्या आपने उसके साथ क्रेडिट-लाइफ इंश्योरेंस भी लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आपके रिकॉर्ड में जो है, वही ठीक है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.29224163317121565,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आपके रिकॉर्ड में जो है, वही ठीक है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "सर, मैं बस यह जानना चाहता हूँ कि आपको इस इंश्योरेंस के बारे में कितना पता है। क्या आप बता सकते हैं कि यह क्या है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं बस यह जानना चाहता हूँ कि आपको इस इंश्योरेंस के बारे में कितना पता है। क्या आप बता सकते हैं कि यह क्या है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जो कागज़ों में लिखा है, वही सही।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.29224163317121565,
+     "source_topic": "what_is_it",
+     "text": "जो कागज़ों में लिखा है, वही सही।"
+    },
+    {
+     "item": 1,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "सर, मैं आपकी बात मान रहा हूँ, लेकिन कृपया थोड़ा बताइए — यह इंश्योरेंस क्या करती है अगर आपकी मृत्यु हो जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं आपकी बात मान रहा हूँ, लेकिन कृपया थोड़ा बताइए — यह इंश्योरेंस क्या करती है अगर आपकी मृत्यु हो जाए?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "अगर आपकी मृत्यु हो जाए"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आपके रिकॉर्ड में जो है, वही ठीक। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "अगर आपकी मृत्यु हो जाए",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.35474539501592517,
+     "source_topic": "what_it_gives",
+     "text": "आपके रिकॉर्ड में जो है, वही ठीक।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "धन्यवाद, सर। अगर कभी कोई सवाल आए, तो हमारे बैंक में संपर्क करें।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "incomplete",
+     "reason": "borrower did not confirm any understanding of the product details",
+     "findings": []
+    }
+   },
+   "say": "धन्यवाद, सर। अगर कभी कोई सवाल आए, तो हमारे बैंक में संपर्क करें।",
+   "agent_usd": 0.0002904
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "incomplete",
+  "reason": "borrower did not confirm any understanding of the product details",
+  "findings": []
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0002904,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 4,
+  "router": 4
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:26:14+00:00",
+ "agent_turns": 5,
+ "usd_total": 0.0002904,
+ "finished_utc": "2026-11-13T22:26:19+00:00"
+}

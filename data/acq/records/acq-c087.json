@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C087. Meena took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c087",
+  "label": "Synthetic ACQ record. Meena: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1997-05-24",
+      "language": "hi",
+      "name": "Meena Namoona"
+    },
+    "disbursed_inr": 647500,
+    "disbursed_on": "2026-10-25",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-087",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-25",
+          "method": "otp"
+        },
+        "cover_inr": 670000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 22500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 670000,
+    "tenure_months": 24
+  }
+}

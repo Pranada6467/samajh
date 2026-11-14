@@ -1,0 +1,609 @@
+{
+ "customer_id": "ACQ-C108",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "26dbc10ecd505234c1c01a7a017cdfe8b38c57779699b5bb70989b2e566e25cf",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं सैंजय जी से बोल रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं सैंजय जी से बोल रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "not_asked",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "सैंजय जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था। क्या आप बता सकते हैं कि आपने वो पैसा किस चीज़ पर खर्च किया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सैंजय जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था। क्या आप बता सकते हैं कि आपने वो पैसा किस चीज़ पर खर्च किया?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": "सैंजय जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था।"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, लोन के साथ बीमा लिया था, छियासठ हज़ार रुपये का।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.2248963986057788,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ जी, लोन के साथ बीमा लिया था, छियासठ हज़ार रुपये का।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "सही कहा, ये क्रेडिट-लाइफ बीमा था। क्या आपको पता है कि इसका प्रीमियम कितना था और ये पैसा कैसे जमा किया गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सही कहा, ये क्रेडिट-लाइफ बीमा था। क्या आपको पता है कि इसका प्रीमियम कितना था और ये पैसा कैसे जमा किया गया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ बीमा"
+    },
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "पूरे छियासठ हज़ार रुपये दिए थे उसके। लोन के पैसे में से ही काट लिया था, कटकर मिला था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6474370213691145,
+     "source_topic": "how_much",
+     "text": "पूरे छियासठ हज़ार रुपये दिए थे उसके।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.1943844931665808,
+     "source_topic": "how_paid",
+     "text": "लोन के पैसे में से ही काट लिया था, कटकर मिला था।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "सही कहा, प्रीमियम 31,500 रुपये था, जो लोन राशि से काटा गया था। क्या आपको पता है कि ये बीमा लेना अनिवार्य था या आपको कोई दूसरा विकल्प भी मिल सकता था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सही कहा, प्रीमियम 31,500 रुपये था, जो लोन राशि से काटा गया था। क्या आपको पता है कि ये बीमा लेना अनिवार्य था या आपको कोई दूसरा विकल्प भी मिल सकता था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "31,500 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "लोन राशि से काटा गया था"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "बीमा"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। पूरे छियासठ हज़ार रुपये दिए थे उसके। अफ़सर बोले कि लोन के लिए ये ज़रूरी है, लेना ही पड़ेगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "31,500 रुपये",
+     "stated_value": 31500,
+     "belief_state": "false",
+     "belief_value": 66000,
+     "record_value": 31500,
+     "draw_a": 0.6474370213691145,
+     "draw_r": 0.54054772015661,
+     "source_topic": "how_much",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "पूरे छियासठ हज़ार रुपये दिए थे उसके।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन राशि से काटा गया था",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.1943844931665808,
+     "draw_r": 0.20051475847139955,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5209948921110481,
+     "source_topic": "needed_or_choice",
+     "text": "अफ़सर बोले कि लोन के लिए ये ज़रूरी है, लेना ही पड़ेगा।"
+    },
+    {
+     "item": 3,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 4,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "क्या आपको पता है कि अगर कुछ हो जाए तो ये बीमा कितने समय के लिए कवर देता है और कितने पैसे का?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि अगर कुछ हो जाए तो ये बीमा कितने समय के लिए कवर देता है और कितने पैसे का?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "कितने पैसे का"
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "कितने समय के लिए"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "अगर मैं न रहूँ, तो पाँच लाख साठ हज़ार तक लोन भरेगा। ये एक साल तक चलेगा, ऐसा बताया था मुझे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "कितने पैसे का",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.2798089156858623,
+     "source_topic": "what_it_gives",
+     "text": "अगर मैं न रहूँ, तो पाँच लाख साठ हज़ार तक लोन भरेगा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "asks_inferred": true,
+     "span_dropped": "कितने समय के लिए",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6898868421558291,
+     "source_topic": "how_long",
+     "text": "ये एक साल तक चलेगा, ऐसा बताया था मुझे।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "बिल्कुल सही। क्या आपको पता है कि इसे कैंसिल करने का ऑप्शन था और कितने दिनों के अंदर?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "बिल्कुल सही। क्या आपको पता है कि इसे कैंसिल करने का ऑप्शन था और कितने दिनों के अंदर?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "कितने दिनों के अंदर"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "बोले थे कि पंद्रह दिन के भीतर बंद करवा सकते हैं। पूरे एक साल के लिए है वो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.005346604157239199,
+     "source_topic": "can_cancel",
+     "text": "बोले थे कि पंद्रह दिन के भीतर बंद करवा सकते हैं।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "span_dropped": "कितने दिनों के अंदर",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.6898868421558291,
+     "source_topic": "how_long",
+     "text": "पूरे एक साल के लिए है वो।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "हाँ जी, पंद्रह दिन के भीतर कैंसिल कर सकते थे। क्या आपको बताया गया था कि बीमा खत्म होने के बाद पैसे वापस मिलेंगे या नहीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "हाँ जी, पंद्रह दिन के भीतर कैंसिल कर सकते थे। क्या आपको बताया गया था कि बीमा खत्म होने के बाद पैसे वापस मिलेंगे या नहीं?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "पंद्रह दिन"
+    },
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "पूरे एक साल के लिए है वो। ये पैसा वापस नहीं मिलता, ये बचत का पैसा थोड़ी है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "asks_inferred": true,
+     "span_dropped": "पंद्रह दिन",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.6898868421558291,
+     "source_topic": "how_long",
+     "text": "पूरे एक साल के लिए है वो।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6695584030821919,
+     "source_topic": "money_back",
+     "text": "ये पैसा वापस नहीं मिलता, ये बचत का पैसा थोड़ी है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "सही कहा, पैसा वापस नहीं मिलता। क्या आपने इस बीमा के लिए कोई फॉर्म भरा था या साइन किया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सही कहा, पैसा वापस नहीं मिलता। क्या आपने इस बीमा के लिए कोई फॉर्म भरा था या साइन किया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसा वापस नहीं मिलता"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "क्या आपने इस बीमा के लिए कोई फॉर्म भरा था या साइन किया था"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसा वापस नहीं मिलता",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.6695584030821919,
+     "draw_r": 0.16110976692289114,
+     "source_topic": "money_back",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "rule": "stated",
+     "stated": "क्या आपने इस बीमा के लिए कोई फॉर्म भरा था या साइन किया था",
+     "stated_value": "signed_form",
+     "belief_state": "correct",
+     "belief_value": "signed_form",
+     "record_value": "signed_form",
+     "draw_a": 0.5083944357465953,
+     "draw_r": 0.8492324338294566,
+     "source_topic": "what_you_agreed_to",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बोरोवर ने कहा कि बीमा लेना अनिवार्य था, जबकि रिकॉर्ड के अनुसार यह अनिवार्य नहीं था और दूसरा प्रदाता चुना जा सकता था।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "हाँ जी, लोन के साथ बीमा लिया था, छियासठ हज़ार रुपये का।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "पूरे छियासठ हज़ार रुपये दिए थे उसके।"
+      },
+      {
+       "field": "source",
+       "belief": "false",
+       "quote": "लोन के पैसे में से ही काट लिया था, कटकर मिला था।"
+      },
+      {
+       "field": "required",
+       "belief": "false",
+       "quote": "अफ़सर बोले कि लोन के लिए ये ज़रूरी है, लेना ही पड़ेगा।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "अगर मैं न रहूँ, तो पाँच लाख साठ हज़ार तक लोन भरेगा।"
+      },
+      {
+       "field": "term",
+       "belief": "false",
+       "quote": "ये एक साल तक चलेगा, ऐसा बताया था मुझे।"
+      },
+      {
+       "field": "cancel",
+       "belief": "false",
+       "quote": "बोले थे कि पंद्रह दिन के भीतर बंद करवा सकते हैं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "ये पैसा वापस नहीं मिलता, ये बचत का पैसा थोड़ी है।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "हाँ जी, सही है।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.0
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बोरोवर ने कहा कि बीमा लेना अनिवार्य था, जबकि रिकॉर्ड के अनुसार यह अनिवार्य नहीं था और दूसरा प्रदाता चुना जा सकता था।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "हाँ जी, लोन के साथ बीमा लिया था, छियासठ हज़ार रुपये का।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "पूरे छियासठ हज़ार रुपये दिए थे उसके।"
+   },
+   {
+    "field": "source",
+    "belief": "false",
+    "quote": "लोन के पैसे में से ही काट लिया था, कटकर मिला था।"
+   },
+   {
+    "field": "required",
+    "belief": "false",
+    "quote": "अफ़सर बोले कि लोन के लिए ये ज़रूरी है, लेना ही पड़ेगा।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "अगर मैं न रहूँ, तो पाँच लाख साठ हज़ार तक लोन भरेगा।"
+   },
+   {
+    "field": "term",
+    "belief": "false",
+    "quote": "ये एक साल तक चलेगा, ऐसा बताया था मुझे।"
+   },
+   {
+    "field": "cancel",
+    "belief": "false",
+    "quote": "बोले थे कि पंद्रह दिन के भीतर बंद करवा सकते हैं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "ये पैसा वापस नहीं मिलता, ये बचत का पैसा थोड़ी है।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "हाँ जी, सही है।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 9,
+  "router": 8
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:25:08+00:00",
+ "agent_turns": 9,
+ "usd_total": 0.0,
+ "finished_utc": "2026-11-13T22:25:08+00:00"
+}

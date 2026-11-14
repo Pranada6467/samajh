@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C033. Sarita took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c033",
+  "label": "Synthetic ACQ record. Sarita: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1982-04-12",
+      "language": "hi",
+      "name": "Sarita Namoona"
+    },
+    "disbursed_inr": 420000,
+    "disbursed_on": "2026-10-29",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-033",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-29",
+          "method": "recorded_call"
+        },
+        "cover_inr": 420000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 30500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 420000,
+    "tenure_months": 36
+  }
+}

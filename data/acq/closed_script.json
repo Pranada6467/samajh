@@ -1,0 +1,55 @@
+{
+  "about": "The ACQ closed call: one statement per field, rendered from the record, each ending 'क्या यह सही है?'. Display only: the closed arm is answered symbolically from the belief. Adapted from data/p5/closed_script.json; model-written, no human review.",
+  "fields": [
+    "kind",
+    "premium",
+    "source",
+    "frequency",
+    "required",
+    "cover",
+    "term",
+    "cancel",
+    "money_back",
+    "consent"
+  ],
+  "hi": {
+    "kind": "आपने लोन के साथ {provider} का एक जीवन बीमा लिया है, जो आपके लोन पर बीमा कवर है। क्या यह सही है?",
+    "premium": "इस बीमा का प्रीमियम {premium_words} रुपये था। क्या यह सही है?",
+    "source": {
+      "from_loan": "यह प्रीमियम आपके लोन की रकम में से काटा गया था। क्या यह सही है?",
+      "separately": "यह प्रीमियम लोन की रकम से नहीं काटा गया था, आपने इसे अलग से भरा था। क्या यह सही है?"
+    },
+    "frequency": "यह प्रीमियम एक ही बार भरा गया था, इसे बार-बार नहीं भरना है। क्या यह सही है?",
+    "required": "यह बीमा लेना आपकी अपनी मर्ज़ी थी, लोन के लिए ज़रूरी नहीं था, और आप इसे किसी भी कंपनी से ले सकते थे। क्या यह सही है?",
+    "cover": "अगर आपकी मृत्यु हो जाए, तो यह बीमा आपका लोन चुकाने के लिए {cover_words} रुपये तक देता है। क्या यह सही है?",
+    "term": "यह बीमा {term_words} तक चलता है। क्या यह सही है?",
+    "cancel": "आप यह बीमा {cancel_days_words} के अंदर रद्द करवा सकते थे। क्या यह सही है?",
+    "money_back": "यह बीमा कोई जमा या बचत नहीं है, और जो प्रीमियम भरा गया वह आख़िर में वापस नहीं मिलता। क्या यह सही है?",
+    "consent": {
+      "signed_form": "आपने इस बीमा के लिए एक फ़ॉर्म पर दस्तख़त करके हाँ कहा था। क्या यह सही है?",
+      "otp": "आपने इस बीमा के लिए अपने फ़ोन पर आया ओटीपी देकर हाँ कहा था। क्या यह सही है?",
+      "digital_click": "आपने इस बीमा के लिए फ़ोन या कंप्यूटर पर एक बटन दबाकर हाँ कहा था। क्या यह सही है?",
+      "recorded_call": "आपने इस बीमा के लिए एक रिकॉर्ड की गई फ़ोन कॉल पर हाँ कहा था। क्या यह सही है?"
+    }
+  },
+  "hi-en": {
+    "kind": "आपने loan के साथ {provider} का एक life insurance लिया है, जो आपके loan पर insurance cover है। क्या यह सही है?",
+    "premium": "इस insurance का premium {premium_words} rupees था। क्या यह सही है?",
+    "source": {
+      "from_loan": "यह premium आपके loan amount में से cut किया गया था। क्या यह सही है?",
+      "separately": "यह premium loan amount से cut नहीं हुआ था, आपने इसे separately pay किया था। क्या यह सही है?"
+    },
+    "frequency": "यह premium एक ही बार pay हुआ था, इसे बार-बार pay नहीं करना है। क्या यह सही है?",
+    "required": "यह insurance लेना आपकी अपनी choice थी, loan के लिए ज़रूरी नहीं था, और आप इसे किसी भी company से ले सकते थे। क्या यह सही है?",
+    "cover": "अगर आपकी death हो जाए, तो यह insurance आपका loan चुकाने के लिए {cover_words} rupees तक देता है। क्या यह सही है?",
+    "term": "यह insurance {term_words} तक चलता है। क्या यह सही है?",
+    "cancel": "आप यह insurance {cancel_days_words} के अंदर cancel करवा सकते थे। क्या यह सही है?",
+    "money_back": "यह insurance कोई deposit या savings नहीं है, और जो premium pay हुआ वह end में वापस नहीं मिलता। क्या यह सही है?",
+    "consent": {
+      "signed_form": "आपने इस insurance के लिए एक form sign करके हाँ कहा था। क्या यह सही है?",
+      "otp": "आपने इस insurance के लिए अपने phone पर आया OTP देकर हाँ कहा था। क्या यह सही है?",
+      "digital_click": "आपने इस insurance के लिए phone या computer पर एक button click करके हाँ कहा था। क्या यह सही है?",
+      "recorded_call": "आपने इस insurance के लिए एक recorded phone call पर हाँ कहा था। क्या यह सही है?"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "system": "indicwhisper-hi",
+  "hf_repo": "AI4Bharat/vistaar (IndicWhisper Hindi)",
+  "revision": "hindi_models.zip",
+  "settings": {
+    "language": "hi",
+    "task": "transcribe",
+    "num_beams": 1,
+    "do_sample": false,
+    "temperature_fallback": null,
+    "max_new_tokens": 225,
+    "sample_rate": 16000,
+    "dtype": "float32",
+    "device": "mps",
+    "source_url": "https://indicwhisper.objectstore.e2enetworks.net/hindi_models.zip",
+    "zip_sha256": "e409b7d56d3cf3c04d0b307347d48a96fd2c045c53ff99ed24dec5e3f80ea4c0",
+    "zip_bytes": 4262614425,
+    "model_dir": "hindi_models/whisper-medium-hi_alldata_multigpu",
+    "config_sha256": "8de96b551ddff9ccf8df4379a84fe7e1cd79d7312bd16673082d1f71501388b7"
+  },
+  "versions": {
+    "python": "3.11.5",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "mlx": "0.26.1",
+    "mlx-whisper": "0.4.2",
+    "torch": "2.5.1",
+    "torchaudio": "2.5.1",
+    "transformers": "4.46.3",
+    "onnxruntime": "1.20.1",
+    "onnx": "1.17.0",
+    "soundfile": "0.12.1",
+    "numpy": "1.26.4",
+    "huggingface-hub": "0.26.5"
+  },
+  "date": "2026-11-13T22:34:09+00:00"
+}

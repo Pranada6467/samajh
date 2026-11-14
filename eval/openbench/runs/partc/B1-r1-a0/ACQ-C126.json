@@ -1,0 +1,972 @@
+{
+ "customer_id": "ACQ-C126",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi-en",
+ "arm": "B1",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "92d52bcf86ffde2bd0e49c137efb12e1eadbcd1ff56228bc8c38364662517ca0",
+ "system_prompt_sha256": "acb52638405a916f83b849d278b16ca804a97fa6a398a47ba18d453ea1918a16",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्री अनिल नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्री अनिल नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी अनिल जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से एक गोल्ड लोन लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी अनिल जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से एक गोल्ड लोन लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "अच्छा जी, क्या आप मुझे बता सकते हैं कि आपने लोन के साथ कौन सी चीज़ खरीदी थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अच्छा जी, क्या आप मुझे बता सकते हैं कि आपने लोन के साथ कौन सी चीज़ खरीदी थी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ, loan के साथ एक FD खुलवाया था, सत्रह हज़ार रुपये का।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.08644767082296312,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, loan के साथ एक FD खुलवाया था, सत्रह हज़ार रुपये का।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "अनिल जी, थोड़ा स्पष्ट कर दूँ — आपने जो सत्रह हज़ार रुपये की चीज़ खरीदी, क्या वो FD थी या कोई और चीज़?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, थोड़ा स्पष्ट कर दूँ — आपने जो सत्रह हज़ार रुपये की चीज़ खरीदी, क्या वो FD थी या कोई और चीज़?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "Loan के साथ FD भी लिया था, उसके लिए सत्रह हज़ार रुपये दिए। वह fixed deposit है, FD, loan के साथ खुलवाया गया।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.08644767082296312,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "Loan के साथ FD भी लिया था, उसके लिए सत्रह हज़ार रुपये दिए।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.08644767082296312,
+     "source_topic": "what_is_it",
+     "text": "वह fixed deposit है, FD, loan के साथ खुलवाया गया।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "अनिल जी, थोड़ा स्पष्ट कर दूँ — आपके लोन राशि से 17,000 रुपये काटे गए थे। क्या आप बता सकते हैं कि ये पैसे किस चीज़ के लिए गए थे?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, थोड़ा स्पष्ट कर दूँ — आपके लोन राशि से 17,000 रुपये काटे गए थे। क्या आप बता सकते हैं कि ये पैसे किस चीज़ के लिए गए थे?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "17,000 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "लोन राशि से काटे गए थे"
+    },
+    {
+     "kind": "identity",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। एक FD है, fixed deposit, जो loan के साथ जुड़ी है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.08644767082296312,
+     "source_topic": "what_is_it",
+     "text": "एक FD है, fixed deposit, जो loan के साथ जुड़ी है।"
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "17,000 रुपये",
+     "stated_value": 17000,
+     "belief_state": "correct",
+     "belief_value": 17000,
+     "record_value": 17000,
+     "draw_a": 0.5318839498795569,
+     "draw_r": 0.8093048674054444,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन राशि से काटे गए थे",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.5829171226359904,
+     "draw_r": 0.06157830683514476,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 4,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "अनिल जी, क्या आपको याद है कि ये FD किस बैंक या कंपनी में खुली है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, क्या आपको याद है कि ये FD किस बैंक या कंपनी में खुली है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "FD"
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": true,
+     "states_span": "किस बैंक या कंपनी में"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "कहा गया था कि किसी भी company से ले सकते हैं, सिर्फ़ इसी lender से नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "where_to_take_it_from",
+     "span_dropped": "किस बैंक या कंपनी में",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5618912950158119,
+     "source_topic": "where_to_take_it_from",
+     "text": "कहा गया था कि किसी भी company से ले सकते हैं, सिर्फ़ इसी lender से नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "अनिल जी, थोड़ा स्पष्ट कर दूँ — जो 17,000 रुपये काटे गए, वो किसी FD के लिए नहीं, बल्कि क्रेडिट-लाइफ इंश्योरेंस के लिए हैं। क्या आपको ये जानकारी थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, थोड़ा स्पष्ट कर दूँ — जो 17,000 रुपये काटे गए, वो किसी FD के लिए नहीं, बल्कि क्रेडिट-लाइफ इंश्योरेंस के लिए हैं। क्या आपको ये जानकारी थी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "17,000 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "काटे गए"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। वह fixed deposit है, FD, loan के साथ खुलवाया गया।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.08644767082296312,
+     "draw_r": 0.0003178049810230732,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "वह fixed deposit है, FD, loan के साथ खुलवाया गया।"
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "17,000 रुपये",
+     "stated_value": 17000,
+     "belief_state": "correct",
+     "belief_value": 17000,
+     "record_value": 17000,
+     "draw_a": 0.5318839498795569,
+     "draw_r": 0.8093048674054444,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "काटे गए",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.5829171226359904,
+     "draw_r": 0.06157830683514476,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "needed_or_choice",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 4,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 5,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "अनिल जी, मैं समझ रहा हूँ। बस एक बात स्पष्ट कर लूँ — क्या आपको लगता है कि ये FD है या फिर ये एक बीमा है जो आपकी मृत्यु पर लोन चुका देगा?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, मैं समझ रहा हूँ। बस एक बात स्पष्ट कर लूँ — क्या आपको लगता है कि ये FD है या फिर ये एक बीमा है जो आपकी मृत्यु पर लोन चुका देगा?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "बीमा"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "एक FD है, fixed deposit, जो loan के साथ जुड़ी है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.08644767082296312,
+     "source_topic": "what_is_it",
+     "text": "एक FD है, fixed deposit, जो loan के साथ जुड़ी है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "duplicate",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "अनिल जी, क्या आपको ये बताया गया था कि ये पैसा एक बीमा के लिए जा रहा है, जो आपकी मौत के मामले में लोन चुका देगा?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, क्या आपको ये बताया गया था कि ये पैसा एक बीमा के लिए जा रहा है, जो आपकी मौत के मामले में लोन चुका देगा?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "बीमा"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": "लोन चुका देगा"
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": "ये पैसा एक बीमा के लिए जा रहा है, जो आपकी मौत के मामले में लोन चुका देगा"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "एक FD है, fixed deposit, जो loan के साथ जुड़ी है। यह मुझे नहीं पता, क्या देता है या कितने तक।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "span_dropped": "बीमा",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.08644767082296312,
+     "source_topic": "what_is_it",
+     "text": "एक FD है, fixed deposit, जो loan के साथ जुड़ी है।"
+    },
+    {
+     "item": 2,
+     "kind": "what_it_gives",
+     "span_dropped": "लोन चुका देगा",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.23491604602895677,
+     "source_topic": "what_it_gives",
+     "text": "यह मुझे नहीं पता, क्या देता है या कितने तक।"
+    },
+    {
+     "item": 3,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "अनिल जी, आपको क्या लगता है — क्या ये FD आपको पैसा वापस देगी या कुछ और?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, आपको क्या लगता है — क्या ये FD आपको पैसा वापस देगी या कुछ और?",
+   "agent_usd": 0.00037122,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": "पैसा वापस देगी"
+    }
+   ],
+   "router_usd": 8.9275e-05,
+   "reply": "एक FD है, fixed deposit, जो loan के साथ जुड़ी है। मेरा मानना है loan के अंत में यह money मुझे वापस मिल जाती है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.08644767082296312,
+     "source_topic": "what_is_it",
+     "text": "एक FD है, fixed deposit, जो loan के साथ जुड़ी है।"
+    },
+    {
+     "item": 2,
+     "kind": "money_back",
+     "span_dropped": "पैसा वापस देगी",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.11235999665223062,
+     "source_topic": "money_back",
+     "text": "मेरा मानना है loan के अंत में यह money मुझे वापस मिल जाती है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "अनिल जी, क्या आपको ये बताया गया था कि अगर आप चाहें, तो इस चीज़ को 30 दिनों के अंदर रद्द कर सकते हैं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, क्या आपको ये बताया गया था कि अगर आप चाहें, तो इस चीज़ को 30 दिनों के अंदर रद्द कर सकते हैं?",
+   "agent_usd": 0.00035112,
+   "router_items": [
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": "30 दिनों के अंदर"
+    },
+    {
+     "kind": "identity",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.625e-05,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "30 दिनों के अंदर",
+     "stated_value": 30,
+     "belief_state": "correct",
+     "belief_value": 30,
+     "record_value": 30,
+     "draw_a": 0.5476150729227811,
+     "draw_r": 0.9330958880018443,
+     "source_topic": "can_cancel",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 11,
+   "agent": {
+    "say": "अनिल जी, क्या आपको याद है कि आपने इस चीज़ के लिए सहमति कैसे दी थी? क्या आपके फ़ोन पर कोई OTP आया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, क्या आपको याद है कि आपने इस चीज़ के लिए सहमति कैसे दी थी? क्या आपके फ़ोन पर कोई OTP आया था?",
+   "agent_usd": 0.000526,
+   "router_items": [
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 2.961e-05,
+   "reply": "मैंने loan के साथ FD के लिए हाँ कही, phone पर आया OTP देकर।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_you_agreed_to",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6696484223939478,
+     "source_topic": "what_you_agreed_to",
+     "text": "मैंने loan के साथ FD के लिए हाँ कही, phone पर आया OTP देकर।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 12,
+   "agent": {
+    "say": "अनिल जी, धन्यवाद। मेरी जानकारी के अनुसार, आपके लोन से 17,000 रुपये क्रेडिट-लाइफ इंश्योरेंस के लिए काटे गए हैं, जो Namoona Life में है। यह बीमा है, FD नहीं। क्या आप चाहेंगे कि आपको इसकी सही जानकारी दी जाए और केस एक एजेंट को ट्रांसफर किया जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, धन्यवाद। मेरी जानकारी के अनुसार, आपके लोन से 17,000 रुपये क्रेडिट-लाइफ इंश्योरेंस के लिए काटे गए हैं, जो Namoona Life में है। यह बीमा है, FD नहीं। क्या आप चाहेंगे कि आपको इसकी सही जानकारी दी जाए और केस एक एजेंट को ट्रांसफर किया जाए?",
+   "agent_usd": 0.0002918,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "लोन से काटे गए"
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "17,000 रुपये"
+    },
+    {
+     "kind": "human",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "closing",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.000109175,
+   "reply": "हाँ जी, सही है। नहीं, आप ही पूछिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन से काटे गए",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.5829171226359904,
+     "draw_r": 0.06157830683514476,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "17,000 रुपये",
+     "stated_value": 17000,
+     "belief_state": "correct",
+     "belief_value": 17000,
+     "record_value": 17000,
+     "draw_a": 0.5318839498795569,
+     "draw_r": 0.8093048674054444,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "human",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं, आप ही पूछिए।"
+    },
+    {
+     "item": 4,
+     "kind": "closing",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 13,
+   "agent": {
+    "say": "अनिल जी, कृपया बताएं — आपको क्या लगता है, यह बीमा कितने समय तक के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, कृपया बताएं — आपको क्या लगता है, यह बीमा कितने समय तक के लिए है?",
+   "agent_usd": 0.0006434,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "कितने समय तक के लिए है"
+    }
+   ],
+   "router_usd": 3.011e-05,
+   "reply": "मुझे नहीं पता, कितने समय का है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "span_dropped": "कितने समय तक के लिए है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.11929753888398409,
+     "source_topic": "how_long",
+     "text": "मुझे नहीं पता, कितने समय का है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 14,
+   "agent": {
+    "say": "अनिल जी, क्या आपको ये पता है कि यह बीमा किस राशि तक कवर करता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, क्या आपको ये पता है कि यह बीमा किस राशि तक कवर करता है?",
+   "agent_usd": 0.0002356,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.7875e-05,
+   "reply": "मुझे इसकी जानकारी नहीं, क्या benefit है या limit क्या है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.23491604602895677,
+     "source_topic": "what_it_gives",
+     "text": "मुझे इसकी जानकारी नहीं, क्या benefit है या limit क्या है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 15,
+   "agent": {
+    "say": "अनिल जी, क्या आपको लगता है कि यह बीमा आपके लोन के बाकी बचे हिस्से को चुका देगा अगर कुछ हो जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, क्या आपको लगता है कि यह बीमा आपके लोन के बाकी बचे हिस्से को चुका देगा अगर कुछ हो जाए?",
+   "agent_usd": 0.00033904,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.431e-05,
+   "reply": "मुझे इसकी जानकारी नहीं, क्या benefit है या limit क्या है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.23491604602895677,
+     "source_topic": "what_it_gives",
+     "text": "मुझे इसकी जानकारी नहीं, क्या benefit है या limit क्या है।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 16,
+   "agent": {
+    "say": "अनिल जी, धन्यवाद। मैं आपके केस को एक मानव एजेंट को ट्रांसफर कर रहा हूँ ताकि आपको सही जानकारी मिल सके। कृपया थोड़ा समय दें।",
+    "end_call": false,
+    "transfer_to_human": true,
+    "report": null
+   },
+   "say": "अनिल जी, धन्यवाद। मैं आपके केस को एक मानव एजेंट को ट्रांसफर कर रहा हूँ ताकि आपको सही जानकारी मिल सके। कृपया थोड़ा समय दें।",
+   "agent_usd": 0.0002904
+  }
+ ],
+ "status": "no_report",
+ "report": null,
+ "ended_by": "transfer_to_human",
+ "usd": {
+  "agent": 0.0030485800000000004,
+  "router": 0.000456605
+ },
+ "cache_hits": {
+  "agent": 9,
+  "router": 9
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:37:59+00:00",
+ "agent_turns": 17,
+ "usd_total": 0.0035051850000000005,
+ "finished_utc": "2026-11-13T22:38:52+00:00"
+}

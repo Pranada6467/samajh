@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C121. Rekha took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c121",
+  "label": "Synthetic ACQ record. Rekha: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1990-04-15",
+      "language": "hi-en",
+      "name": "Rekha Namoona"
+    },
+    "disbursed_inr": 310000,
+    "disbursed_on": "2026-10-16",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-121",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-16",
+          "method": "digital_click"
+        },
+        "cover_inr": 310000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 35500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 310000,
+    "tenure_months": 36
+  }
+}

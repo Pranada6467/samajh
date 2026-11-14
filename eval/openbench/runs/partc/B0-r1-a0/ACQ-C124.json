@@ -1,0 +1,606 @@
+{
+ "customer_id": "ACQ-C124",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "5cd89c79815f74dcc2973401fa99d8d73a9aa97e77443420b2c49440a9565097",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं गोपाल नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं गोपाल नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी गोपाल जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था और उसके साथ एक प्रोडक्ट खरीदा था। क्या मैं आपसे इसके बारे में कुछ सवाल पूछ सकता हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी गोपाल जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था और उसके साथ एक प्रोडक्ट खरीदा था। क्या मैं आपसे इसके बारे में कुछ सवाल पूछ सकता हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, बोलिए। हाँ, loan के साथ एक charge था, processing fee वाला।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    },
+    {
+     "item": 2,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8277201217133552,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, loan के साथ एक charge था, processing fee वाला।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "जी गोपाल जी, वो तो प्रोसेसिंग फी है। मैं बात कर रहा हूँ क्रेडिट-लाइफ इंश्योरेंस की, जो आपने 18 अक्टूबर को खरीदी थी। क्या आपको याद है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी गोपाल जी, वो तो प्रोसेसिंग फी है। मैं बात कर रहा हूँ क्रेडिट-लाइफ इंश्योरेंस की, जो आपने 18 अक्टूबर को खरीदी थी। क्या आपको याद है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "how_often",
+     "asks": false,
+     "states_span": "जो आपने 18 अक्टूबर को खरीदी थी"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "एक बार ही, दोबारा किसी ने नहीं माँगा। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_often",
+     "asks_inferred": true,
+     "span_dropped": "जो आपने 18 अक्टूबर को खरीदी थी",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.10671176388859749,
+     "source_topic": "how_often",
+     "text": "एक बार ही, दोबारा किसी ने नहीं माँगा।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "जी, वो एक बार का प्रीमियम था। क्या आपको पता है कि ये इंश्योरेंस किस चीज़ के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी, वो एक बार का प्रीमियम था। क्या आपको पता है कि ये इंश्योरेंस किस चीज़ के लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "एक बार का प्रीमियम था"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो एक charge है, loan processing fee, ऐसे ही समझा। Loan की रकम से ही काट लिया, अलग से नहीं दिया।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8277201217133552,
+     "source_topic": "what_is_it",
+     "text": "वो एक charge है, loan processing fee, ऐसे ही समझा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "asks_inferred": true,
+     "span_dropped": "एक बार का प्रीमियम था",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.806863980833441,
+     "source_topic": "how_paid",
+     "text": "Loan की रकम से ही काट लिया, अलग से नहीं दिया।"
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "जी गोपाल जी, ये इंश्योरेंस प्रीमियम अलग से दिया गया था, लोन की रकम से नहीं काटा गया। क्या आपको याद है कि आपने इसे अलग से भुगतान किया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी गोपाल जी, ये इंश्योरेंस प्रीमियम अलग से दिया गया था, लोन की रकम से नहीं काटा गया। क्या आपको याद है कि आपने इसे अलग से भुगतान किया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "अलग से दिया गया था, लोन की रकम से नहीं काटा गया"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो पैसा loan money में से कट गया, मुझे कम मिला। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_paid",
+     "asks_inferred": true,
+     "span_dropped": "अलग से दिया गया था, लोन की रकम से नहीं काटा गया",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.806863980833441,
+     "source_topic": "how_paid",
+     "text": "वो पैसा loan money में से कट गया, मुझे कम मिला।"
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "गोपाल जी, क्या आपको याद है कि आपने 32,500 रुपये का अलग से भुगतान किया था या कोई फॉर्म साइन किया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "गोपाल जी, क्या आपको याद है कि आपने 32,500 रुपये का अलग से भुगतान किया था या कोई फॉर्म साइन किया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो पैसा loan money में से कट गया, मुझे कम मिला। मैंने charge के लिए हाँ कहा, loan के साथ form पे sign किया।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.806863980833441,
+     "source_topic": "how_paid",
+     "text": "वो पैसा loan money में से कट गया, मुझे कम मिला।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.3359433985315263,
+     "source_topic": "what_you_agreed_to",
+     "text": "मैंने charge के लिए हाँ कहा, loan के साथ form पे sign किया।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "गोपाल जी, क्या आपको लगता है कि ये इंश्योरेंस लोन के लिए ज़रूरी थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "गोपाल जी, क्या आपको लगता है कि ये इंश्योरेंस लोन के लिए ज़रूरी थी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मुझे बोला गया ये मेरी मर्ज़ी है, loan के लिए ज़रूरी नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.42533201118931174,
+     "source_topic": "needed_or_choice",
+     "text": "मुझे बोला गया ये मेरी मर्ज़ी है, loan के लिए ज़रूरी नहीं।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "गोपाल जी, क्या आपको पता है कि ये इंश्योरेंस कितने समय के लिए है और अगर कुछ हो जाए तो क्या होगा?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "गोपाल जी, क्या आपको पता है कि ये इंश्योरेंस कितने समय के लिए है और अगर कुछ हो जाए तो क्या होगा?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "दो साल तक चलता है। अगर मैं मर जाऊँ तो दो लाख तक loan चुका देता है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.0829729966353625,
+     "source_topic": "how_long",
+     "text": "दो साल तक चलता है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.27071551978588104,
+     "source_topic": "what_it_gives",
+     "text": "अगर मैं मर जाऊँ तो दो लाख तक loan चुका देता है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "गोपाल जी, क्या आपको पता है कि इसे 30 दिनों के अंदर कैंसिल किया जा सकता है या अंत में पैसा वापस मिलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "गोपाल जी, क्या आपको पता है कि इसे 30 दिनों के अंदर कैंसिल किया जा सकता है या अंत में पैसा वापस मिलता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसा वापस मिलता है"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ, तीस दिन के अंदर cancel कर सकते हैं, ऐसा बोला गया था। वो पैसा वापस नहीं आता, savings नहीं है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.20932999602518976,
+     "source_topic": "can_cancel",
+     "text": "हाँ, तीस दिन के अंदर cancel कर सकते हैं, ऐसा बोला गया था।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "asks_inferred": true,
+     "span_dropped": "पैसा वापस मिलता है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7695553170051426,
+     "source_topic": "money_back",
+     "text": "वो पैसा वापस नहीं आता, savings नहीं है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "धन्यवाद गोपाल जी, आपका समय देने के लिए धन्यवाद। अगर कोई सवाल हो तो हमसे जुड़े रहिए।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "understanding_gap",
+     "reason": "बोरोअर को उत्पाद के बारे में सामान्य जानकारी है, लेकिन भुगतान के स्रोत को लेकर गलत धारणा है।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "वो एक charge है, loan processing fee, ऐसे ही समझा।"
+      },
+      {
+       "field": "source",
+       "belief": "false",
+       "quote": "वो पैसा loan money में से कट गया, मुझे कम मिला।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "वो एक बार ही, दोबारा किसी ने नहीं माँगा।"
+      },
+      {
+       "field": "required",
+       "belief": "false",
+       "quote": "मुझे बोला गया ये मेरी मर्ज़ी है, loan के लिए ज़रूरी नहीं।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "अगर मैं मर जाऊँ तो दो लाख तक loan चुका देता है।"
+      },
+      {
+       "field": "term",
+       "belief": "false",
+       "quote": "दो साल तक चलता है।"
+      },
+      {
+       "field": "cancel",
+       "belief": "false",
+       "quote": "हाँ, तीस दिन के अंदर cancel कर सकते हैं, ऐसा बोला गया था।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "वो पैसा वापस नहीं आता, savings नहीं है।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "मैंने charge के लिए हाँ कहा, loan के साथ form पे sign किया।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "वो पैसा loan money में से कट गया, मुझे कम मिला।"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद गोपाल जी, आपका समय देने के लिए धन्यवाद। अगर कोई सवाल हो तो हमसे जुड़े रहिए।",
+   "agent_usd": 0.0
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "understanding_gap",
+  "reason": "बोरोअर को उत्पाद के बारे में सामान्य जानकारी है, लेकिन भुगतान के स्रोत को लेकर गलत धारणा है।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "वो एक charge है, loan processing fee, ऐसे ही समझा।"
+   },
+   {
+    "field": "source",
+    "belief": "false",
+    "quote": "वो पैसा loan money में से कट गया, मुझे कम मिला।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "वो एक बार ही, दोबारा किसी ने नहीं माँगा।"
+   },
+   {
+    "field": "required",
+    "belief": "false",
+    "quote": "मुझे बोला गया ये मेरी मर्ज़ी है, loan के लिए ज़रूरी नहीं।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "अगर मैं मर जाऊँ तो दो लाख तक loan चुका देता है।"
+   },
+   {
+    "field": "term",
+    "belief": "false",
+    "quote": "दो साल तक चलता है।"
+   },
+   {
+    "field": "cancel",
+    "belief": "false",
+    "quote": "हाँ, तीस दिन के अंदर cancel कर सकते हैं, ऐसा बोला गया था।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "वो पैसा वापस नहीं आता, savings नहीं है।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "मैंने charge के लिए हाँ कहा, loan के साथ form पे sign किया।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "वो पैसा loan money में से कट गया, मुझे कम मिला।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 10,
+  "router": 9
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:11:44+00:00",
+ "agent_turns": 10,
+ "usd_total": 0.0,
+ "finished_utc": "2026-11-13T22:11:45+00:00"
+}

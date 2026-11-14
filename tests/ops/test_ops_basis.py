@@ -60,7 +60,12 @@ def mixed(tmp_path: Path) -> OpsStore:
     record_disposition(
         store,
         first_record.case_id,
-        DispositionIn(decision=Decision.concern_not_supported, note="seen", reviewer="R1"),
+        DispositionIn(
+            decision=Decision.concern_not_supported,
+            note="seen",
+            reviewer="R1",
+            case_digest=case_view(load_batch(store), first_record.case_id).case_digest,
+        ),
         NOW,
     )
     return store

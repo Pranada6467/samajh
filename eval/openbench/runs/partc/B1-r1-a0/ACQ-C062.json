@@ -1,0 +1,573 @@
+{
+ "customer_id": "ACQ-C062",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi",
+ "arm": "B1",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "92d52bcf86ffde2bd0e49c137efb12e1eadbcd1ff56228bc8c38364662517ca0",
+ "system_prompt_sha256": "2db97866d7abc3de26affc64a3ff15738e5bcfa04eaba4c65a5cd5de4113d3f8",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं संतोष जी से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं संतोष जी से बात कर रहा हूँ?",
+   "agent_usd": 0.0001654,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "संतोष जी, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था। क्या आप बता सकते हैं कि आपने वो पैसा किस चीज़ पर खर्च किया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "संतोष जी, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था। क्या आप बता सकते हैं कि आपने वो पैसा किस चीज़ पर खर्च किया?",
+   "agent_usd": 0.000138,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": "संतोष जी, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था।"
+    }
+   ],
+   "router_usd": 4.297e-05,
+   "reply": "हाँ, लोन के साथ एक एफ़डी भी खुलवाई थी, इक्यावन हज़ार पाँच सौ रुपये की।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.2881299718283117,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, लोन के साथ एक एफ़डी भी खुलवाई थी, इक्यावन हज़ार पाँच सौ रुपये की।"
+    },
+    {
+     "item": 2,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "सही कहा, उस FD के लिए एक insurance भी ली गई थी। क्या आप बता सकते हैं कि आपने कौन-सी इंश्योरेंस ली थी और वो किसके लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सही कहा, उस FD के लिए एक insurance भी ली गई थी। क्या आप बता सकते हैं कि आपने कौन-सी इंश्योरेंस ली थी और वो किसके लिए है?",
+   "agent_usd": 0.00022896,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.5225e-05,
+   "reply": "लोन के साथ एफ़डी हुई थी, उसमें इक्यावन हज़ार पाँच सौ रुपये डाले थे। एफ़डी है, फ़िक्स्ड डिपॉज़िट, लोन के सामने रखी हुई।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.2881299718283117,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "लोन के साथ एफ़डी हुई थी, उसमें इक्यावन हज़ार पाँच सौ रुपये डाले थे।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.2881299718283117,
+     "source_topic": "what_is_it",
+     "text": "एफ़डी है, फ़िक्स्ड डिपॉज़िट, लोन के सामने रखी हुई।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "संतोष जी, मैं थोड़ा स्पष्ट करूँ – आपने लोन के साथ एक credit-life insurance भी ली थी। क्या आप बता सकते हैं कि आपने ये इंश्योरेंस क्यों ली और ये किसके लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "संतोष जी, मैं थोड़ा स्पष्ट करूँ – आपने लोन के साथ एक credit-life insurance भी ली थी। क्या आप बता सकते हैं कि आपने ये इंश्योरेंस क्यों ली और ये किसके लिए है?",
+   "agent_usd": 0.000334,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.241e-05,
+   "reply": "फ़िक्स्ड डिपॉज़िट है, लोन के खिलाफ़ जमा की हुई। बोले थे मेरी मर्ज़ी है, लोन के लिए ज़रूरी नहीं। अगर मर जाऊँ तो लोन पर छह लाख पचास हज़ार रुपये तक देती है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.2881299718283117,
+     "source_topic": "what_is_it",
+     "text": "फ़िक्स्ड डिपॉज़िट है, लोन के खिलाफ़ जमा की हुई।"
+    },
+    {
+     "item": 1,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8163928298745304,
+     "source_topic": "needed_or_choice",
+     "text": "बोले थे मेरी मर्ज़ी है, लोन के लिए ज़रूरी नहीं।"
+    },
+    {
+     "item": 2,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8002093273680657,
+     "source_topic": "what_it_gives",
+     "text": "अगर मर जाऊँ तो लोन पर छह लाख पचास हज़ार रुपये तक देती है।"
+    },
+    {
+     "item": 3,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "ठीक है, क्या आप बता सकते हैं कि इंश्योरेंस का प्रीमियम कितना था और वो पैसा कैसे जमा हुआ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, क्या आप बता सकते हैं कि इंश्योरेंस का प्रीमियम कितना था और वो पैसा कैसे जमा हुआ?",
+   "agent_usd": 0.0002983,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.3825e-05,
+   "reply": "इक्यावन हज़ार पाँच सौ रुपये। लोन की रकम में से ही काट लिया, अलग से नहीं दिया।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8139721916522831,
+     "source_topic": "how_much",
+     "text": "इक्यावन हज़ार पाँच सौ रुपये।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5375925975386053,
+     "source_topic": "how_paid",
+     "text": "लोन की रकम में से ही काट लिया, अलग से नहीं दिया।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "सही कहा। क्या आप बता सकते हैं कि ये इंश्योरेंस कितने समय के लिए है और क्या आप इसे कैंसल कर सकते हैं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सही कहा। क्या आप बता सकते हैं कि ये इंश्योरेंस कितने समय के लिए है और क्या आप इसे कैंसल कर सकते हैं?",
+   "agent_usd": 0.00018922,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.3775e-05,
+   "reply": "दो साल का है। यह मुझे नहीं पता, कैंसिल हो सकती है या नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.13198063429445028,
+     "source_topic": "how_long",
+     "text": "दो साल का है।"
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7334151442628354,
+     "source_topic": "can_cancel",
+     "text": "यह मुझे नहीं पता, कैंसिल हो सकती है या नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "ठीक है, क्या आपको पता है कि इंश्योरेंस के खत्म होने पर क्या पैसा वापस मिलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है, क्या आपको पता है कि इंश्योरेंस के खत्म होने पर क्या पैसा वापस मिलता है?",
+   "agent_usd": 0.0001811,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "पैसे वापस मिलता है"
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "नहीं मिलता"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.741e-05,
+   "reply": "मौत होने पर छह लाख पचास हज़ार तक लोन में काम आता है। मुझे लगता है लोन खत्म होने पर पैसा वापस मिल जाता है। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "पैसे वापस मिलता है",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.8002093273680657,
+     "source_topic": "what_it_gives",
+     "text": "मौत होने पर छह लाख पचास हज़ार तक लोन में काम आता है।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "asks_inferred": true,
+     "span_dropped": "नहीं मिलता",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5638759422581643,
+     "source_topic": "money_back",
+     "text": "मुझे लगता है लोन खत्म होने पर पैसा वापस मिल जाता है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "संतोष जी, धन्यवाद। मेरी समझ में आ गया। क्या आप चाहते हैं कि आपको किसी एजेंट से बात करवाई जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "संतोष जी, धन्यवाद। मेरी समझ में आ गया। क्या आप चाहते हैं कि आपको किसी एजेंट से बात करवाई जाए?",
+   "agent_usd": 0.0002856,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "human",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.321e-05,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ। हाँ जी। नहीं, आप ही पूछिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    },
+    {
+     "item": 2,
+     "kind": "human",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं, आप ही पूछिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "Borrower believes money is returned at the end of the loan term, which contradicts the product terms. Also unaware of cancellation period.",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "लोन के साथ एफ़डी हुई थी, उसमें इक्यावन हज़ार पाँच सौ रुपये डाले थे।"
+      },
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "फ़िक्स्ड डिपॉज़िट है, लोन के खिलाफ़ जमा की हुई।"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "अगर मर जाऊँ तो लोन पर छह लाख पचास हज़ार रुपये तक देती है।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "बोले थे मेरी मर्ज़ी है, लोन के लिए ज़रूरी नहीं।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "इक्यावन हज़ार पाँच सौ रुपये।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "लोन की रकम में से ही काट लिया, अलग से नहीं दिया।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "दो साल का है।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "यह मुझे नहीं पता, कैंसिल हो सकती है या नहीं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "मुझे लगता है लोन खत्म होने पर पैसा वापस मिल जाता है। हाँ जी।"
+      },
+      {
+       "field": "consent",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, मैं ही बोल रहा हूँ।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.0005864
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "Borrower believes money is returned at the end of the loan term, which contradicts the product terms. Also unaware of cancellation period.",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "लोन के साथ एफ़डी हुई थी, उसमें इक्यावन हज़ार पाँच सौ रुपये डाले थे।"
+   },
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "फ़िक्स्ड डिपॉज़िट है, लोन के खिलाफ़ जमा की हुई।"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "अगर मर जाऊँ तो लोन पर छह लाख पचास हज़ार रुपये तक देती है।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "बोले थे मेरी मर्ज़ी है, लोन के लिए ज़रूरी नहीं।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "इक्यावन हज़ार पाँच सौ रुपये।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "लोन की रकम में से ही काट लिया, अलग से नहीं दिया।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "दो साल का है।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "यह मुझे नहीं पता, कैंसिल हो सकती है या नहीं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "मुझे लगता है लोन खत्म होने पर पैसा वापस मिल जाता है। हाँ जी।"
+   },
+   {
+    "field": "consent",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, मैं ही बोल रहा हूँ।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.00240698,
+  "router": 0.000408825
+ },
+ "cache_hits": {
+  "agent": 0,
+  "router": 1
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:20:01+00:00",
+ "agent_turns": 9,
+ "usd_total": 0.002815805,
+ "finished_utc": "2026-11-13T22:20:42+00:00"
+}

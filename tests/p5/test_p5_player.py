@@ -126,3 +126,9 @@ def test_closed_reply_follows_the_draw() -> None:
     c = _customer()
     assert choose_closed(c, TOPICS, 0.0, "c_kind").variant == "own"
     assert choose_closed(c, TOPICS, 1.0, "c_kind").variant == "go_along"
+
+
+def test_a_w4_follow_up_is_answered_from_the_topic_of_its_question() -> None:
+    assert OPEN_TOPIC["consent.follow_what"] == OPEN_TOPIC["consent.follow_how"] == OPEN_TOPIC["consent.ask"]
+    assert OPEN_TOPIC["kind.follow_what"] == OPEN_TOPIC["kind.ask"]
+    assert {"language.switched", "defer.reask"} <= NO_REPLY

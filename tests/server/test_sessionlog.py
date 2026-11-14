@@ -149,7 +149,7 @@ def test_save_then_load_round_trips_and_lays_out(tmp_path: Path) -> None:
     loaded = store.load(SID)
     assert loaded == log
     assert loaded.events[1].rec_start == 1.5
-    assert [p.name for p in (tmp_path / SID).iterdir()] == ["session.json"]  # no temp file left
+    assert not [p.name for p in (tmp_path / SID).iterdir() if p.name.endswith(".tmp")]  # no temp file left
 
 
 @pytest.mark.parametrize("bad", ["", "nope", "../" + SID, SID + "/..", SID.upper(), SID + "\n"])

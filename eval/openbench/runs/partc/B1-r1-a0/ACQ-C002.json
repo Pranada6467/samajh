@@ -1,0 +1,359 @@
+{
+ "customer_id": "ACQ-C002",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi-en",
+ "arm": "B1",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "92d52bcf86ffde2bd0e49c137efb12e1eadbcd1ff56228bc8c38364662517ca0",
+ "system_prompt_sha256": "f8886aaf7418b1e6c095c4d7447c26cc8bf2a264fe441dff8c0f2c00295156d0",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "क्या मैं राधा नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या मैं राधा नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.00013142,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.6675e-05,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से लोन लिया है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से लोन लिया है?",
+   "agent_usd": 0.0001778,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.2975e-05,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "कृपया बताएं, आपने लोन के साथ जो प्रोडक्ट लिया है, उसके बारे में आपको क्या पता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "कृपया बताएं, आपने लोन के साथ जो प्रोडक्ट लिया है, उसके बारे में आपको क्या पता है?",
+   "agent_usd": 0.0002284,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.445e-05,
+   "reply": "हाँ, loan के साथ insurance cover लिया था, चौवन हज़ार रुपये का।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8082888443022966,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, loan के साथ insurance cover लिया था, चौवन हज़ार रुपये का।"
+    },
+    {
+     "item": 1,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "अच्छा, आपने बताया कि insurance cover लिया था। कृपया बताएं, यह insurance किस चीज़ के लिए है और कितने समय के लिए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अच्छा, आपने बताया कि insurance cover लिया था। कृपया बताएं, यह insurance किस चीज़ के लिए है और कितने समय के लिए?",
+   "agent_usd": 0.0002486,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.37e-05,
+   "reply": "वो loan का insurance cover था, बस। कितने दिन चलेगा, ये मुझे नहीं पता।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8082888443022966,
+     "source_topic": "what_is_it",
+     "text": "वो loan का insurance cover था, बस।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7062987801618874,
+     "source_topic": "how_long",
+     "text": "कितने दिन चलेगा, ये मुझे नहीं पता।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "क्या आपको पता है कि इस इंश्योरेंस का प्रीमियम कैसे चुकाया गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि इस इंश्योरेंस का प्रीमियम कैसे चुकाया गया था?",
+   "agent_usd": 0.0002559,
+   "router_items": [
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.775e-05,
+   "reply": "अलग से दिए थे, loan की रकम से नहीं कटा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6582565666176379,
+     "source_topic": "how_paid",
+     "text": "अलग से दिए थे, loan की रकम से नहीं कटा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "क्या आपको याद है कि आपने इस इंश्योरेंस के लिए कोई OTP डाला था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको याद है कि आपने इस इंश्योरेंस के लिए कोई OTP डाला था?",
+   "agent_usd": 0.00018772,
+   "router_items": [
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "OTP डाला था"
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.001e-05,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_you_agreed_to",
+     "rule": "stated",
+     "stated": "OTP डाला था",
+     "stated_value": "otp",
+     "belief_state": "correct",
+     "belief_value": "otp",
+     "record_value": "otp",
+     "draw_a": 0.39032500400207937,
+     "draw_r": 0.8283225556369871,
+     "source_topic": "what_you_agreed_to",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "कृपया बताएं, क्या यह इंश्योरेंस लेना अनिवार्य था या आपको चुनने का विकल्प मिला था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "कृपया बताएं, क्या यह इंश्योरेंस लेना अनिवार्य था या आपको चुनने का विकल्प मिला था?",
+   "agent_usd": 0.0002708,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 9.828125e-05,
+   "reply": "मेरी अपनी choice थी, loan के लिए ज़रूरी नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8391556032001972,
+     "source_topic": "needed_or_choice",
+     "text": "मेरी अपनी choice थी, loan के लिए ज़रूरी नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "क्या आपको पता है कि अगर आपकी मृत्यु हो जाती है, तो यह इंश्योरेंस क्या करता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि अगर आपकी मृत्यु हो जाती है, तो यह इंश्योरेंस क्या करता है?",
+   "agent_usd": 0.0002054,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.81e-05,
+   "reply": "ये तो मुझे नहीं पता, क्या देता है या कितना।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.0703936917707324,
+     "source_topic": "what_it_gives",
+     "text": "ये तो मुझे नहीं पता, क्या देता है या कितना।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "ठीक है, धन्यवाद। अब मैं आपको एक ह्यूमन एजेंट को ट्रांसफर कर देता हूँ, अगर आप चाहें तो उनसे बात कर सकती हैं। क्या मैं अब ट्रांसफर करूँ?",
+    "end_call": false,
+    "transfer_to_human": true,
+    "report": null
+   },
+   "say": "ठीक है, धन्यवाद। अब मैं आपको एक ह्यूमन एजेंट को ट्रांसफर कर देता हूँ, अगर आप चाहें तो उनसे बात कर सकती हैं। क्या मैं अब ट्रांसफर करूँ?",
+   "agent_usd": 0.00024623
+  }
+ ],
+ "status": "no_report",
+ "report": null,
+ "ended_by": "transfer_to_human",
+ "usd": {
+  "agent": 0.0019522700000000003,
+  "router": 0.00061194125
+ },
+ "cache_hits": {
+  "agent": 0,
+  "router": 0
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:17:35+00:00",
+ "agent_turns": 9,
+ "usd_total": 0.00256421125,
+ "finished_utc": "2026-11-13T22:18:12+00:00"
+}

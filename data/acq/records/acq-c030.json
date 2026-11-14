@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C030. Neha took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c030",
+  "label": "Synthetic ACQ record. Neha: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1980-04-09",
+      "language": "hi-en",
+      "name": "Neha Namoona"
+    },
+    "disbursed_inr": 460000,
+    "disbursed_on": "2026-10-17",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-030",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-17",
+          "method": "digital_click"
+        },
+        "cover_inr": 460000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 43000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 460000,
+    "tenure_months": 24
+  }
+}

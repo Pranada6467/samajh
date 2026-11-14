@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C067. Anil took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c067",
+  "label": "Synthetic ACQ record. Anil: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1993-03-24",
+      "language": "hi",
+      "name": "Anil Namoona"
+    },
+    "disbursed_inr": 630000,
+    "disbursed_on": "2026-10-25",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-067",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-25",
+          "method": "signed_form"
+        },
+        "cover_inr": 630000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 21500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 630000,
+    "tenure_months": 24
+  }
+}

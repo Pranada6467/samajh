@@ -5,7 +5,12 @@
     draws.jsonl         one Draw per line
     attempts.jsonl      one Attempt per line; the last line per attempt id is the one that stands
     calls/<call_id>.json    one CallRecord per analysed call
-    dispositions.jsonl  one Disposition per line; append-only, the latest per case stands
+    calls.chain.jsonl   one chained line per call file written or removed, with its sha256
+                        (samajh.evidence.ledger); calls.chain.head.json holds its line count and head
+    dispositions.jsonl  one Disposition per line; append-only, the latest per case stands; each new
+                        line chains to the one before (`prev_sha256`, samajh.evidence.decisions);
+                        dispositions.head.json holds its line count and last line's sha256
+    reviewers.json      who may sign in to the review pages: name -> sha256 of the token (samajh.ops.reviewers)
     outside.jsonl       one OutsideCall per line: phone calls that are not attempts in the sample;
                         the last line per session id stands
     ingest.json         the IngestSummary of the last ingest of phone sessions
@@ -24,13 +29,16 @@ line carries `supersedes`): a phone session's `completed_not_analysed` replaced 
 import os
 import re
 from collections.abc import Callable, Sequence
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import TypeVar
 
 from filelock import FileLock
 from pydantic import BaseModel
 
+from samajh.evidence.decisions import last_line_sha256
+from samajh.evidence.digest import sha256_hex
+from samajh.evidence.ledger import DISPOSITIONS_HEAD, append_call, raw_lines, write_head
 from samajh.ops import book as books
 from samajh.ops.model import (
     DEFAULT_UNIT,
@@ -49,6 +57,10 @@ from samajh.ops.model import (
 
 M = TypeVar("M", bound=BaseModel)
 CALL_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$")
+
+
+def _now() -> str:
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 class NoBatch(Exception):
@@ -171,9 +183,22 @@ class OpsStore:
         """Every recorded decision, oldest first."""
         return self._read("dispositions.jsonl", Disposition)
 
-    def add_disposition(self, disposition: Disposition) -> None:
-        """Append a decision. Nothing is ever changed or removed; an identical entry is stored once."""
-        self._append("dispositions.jsonl", disposition, Disposition, lambda d: d)
+    def add_disposition(self, disposition: Disposition) -> Disposition:
+        """Append a decision. Nothing is ever changed or removed; an identical entry is stored once
+        (compared without `prev_sha256`). Under the lock, `prev_sha256` is set to the sha256 of the
+        raw bytes of the last line (GENESIS when the log is empty). Returns the entry as stored."""
+        bare = disposition.model_copy(update={"prev_sha256": None})
+        path = self.root / "dispositions.jsonl"
+        with self._lock():
+            for existing in self.dispositions():
+                if existing.model_copy(update={"prev_sha256": None}) == bare:
+                    return existing
+            self._mend_tail(path, Disposition)
+            row = bare.model_copy(update={"prev_sha256": last_line_sha256(path)})
+            self._write_line(path, row)
+            lines = raw_lines(path.read_bytes())
+            write_head(self.root / DISPOSITIONS_HEAD, len(lines), sha256_hex(lines[-1]))
+            return row
 
     def outside(self) -> tuple[OutsideCall, ...]:
         """One effective entry per session (the last line with its id), in the order first logged."""
@@ -207,11 +232,14 @@ class OpsStore:
             return None
 
     def save_call(self, call: CallRecord) -> None:
-        """Save an analysed call. A call that is already saved is left as it is."""
+        """Save an analysed call. A call that is already saved is left as it is. Each file written
+        gets one line in `calls.chain.jsonl` (samajh.evidence.ledger) with the sha256 of its bytes."""
         path = self._call_path(call.call_id)
         with self._lock():
             if not path.exists():
-                self._replace(path, call.model_dump_json(indent=2) + "\n")
+                text = call.model_dump_json(indent=2) + "\n"
+                self._replace(path, text)
+                append_call(self.root, call.call_id, sha256_hex(text.encode("utf-8")), _now())
 
     def drop_unreferenced_session_calls(self) -> tuple[str, ...]:
         """Remove each phone session's call file that no effective attempt or outside call names.
@@ -230,6 +258,7 @@ class OpsStore:
             )
             for call_id in dropped:
                 self._call_path(call_id).unlink()
+                append_call(self.root, call_id, None, _now())
             return dropped
 
     # --- files ---
@@ -286,15 +315,20 @@ class OpsStore:
                     break
             path = self.root / name
             self._mend_tail(path, model)
-            line = (row.model_dump_json() + "\n").encode("utf-8")
-            fd = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o644)
-            try:
-                written = os.write(fd, line)  # one write of the whole line
-                while written < len(line):  # a short write to a local file is rare; finish the line
-                    written += os.write(fd, line[written:])
-                os.fsync(fd)
-            finally:
-                os.close(fd)
+            self._write_line(path, row)
+
+    @staticmethod
+    def _write_line(path: Path, row: BaseModel) -> None:
+        """Append one whole line in one write, under the caller's lock."""
+        line = (row.model_dump_json() + "\n").encode("utf-8")
+        fd = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o644)
+        try:
+            written = os.write(fd, line)  # one write of the whole line
+            while written < len(line):  # a short write to a local file is rare; finish the line
+                written += os.write(fd, line[written:])
+            os.fsync(fd)
+        finally:
+            os.close(fd)
 
     @staticmethod
     def _mend_tail(path: Path, model: type[M]) -> None:

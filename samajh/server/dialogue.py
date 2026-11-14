@@ -71,6 +71,25 @@ class Heard(_Frozen):
     second: str | None = None
 
 
+class ClassifierRecord(_Frozen):
+    """What the LLM turn classifier did on one customer turn. No text of any kind.
+
+    `ran`: a classifier label was used or the classifier was asked and failed (`degraded`). A
+    classifier answer of "unclear" is not kept as a label by the fallback, so it records as
+    `ran=False`. `latency_ms`: from begin to answer: an upper bound on the LLM's own time; with a
+    prefetch it includes the second-reading wait (it runs from the prefetch's `begin` of the same
+    turn when there was one, else from the start of `interpret`, to its end). `wait_ms`: the wall
+    time spent inside `interpret` calls in this step (summed): what the classifier added to the
+    turn after the readings were in."""
+
+    ran: bool
+    label: str | None = None
+    latency_ms: float | None = None
+    model: str | None = None
+    degraded: bool = False
+    wait_ms: float | None = None
+
+
 class Step(_Frozen):
     state: str = Field(max_length=MAX_STATE_BYTES)  # opaque; handed back on the next `step`
     say: BotUtterance
@@ -85,6 +104,8 @@ class Step(_Frozen):
     # Whether the person on the line has passed the identity checks, as the dialogue says. None:
     # the dialogue does not say.
     speaker_confirmed: bool | None = None
+    # The turn classifier's record for this turn (`ClassifierRecord`). None: `start`, or not recorded.
+    classifier: ClassifierRecord | None = None
 
 
 class Dialogue(Protocol):

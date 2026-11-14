@@ -1,0 +1,759 @@
+{
+ "customer_id": "ACQ-C118",
+ "kind": "informed",
+ "customer_kind": "informed",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "c0f5248aa5f8b63730102bb08827efbdebd4a438192367907067b5c08a56feeb",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ मुकेश नमूना साहब से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ मुकेश नमूना साहब से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में एक गोल्ड लोन लिया था। क्या आपने उसके साथ क्रेडिट-लाइफ इंश्योरेंस भी लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं नमूना बैंक से बोल रहा हूँ। आपने हाल ही में एक गोल्ड लोन लिया था। क्या आपने उसके साथ क्रेडिट-लाइफ इंश्योरेंस भी लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। आप अपने कागज़ात में देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.30539038334973156,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "आप अपने कागज़ात में देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "correct",
+     "belief_value": "insurance",
+     "record_value": "insurance",
+     "draw_a": 0.30539038334973156,
+     "draw_r": 0.5097889748867601,
+     "source_topic": "what_is_it",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "धन्यवाद, सर। कृपया थोड़ा बताइए, यह इंश्योरेंस किस चीज़ के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "धन्यवाद, सर। कृपया थोड़ा बताइए, यह इंश्योरेंस किस चीज़ के लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "closing",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जो आपके रिकॉर्ड में लिखा हो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.30539038334973156,
+     "source_topic": "what_is_it",
+     "text": "जो आपके रिकॉर्ड में लिखा हो।"
+    },
+    {
+     "item": 1,
+     "kind": "closing",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "सर, मैं आपकी जानकारी की पुष्टि करना चाहता हूँ। कृपया बताएं, यह इंश्योरेंस किसके लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, मैं आपकी जानकारी की पुष्टि करना चाहता हूँ। कृपया बताएं, यह इंश्योरेंस किसके लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जो आपके रिकॉर्ड में लिखा हो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.30539038334973156,
+     "source_topic": "what_is_it",
+     "text": "जो आपके रिकॉर्ड में लिखा हो।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "सर, कृपया थोड़ा बताएं, अगर कुछ हो जाए तो यह पॉलिसी क्या करती है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, कृपया थोड़ा बताएं, अगर कुछ हो जाए तो यह पॉलिसी क्या करती है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "अगर कुछ हो जाए तो यह पॉलिसी क्या करती है"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मेरे न रहने पर यह लोन के सात लाख साठ हज़ार रुपये तक चुकाएगा। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "अगर कुछ हो जाए तो यह पॉलिसी क्या करती है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9571231028530747,
+     "source_topic": "what_it_gives",
+     "text": "मेरे न रहने पर यह लोन के सात लाख साठ हज़ार रुपये तक चुकाएगा।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "धन्यवाद, सर। क्या आपको पता है कि इंश्योरेंस का प्रीमियम कितना था और कैसे चुकाया गया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "धन्यवाद, सर। क्या आपको पता है कि इंश्योरेंस का प्रीमियम कितना था और कैसे चुकाया गया?",
+   "agent_usd": 0.00021882,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.451e-05,
+   "reply": "जितना लिखा है उतना ही दिया था। जैसे आपके खाते में दर्ज हो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.026023715268820524,
+     "source_topic": "how_much",
+     "text": "जितना लिखा है उतना ही दिया था।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.38315142528153956,
+     "source_topic": "how_paid",
+     "text": "जैसे आपके खाते में दर्ज हो।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "सर, कृपया थोड़ा बताएं, क्या यह इंश्योरेंस लोन के लिए अनिवार्य था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, कृपया थोड़ा बताएं, क्या यह इंश्योरेंस लोन के लिए अनिवार्य था?",
+   "agent_usd": 0.0001968,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 7.825e-05,
+   "reply": "जैसा आपके यहाँ तय हुआ हो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.4911032482050359,
+     "source_topic": "needed_or_choice",
+     "text": "जैसा आपके यहाँ तय हुआ हो।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "सर, क्या आपको पता है कि आपने यह पॉलिसी कब ली थी और इसे कैंसल करने का समय कितना था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आपको पता है कि आपने यह पॉलिसी कब ली थी और इसे कैंसल करने का समय कितना था?",
+   "agent_usd": 0.0002131,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.3325e-05,
+   "reply": "यह पूरा एक साल तक चलेगा। हाँ, तीस दिन के भीतर इसे रद्द करवा सकते हैं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9623707954306155,
+     "source_topic": "how_long",
+     "text": "यह पूरा एक साल तक चलेगा।"
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.614301475463435,
+     "source_topic": "can_cancel",
+     "text": "हाँ, तीस दिन के भीतर इसे रद्द करवा सकते हैं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "सर, क्या आपको पता है कि प्रीमियम कितना था और क्या पॉलिसी खत्म होने पर कोई पैसा वापस मिलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आपको पता है कि प्रीमियम कितना था और क्या पॉलिसी खत्म होने पर कोई पैसा वापस मिलता है?",
+   "agent_usd": 0.00021374,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": "कोई पैसा वापस मिलता है"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.751e-05,
+   "reply": "जितना लिखा है उतना ही दिया था। अगर मुझे कुछ हो जाए, तो सात लाख साठ हज़ार तक लोन भरेगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.026023715268820524,
+     "source_topic": "how_much",
+     "text": "जितना लिखा है उतना ही दिया था।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "span_dropped": "कोई पैसा वापस मिलता है",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.9571231028530747,
+     "source_topic": "what_it_gives",
+     "text": "अगर मुझे कुछ हो जाए, तो सात लाख साठ हज़ार तक लोन भरेगा।"
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "सर, क्या आपको पता है कि प्रीमियम एक बार में चुकाया गया था और क्या पॉलिसी खत्म होने पर कोई पैसा वापस मिलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आपको पता है कि प्रीमियम एक बार में चुकाया गया था और क्या पॉलिसी खत्म होने पर कोई पैसा वापस मिलता है?",
+   "agent_usd": 0.00021194,
+   "router_items": [
+    {
+     "kind": "how_often",
+     "asks": true,
+     "states_span": "प्रीमियम एक बार में चुकाया गया था"
+    },
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states_span": "पॉलिसी खत्म होने पर कोई पैसा वापस मिलता है"
+    }
+   ],
+   "router_usd": 8.9525e-05,
+   "reply": "जो आपके यहाँ का नियम हो। यह पैसा वापस नहीं आता, यह कोई बचत नहीं है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_often",
+     "span_dropped": "प्रीमियम एक बार में चुकाया गया था",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.15710415178909898,
+     "source_topic": "how_often",
+     "text": "जो आपके यहाँ का नियम हो।"
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "span_dropped": "पॉलिसी खत्म होने पर कोई पैसा वापस मिलता है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8457083131652325,
+     "source_topic": "money_back",
+     "text": "यह पैसा वापस नहीं आता, यह कोई बचत नहीं है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "धन्यवाद, सर। क्या आपको पता है कि आपने इस पॉलिसी के लिए किस कंपनी के साथ अनुबंध किया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "धन्यवाद, सर। क्या आपको पता है कि आपने इस पॉलिसी के लिए किस कंपनी के साथ अनुबंध किया था?",
+   "agent_usd": 0.0003375,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "closing",
+     "asks": false,
+     "states_span": "धन्यवाद, सर।"
+    },
+    {
+     "kind": "any_questions",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 4.677e-05,
+   "reply": "जो आपके नियमों में लिखा है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "where_to_take_it_from",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.4911032482050359,
+     "source_topic": "where_to_take_it_from",
+     "text": "जो आपके नियमों में लिखा है।"
+    },
+    {
+     "item": 2,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 3,
+     "kind": "closing",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 4,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 11,
+   "agent": {
+    "say": "सर, क्या आपको याद है कि आपने यह पॉलिसी 9 अक्टूबर 2026 को साइन की थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सर, क्या आपको याद है कि आपने यह पॉलिसी 9 अक्टूबर 2026 को साइन की थी?",
+   "agent_usd": 0.00040072,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "9 अक्टूबर 2026"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.000108,
+   "reply": "इसकी अवधि बस एक साल की है। मैंने लोन के साथ एक फॉर्म पर दस्तखत करके हाँ कहा था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "span_dropped": "9 अक्टूबर 2026",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.9623707954306155,
+     "source_topic": "how_long",
+     "text": "इसकी अवधि बस एक साल की है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9913898149970919,
+     "source_topic": "what_you_agreed_to",
+     "text": "मैंने लोन के साथ एक फॉर्म पर दस्तखत करके हाँ कहा था।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 12,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "understanding_gap",
+     "reason": "borrower knows key aspects but not specific details like premium amount, payment source, provider name, or cancellation period confirmation",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "अगर मुझे कुछ हो जाए, तो सात लाख साठ हज़ार तक लोन भरेगा।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "जितना लिखा है उतना ही दिया था।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "जैसा आपके यहाँ तय हुआ हो।"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "जितना लिखा है उतना ही दिया था।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "जैसा आपके यहाँ तय हुआ हो।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "मेरे न रहने पर यह लोन के सात लाख साठ हज़ार रुपये तक चुकाएगा।"
+      },
+      {
+       "field": "term",
+       "belief": "false",
+       "quote": "यह पूरा एक साल तक चलेगा।"
+      },
+      {
+       "field": "cancel",
+       "belief": "false",
+       "quote": "हाँ, तीस दिन के भीतर इसे रद्द करवा सकते हैं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "false",
+       "quote": "यह पैसा वापस नहीं आता, यह कोई बचत नहीं है।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "मैंने लोन के साथ एक फॉर्म पर दस्तखत करके हाँ कहा था।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.00061949
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "understanding_gap",
+  "reason": "borrower knows key aspects but not specific details like premium amount, payment source, provider name, or cancellation period confirmation",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "अगर मुझे कुछ हो जाए, तो सात लाख साठ हज़ार तक लोन भरेगा।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "जितना लिखा है उतना ही दिया था।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "जैसा आपके यहाँ तय हुआ हो।"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "जितना लिखा है उतना ही दिया था।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "जैसा आपके यहाँ तय हुआ हो।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "मेरे न रहने पर यह लोन के सात लाख साठ हज़ार रुपये तक चुकाएगा।"
+   },
+   {
+    "field": "term",
+    "belief": "false",
+    "quote": "यह पूरा एक साल तक चलेगा।"
+   },
+   {
+    "field": "cancel",
+    "belief": "false",
+    "quote": "हाँ, तीस दिन के भीतर इसे रद्द करवा सकते हैं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "false",
+    "quote": "यह पैसा वापस नहीं आता, यह कोई बचत नहीं है।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "मैंने लोन के साथ एक फॉर्म पर दस्तखत करके हाँ कहा था।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0024121100000000003,
+  "router": 0.00047789
+ },
+ "cache_hits": {
+  "agent": 5,
+  "router": 5
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:31:39+00:00",
+ "agent_turns": 13,
+ "usd_total": 0.00289,
+ "finished_utc": "2026-11-13T22:32:39+00:00"
+}

@@ -1,0 +1,1232 @@
+{
+ "customer_id": "ACQ-C055",
+ "arm": "open",
+ "kind": "knowledge_gap",
+ "gold_class": "knowledge_gap_only",
+ "language": "hi",
+ "gender": "f",
+ "record_id": "acq-c055",
+ "writer_model": "deepseek/deepseek-v4.1-flash",
+ "a": 0.0,
+ "second_reading": null,
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "नमस्ते, क्या आप Pooja जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी।",
+    "line_key": "right_party.ask"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "acknowledges",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "right_party.reask",
+     "text": "यह Pooja जी के लिए एक ऑटोमेटेड कस्टमर केयर कॉल है। क्या आप ख़ुद Pooja जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी, मैं ख़ुद ही बात कर रही हूँ।",
+    "line_key": "right_party.reask"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "said",
+     "settled": false,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना फ़ाइनेंस कस्टमर केयर से कंप्यूटर से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह सेल्स नहीं, फ़ीडबैक कॉल है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत रिकॉर्ड हो रही है; जानकारी नमूना फ़ाइनेंस के लिखित नोटिस में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी ओ-टी-पी, पिन, पासवर्ड या खाता नंबर नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "शक हो तो फ़ोन रखकर नमूना फ़ाइनेंस कस्टमर केयर पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन मिनट बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी, बोलिए।",
+    "line_key": "disclosure.go_ahead"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "go_ahead",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "context.loan",
+     "text": "धन्यवाद। आपने हाल ही में नमूना फ़ाइनेंस से जो लोन लिया, उसके बारे में कुछ सवाल हैं।",
+     "step": "context",
+     "asks": null
+    },
+    {
+     "key": "disclosure.rights",
+     "text": "रुकना हो या किसी इंसान से बात करनी हो, तो कभी भी बोल दीजिए।",
+     "step": "context",
+     "asks": null
+    },
+    {
+     "key": "open_recall.ask",
+     "text": "लोन के साथ आपने कुछ और भी लिया था क्या? अगर हाँ, तो क्या, और कितने का?",
+     "step": "open_recall",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "what_did_you_take",
+    "variant": "own",
+    "text": "हाँ, लोन के साथ बीमा भी लिया था। बारह हज़ार पाँच सौ रुपये का।",
+    "line_key": "open_recall.ask",
+    "mapped": true,
+    "note": null,
+    "field": "kind",
+    "draw_a": 0.32637105602771044,
+    "readback": null,
+    "recall_rule": "own_recall",
+    "source_topic": "what_did_you_take"
+   },
+   "field": "kind",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": 12500,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "teach_back.intro",
+     "text": "ठीक है, उसके बारे में कुछ छोटे सवाल हैं।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "kind.ask_named",
+     "text": "जो आपने बताया, उसे थोड़ा समझाइए: वो क्या है और किस काम आता है?",
+     "step": "teach_back",
+     "asks": "kind"
+    }
+   ],
+   "reply": {
+    "topic": "what_is_it",
+    "variant": "own",
+    "text": "वह लोन पर बीमा कवर था।",
+    "line_key": "kind.ask_named",
+    "mapped": true,
+    "note": null,
+    "field": "kind",
+    "draw_a": 0.32637105602771044,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "what_is_it"
+   },
+   "field": "kind",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "read_back.confirm",
+     "text": "तो आपने उसके लिए बारह हज़ार पाँच सौ रुपये दिए। सही है?",
+     "step": "read_back",
+     "asks": "premium"
+    }
+   ],
+   "reply": {
+    "topic": "figure_read_back_right",
+    "variant": "canned",
+    "text": "हाँ जी, सही है।",
+    "line_key": "read_back.confirm",
+    "mapped": true,
+    "note": null,
+    "field": null,
+    "draw_a": null,
+    "readback": {
+     "item": "premium",
+     "bot_read_back": [
+      12500,
+      12500
+     ],
+     "customer_said": [
+      12500,
+      12500
+     ],
+     "customer_topic": "what_did_you_take",
+     "right": true
+    },
+    "recall_rule": null,
+    "source_topic": null
+   },
+   "field": null,
+   "variant": "canned",
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "payment_source.ask",
+     "text": "वो पैसे कहाँ से और कैसे दिए गए?",
+     "step": "teach_back",
+     "asks": "payment_source"
+    }
+   ],
+   "reply": {
+    "topic": "how_paid",
+    "variant": "own",
+    "text": "लोन की रकम में से काट लिया था। मुझे लोन उतना कम मिला।",
+    "line_key": "payment_source.ask",
+    "mapped": true,
+    "note": null,
+    "field": "source",
+    "draw_a": 0.7034448650665581,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_paid"
+   },
+   "field": "source",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "payment_frequency.ask",
+     "text": "ये पैसे एक ही बार देने थे, या आगे भी देने होंगे?",
+     "step": "teach_back",
+     "asks": "payment_frequency"
+    }
+   ],
+   "reply": {
+    "topic": "how_often",
+    "variant": "own",
+    "text": "एक बार ही। दोबारा किसी ने नहीं कहा।",
+    "line_key": "payment_frequency.ask",
+    "mapped": true,
+    "note": null,
+    "field": "frequency",
+    "draw_a": 0.16991106909699738,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_often"
+   },
+   "field": "frequency",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "either_or",
+     "intent": "asks_repeat",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "payment_frequency.reask",
+     "text": "मतलब, उसके लिए पैसे एक बार दिए, या बार-बार देने हैं?",
+     "step": "teach_back",
+     "asks": "payment_frequency"
+    }
+   ],
+   "reply": {
+    "topic": "how_often",
+    "variant": "again",
+    "text": "सिर्फ़ एक बार का भुगतान था, फिर नहीं।",
+    "line_key": "payment_frequency.reask",
+    "mapped": true,
+    "note": null,
+    "field": "frequency",
+    "draw_a": 0.16991106909699738,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_often"
+   },
+   "field": "frequency",
+   "variant": "again",
+   "readings": [
+    {
+     "expecting": "either_or",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "required_for_loan.ask",
+     "text": "आपको क्या बताया गया था: लोन के लिए यह लेना ज़रूरी है, या आपकी मर्ज़ी है?",
+     "step": "teach_back",
+     "asks": "required_for_loan"
+    }
+   ],
+   "reply": {
+    "topic": "needed_or_choice",
+    "variant": "own",
+    "text": "नहीं, लोन के लिए ज़रूरी नहीं था। मेरी अपनी मर्ज़ी थी।",
+    "line_key": "required_for_loan.ask",
+    "mapped": true,
+    "note": null,
+    "field": "required",
+    "draw_a": 0.3992070679087192,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "needed_or_choice"
+   },
+   "field": "required",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "either_or",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "cover.ask",
+     "text": "उससे आपको क्या मिलता है? कोई रक़म जुड़ी हो, तो वो भी बताइए।",
+     "step": "teach_back",
+     "asks": "cover"
+    }
+   ],
+   "reply": {
+    "topic": "what_it_gives",
+    "variant": "own",
+    "text": "अगर मर जाऊँ, तो लोन के लिए पाँच लाख तीस हज़ार रुपये तक देता है।",
+    "line_key": "cover.ask",
+    "mapped": true,
+    "note": null,
+    "field": "cover",
+    "draw_a": 0.4515041960403323,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "what_it_gives"
+   },
+   "field": "cover",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "amount",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": 530000,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "read_back.cover_confirm",
+     "text": "तो उससे पाँच लाख तीस हज़ार रुपये तक मिलता है। सही है?",
+     "step": "read_back",
+     "asks": "cover"
+    }
+   ],
+   "reply": {
+    "topic": "figure_read_back_right",
+    "variant": "canned",
+    "text": "हाँ जी, सही है।",
+    "line_key": "read_back.cover_confirm",
+    "mapped": true,
+    "note": null,
+    "field": null,
+    "draw_a": null,
+    "readback": {
+     "item": "cover",
+     "bot_read_back": [
+      530000,
+      530000
+     ],
+     "customer_said": [
+      530000,
+      530000
+     ],
+     "customer_topic": "what_it_gives",
+     "right": true
+    },
+    "recall_rule": null,
+    "source_topic": null
+   },
+   "field": null,
+   "variant": "canned",
+   "readings": [
+    {
+     "expecting": "confirmation",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "term.ask",
+     "text": "वो कितने समय के लिए है?",
+     "step": "teach_back",
+     "asks": "term"
+    }
+   ],
+   "reply": {
+    "topic": "how_long",
+    "variant": "own",
+    "text": "जब तक लोन चलेगा, तब तक यह भी चलेगा।",
+    "line_key": "term.ask",
+    "mapped": true,
+    "note": null,
+    "field": "term",
+    "draw_a": 0.26051480369642377,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "how_long"
+   },
+   "field": "term",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "cancel_window.ask",
+     "text": "उसे बंद या कैंसल कराने के बारे में आपको क्या बताया गया था?",
+     "step": "teach_back",
+     "asks": "cancel_window"
+    }
+   ],
+   "reply": {
+    "topic": "can_cancel",
+    "variant": "own",
+    "text": "हाँ, तीस दिन के अंदर रद्द कर सकती थी।",
+    "line_key": "cancel_window.ask",
+    "mapped": true,
+    "note": null,
+    "field": "cancel",
+    "draw_a": 0.10288210958242416,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "can_cancel"
+   },
+   "field": "cancel",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "told",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "ack.neutral",
+     "text": "जी।",
+     "step": "teach_back",
+     "asks": null
+    },
+    {
+     "key": "features.ask",
+     "text": "अगर आप उसमें लगे पैसे वापस चाहें, तो क्या होगा? आपको क्या लगता है?",
+     "step": "teach_back",
+     "asks": "features"
+    }
+   ],
+   "reply": {
+    "topic": "money_back",
+    "variant": "own",
+    "text": "यह मुझे नहीं पता। पैसे वापस मिलेंगे या नहीं, मालूम नहीं।",
+    "line_key": "features.ask",
+    "mapped": true,
+    "note": null,
+    "field": "money_back",
+    "draw_a": 0.7518237510230392,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "money_back"
+   },
+   "field": "money_back",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "dont_know",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  },
+  {
+   "bot": [
+    {
+     "key": "consent.ask",
+     "text": "लोन लेते समय आपने किन-किन चीज़ों के लिए हाँ कही थी? और वो हाँ आपने किस तरह दी थी?",
+     "step": "consent_check",
+     "asks": "consent"
+    }
+   ],
+   "reply": {
+    "topic": "what_you_agreed_to",
+    "variant": "own",
+    "text": "लोन के साथ बीमा को हाँ कहा था, फोन पर बटन दबाकर।",
+    "line_key": "consent.ask",
+    "mapped": true,
+    "note": null,
+    "field": "consent",
+    "draw_a": 0.3509238853584975,
+    "readback": null,
+    "recall_rule": null,
+    "source_topic": "what_you_agreed_to"
+   },
+   "field": "consent",
+   "variant": "own",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "said",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "answer",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "anything_else_turns": 0,
+ "scored_from_turn": 3,
+ "final_bot": [
+  {
+   "key": "close.thanks",
+   "text": "आपके समय और जवाबों के लिए धन्यवाद।",
+   "step": "close",
+   "asks": null
+  },
+  {
+   "key": "close.verify",
+   "text": "कोई शक हो, तो लोन के काग़ज़ों पर छपे नमूना फ़ाइनेंस कस्टमर केयर नंबर पर पूछ सकते हैं।",
+   "step": "close",
+   "asks": null
+  },
+  {
+   "key": "close.bye",
+   "text": "नमस्ते।",
+   "step": "close",
+   "asks": null
+  }
+ ],
+ "outcome": "completed",
+ "speaker_confirmed": true,
+ "degraded_turns": 0,
+ "unresolved": [],
+ "tier": "understanding_gap",
+ "flags": [
+  {
+   "rule_id": "belief_mismatch",
+   "reason": "feature_dont_know",
+   "tier": "understanding_gap",
+   "basis": "customer_statement",
+   "product_id": "P1",
+   "quote": "यह मुझे नहीं पता। पैसे वापस मिलेंगे या नहीं, मालूम नहीं।",
+   "field": "money_back"
+  }
+ ],
+ "gaps": [],
+ "referral_basis": null,
+ "summary": {
+  "loan_id": "TEST-ACQ-LN-055",
+  "call_id": "acq-ACQ-C055-a0",
+  "tier": "understanding_gap",
+  "lines": [
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "Customer did not know getting the money back.",
+    "record_value": "features on record: a single payment",
+    "quote": "यह मुझे नहीं पता। पैसे वापस मिलेंगे या नहीं, मालूम नहीं।",
+    "turn_id": 41,
+    "clauses": [
+     "6(9A)(ii)"
+    ],
+    "rule_ids": [
+     "belief_mismatch"
+    ],
+    "record_only": false,
+    "note": false
+   }
+  ]
+ },
+ "transcript": {
+  "call_id": "acq-ACQ-C055-a0",
+  "loan_id": "TEST-ACQ-LN-055",
+  "language": "hi",
+  "turns": [
+   {
+    "id": 1,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "नमस्ते, क्या आप Pooja जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 2,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "हाँ जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 3,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "यह Pooja जी के लिए एक ऑटोमेटेड कस्टमर केयर कॉल है। क्या आप ख़ुद Pooja जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 4,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "हाँ जी, मैं ख़ुद ही बात कर रही हूँ।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 5,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "मैं नमूना फ़ाइनेंस कस्टमर केयर से कंप्यूटर से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 6,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "यह सेल्स नहीं, फ़ीडबैक कॉल है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 7,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "बातचीत रिकॉर्ड हो रही है; जानकारी नमूना फ़ाइनेंस के लिखित नोटिस में है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 8,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "हम आपसे कभी ओ-टी-पी, पिन, पासवर्ड या खाता नंबर नहीं माँगेंगे।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 9,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "शक हो तो फ़ोन रखकर नमूना फ़ाइनेंस कस्टमर केयर पर ख़ुद पूछ सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 10,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "क्या दो-तीन मिनट बात करें?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 11,
+    "speaker": "customer",
+    "step": "disclosure",
+    "text": "हाँ जी, बोलिए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 12,
+    "speaker": "bot",
+    "step": "context",
+    "text": "धन्यवाद। आपने हाल ही में नमूना फ़ाइनेंस से जो लोन लिया, उसके बारे में कुछ सवाल हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 13,
+    "speaker": "bot",
+    "step": "context",
+    "text": "रुकना हो या किसी इंसान से बात करनी हो, तो कभी भी बोल दीजिए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 14,
+    "speaker": "bot",
+    "step": "open_recall",
+    "text": "लोन के साथ आपने कुछ और भी लिया था क्या? अगर हाँ, तो क्या, और कितने का?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 15,
+    "speaker": "customer",
+    "step": "open_recall",
+    "text": "हाँ, लोन के साथ बीमा भी लिया था। बारह हज़ार पाँच सौ रुपये का।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 16,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "ठीक है, उसके बारे में कुछ छोटे सवाल हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 17,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जो आपने बताया, उसे थोड़ा समझाइए: वो क्या है और किस काम आता है?",
+    "asks": "kind",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 18,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "वह लोन पर बीमा कवर था।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 19,
+    "speaker": "bot",
+    "step": "read_back",
+    "text": "तो आपने उसके लिए बारह हज़ार पाँच सौ रुपये दिए। सही है?",
+    "asks": "premium",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 20,
+    "speaker": "customer",
+    "step": "read_back",
+    "text": "हाँ जी, सही है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 21,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "वो पैसे कहाँ से और कैसे दिए गए?",
+    "asks": "payment_source",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 22,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "लोन की रकम में से काट लिया था। मुझे लोन उतना कम मिला।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 23,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 24,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "ये पैसे एक ही बार देने थे, या आगे भी देने होंगे?",
+    "asks": "payment_frequency",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 25,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "एक बार ही। दोबारा किसी ने नहीं कहा।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 26,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "मतलब, उसके लिए पैसे एक बार दिए, या बार-बार देने हैं?",
+    "asks": "payment_frequency",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 27,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "सिर्फ़ एक बार का भुगतान था, फिर नहीं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 28,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "आपको क्या बताया गया था: लोन के लिए यह लेना ज़रूरी है, या आपकी मर्ज़ी है?",
+    "asks": "required_for_loan",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 29,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "नहीं, लोन के लिए ज़रूरी नहीं था। मेरी अपनी मर्ज़ी थी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 30,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "उससे आपको क्या मिलता है? कोई रक़म जुड़ी हो, तो वो भी बताइए।",
+    "asks": "cover",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 31,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "अगर मर जाऊँ, तो लोन के लिए पाँच लाख तीस हज़ार रुपये तक देता है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 32,
+    "speaker": "bot",
+    "step": "read_back",
+    "text": "तो उससे पाँच लाख तीस हज़ार रुपये तक मिलता है। सही है?",
+    "asks": "cover",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 33,
+    "speaker": "customer",
+    "step": "read_back",
+    "text": "हाँ जी, सही है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 34,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 35,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "वो कितने समय के लिए है?",
+    "asks": "term",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 36,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "जब तक लोन चलेगा, तब तक यह भी चलेगा।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 37,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "उसे बंद या कैंसल कराने के बारे में आपको क्या बताया गया था?",
+    "asks": "cancel_window",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 38,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "हाँ, तीस दिन के अंदर रद्द कर सकती थी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 39,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 40,
+    "speaker": "bot",
+    "step": "teach_back",
+    "text": "अगर आप उसमें लगे पैसे वापस चाहें, तो क्या होगा? आपको क्या लगता है?",
+    "asks": "features",
+    "product_id": "P1",
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 41,
+    "speaker": "customer",
+    "step": "teach_back",
+    "text": "यह मुझे नहीं पता। पैसे वापस मिलेंगे या नहीं, मालूम नहीं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 42,
+    "speaker": "bot",
+    "step": "consent_check",
+    "text": "लोन लेते समय आपने किन-किन चीज़ों के लिए हाँ कही थी? और वो हाँ आपने किस तरह दी थी?",
+    "asks": "consent",
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 43,
+    "speaker": "customer",
+    "step": "consent_check",
+    "text": "लोन के साथ बीमा को हाँ कहा था, फोन पर बटन दबाकर।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 44,
+    "speaker": "bot",
+    "step": "close",
+    "text": "आपके समय और जवाबों के लिए धन्यवाद।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 45,
+    "speaker": "bot",
+    "step": "close",
+    "text": "कोई शक हो, तो लोन के काग़ज़ों पर छपे नमूना फ़ाइनेंस कस्टमर केयर नंबर पर पूछ सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 46,
+    "speaker": "bot",
+    "step": "close",
+    "text": "नमस्ते।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   }
+  ]
+ },
+ "llm_requests": 43,
+ "llm_cache_hits": 15,
+ "usd_this_call": 0.00154,
+ "degraded_turn_count": 0,
+ "finished_utc": "2026-11-13T20:59:32+00:00"
+}

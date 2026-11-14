@@ -68,6 +68,7 @@ LINES: dict[str, LineSpec] = {
     "teach_back.intro_nth": LineSpec(CallStep.teach_back, slots=_ORDINAL, optional=_ORDINAL),
     **_question("kind", Question.kind),
     "kind.ask_named": LineSpec(CallStep.teach_back, Question.kind),  # gain 8: the customer named something
+    "kind.follow_what": LineSpec(CallStep.teach_back, Question.kind),  # W4: what it is called, nothing else
     "ack.neutral": LineSpec(CallStep.teach_back),  # gain 8: "जी।" by position only (Hindi and Hinglish)
     **_question("premium", Question.premium),
     "premium.say_again": LineSpec(CallStep.teach_back, Question.premium),
@@ -82,12 +83,15 @@ LINES: dict[str, LineSpec] = {
     **_question("features", Question.features),
     "consent.ask": LineSpec(CallStep.consent_check, Question.consent),
     "consent.reask": LineSpec(CallStep.consent_check, Question.consent),
+    "consent.follow_what": LineSpec(CallStep.consent_check, Question.consent),  # W4: the missing half only
+    "consent.follow_how": LineSpec(CallStep.consent_check, Question.consent),  # W4
     "read_back.confirm": LineSpec(CallStep.read_back, Question.premium, _AMOUNT),
     "read_back.confirm_about": LineSpec(CallStep.read_back, Question.premium, _AMOUNT),
     "read_back.cover_confirm": LineSpec(CallStep.read_back, Question.cover, _AMOUNT),
     "read_back.reconfirm": LineSpec(CallStep.read_back, Question.premium, _AMOUNT),
     "read_back.restate": LineSpec(CallStep.read_back, Question.premium),
     "bridge.moving_on": LineSpec(CallStep.teach_back),
+    "defer.reask": LineSpec(CallStep.teach_back),  # W4: before the re-ask after a deferral; takes the question's step
     "stop_check.decline": LineSpec(CallStep.close),
     "stop_check.human": LineSpec(CallStep.close),
     "stop_check.disengaged": LineSpec(CallStep.close),
@@ -99,6 +103,7 @@ LINES: dict[str, LineSpec] = {
     "end.human": LineSpec(CallStep.close),
     "end.call_back": LineSpec(CallStep.close),
     "end.language": LineSpec(CallStep.close),
+    "language.switched": LineSpec(CallStep.disclosure),  # W4: said in the new language before the question
     "end.no_response": LineSpec(CallStep.close),
     "end.do_not_call": LineSpec(CallStep.close),
     "end.written": LineSpec(CallStep.close),

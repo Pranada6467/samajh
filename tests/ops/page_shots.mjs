@@ -1,6 +1,9 @@
 // Renders the review pages in headless Chrome and saves what a reviewer would see.
 //
-//   node tests/ops/page_shots.mjs --url http://127.0.0.1:8085 --out DIR [--case CASE_ID]
+//   node tests/ops/page_shots.mjs --url http://127.0.0.1:8085 --out DIR --token TOKEN [--case CASE_ID]
+//
+// TOKEN: a reviewer token (`uv run python -m samajh.ops reviewer add NAME --state DIR`); it is put in
+// the pages' sessionStorage before each load and sent to the API. Or set SAMAJH_REVIEW_TOKEN.
 //
 // For each page (queue, one case, attempt log, report), at phone (390 px) and laptop (1280 px)
 // width, in light and dark: a full-page PNG. Once per page: the rendered HTML. The report is also
@@ -19,6 +22,7 @@ const args = Object.fromEntries(
   }, []),
 );
 const url = args.url ?? "http://127.0.0.1:8085";
+const token = args.token ?? process.env.SAMAJH_REVIEW_TOKEN ?? "";
 const out = args.out ?? "p3b-shots";
 mkdirSync(out, { recursive: true });
 const chrome = process.env.CHROME ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -75,7 +79,11 @@ const evaluate = async (expression) => (await send("Runtime.evaluate", { express
 
 await send("Runtime.enable");
 await send("Page.enable");
-const caseId = args.case ?? (await (await fetch(`${url}/api/review/queue`)).json()).items[0].case_id;
+await send("Page.addScriptToEvaluateOnNewDocument", {
+  source: `try { sessionStorage.setItem("samajh.review.token", ${JSON.stringify(token)}); } catch {}`,
+});
+const auth = { headers: { Authorization: `Bearer ${token}` } };
+const caseId = args.case ?? (await (await fetch(`${url}/api/review/queue`, auth)).json()).items[0].case_id;
 const pages = [
   ["queue", "review/index.html"],
   ["case", `review/case.html?id=${encodeURIComponent(caseId)}`],

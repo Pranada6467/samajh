@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import os
 import re
 import secrets
@@ -25,9 +26,13 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Literal
 
+from filelock import FileLock
 from pydantic import BaseModel, ConfigDict, Field
 
 from samajh.clients.gnani import TtsLanguage
+from samajh.evidence.case_seal import seal_case
+from samajh.evidence.digest import file_sha256
+from samajh.evidence.session import CHAIN_FILE, append_chain, event_digest, session_fields, session_seal
 from samajh.server.dialogue import ListenKind
 
 LOG_VERSION = 2
@@ -53,6 +58,9 @@ class TtsCall(_Model):
     attempts: int
     est_credits: float
     request_id: str | None = None
+    # Wall ms in this server for this line: the Timbre call (or cache read) plus conversion to
+    # line PCM. None in logs written before this field.
+    synth_ms: float | None = None
 
 
 class SttReading(_Model):
@@ -74,6 +82,10 @@ class SttReading(_Model):
     attempts: int = 0
     est_credits: float = 0.0
     request_id: str | None = None
+    cache_key: str | None = None  # joins the Gnani ledger (.samajh/ledger.jsonl)
+    # 200 for a reading fetched now; None for a cache hit; for a failed second reading, the
+    # upstream HTTP status when the error carries one, else None.
+    http_status: int | None = None
 
 
 class TurnLatency(_Model):
@@ -106,6 +118,67 @@ class PhoneTurn(_Model):
     mode: Literal["vad", "ptt", "file"]
     cut_ms: float | None = None  # the silence after which it sent this take
     grace_ms: float | None = None  # how long after the last voiced frame the customer could resume
+
+
+# Strict: a bool or a numeric string is refused; a JSON integer is still a valid float.
+Millis = Annotated[float, Field(ge=0, le=600000, allow_inf_nan=False, strict=True)]
+Position = dict[str, str | int | float | bool | None]
+
+
+class _Strict(_Model):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+
+class ClassifierCall(_Model):
+    """The dialogue's LLM turn classifier on one turn, as the dialogue reports it."""
+
+    ran: bool  # the LLM classifier was asked on this turn
+    label: str | None = None  # its label, None when it did not run or gave none
+    # From begin to answer: an upper bound on the LLM's own time; with a prefetch it includes the
+    # second-reading wait.
+    latency_ms: float | None = None
+    model: str | None = None
+    degraded: bool = False  # it failed or ran out of time (as CustomerEvent.degraded)
+    # Wall time inside the classifier's `interpret` calls in this step, summed: what it added to
+    # the turn after the readings were in.
+    wait_ms: float | None = None
+
+
+class VadMark(_Strict):
+    type: Literal["speech_start", "pause", "cut", "resume", "grace_expired", "send"]
+    at_ms: Millis  # ms since listening opened for this turn
+    ms: Millis | None = None  # "pause": the unvoiced gap's length; "cut": silence waited
+
+
+class BrowserListen(_Strict):
+    """How the phone took a customer turn. Posted by the browser: untrusted, logged, never acted on."""
+
+    mode: Literal["vad", "ptt", "file"]
+    cut_ms: Millis | None = None
+    grace_ms: Millis | None = None
+    marks: list[VadMark] = Field(default_factory=list, max_length=400)
+    takes: int = Field(default=1, ge=0, le=1000)  # takes sent for this turn
+    grace_used: bool = False  # the customer resumed inside the grace window at least once
+    eos_wait_ms: Millis | None = None
+    post_ms: Millis | None = None  # upload start to reply received
+    echo_cancellation: bool | None = None  # MediaStreamTrack.getSettings().echoCancellation
+
+
+class TalkOver(_Strict):
+    start_ms: Millis  # ms after the bot audio started playing
+    ms: Millis  # length of the voiced run heard on the mic
+
+
+class BrowserPlayback(_Strict):
+    """One bot utterance as the browser played it. Untrusted, logged, never acted on."""
+
+    bot_start_ms: Millis | None = None  # end of the customer's speech to the first sample, browser clock
+    output_latency_ms: Millis | None = None  # AudioContext.outputLatency * 1000
+    played_ms: Millis | None = None
+    completed: bool | None = None
+    # Voiced runs on the mic while this audio played, echo cancellation on: residual bot echo can
+    # still count, so this is "speech heard during bot audio", not proof the customer spoke.
+    talk_over: list[TalkOver] = Field(default_factory=list, max_length=200)
 
 
 class _Event(_Model):
@@ -143,6 +216,7 @@ class BotEvent(_Event):
     # Wall time to make this utterance's audio on its first fetch (every line's Timbre call or
     # cache read, plus the join). None until then.
     synth_ms: float | None = None
+    browser: BrowserPlayback | None = None  # posted by the phone; never in turn_json
 
 
 # What the bot did right after a customer turn, from its next line (`samajh_dialogue.followed_by`):
@@ -175,6 +249,11 @@ class CustomerEvent(_Event):
     latency: TurnLatency | None = None
     pauses: PauseStats | None = None
     phone: PhoneTurn | None = None
+    classifier: ClassifierCall | None = None  # None: the dialogue does not say
+    # Scalar values of the dialogue state's `position` before and after this turn; never the state.
+    state_before: Position | None = None
+    state_after: Position | None = None
+    browser: BrowserListen | None = None  # posted by the phone; never in turn_json
 
 
 class ErrorEvent(_Event):
@@ -213,6 +292,15 @@ class Recording(_Model):
     sha256: str
 
 
+class ChainState(_Model):
+    """The session's evidence chain as of this file (format: `samajh.evidence`)."""
+
+    version: Literal[1] = 1
+    entries: int
+    head: str
+    seal: str | None = None  # set once `recording` is
+
+
 class SessionLog(_Model):
     version: Literal[2] = LOG_VERSION
     session_id: str
@@ -236,6 +324,8 @@ class SessionLog(_Model):
     # As the dialogue's state says after the last event (`samajh_dialogue.speaker_confirmed`):
     # True once the year-of-birth check has passed, False before. None: the dialogue does not say.
     speaker_confirmed: bool | None = None
+    # None in logs written before the evidence chain existed.
+    chain: ChainState | None = None
 
 
 def new_session_id() -> str:
@@ -281,12 +371,21 @@ def _read(path: Path) -> bytes | None:
         return None
 
 
+def _stored_chain(data: bytes) -> object:
+    try:
+        parsed = json.loads(data)
+    except ValueError:
+        return None
+    return parsed.get("chain") if isinstance(parsed, dict) else None
+
+
 class SessionStore:
     """Reads and writes sessions under `root` (`<state>/sessions`). Paths are built here only,
     from ids and names that match SESSION_ID and AUDIO_NAME; anything else raises ValueError."""
 
     def __init__(self, root: Path) -> None:
         self.root = root
+        self._audio_hashes: dict[tuple[str, int, int], str] = {}
 
     def _dir(self, session_id: str) -> Path:
         if not SESSION_ID.fullmatch(session_id):
@@ -298,10 +397,41 @@ class SessionStore:
             raise ValueError("malformed audio name")
         return self._dir(session_id) / "audio" / name
 
+    def _audio_sha(self, session_dir: Path, ref: str | None) -> str | None:
+        """sha256 of an event's audio file, cached by (path, size, mtime_ns); None when missing."""
+        if ref is None:
+            return None
+        path = session_dir / ref
+        try:
+            st = path.stat()
+        except OSError:
+            return None
+        key = (str(path), st.st_size, st.st_mtime_ns)
+        if key not in self._audio_hashes:
+            self._audio_hashes[key] = file_sha256(path)
+        return self._audio_hashes[key]
+
     def save(self, log: SessionLog) -> None:
-        """`lay_out` the events, then write session.json atomically (temp file + os.replace)."""
+        """`lay_out` the events, append what changed to the session's evidence chain
+        (`samajh.evidence.session`), set `log.chain` in place, then write session.json atomically
+        (temp file + os.replace). A session first written before the chain existed is adopted on
+        this save: its earlier history is not covered."""
         lay_out(log.events)
-        _write_atomic(self._dir(log.session_id) / "session.json", log.model_dump_json(indent=2).encode())
+        session_dir = self._dir(log.session_id)
+        session_dir.mkdir(parents=True, exist_ok=True)
+        with FileLock(str(session_dir / ".chain.lock")):
+            adopted = False
+            if not (session_dir / CHAIN_FILE).exists():
+                # A stored log with no chain was written before the chain existed: adopt it. One that
+                # has a chain lost its chain.jsonl: start afresh, not adopted, and verification of
+                # the old chain head is lost with it.
+                stored = _read(session_dir / "session.json")
+                adopted = stored is not None and _stored_chain(stored) is None
+            events = [(e.seq, event_digest(e), self._audio_sha(session_dir, e.audio)) for e in log.events]
+            entries, head = append_chain(session_dir, session_fields(log), events, adopted=adopted)
+            seal = session_seal(head, log.recording.sha256) if log.recording is not None else None
+            log.chain = ChainState(entries=entries, head=head, seal=seal)
+            _write_atomic(session_dir / "session.json", log.model_dump_json(indent=2).encode())
 
     def load(self, session_id: str) -> SessionLog | None:
         """The stored log, or None if the id is malformed, unknown or the file does not parse."""
@@ -356,8 +486,9 @@ class SessionStore:
         return _read(self._dir(session_id) / "call.wav")
 
     def write_case(self, session_id: str, data: bytes) -> None:
-        """The after-call case file (`samajh.server.casefile`), written atomically."""
-        _write_atomic(self._dir(session_id) / "case.json", data)
+        """The after-call case file (`samajh.server.casefile`), written atomically and, when it
+        carries a `seal`, sealed over its final bytes (`samajh.evidence.case_seal.seal_case`)."""
+        _write_atomic(self._dir(session_id) / "case.json", seal_case(data))
 
     def read_case(self, session_id: str) -> bytes | None:
         return _read(self._dir(session_id) / "case.json")

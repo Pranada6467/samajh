@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C124. Gopal took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c124",
+  "label": "Synthetic ACQ record. Gopal: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1995-12-05",
+      "language": "hi-en",
+      "name": "Gopal Namoona"
+    },
+    "disbursed_inr": 200000,
+    "disbursed_on": "2026-10-18",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-124",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-18",
+          "method": "signed_form"
+        },
+        "cover_inr": 200000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": false,
+        "premium_inr": 32500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 200000,
+    "tenure_months": 24
+  }
+}

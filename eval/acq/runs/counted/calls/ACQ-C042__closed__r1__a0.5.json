@@ -1,0 +1,101 @@
+{
+ "customer_id": "ACQ-C042",
+ "arm": "closed",
+ "kind": "misled_with_gaps",
+ "gold_class": "problem",
+ "language": "hi-en",
+ "gender": "f",
+ "record_id": "acq-c042",
+ "writer_model": "google/gemini-3.7-flash",
+ "r": 1.0,
+ "a": 0.5,
+ "status": "ok",
+ "answers": [
+  {
+   "field": "kind",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "आपने loan के साथ Namoona Life का एक life insurance लिया है, जो आपके loan पर insurance cover है। क्या यह सही है?"
+  },
+  {
+   "field": "premium",
+   "belief_state": "dk",
+   "answer": "yes",
+   "decided_by": {
+    "axis": "r",
+    "value": 0.9213048666715622,
+    "level": 1.0
+   },
+   "statement": "इस insurance का premium thirty thousand five hundred rupees था। क्या यह सही है?"
+  },
+  {
+   "field": "source",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह premium आपके loan amount में से cut किया गया था। क्या यह सही है?"
+  },
+  {
+   "field": "frequency",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह premium एक ही बार pay हुआ था, इसे बार-बार pay नहीं करना है। क्या यह सही है?"
+  },
+  {
+   "field": "required",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह insurance लेना आपकी अपनी choice थी, loan के लिए ज़रूरी नहीं था, और आप इसे किसी भी company से ले सकते थे। क्या यह सही है?"
+  },
+  {
+   "field": "cover",
+   "belief_state": "dk",
+   "answer": "yes",
+   "decided_by": {
+    "axis": "r",
+    "value": 0.46058657742105424,
+    "level": 1.0
+   },
+   "statement": "अगर आपकी death हो जाए, तो यह insurance आपका loan चुकाने के लिए one lakh seventy thousand rupees तक देता है। क्या यह सही है?"
+  },
+  {
+   "field": "term",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "यह insurance one year तक चलता है। क्या यह सही है?"
+  },
+  {
+   "field": "cancel",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "आप यह insurance thirty days के अंदर cancel करवा सकते थे। क्या यह सही है?"
+  },
+  {
+   "field": "money_back",
+   "belief_state": "false",
+   "answer": "yes",
+   "decided_by": {
+    "axis": "a",
+    "value": 0.22965322947129607,
+    "level": 0.5
+   },
+   "statement": "यह insurance कोई deposit या savings नहीं है, और जो premium pay हुआ वह end में वापस नहीं मिलता। क्या यह सही है?"
+  },
+  {
+   "field": "consent",
+   "belief_state": "correct",
+   "answer": "yes",
+   "decided_by": null,
+   "statement": "आपने इस insurance के लिए phone या computer पर एक button click करके हाँ कहा था। क्या यह सही है?"
+  }
+ ],
+ "outcome_strict": "confirmed",
+ "caught_fields_strict": [],
+ "outcome_lenient": "confirmed",
+ "caught_fields_lenient": []
+}

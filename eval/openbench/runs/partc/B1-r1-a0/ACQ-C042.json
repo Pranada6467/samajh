@@ -1,0 +1,475 @@
+{
+ "customer_id": "ACQ-C042",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi-en",
+ "arm": "B1",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "92d52bcf86ffde2bd0e49c137efb12e1eadbcd1ff56228bc8c38364662517ca0",
+ "system_prompt_sha256": "f6a554bd065ac42b4b6cd999472b886d4f13cd090de468e8d9decfce342981a0",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "क्या मैं बात कर रहा हूँ सुनीता नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या मैं बात कर रहा हूँ सुनीता नमूना से?",
+   "agent_usd": 0.00011396,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था?",
+   "agent_usd": 0.00017856,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.00010371875,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "कृपया बताएं, आपने उस लोन के साथ एक प्रोडक्ट खरीदा था। आपको क्या लगता है कि वह क्या था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "कृपया बताएं, आपने उस लोन के साथ एक प्रोडक्ट खरीदा था। आपको क्या लगता है कि वह क्या था?",
+   "agent_usd": 0.00013408,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "एक प्रोडक्ट"
+    },
+    {
+     "kind": "any_questions",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.721e-05,
+   "reply": "हाँ, loan के साथ एक insurance cover लिया था, पर amount याद नहीं। वो loan पर एक insurance cover ही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.300420202082023,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, loan के साथ एक insurance cover लिया था, पर amount याद नहीं।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "span_dropped": "एक प्रोडक्ट",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.300420202082023,
+     "source_topic": "what_is_it",
+     "text": "वो loan पर एक insurance cover ही है।"
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "ठीक है। कृपया बताएं, उस इंश्योरेंस का प्रीमियम कितना था और उसे कैसे पेमेंट किया गया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। कृपया बताएं, उस इंश्योरेंस का प्रीमियम कितना था और उसे कैसे पेमेंट किया गया?",
+   "agent_usd": 0.00015833,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.39e-05,
+   "reply": "मुझे exact amount नहीं पता जी, ध्यान नहीं आ रहा। वो loan के पैसे से ही कट गया था, काटकर मिला था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.039487231988459826,
+     "source_topic": "how_much",
+     "text": "मुझे exact amount नहीं पता जी, ध्यान नहीं आ रहा।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5496674890164286,
+     "source_topic": "how_paid",
+     "text": "वो loan के पैसे से ही कट गया था, काटकर मिला था।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "समझ गए। कृपया बताएं, क्या यह इंश्योरेंस लेना जरूरी था या आपको चुनने का विकल्प था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "समझ गए। कृपया बताएं, क्या यह इंश्योरेंस लेना जरूरी था या आपको चुनने का विकल्प था?",
+   "agent_usd": 0.00024356,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस"
+    }
+   ],
+   "router_usd": 3.071e-05,
+   "reply": "मेरी अपनी choice थी, loan के लिए ज़रूरी नहीं था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.27891328814439476,
+     "source_topic": "needed_or_choice",
+     "text": "मेरी अपनी choice थी, loan के लिए ज़रूरी नहीं था।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "ठीक है। कृपया बताएं, अगर कुछ हो जाए तो यह इंश्योरेंस कितना कवर करता है और कितने समय के लिए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। कृपया बताएं, अगर कुछ हो जाए तो यह इंश्योरेंस कितना कवर करता है और कितने समय के लिए?",
+   "agent_usd": 0.0002671,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.3975e-05,
+   "reply": "उसमें क्या मिलता है या कितने amount का cover है, मुझे नहीं पता। जब तक loan चलेगा, तब तक ही रहेगा insurance।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.32387947547249496,
+     "source_topic": "what_it_gives",
+     "text": "उसमें क्या मिलता है या कितने amount का cover है, मुझे नहीं पता।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.30801660381257534,
+     "source_topic": "how_long",
+     "text": "जब तक loan चलेगा, तब तक ही रहेगा insurance।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "समझ गए। कृपया बताएं, क्या आपने उस इंश्योरेंस को ऐप पर एक्सेप्ट किया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "समझ गए। कृपया बताएं, क्या आपने उस इंश्योरेंस को ऐप पर एक्सेप्ट किया था?",
+   "agent_usd": 0.00019962,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "ऐप पर एक्सेप्ट"
+    }
+   ],
+   "router_usd": 8.775e-05,
+   "reply": "जी, loan के लिए insurance policy ली थी। मैंने phone पर button click करके loan और insurance दोनों accept किया था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "span_dropped": "इंश्योरेंस",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.300420202082023,
+     "source_topic": "what_is_it",
+     "text": "जी, loan के लिए insurance policy ली थी।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "span_dropped": "ऐप पर एक्सेप्ट",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6353658605366945,
+     "source_topic": "what_you_agreed_to",
+     "text": "मैंने phone पर button click करके loan और insurance दोनों accept किया था।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "धन्यवाद, सुनीता जी। अब हमारी बात पूरी हो गई है।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "understanding_gap",
+     "reason": "borrower does not know the premium amount, cover amount, term, or cancellation period",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "वो loan पर एक insurance cover ही है"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "मुझे exact amount नहीं पता जी, ध्यान नहीं आ रहा"
+      },
+      {
+       "field": "source",
+       "belief": "false",
+       "quote": "वो loan के पैसे से ही कट गया था, काटकर मिला था"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "मुझे exact amount नहीं पता जी, ध्यान नहीं आ रहा"
+      },
+      {
+       "field": "required",
+       "belief": "false",
+       "quote": "मेरी अपनी choice थी, loan के लिए ज़रूरी नहीं था"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "उसमें क्या मिलता है या कितने amount का cover है, मुझे नहीं पता"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "जब तक loan चलेगा, तब तक ही रहेगा insurance"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "उसमें क्या मिलता है या कितने amount का cover है, मुझे नहीं पता"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "उसमें क्या मिलता है या कितने amount का cover है, मुझे नहीं पता"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "मैंने phone पर button click करके loan और insurance दोनों accept किया था"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद, सुनीता जी। अब हमारी बात पूरी हो गई है।",
+   "agent_usd": 0.00064518
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "understanding_gap",
+  "reason": "borrower does not know the premium amount, cover amount, term, or cancellation period",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "वो loan पर एक insurance cover ही है"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "मुझे exact amount नहीं पता जी, ध्यान नहीं आ रहा"
+   },
+   {
+    "field": "source",
+    "belief": "false",
+    "quote": "वो loan के पैसे से ही कट गया था, काटकर मिला था"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "मुझे exact amount नहीं पता जी, ध्यान नहीं आ रहा"
+   },
+   {
+    "field": "required",
+    "belief": "false",
+    "quote": "मेरी अपनी choice थी, loan के लिए ज़रूरी नहीं था"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "उसमें क्या मिलता है या कितने amount का cover है, मुझे नहीं पता"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "जब तक loan चलेगा, तब तक ही रहेगा insurance"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "उसमें क्या मिलता है या कितने amount का cover है, मुझे नहीं पता"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "उसमें क्या मिलता है या कितने amount का cover है, मुझे नहीं पता"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "मैंने phone पर button click करके loan और insurance दोनों accept किया था"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.00194039,
+  "router": 0.00042726375
+ },
+ "cache_hits": {
+  "agent": 0,
+  "router": 1
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:19:06+00:00",
+ "agent_turns": 8,
+ "usd_total": 0.00236765375,
+ "finished_utc": "2026-11-13T22:19:43+00:00"
+}

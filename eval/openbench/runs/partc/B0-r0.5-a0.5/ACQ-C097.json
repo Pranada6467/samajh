@@ -1,0 +1,634 @@
+{
+ "customer_id": "ACQ-C097",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "3341327bef795abab56938af4fb47e502898048a97baa4c418a2de3b20fcfd57",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं उषा नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं उषा नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी उषा जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आप बता सकती हैं कि आपको पता है कि आपने लोन के साथ एक इंश्योरेंस प्रोडक्ट भी लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी उषा जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आप बता सकती हैं कि आपको पता है कि आपने लोन के साथ एक इंश्योरेंस प्रोडक्ट भी लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मुझे तो यही लगा कि वो लोन की प्रोसेसिंग फीस का चार्ज है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.566075939219445,
+     "recall_rule": "what_is_it_for_premium_defer",
+     "source_topic": "what_is_it",
+     "text": "मुझे तो यही लगा कि वो लोन की प्रोसेसिंग फीस का चार्ज है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "उषा जी, वो चार्ज प्रोसेसिंग फीस नहीं था। ये क्रेडिट-लाइफ इंश्योरेंस था, जो आपके लोन को कवर करता है अगर कभी कुछ हो जाए। क्या आपको ये बताया गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "उषा जी, वो चार्ज प्रोसेसिंग फीस नहीं था। ये क्रेडिट-लाइफ इंश्योरेंस था, जो आपके लोन को कवर करता है अगर कभी कुछ हो जाए। क्या आपको ये बताया गया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "आपके लोन को कवर करता है अगर कभी कुछ हो जाए"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "अगर मैं ना रहूँ तो लोन का एक लाख अस्सी हज़ार रुपये तक चुकाएगा। हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "आपके लोन को कवर करता है अगर कभी कुछ हो जाए",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6359694984275848,
+     "source_topic": "what_it_gives",
+     "text": "अगर मैं ना रहूँ तो लोन का एक लाख अस्सी हज़ार रुपये तक चुकाएगा।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "सही कहा, अगर कुछ हो जाए तो ये इंश्योरेंस लोन के 1,80,000 रुपये कवर करता है। क्या आपको पता है कि इसके लिए 12,500 रुपये प्रीमियम दिया गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "सही कहा, अगर कुछ हो जाए तो ये इंश्योरेंस लोन के 1,80,000 रुपये कवर करता है। क्या आपको पता है कि इसके लिए 12,500 रुपये प्रीमियम दिया गया था?",
+   "agent_usd": 0.00021652,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "लोन के 1,80,000 रुपये"
+    },
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": "12,500 रुपये"
+    }
+   ],
+   "router_usd": 9.03e-05,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "stated",
+     "stated": "लोन के 1,80,000 रुपये",
+     "stated_value": 180000,
+     "belief_state": "correct",
+     "belief_value": 180000,
+     "record_value": 180000,
+     "draw_a": 0.6359694984275848,
+     "draw_r": 0.42066609766334295,
+     "source_topic": "what_it_gives",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "12,500 रुपये",
+     "stated_value": 12500,
+     "belief_state": "correct",
+     "belief_value": 12500,
+     "record_value": 12500,
+     "draw_a": 0.22861607489176095,
+     "draw_r": 0.16585376299917698,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "ये प्रीमियम लोन अमाउंट से कटा था। क्या आपको ये पता था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ये प्रीमियम लोन अमाउंट से कटा था। क्या आपको ये पता था?",
+   "agent_usd": 0.0002532,
+   "router_items": [
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": "लोन अमाउंट से कटा था"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.001e-05,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन अमाउंट से कटा था",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.31453517312183976,
+     "draw_r": 0.06713602459058166,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "ये इंश्योरेंस लेना ज़रूरी नहीं था और आप किसी दूसरी कंपनी का भी ले सकती थीं। क्या आपको ये बताया गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ये इंश्योरेंस लेना ज़रूरी नहीं था और आप किसी दूसरी कंपनी का भी ले सकती थीं। क्या आपको ये बताया गया था?",
+   "agent_usd": 0.00018124,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "where_to_take_it_from",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.455e-05,
+   "reply": "जो भी लिखा हो आपके कागज़ पर। जो आपके यहाँ चलता हो।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.1326813290361315,
+     "source_topic": "needed_or_choice",
+     "text": "जो भी लिखा हो आपके कागज़ पर।"
+    },
+    {
+     "item": 1,
+     "kind": "where_to_take_it_from",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.1326813290361315,
+     "source_topic": "where_to_take_it_from",
+     "text": "जो आपके यहाँ चलता हो।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "उषा जी, क्या आपको ये पता है कि इंश्योरेंस कवर 12 महीने के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "उषा जी, क्या आपको ये पता है कि इंश्योरेंस कवर 12 महीने के लिए है?",
+   "agent_usd": 0.00018214,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "12 महीने"
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "इंश्योरेंस"
+    }
+   ],
+   "router_usd": 8.545e-05,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "12 महीने",
+     "stated_value": 12,
+     "belief_state": "correct",
+     "belief_value": 12,
+     "record_value": 12,
+     "draw_a": 0.6486604192759842,
+     "draw_r": 0.4354786672629416,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "क्या आपको पता है कि इंश्योरेंस खरीदने के 15 दिन के अंदर आप इसे कैंसिल कर सकती थीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि इंश्योरेंस खरीदने के 15 दिन के अंदर आप इसे कैंसिल कर सकती थीं?",
+   "agent_usd": 0.00032132,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "15 दिन"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.4225e-05,
+   "reply": "ये एक साल तक के लिए चलता है। हाँ, पंद्रह दिन के भीतर बंद करा सकते थे।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "span_dropped": "15 दिन",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6486604192759842,
+     "source_topic": "how_long",
+     "text": "ये एक साल तक के लिए चलता है।"
+    },
+    {
+     "item": 1,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9910570154897869,
+     "source_topic": "can_cancel",
+     "text": "हाँ, पंद्रह दिन के भीतर बंद करा सकते थे।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "क्या आपको ये पता है कि इंश्योरेंस खत्म होने के बाद आपको पैसे वापस नहीं मिलते?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको ये पता है कि इंश्योरेंस खत्म होने के बाद आपको पैसे वापस नहीं मिलते?",
+   "agent_usd": 0.00018626,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "पैसे वापस नहीं मिलते"
+    }
+   ],
+   "router_usd": 3.001e-05,
+   "reply": "हाँ जी, सही है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "पैसे वापस नहीं मिलते",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.29394883988425136,
+     "draw_r": 0.0904878624714911,
+     "source_topic": "money_back",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "क्या आपने इस इंश्योरेंस के लिए हाँ कहा था जब आपसे फोन पर पूछा गया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपने इस इंश्योरेंस के लिए हाँ कहा था जब आपसे फोन पर पूछा गया था?",
+   "agent_usd": 0.00018278,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "इंश्योरेंस"
+    },
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "हाँ"
+    }
+   ],
+   "router_usd": 8.59e-05,
+   "reply": "मुझे तो यही लगा कि वो लोन की प्रोसेसिंग फीस का चार्ज है। लोन और इस चार्ज के लिए फ़ोन कॉल पर रिकॉर्डिंग में हाँ कहा था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.566075939219445,
+     "draw_r": 0.595188028877601,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "मुझे तो यही लगा कि वो लोन की प्रोसेसिंग फीस का चार्ज है।"
+    },
+    {
+     "item": 1,
+     "kind": "what_you_agreed_to",
+     "span_dropped": "हाँ",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7480510992463678,
+     "source_topic": "what_you_agreed_to",
+     "text": "लोन और इस चार्ज के लिए फ़ोन कॉल पर रिकॉर्डिंग में हाँ कहा था।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "धन्यवाद उषा जी, अब सब कुछ स्पष्ट है। कोई और मदद चाहिए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "धन्यवाद उषा जी, अब सब कुछ स्पष्ट है। कोई और मदद चाहिए?",
+   "agent_usd": 0.000498,
+   "router_items": [
+    {
+     "kind": "closing",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.2525e-05,
+   "reply": "नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "closing",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 11,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बोरोअर को लगता है कि इंश्योरेंस प्रीमियम प्रोसेसिंग फीस थी, जो रिकॉर्ड के खंडन में है।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "मुझे तो यही लगा कि वो लोन की प्रोसेसिंग फीस का चार्ज है।"
+      },
+      {
+       "field": "source",
+       "belief": "false",
+       "quote": "मुझे तो यही लगा कि वो लोन की प्रोसेसिंग फीस का चार्ज है।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "जो भी लिखा हो आपके कागज़ पर। जो आपके यहाँ चलता हो।"
+      },
+      {
+       "field": "consent",
+       "belief": "false",
+       "quote": "लोन और इस चार्ज के लिए फ़ोन कॉल पर रिकॉर्डिंग में हाँ कहा था।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.00060604
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बोरोअर को लगता है कि इंश्योरेंस प्रीमियम प्रोसेसिंग फीस थी, जो रिकॉर्ड के खंडन में है।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "मुझे तो यही लगा कि वो लोन की प्रोसेसिंग फीस का चार्ज है।"
+   },
+   {
+    "field": "source",
+    "belief": "false",
+    "quote": "मुझे तो यही लगा कि वो लोन की प्रोसेसिंग फीस का चार्ज है।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "जो भी लिखा हो आपके कागज़ पर। जो आपके यहाँ चलता हो।"
+   },
+   {
+    "field": "consent",
+    "belief": "false",
+    "quote": "लोन और इस चार्ज के लिए फ़ोन कॉल पर रिकॉर्डिंग में हाँ कहा था।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0026275,
+  "router": 0.00057297
+ },
+ "cache_hits": {
+  "agent": 3,
+  "router": 3
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:30:26+00:00",
+ "agent_turns": 12,
+ "usd_total": 0.00320047,
+ "finished_utc": "2026-11-13T22:31:07+00:00"
+}

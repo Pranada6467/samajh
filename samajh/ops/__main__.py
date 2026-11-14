@@ -81,7 +81,21 @@ def main(argv: list[str] | None = None) -> int:
     command("verify", "recompute every draw from the book")
     command("report", "print the half-yearly report as JSON")
     command("demo", "the whole scripted loop into --state: book, batch, nine weekly draws, calls")
+    sub = command("reviewer", "who may sign in to the review pages (tokens; only their sha256 is kept)")
+    sub.add_argument("action", choices=("add", "list", "remove"))
+    sub.add_argument("name", nargs="?", help="the reviewer's name (add, remove)")
+    sub = command("retention", "list (or with --delete remove) ended phone sessions older than N days")
+    sub.add_argument("--days", type=int, default=None, help="default: $SAMAJH_RETENTION_DAYS; neither: off")
+    sub.add_argument("--delete", action="store_true", help="delete; without it, only list")
     args = parser.parse_args(argv)
+
+    if args.command == "retention":
+        from samajh.ops.retention import run as retention
+
+        return retention(args.state, args.days, do_delete=args.delete)
+
+    if args.command == "reviewer":
+        return _reviewer(args.state / "ops", args.action, args.name)
 
     if args.command == "book":
         meta, loans, customers = books.generate_book(args.seed, args.loans, lender_type=args.lender_type)
@@ -127,6 +141,28 @@ def main(argv: list[str] | None = None) -> int:
         print(f"simulated batch in {store.root} (scripted customers, scripted extraction, no model)")
         print(_summary(store))
     return 0
+
+
+def _reviewer(ops_root: Path, action: str, name: str | None) -> int:
+    from samajh.ops import reviewers
+
+    if action == "list":
+        for who in reviewers.names(ops_root):
+            print(who)
+        return 0
+    if not name:
+        print(f"reviewer {action} needs a NAME", file=sys.stderr)
+        return 2
+    if action == "add":
+        token = reviewers.add(ops_root, name)
+        print(f"reviewer {name.strip()} added. Their token (shown once, not stored):")
+        print(token)
+        return 0
+    if reviewers.remove(ops_root, name):
+        print(f"reviewer {name} removed")
+        return 0
+    print(f"no reviewer named {name}", file=sys.stderr)
+    return 1
 
 
 if __name__ == "__main__":

@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C123. Shobha took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c123",
+  "label": "Synthetic ACQ record. Shobha: a personal loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1983-09-01",
+      "language": "hi-en",
+      "name": "Shobha Namoona"
+    },
+    "disbursed_inr": 108500,
+    "disbursed_on": "2026-10-06",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-123",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-06",
+          "method": "digital_click"
+        },
+        "cover_inr": 120000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 11500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 120000,
+    "tenure_months": 24
+  }
+}

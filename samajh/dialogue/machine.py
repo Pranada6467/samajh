@@ -34,28 +34,38 @@ from typing import Annotated, Literal
 from pydantic import Field
 
 from samajh.amounts import spoken_amount
+from samajh.dialogue._lexicon import OWN_LANGUAGES
+from samajh.dialogue.halves import consent_halves, kind_is_half
 from samajh.dialogue.interpret import (
     UNCLEAR,
     Expecting,
     Intent,
     Interpretation,
     RuleInterpreter,
+    TurnContext,
     TurnInterpreter,
+    affirms_or_goes_on,
     asks_something,
     claim_with_tail,
+    claims_another_name,
     claims_self,
     doubts_claim,
+    hedges_claim,
     hedges_or_asks,
     means_now,
+    name_hints,
     names_another_speaker,
+    only_asks_whom,
     points_elsewhere,
     short_delay_or_echo,
     speaks_of_borrower,
     starts_with_yes,
+    third_party_sign,
     who_check_claim,
 )
 from samajh.dialogue.prompts import LINES, PRODUCT_QUESTIONS, load_prompts
 from samajh.identity import CheckKind, IdentityPolicy, IdentityRecord, expected_answer, identity_sentence
+from samajh.rules.halves import missing_half
 from samajh.types import (
     CallStep,
     Frozen,
@@ -97,6 +107,17 @@ class Limits(Frozen):
     # Round 4: "is it you speaking?" checks after a sign of another speaker. Its own count, not
     # `max_stop_checks`: a borrower who used the "shall I go on?" checks still gets one, and the reverse.
     max_who_checks: int = Field(default=2, ge=0)
+    # W4: live switches to another prompt language; a request past this ends the call (`end.language`).
+    max_language_switches: int = Field(default=2, ge=0)
+
+
+class LanguageSwitch(Frozen):
+    """W4: the call went on in another language from this customer turn on."""
+
+    turn_id: TurnId
+    from_language: Language
+    to_language: Language
+    requested: str  # the English lower-case name the customer asked for
 
 
 class CallPlan(Frozen):
@@ -179,6 +200,7 @@ class AtTeachBack(Frozen):
     product: int  # index into CallPlan.product_ids
     question: Question
     reasked: bool = False
+    follow: bool = False  # W4: the one follow-up for a half answer to the kind question ("what is it called?")
 
 
 class AtSayAgain(Frozen):
@@ -192,6 +214,7 @@ class AtSayAgain(Frozen):
 class AtConsent(Frozen):
     at: Literal["consent"] = "consent"
     reasked: bool = False
+    follow: Literal["what", "how"] | None = None  # W4: the one follow-up asking only for the missing half
 
 
 class AtReadBack(Frozen):
@@ -315,6 +338,10 @@ class CallState(Frozen):
     own_choice: tuple[ProductId, ...] = ()  # products the customer said were their own choice
     callback_time: str | None = None  # the customer's own words for when to call; never parsed
     requested_language: str | None = None  # English name in lower case, as asked for
+    language_switches: tuple[LanguageSwitch, ...] = ()  # W4: live switches, in order
+    follow_ups: tuple[str, ...] = ()  # W4: slots that had their one follow-up ("consent", "kind:P1")
+    deferrals: tuple[str, ...] = ()  # W4: slots that had their one re-ask after a deferral ("आप records में देख लीजिए")
+    puts: tuple[tuple[str, int], ...] = ()  # W4: times each question slot was put, for the loop cap
     degraded_turns: tuple[TurnId, ...] = ()  # customer turns the classifier failed on
     degraded_checked: bool = False  # the call has asked "shall I go on?" after a failed classifier
     unusable_run: int = 0  # unusable replies in a row
@@ -363,6 +390,7 @@ class EndOfCall(Frozen):
     unresolved: tuple[Unresolved, ...]
     callback_time: str | None = None
     requested_language: str | None = None
+    language_switches: tuple[LanguageSwitch, ...] = ()
     degraded_turns: tuple[TurnId, ...] = ()
     carried_forward: tuple[CarriedAnswer, ...] = ()
     speaker_confirmed: bool = False  # the birth year passed before the call ended; never on `wrong_party`
@@ -521,6 +549,10 @@ def _lines_for(state: CallState, position: Position, *, again: bool = False) -> 
             )
         case AtRecallFollowUp():
             return (_line(state, "open_recall.nothing"),)
+        case AtTeachBack(product=product, follow=True):
+            return (_line(state, "kind.follow_what", product=product),)
+        case AtConsent(follow="what" | "how" as half):
+            return (_line(state, f"consent.follow_{half}"),)
         case AtTeachBack(product=product, question=question, reasked=reasked):
             named = question is Question.kind and not reasked and product == 0 and state.recall_named
             key = "kind.ask_named" if named else f"{question.value}.{'reask' if reasked else 'ask'}"
@@ -571,6 +603,24 @@ def _ack(state: CallState, position: AtTeachBack) -> tuple[Line, ...]:
     return ()
 
 
+_MAX_PUTS = 2
+_SIDE_ANSWERS = ("verify.", "purpose.")
+
+
+def _capped_slot(position: Position) -> str | None:
+    """W4: the slot a question position puts, for the loop cap; None for the opening, read-backs (bounded by
+    `Limits.max_read_backs`) and the stop checks."""
+    match position:
+        case AtTeachBack(product=product, question=question):
+            return f"{question.value}:{product}"
+        case AtConsent():
+            return "consent"
+        case AtRecall():
+            return "recall"
+        case _:
+            return None
+
+
 def _say(
     state: CallState,
     position: Position,
@@ -578,6 +628,7 @@ def _say(
     bridge: bool = False,
     again: bool = False,
     before: tuple[str, ...] = (),
+    lead: tuple[str, ...] = (),
 ) -> tuple[CallState, BotUtterance | EndOfCall]:
     """Move to `position` and put its question, or end the call when the turn budget is spent.
 
@@ -586,9 +637,20 @@ def _say(
     if state.bot_turns + 1 >= state.limits.max_bot_turns:
         return _end(state, Outcome.turn_limit)
     state, position = _carry_forward(state, position)
+    slot = _capped_slot(position)
+    if slot is not None and not any(key.startswith(_SIDE_ANSWERS) for key in before):
+        # W4: a question is put at most `_MAX_PUTS` times by any path (re-ask, deferral, call-back-time or stop-check
+        # return); past that the slot is left unresolved and the call moves on. "Who is this?" answers do not count.
+        counts = dict(state.puts)
+        counts[slot] = counts.get(slot, 0) + 1
+        state = state.model_copy(update={"puts": tuple(counts.items())})
+        if counts[slot] > _MAX_PUTS:
+            return _go(_mark_unresolved(state, position), _after(state, position), bridge=True)
     lines = _lines_for(state, position, again=again)
     if before:
         lines = (*(_line(state, key, step=lines[-1].step) for key in before), lines[-1])
+    if lead:  # W4: said before the position's own lines, all of them
+        lines = (*(_line(state, key, step=lines[0].step) for key in lead), *lines)
     if bridge:
         lines = tuple(line for line in lines if line.key != "ack.neutral")
         lines = (_line(state, "bridge.moving_on", step=lines[0].step), *lines)
@@ -632,6 +694,7 @@ def _end(
         unresolved=ended.unresolved,
         callback_time=ended.callback_time,
         requested_language=ended.requested_language,
+        language_switches=ended.language_switches,
         degraded_turns=ended.degraded_turns,
         speaker_confirmed=ended.speaker_confirmed,
     )
@@ -814,6 +877,7 @@ def _names_something(line: Line) -> bool:
     return bool({"lender", "amount_words"} & line.slots.keys()) or any(w in line.text.casefold() for w in _LOAN_WORDS)
 
 
+_DEFER_POSITIONS = (AtRecall, AtTeachBack, AtConsent)
 _QUESTION_POSITIONS = (AtRecall, AtRecallFollowUp, AtTeachBack, AtSayAgain, AtConsent, AtReadBack, AtRestate)
 
 
@@ -887,7 +951,8 @@ def step(
     def read(text: str) -> Interpretation:
         try:
             return interpreter.interpret(
-                text, language=state.language, expecting=expects, question=asked.text
+                text, language=state.language, expecting=expects, question=asked.text,
+                **_context_kwargs(interpreter, state, text),
             )
         except Exception:  # an interpreter's failure must never escape `step`
             log.warning("interpreter raised; turn read by the word lists", exc_info=True)
@@ -932,15 +997,21 @@ def step(
     if isinstance(position, AtStopCheck) and position.wish == "who":
         return _on_who_check(state, position, heard, customer_text)
     if heard.intent is Intent.other_language:
-        return _end(
-            state.model_copy(update={"requested_language": heard.language_name}), Outcome.language_switch
-        )
+        own = heard.language_name in OWN_LANGUAGES[state.language]
+        if not own:
+            return _on_language_request(state, position, heard, turn_id)
+        heard = heard.model_copy(update={"intent": Intent.asks_repeat, "language_name": None})
     if heard.intent is Intent.wants_human:
         return _end(state, Outcome.human_requested)
     if isinstance(position, _BEFORE_LOAN) and not state.speaker_confirmed \
             and heard.intent in (Intent.decline, Intent.do_not_call, Intent.call_later) \
             and speaks_of_borrower(customer_text, state.language, state.plan.first_name):  # fmt: skip
         return _end(state, Outcome.wrong_party)  # iteration 3: "रमेश जी नहीं हैं, ..." is not the borrower refusing
+    if isinstance(position, AtIdentity) and not state.speaker_confirmed \
+            and claims_another_name(customer_text, state.language, state.plan.first_name):  # fmt: skip
+        # Iteration 4: "हाँ, मैं ही राजेश हूँ" on a record for Ramesh names someone else as the speaker. It ends here,
+        # before any re-ask: a re-asked "are you Ramesh yourself?" would let a bare yes pass.
+        return _end(state.model_copy(update={"speaker_confirmed": False}), Outcome.wrong_party)
     if heard.intent is Intent.decline:
         return _end(state, Outcome.declined)
     if heard.intent is Intent.do_not_call:
@@ -976,6 +1047,14 @@ def step(
         if position.resume is not None and means_now(customer_text, state.language):
             return _say(state, position.resume)  # "अभी बोलिए, अभी फ़्री हूँ": back to the pending question
         return _call_back(state, customer_text.strip() or None)
+    if heard.intent is Intent.defers:
+        if isinstance(position, _DEFER_POSITIONS):
+            slot = _capped_slot(position) or position.at
+            if slot not in state.deferrals and not getattr(position, "reasked", True):
+                # W4: one re-ask, with a line that says the call wants the customer's own memory, not the record
+                state = state.model_copy(update={"deferrals": (*state.deferrals, slot)})
+                return _say(state, position.model_copy(update={"reasked": True}), before=("defer.reask",))
+        heard = heard.model_copy(update={"intent": Intent.unclear})  # a second deferral: an unusable reply
     if heard.intent is Intent.call_later:
         if heard.callback == "ask":
             resume = None if isinstance(position, AtStopCheck) else position
@@ -991,6 +1070,7 @@ def step(
         return _say(state, AtStopCheck(wish=wish, resume=position))
     if isinstance(position, AtIdentity) and state.identity.second_check is None \
             and heard.classifier_label not in _SPEAKER_LABELS \
+            and not (heard.judged and heard.classifier_label != "confirms_self") \
             and claim_with_tail(customer_text, state.language, state.plan.first_name):  # fmt: skip
         # Iteration 3, round 2: an explicit claim passes whatever follows it ("मैं ही समीर हूँ, क्या issue है?"); the
         # question then gets the disclosure, which comes only after the pass. A classifier label that the speaker
@@ -1056,12 +1136,37 @@ def _protects_more(a: Interpretation, b: Interpretation) -> bool:
     return rank_a is not None and (rank_b is None or rank_a < rank_b)
 
 
+def turn_context(state: CallState, text: str) -> TurnContext:
+    """The context classifier's view beyond the turn (W4): the record's first name, name hints from the reply, and
+    the exchange before this one, unless that exchange was at the year of birth (never sent to any model)."""
+    previous_question = previous_reply = None
+    turns = state.turns
+    for k in range(len(turns) - 1, -1, -1):
+        if turns[k].speaker is Speaker.customer:
+            bot = next((t for t in reversed(turns[:k]) if t.speaker is Speaker.bot), None)
+            if turns[k].step is not CallStep.second_check and (bot is None or bot.step is not CallStep.second_check):
+                previous_reply = turns[k].text
+                previous_question = bot.text if bot is not None else None
+            break
+    name = state.plan.first_name
+    hints = name_hints(text, name)
+    return TurnContext(
+        first_name=name, previous_question=previous_question, previous_reply=previous_reply, name_hints=hints
+    )
+
+
+def _context_kwargs(interpreter: TurnInterpreter, state: CallState, text: str) -> dict:
+    """`context=` only for an interpreter that declares `wants_context`; others keep the old signature."""
+    return {"context": turn_context(state, text)} if getattr(interpreter, "wants_context", False) else {}
+
+
 def _begin(interpreter: TurnInterpreter, state: CallState, text: str) -> None:
     begin = getattr(interpreter, "begin", None)
     if begin is None:
         return
     try:
-        begin(text, language=state.language, expecting=expecting(state.position), question=state.turns[-1].text)
+        begin(text, language=state.language, expecting=expecting(state.position), question=state.turns[-1].text,
+              **_context_kwargs(interpreter, state, text))
     except Exception:
         log.warning("interpreter begin raised", exc_info=True)
 
@@ -1146,6 +1251,27 @@ _WHO_CHECK_ENDS = {
 
 
 _WHO_CHECK_STOPS = frozenset({*_WHO_CHECK_ENDS, Intent.call_later, Intent.other_language})
+
+
+# W4: the prompt file a requested language is served from. English goes to the Hinglish file, the closest one
+# there is (its lines mix English words into Hindi); a request for a language with no file ends the call.
+_SWITCH_TO: dict[str, Language] = {
+    "hindi": Language.hi, "tamil": Language.ta, "kannada": Language.kn, "english": Language.hi_en,
+}  # fmt: skip
+
+
+def _on_language_request(state: CallState, position: Position, heard: Interpretation, turn_id: TurnId):
+    """W4: switch live to a language that has a prompt file and put the pending question again, as new, in it;
+    otherwise end with `end.language`. Never while a sign of another speaker is unsettled."""
+    target = _SWITCH_TO.get(heard.language_name or "")
+    room = len(state.language_switches) < state.limits.max_language_switches
+    if target is None or target is state.language or not room or state.speaker_doubt:
+        return _end(state.model_copy(update={"requested_language": heard.language_name}), Outcome.language_switch)
+    switch = LanguageSwitch(
+        turn_id=turn_id, from_language=state.language, to_language=target, requested=heard.language_name or ""
+    )
+    state = state.model_copy(update={"language": target, "language_switches": (*state.language_switches, switch)})
+    return _say(state, position, lead=("language.switched",))
 
 
 def _on_who_check(state: CallState, position: AtStopCheck, heard: Interpretation, text: str):
@@ -1242,6 +1368,8 @@ def _on_identity_direct(state: CallState, position: AtIdentity, heard: Interpret
     if heard.intent in (Intent.no, Intent.wrong_person):
         return _end(state, Outcome.wrong_party)
     text = state.turns[-1].text if state.turns and state.turns[-1].speaker is Speaker.customer else ""
+    if heard.judged:
+        return _on_identity_judged(state, position, heard, text)
     # Iteration 3, round 2: a reply that puts someone else in the speaker's place, hedges, or asks whom the caller wants
     # is never plain, whatever a classifier labelled it ("हाँ मैं ही हूँ, मेरा बेटा बात करेगा").
     plain = not hedges_or_asks(text, state.language) and not doubts_claim(text, state.language, state.plan.first_name)
@@ -1261,6 +1389,40 @@ def _on_identity_direct(state: CallState, position: AtIdentity, heard: Interpret
     if asks_something(text, state.language) and state.side_answers < state.limits.max_side_answers:
         # "हाँ, क्या बात है?": not a pass; the question is answered without the lender or the loan, and the
         # direct question is put again (within the "who is this?" answers allowed).
+        state = state.model_copy(update={"side_answers": state.side_answers + 1})
+        return _say(state, position, before=("purpose.before_confirm",))
+    return _end(state, Outcome.not_confirmed)
+
+
+def _on_identity_judged(state: CallState, position: AtIdentity, heard: Interpretation, text: str):
+    """W4: the context classifier decided the reply. `confirms_self` passes; `yes` gets the direct question, and at
+    the direct question passes (the yes-twice default). A third-party sign or another name is a veto."""
+    name = state.plan.first_name
+    if claims_another_name(text, state.language, name):
+        return _end(state.model_copy(update={"speaker_confirmed": False}), Outcome.wrong_party)
+    if only_asks_whom(text, state.language, name):
+        # W4 fix round: the only sign is a question about whom the caller wants: the direct question once, not the end
+        if not position.reasked:
+            return _say(state, AtIdentity(reasked=True))
+        return _end(state, Outcome.not_confirmed)
+    if third_party_sign(text, state.language, name):
+        return _end(state.model_copy(update={"speaker_confirmed": False}), Outcome.wrong_party)
+    label = heard.classifier_label
+    # A hedge on the claim itself ("शायद मैं ही हूँ", "मान लीजिए") never passes; a trailing question after a claim
+    # does ("मैं ही समीर हूँ, क्या issue है?": the disclosure that follows the pass answers it). A plain yes passes at
+    # the direct question only without a hedge or a question, as before.
+    hedged = hedges_claim(text, state.language, name)
+    plain = not hedged and not hedges_or_asks(text, state.language)
+    # A `yes` label on a reply the word lists read as an explicit claim with the name ("Sunita here, go on") passes
+    # as today: the label says it agrees, and a claim needs no "I" when it names the borrower.
+    claim = label == "yes" and not hedged and claim_with_tail(text, state.language, name)
+    if (label == "confirms_self" and not hedged) or claim or (label == "yes" and position.reasked and plain and heard.intent is not Intent.filler
+                                                       and (starts_with_yes(text, state.language)
+                                                            or affirms_or_goes_on(text, state.language))):
+        return _say(_passed(state), AtGoAhead(year_passed=True))
+    if not position.reasked:
+        return _say(state, AtIdentity(reasked=True))
+    if asks_something(text, state.language) and state.side_answers < state.limits.max_side_answers:
         state = state.model_copy(update={"side_answers": state.side_answers + 1})
         return _say(state, position, before=("purpose.before_confirm",))
     return _end(state, Outcome.not_confirmed)
@@ -1339,7 +1501,35 @@ def _on_follow_up(state: CallState, position: AtRecallFollowUp, heard: Interpret
     return _start_products(state, heard)
 
 
+def _follow_up(state: CallState, position: AtTeachBack | AtConsent, heard: Interpretation):
+    """W4: the one follow-up for a half answer, chosen only by what the customer said (never by the record)."""
+    if heard.intent is not Intent.said or heard.names_nothing:
+        return None
+    reply = state.turns[-1]
+    # Only a figure the call could read back counts (W4 fix round: "एक फॉर्म", "ek baar" hold the figure 1)
+    figure = heard.amount_inr is not None or any(f >= 100 for f in heard.figures)
+    if isinstance(position, AtConsent):
+        slot = "consent"
+        halves = consent_halves(reply.text, state.language, reply.id, figure=figure)
+        missing = missing_half(*halves) if halves is not None else None
+        follow: AtTeachBack | AtConsent | None = None if missing is None else AtConsent(follow=missing)
+    elif position.question is Question.kind:
+        slot = f"kind:{state.plan.product_ids[position.product]}"
+        half = kind_is_half(reply.text, state.language, figure=figure)
+        follow = position.model_copy(update={"follow": True}) if half else None
+    else:
+        return None
+    if follow is None or slot in state.follow_ups:
+        return None
+    return _say(state.model_copy(update={"follow_ups": (*state.follow_ups, slot)}), follow)
+
+
 def _on_question(state: CallState, position: AtTeachBack | AtConsent, heard: Interpretation, other):
+    if position.follow:  # W4: after the follow-up the call goes on as if the question had been answered
+        return _go(state, _after(state, position))
+    followed = _follow_up(state, position, heard)
+    if followed is not None:
+        return followed
     if isinstance(position, AtTeachBack):
         first_of_later = position.product > 0 and position.question is PRODUCT_QUESTIONS[0]
         denies = heard.intent in (Intent.took_nothing, Intent.no) and not heard.names_something

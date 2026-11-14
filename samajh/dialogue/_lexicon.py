@@ -432,8 +432,12 @@ _HI = Lexicon(
                        "paper*", "kagaz*", "kaagaz*", "document*", "cash", "account", "khata", "khate", "deducted",
                        "kata", "kat gaya", "cut", "paid", "pay", "charged", "saal", "year*", "mahine", "month*",
                        "compulsory", "mandatory", "required", "choice", "agent", "staff", "manager", "told", "said",
-                       "explained", "consent", "otp"),
-    names_thing=_phrases("बीमा", "इंश्योरेंस", "इंशोरेंस", "पॉलिसी", "पालिसी", "प्रीमियम", "कवर", "एफडी", "डिपॉजिट",
+                       "explained", "consent", "otp",
+                       # Iteration 4 follow-up: how often it was paid (a one-time answer had no substance word, went to
+                       # the classifier and, with it failing, to "shall I go on?").
+                       "एक बार", "एक ही बार", "दो बार", "हर बार", "ek baar", "ek bar", "ek hi baar", "ek hi bar",
+                       "do baar", "har baar", "one time", "onetime", "once", "single payment", "किश्तों", "kishton"),
+    names_thing=_phrases("बीमा", "बिमा", "बीमे", "इन्शुरन्स", "इंसुरेंस", "इंश्योरेंस", "इंशोरेंस", "पॉलिसी", "पालिसी", "प्रीमियम", "कवर", "एफडी", "डिपॉजिट",
                          "कार्ड", "स्कीम", "प्लान", "सिक्योरिटी", "साइन", "फॉर्म", "दस्तखत", "अंगूठा", "कट*", "काट*",
                          "खाते से", "पैसे", "पैसा", "दिए", "दिया", "भरा", "भरे", "भरना", "करवाया", "करवाई", "करवाना",
                          "करवाने", "कराया", "कराई", "कराना", "खुलवाया", "खुलवाई", "खुलवाना", "खोला", "बनवाया",

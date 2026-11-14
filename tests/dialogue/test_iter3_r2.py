@@ -28,8 +28,19 @@ NAMING = ("disclosure.who", "disclosure.reask", "verify.after_loan", "context.lo
           "read_back", "close.verify")  # fmt: skip
 
 
+# W4: the context classifier is now asked about the setup claim too; it answers that one as a classifier would, so a
+# fixed label still lands on the turn under test.
+SETUP_CLAIMS = ("हाँ जी, बोल रहा हूँ", "हाँ जी, बोल रही हूँ")
+
+
+def _setup_or(label: str, reply: str, stage: str) -> str:
+    if "first_name" in stage and reply in SETUP_CLAIMS:
+        return "confirms_self"
+    return "yes" if "go_ahead" in stage and reply == "हाँ ठीक है" else label
+
+
 def labelled(label: str) -> LlmFallbackInterpreter:
-    return LlmFallbackInterpreter(Labels(lambda reply, stage: label))
+    return LlmFallbackInterpreter(Labels(lambda reply, stage: _setup_or(label, reply, stage)))
 
 
 def raises() -> LlmFallbackInterpreter:
@@ -122,7 +133,8 @@ def test_the_word_list_refuses_a_claim_that_puts_someone_else_in_place(case):
     assert not claim_with_tail(reply, HE if reply.isascii() else HI, name.split()[0])
 
 
-OPENING_ARMS = arms_with("who_or_why", "answer", "yes", "unclear", "confirms_self")
+# W4: a `who_or_why` label at the opening is now honoured (the question is answered and the name asked again).
+OPENING_ARMS = arms_with("answer", "yes", "unclear", "confirms_self")
 
 
 @pytest.mark.parametrize("arm", OPENING_ARMS)

@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C012. Seema took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c012",
+  "label": "Synthetic ACQ record. Seema: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1997-12-27",
+      "language": "hi",
+      "name": "Seema Namoona"
+    },
+    "disbursed_inr": 321500,
+    "disbursed_on": "2026-10-05",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-012",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-05",
+          "method": "recorded_call"
+        },
+        "cover_inr": 350000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 28500,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 350000,
+    "tenure_months": 12
+  }
+}

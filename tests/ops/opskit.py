@@ -219,3 +219,10 @@ def assert_each_call_named_once(store: OpsStore) -> None:
     ]
     files = sorted(p.stem for p in (store.root / "calls").glob("*.json"))
     assert sorted(named) == files, (named, files)
+
+
+def add_reviewer(state: Path, name: str = "Reviewer One") -> dict[str, str]:
+    """Add a reviewer to the state directory; returns the auth headers that sign in as them."""
+    from samajh.ops import reviewers
+
+    return {"Authorization": f"Bearer {reviewers.add(state / 'ops', name)}"}

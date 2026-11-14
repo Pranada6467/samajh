@@ -1,0 +1,271 @@
+{
+ "customer_id": "ACQ-C152",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi",
+ "arm": "B1",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "92d52bcf86ffde2bd0e49c137efb12e1eadbcd1ff56228bc8c38364662517ca0",
+ "system_prompt_sha256": "f91c442e411981b321da0f780842a5d8a7386d604e4162ce6caae63bd948f24c",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं विजय नमूना से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं विजय नमूना से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी विजय जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल में हमारे साथ एक लोन लिया है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी विजय जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल में हमारे साथ एक लोन लिया है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "कृपया बताइए, आपने लोन के साथ जो प्रोडक्ट खरीदा है, उसके बारे में आपको क्या पता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "कृपया बताइए, आपने लोन के साथ जो प्रोडक्ट खरीदा है, उसके बारे में आपको क्या पता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो लोन का बीमा कवर है जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.019263264257460833,
+     "source_topic": "what_is_it",
+     "text": "वो लोन का बीमा कवर है जी।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "ठीक है। कृपया बताइए, यह बीमा किस स्थिति में काम करता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। कृपया बताइए, यह बीमा किस स्थिति में काम करता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "किस स्थिति में काम करता है"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "किस स्थिति में काम करता है",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.1520881315227598,
+     "source_topic": "what_it_gives",
+     "text": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "धन्यवाद, विजय जी। आपके समय के लिए धन्यवाद।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower does not know what the product is, cover amount, or key details",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "वो लोन का बीमा कवर है जी।"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद, विजय जी। आपके समय के लिए धन्यवाद।",
+   "agent_usd": 0.0004764
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower does not know what the product is, cover amount, or key details",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "वो लोन का बीमा कवर है जी।"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "ये मुझे नहीं पता कि क्या मिलेगा या कितने तक का है।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0004764,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 4,
+  "router": 4
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:38:50+00:00",
+ "agent_turns": 5,
+ "usd_total": 0.0004764,
+ "finished_utc": "2026-11-13T22:38:57+00:00"
+}

@@ -1,0 +1,32 @@
+{
+ "files": {
+  "data/acq/FROZEN_INPUTS.json": "790eafeeec7025f10bb7a813b86e8c5c1a9e51e638d1a7b87ae2500cbc7aeda8",
+  "data/acq/README.md": "8f77560ad705b4aba183bea269035a8990b10f40f662753d77897963eff72fe2",
+  "data/acq/closed_script.json": "308ae6bdcd5512a9bbed7f4b57e5b19402ef3c965595f8428bac26d9a65363fc",
+  "data/acq/closed_statements.jsonl": "58f83c618c667db1c4873df09180e96508569d9a601de5f60071aa8d77afd77f",
+  "data/acq/customers.jsonl": "19a5607de66f1b3f363b98f564ba0c8b782006a0ee65a117826fadc3c0616081",
+  "data/acq/gold.jsonl": "231fad6f82842fba932bb1b4b90c2b55ebbc5b0d4e09d354c036a3762d7821f6",
+  "data/acq/knowledge.jsonl": "7400ef6143e0927d4ed5b94be094ec9c4ace64dd3cecb2e98bb85ef981390063",
+  "data/acq/topics.json": "2f39a2fa14a88431d0eaa64efb47bcd7adff5b0c8ea71a3069365f2068ed4b0c",
+  "data/acq/writer_requests.jsonl": "e6d52e98f343f792f11a16327ebf413b9ce0b238ed2bb2dd74027a48b714c78f",
+  "eval/acq/acq_build.py": "91c443e37cfd95d6a955e43a42cb7b2344e3ec3b601d5f1344fc2dd63c12f3fd",
+  "eval/acq/acq_common.py": "a70c0ab85ffc8bb9c17be0943d6f9e6d97441a62258bdadf79ca01256b541618",
+  "eval/acq/acq_player.py": "8b67602315d2d25181bbd2caf0efdaa6d8f1915226f6302b6ce10d541edf5970",
+  "eval/acq/acq_run.py": "1196f26d8d7cd906208373d0e959b00dbe5d6887241f1b6df4130be94441b521",
+  "eval/acq/acq_score.py": "d474b9af001cca0ec184acb12bc35dc1f84442dfecb8b61e642d3fed4a84cf70",
+  "eval/acq/acq_write.py": "14cfcc7c2c4c7cb12de2ab2e1159ab595e194a9a72f580692b3b6d31a4a4a09c",
+  "eval/p5/bank.py": "55f33c5a50c9eb00907c403095ed4f8608e84e7df7d70d62c5bcae140ccd16b9",
+  "eval/p5/player.py": "3aac521140bcfc8f2277d8bacbfa5de2c3c4d0e918e4893b5ec2bad7297e6646",
+  "eval/p5/text_run.py": "3ed01788c11159a65bb761da29be9cca6e166b9835bc4dc7fa692de3a1ae7b32",
+  "eval/p5/write_customers.py": "d5bd731585011496cae7daddb9c4a1e4cc7ebcad0f210257cbfe8d11e0ea2ce9"
+ },
+ "records": "bc177e90b0a7563663f00f3a528614443d438e97afe58b51589e80355ce9ec12",
+ "source_tree": {
+  "commit": "9c67da6 (git archive snapshot; the snapshot has no .git)",
+  "covers": [
+   "samajh",
+   "data/prompts"
+  ],
+  "sha256": "3e716a3abfe96a98dd03cd5677e65aca01f2c21cbe96e82798595d3bcc4f03b8"
+ }
+}

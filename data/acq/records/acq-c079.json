@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C079. Ramesh took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c079",
+  "label": "Synthetic ACQ record. Ramesh: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1989-03-03",
+      "language": "hi",
+      "name": "Ramesh Namoona"
+    },
+    "disbursed_inr": 382000,
+    "disbursed_on": "2026-10-14",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-079",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-14",
+          "method": "otp"
+        },
+        "cover_inr": 440000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 58000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 440000,
+    "tenure_months": 24
+  }
+}

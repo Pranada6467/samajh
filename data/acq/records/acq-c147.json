@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C147. Usha took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c147",
+  "label": "Synthetic ACQ record. Usha: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1971-10-28",
+      "language": "hi-en",
+      "name": "Usha Namoona"
+    },
+    "disbursed_inr": 148000,
+    "disbursed_on": "2026-10-28",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-147",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-28",
+          "method": "digital_click"
+        },
+        "cover_inr": 200000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 52000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 36
+      }
+    ],
+    "sanctioned_inr": 200000,
+    "tenure_months": 36
+  }
+}

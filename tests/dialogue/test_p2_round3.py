@@ -11,7 +11,7 @@ import pytest
 from dialogue_kit import CUSTOMERS, LENDER, YEAR_POLICY, play, product, record
 
 from samajh.clients.errors import TransportError
-from samajh.dialogue import CallState, Expecting, Outcome, prefetch, start, step
+from samajh.dialogue import CallState, Expecting, Intent, Outcome, prefetch, start, step
 from samajh.dialogue.llm_fallback import LlmFallbackInterpreter
 from samajh.dialogue.machine import AtBirthYear, AtStopCheck
 from samajh.types import Language, Speaker
@@ -43,7 +43,9 @@ class Labels:
 
 def sensible(reply: str, stage: str) -> str:
     if "first_name" in stage:
-        return "confirms_self" if any(w in reply for w in ("मैं", "main", "speaking")) else "yes"
+        if reply.strip(" ?!.") in ("नमस्ते", "हेलो", "hello"):  # W4: a greeting alone is unclear, as the prompt says
+            return "unclear"
+        return "confirms_self" if any(w in reply for w in ("मैं", "main", "speaking", "बोल रहा", "bol raha")) else "yes"
     if "go_ahead" in stage:
         return "yes"
     if "birth_year" in stage:
@@ -342,11 +344,12 @@ def test_which_turns_reach_the_classifier():
     llm = Labels(sensible)
     replies = ["हाँ जी, बोल रहा हूँ", "हाँ", "1984", "एक बीमा लिया था", "बीमा", "हाँ", "बावन हज़ार", "हाँ"]
     play(record(product()), HI, replies, interpreter=LlmFallbackInterpreter(llm))
-    assert llm.calls == []  # tight claim, plain yes, tight year, answers that speak of the sale
+    # W4: the claim and the go-ahead now always reach the classifier; the year and answers that speak of the sale do not
+    assert len(llm.calls) == 2
     llm = Labels(sensible)
     play(record(product()), HI, ["हाँ जी, बोल रहा हूँ", "हाँ जी, थोड़ा जल्दी", "1984", "आज बहुत गर्मी है"],
          interpreter=LlmFallbackInterpreter(llm))  # fmt: skip
-    assert len(llm.calls) == 2  # a go-ahead with more than yes-words; a free reply with no substance
+    assert len(llm.calls) == 3  # the claim (W4), the go-ahead, a free reply with no substance
 
 
 def test_begin_then_interpret_makes_one_call_and_honours_the_remaining_time():
@@ -368,10 +371,10 @@ def test_begin_then_interpret_makes_one_call_and_honours_the_remaining_time():
 
 def test_a_begun_call_that_fails_leaves_the_safe_default():
     reader = LlmFallbackInterpreter(Labels(error=TransportError("down")))
-    args = {"language": HI, "expecting": Expecting.birth_year, "question": "q"}
-    reader.begin("हमारे ये तो 1984 के हैं", **args)  # wave 5: "जी अपना तो 1984 का है" now passes
-    heard = reader.interpret("हमारे ये तो 1984 के हैं", **args)
-    assert heard.year is None and heard.degraded
+    args = {"language": HI, "expecting": Expecting.identity, "question": "q"}  # W4: the year never reaches a model
+    reader.begin("ji main Ramesh", **args)
+    heard = reader.interpret("ji main Ramesh", **args)
+    assert heard.intent is not Intent.yes and heard.degraded
 
 
 def test_prefetch_never_raises():

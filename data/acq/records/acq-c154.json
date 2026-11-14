@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C154. Santosh took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c154",
+  "label": "Synthetic ACQ record. Santosh: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1999-11-22",
+      "language": "hi",
+      "name": "Santosh Namoona"
+    },
+    "disbursed_inr": 130000,
+    "disbursed_on": "2026-10-23",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-154",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-23",
+          "method": "otp"
+        },
+        "cover_inr": 160000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 30000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 160000,
+    "tenure_months": 12
+  }
+}

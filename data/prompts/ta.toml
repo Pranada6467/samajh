@@ -268,8 +268,12 @@ design = "§5 step 2: the customer asked for another time; no time is promised"
 text = "சரி, பிறகு அழைக்க முயற்சிக்கிறோம். நன்றி, வணக்கம்."
 
 [lines."end.language"]
-design = "§5: the customer asked for another language; the call does not switch live"
-text = "சரி, உங்கள் மொழியில் மீண்டும் அழைக்க முயற்சிக்கிறோம். நன்றி, வணக்கம்."
+design = "§5, W4: the customer asked for a language the call has no lines for, or past the switch limit; the call ends and a call in that language is tried later (not human-reviewed)"
+text = "மன்னிக்கவும், இந்த அழைப்பை இப்போது அந்த மொழியில் தொடர முடியாது. உங்கள் மொழியில் மீண்டும் அழைக்க முயற்சிக்கிறோம். நன்றி, வணக்கம்."
+
+[lines."language.switched"]
+design = "§5, W4: said in the new language when the call switches live, before the pending question is put again (not human-reviewed)"
+text = "சரி, இனி தமிழில் பேசலாம்."
 
 [lines."end.no_response"]
 design = "§5: nothing heard twice in a row; the call ends and says nothing about a loan"
@@ -298,3 +302,19 @@ text = "இந்த அழைப்பு பற்றி சந்தேகம
 [lines."close.bye"]
 design = "§5 step 9"
 text = "வணக்கம்."
+
+[lines."consent.follow_what"]
+design = "§9, W4: the one follow-up when the consent reply said only how; asks only what the yes was for (not human-reviewed)"
+text = "அந்த சம்மதம் எதற்காகக் கொடுத்தீர்கள்?"
+
+[lines."consent.follow_how"]
+design = "§9, W4: the one follow-up when the consent reply said only what; asks only how, naming no way (not human-reviewed)"
+text = "அந்த சம்மதத்தை எப்படிக் கொடுத்தீர்கள்?"
+
+[lines."kind.follow_what"]
+design = "§8, W4: the one follow-up when the kind reply gave a figure or what it does but no name for it (not human-reviewed)"
+text = "அதை நீங்கள் என்னவென்று சொல்வீர்கள், அது என்ன?"
+
+[lines."defer.reask"]
+design = "§8, W4: said once before the re-ask when the customer defers to the lender or the record; asks for their own memory (not human-reviewed)"
+text = "பதிவில் என்ன இருக்கிறது என்பதல்ல, உங்களுக்கே என்ன நினைவிருக்கிறது என்பதைத்தான் தெரிந்துகொள்ள விரும்புகிறோம்."

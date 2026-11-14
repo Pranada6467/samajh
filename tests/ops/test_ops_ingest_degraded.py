@@ -13,6 +13,7 @@ from opskit import (
     COMPLETED,
     SOLD,
     WALL,
+    add_reviewer,
     coached,
     customer,
     loan,
@@ -490,7 +491,10 @@ def test_the_attempt_page_gets_why_a_logged_request_was_not_counted_in_neutral_w
     store, _ = open_batch(tmp_path / "ops", [a], DRAWN_ON)
     put_case(tmp_path / "sessions", _void(store, a, "do_not_call", True))
     ingest(store, tmp_path / "sessions", nothing)
-    client = TestClient(create_app(gnani=FakeSpeech(), state=tmp_path, web_dir=None, clips_dir=None))
+    client = TestClient(
+        create_app(gnani=FakeSpeech(), state=tmp_path, web_dir=None, clips_dir=None),
+        headers=add_reviewer(tmp_path),
+    )
     log = AttemptLogView.model_validate(client.get("/api/review/attempts").json())
     (view,) = next(x for x in log.loans if x.loan_id == a.record.loan_id).attempts
     assert view.not_counted == VOID

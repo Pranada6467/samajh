@@ -1,0 +1,751 @@
+{
+ "customer_id": "ACQ-C138",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "371965cd453651f06e8755d94025808884bb30642db276df7aa6dcb98491c3ae",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ मीना नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ मीना नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी मैडम, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी मैडम, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "understood_check",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "जी मैडम, आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी लिया था। क्या आपको पता है कि यह क्या है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी मैडम, आपने उस लोन से एक क्रेडिट-लाइफ इंश्योरेंस भी लिया था। क्या आपको पता है कि यह क्या है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": false,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "एक charge है, loan processing fee, ऐसा मैंने समझा। हाँ, loan के साथ एक charge लिया था, eleven thousand five hundred rupees।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.843584417598322,
+     "draw_r": 0.6795140986796468,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "एक charge है, loan processing fee, ऐसा मैंने समझा।"
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "stated",
+     "stated": "क्रेडिट-लाइफ इंश्योरेंस",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.843584417598322,
+     "draw_r": 0.6795140986796468,
+     "source_topic": "what_did_you_take",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "हाँ, loan के साथ एक charge लिया था, eleven thousand five hundred rupees।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "नहीं मैडम, यह लोन प्रोसेसिंग फीस नहीं है। यह क्रेडिट-लाइफ इंश्योरेंस है। क्या आपको पता है कि यह क्या करता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नहीं मैडम, यह लोन प्रोसेसिंग फीस नहीं है। यह क्रेडिट-लाइफ इंश्योरेंस है। क्या आपको पता है कि यह क्या करता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": "यह क्रेडिट-लाइफ इंश्योरेंस है।"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "अगर मैं मर जाऊँ, तो four lakh ten thousand rupees तक loan चुकता होता है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.8896254952996969,
+     "source_topic": "what_it_gives",
+     "text": "अगर मैं मर जाऊँ, तो four lakh ten thousand rupees तक loan चुकता होता है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "जी हाँ, सही कहा। क्या आपको पता है कि इंश्योरेंस का प्रीमियम कितना था और यह कैसे चुकाया गया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी हाँ, सही कहा। क्या आपको पता है कि इंश्योरेंस का प्रीमियम कितना था और यह कैसे चुकाया गया?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "कितना था"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "कैसे चुकाया गया"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "Eleven thousand five hundred rupees, इतना दिया था। Loan के पैसे में से ही कट गया, मुझे कम मिला।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "asks_inferred": true,
+     "span_dropped": "कितना था",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7039070730097592,
+     "source_topic": "how_much",
+     "text": "Eleven thousand five hundred rupees, इतना दिया था।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "asks_inferred": true,
+     "span_dropped": "कैसे चुकाया गया",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6377471820451319,
+     "source_topic": "how_paid",
+     "text": "Loan के पैसे में से ही कट गया, मुझे कम मिला।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "मैडम, वास्तविक प्रीमियम 28,000 रुपये था, न कि 11,500। क्या आपको यह बताया गया था कि यह राशि लोन राशि से काटी जाएगी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैडम, वास्तविक प्रीमियम 28,000 रुपये था, न कि 11,500। क्या आपको यह बताया गया था कि यह राशि लोन राशि से काटी जाएगी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "28,000 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": "लोन राशि से काटी जाएगी"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। Eleven thousand five hundred rupees, इतना दिया था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "28,000 रुपये",
+     "stated_value": 28000,
+     "belief_state": "false",
+     "belief_value": 11500,
+     "record_value": 28000,
+     "draw_a": 0.7039070730097592,
+     "draw_r": 0.3445861819200218,
+     "source_topic": "how_much",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "Eleven thousand five hundred rupees, इतना दिया था।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन राशि से काटी जाएगी",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.6377471820451319,
+     "draw_r": 0.44630945357494056,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "मैडम, आपको गलत जानकारी मिली है। प्रीमियम 28,000 रुपये था, जो लोन राशि से काटा गया। क्या आपको पता है कि यह इंश्योरेंस लेना अनिवार्य था या आपको चुनने का विकल्प था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैडम, आपको गलत जानकारी मिली है। प्रीमियम 28,000 रुपये था, जो लोन राशि से काटा गया। क्या आपको पता है कि यह इंश्योरेंस लेना अनिवार्य था या आपको चुनने का विकल्प था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "28,000 रुपये"
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states_span": "लोन राशि से काटा गया"
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": "अनिवार्य था या आपको चुनने का विकल्प था"
+    },
+    {
+     "kind": "any_questions",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। Eleven thousand five hundred rupees, इतना दिया था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "28,000 रुपये",
+     "stated_value": 28000,
+     "belief_state": "false",
+     "belief_value": 11500,
+     "record_value": 28000,
+     "draw_a": 0.7039070730097592,
+     "draw_r": 0.3445861819200218,
+     "source_topic": "how_much",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "Eleven thousand five hundred rupees, इतना दिया था।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "लोन राशि से काटा गया",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.6377471820451319,
+     "draw_r": 0.44630945357494056,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "needed_or_choice",
+     "rule": "stated",
+     "stated": "अनिवार्य था या आपको चुनने का विकल्प था",
+     "stated_value": "no",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.5189239492174238,
+     "draw_r": 0.7139551937580109,
+     "source_topic": "needed_or_choice",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 4,
+     "kind": "any_questions",
+     "rule": "field_asked_too",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "मैडम, मैं समझ रहा हूँ कि आपको गलत जानकारी है। वास्तविक प्रीमियम 28,000 रुपये था। क्या आप चाहती हैं कि आपको इस बारे में और जानकारी के लिए किसी एजेंट से बात करवाई जाए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैडम, मैं समझ रहा हूँ कि आपको गलत जानकारी है। वास्तविक प्रीमियम 28,000 रुपये था। क्या आप चाहती हैं कि आपको इस बारे में और जानकारी के लिए किसी एजेंट से बात करवाई जाए?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states_span": "28,000 रुपये"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "human",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": "मैडम, मैं समझ रहा हूँ कि आपको गलत जानकारी है। वास्तविक प्रीमियम"
+    },
+    {
+     "kind": "understood_check",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "Eleven thousand five hundred rupees, इतना दिया था। नहीं जी, कोई सवाल नहीं। नहीं, आप ही पूछिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "28,000 रुपये",
+     "stated_value": 28000,
+     "belief_state": "false",
+     "belief_value": 11500,
+     "record_value": 28000,
+     "draw_a": 0.7039070730097592,
+     "draw_r": 0.3445861819200218,
+     "source_topic": "how_much",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "Eleven thousand five hundred rupees, इतना दिया था।"
+    },
+    {
+     "item": 2,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    },
+    {
+     "item": 3,
+     "kind": "human",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं, आप ही पूछिए।"
+    },
+    {
+     "item": 4,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 5,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "जी मैडम, क्या आपको पता है कि इंश्योरेंस कवर 24 महीने के लिए है और इसे 15 दिनों के भीतर कैंसल किया जा सकता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी मैडम, क्या आपको पता है कि इंश्योरेंस कवर 24 महीने के लिए है और इसे 15 दिनों के भीतर कैंसल किया जा सकता है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "24 महीने"
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states_span": "24 महीने"
+    },
+    {
+     "kind": "can_cancel",
+     "asks": false,
+     "states_span": "15 दिनों के भीतर"
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, सही है। कहा था, मरने पर loan के चार lakh ten thousand rupees तक मिलते हैं। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "24 महीने",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.8896254952996969,
+     "source_topic": "what_it_gives",
+     "text": "कहा था, मरने पर loan के चार lakh ten thousand rupees तक मिलते हैं।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "24 महीने",
+     "stated_value": 24,
+     "belief_state": "correct",
+     "belief_value": 24,
+     "record_value": 24,
+     "draw_a": 0.2666291941422969,
+     "draw_r": 0.2826015877071768,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "15 दिनों के भीतर",
+     "stated_value": 15,
+     "belief_state": "correct",
+     "belief_value": 15,
+     "record_value": 15,
+     "draw_a": 0.19272206304594874,
+     "draw_r": 0.16688480507582426,
+     "source_topic": "can_cancel",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 3,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower को premium के बारे में गलत जानकारी है और वे multiple times गलत राशि (11,500) बता रहे हैं, जबकि सही premium 28,000 है। इसके अलावा, borrower ने required या provider choice के बारे में नहीं बताया, और consent के बारे में भी स्पष्ट नहीं है।",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "एक charge है, loan processing fee, ऐसा मैंने समझा।"
+      },
+      {
+       "field": "premium",
+       "belief": "false",
+       "quote": "Eleven thousand five hundred rupees, इतना दिया था।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "Loan के पैसे में से ही कट गया, मुझे कम मिला।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "नहीं जी, कोई सवाल नहीं।"
+      },
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "अगर मैं मर जाऊँ, तो four lakh ten thousand rupees तक loan चुकता होता है।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "नहीं जी, कोई सवाल नहीं।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "नहीं जी, कोई सवाल नहीं।"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "नहीं जी, कोई सवाल नहीं।"
+      },
+      {
+       "field": "consent",
+       "belief": "does_not_know",
+       "quote": "नहीं जी, कोई सवाल नहीं।"
+      }
+     ]
+    }
+   },
+   "say": "",
+   "agent_usd": 0.0
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower को premium के बारे में गलत जानकारी है और वे multiple times गलत राशि (11,500) बता रहे हैं, जबकि सही premium 28,000 है। इसके अलावा, borrower ने required या provider choice के बारे में नहीं बताया, और consent के बारे में भी स्पष्ट नहीं है।",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "एक charge है, loan processing fee, ऐसा मैंने समझा।"
+   },
+   {
+    "field": "premium",
+    "belief": "false",
+    "quote": "Eleven thousand five hundred rupees, इतना दिया था।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "Loan के पैसे में से ही कट गया, मुझे कम मिला।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "नहीं जी, कोई सवाल नहीं।"
+   },
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "अगर मैं मर जाऊँ, तो four lakh ten thousand rupees तक loan चुकता होता है।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "नहीं जी, कोई सवाल नहीं।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "नहीं जी, कोई सवाल नहीं।"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "नहीं जी, कोई सवाल नहीं।"
+   },
+   {
+    "field": "consent",
+    "belief": "does_not_know",
+    "quote": "नहीं जी, कोई सवाल नहीं।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 10,
+  "router": 9
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:32:53+00:00",
+ "agent_turns": 10,
+ "usd_total": 0.0,
+ "finished_utc": "2026-11-13T22:32:53+00:00"
+}

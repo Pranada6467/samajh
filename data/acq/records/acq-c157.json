@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C157. Amit took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c157",
+  "label": "Synthetic ACQ record. Amit: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1974-12-11",
+      "language": "hi",
+      "name": "Amit Namoona"
+    },
+    "disbursed_inr": 526000,
+    "disbursed_on": "2026-10-12",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-157",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-12",
+          "method": "recorded_call"
+        },
+        "cover_inr": 550000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 24000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 550000,
+    "tenure_months": 12
+  }
+}

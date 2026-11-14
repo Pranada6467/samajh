@@ -1,0 +1,84 @@
+{
+ "customer_id": "ACQ-C026",
+ "kind": "third_party",
+ "customer_kind": "informed",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 0.0,
+  "a": 0.0,
+  "third_party": true
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "d4adbbeba7a40a6796ad19369d5a6a0cdf773a7ae595b3190697cec92134da2d",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "क्या मैं बात कर रहा हूँ कविता नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या मैं बात कर रहा हूँ कविता नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "नहीं जी, मैं उनकी बहन बोल रही हूँ, वो अभी घर पर नहीं हैं।",
+   "choices": [
+    {
+     "kind": "identity",
+     "variant": "third_party_identity"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "ठीक है, धन्यवाद।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "incomplete",
+     "reason": "बातचीत कविता से नहीं हुई।",
+     "findings": []
+    }
+   },
+   "say": "ठीक है, धन्यवाद।",
+   "agent_usd": 0.0001162
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "incomplete",
+  "reason": "बातचीत कविता से नहीं हुई।",
+  "findings": []
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0001162,
+  "router": 0.0
+ },
+ "cache_hits": {
+  "agent": 1,
+  "router": 1
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:39:25+00:00",
+ "agent_turns": 2,
+ "usd_total": 0.0001162,
+ "finished_utc": "2026-11-13T22:39:27+00:00"
+}

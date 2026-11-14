@@ -71,3 +71,34 @@ call_back_line = true
 model = "prisma-v3.0"
 num_speakers = 2
 timeout_s = 600
+
+# Bot lines made before they are needed. The key allows ONE REST request at a time, shared by STT
+# and TTS, and a line made on the call costs about 1 s of the customer's wait, one after another
+# (22 of 35 lines in the practice calls). At start the server makes every line that names no
+# customer (no slot, or only the lender and an ordinal) and the first-name lines of every record
+# in the record book, for these languages and line rates, and refuses to start if one cannot be
+# made. A session whose first-name lines are not cached (a loan-book loan) makes them inside its
+# create, before the response (at most about 8 s). Nothing is synthesised in the background.
+[prewarm]
+enabled = true
+languages = ["hi", "hi-en", "ta", "kn"]
+line_rates = [8000]
+# The most a start may spend (estimated credits) making missing lines; over it the server refuses
+# to start and names the `prompts build` command to run by hand.
+max_credits = 40
+
+# Prisma WebSocket streaming for the primary reading of a customer turn (samajh.server.stream).
+# OFF by default: how streaming is billed is unknown (no API surface reports cost), and it has
+# been measured on TTS clips only. A stream does not hold the account's one REST slot, so when on
+# it frees that slot for the bot's lines and the v2.5 second reading. Any streaming failure falls
+# back to the REST primary, marked `stream_fallback` in the session log.
+#   min_silence_ms      the server-side cut; the phone's VAD commits, so it is set long (2,000 ms
+#                       kept 600 and 1,000 ms pauses in one segment; the 500 ms default split them).
+#   commit_timeout_s    how long a commit, and the turn, wait for the final transcript.
+#   max_stream_seconds  streamed audio seconds over all `stt.stream` ledger rows; then no stream opens.
+[streaming]
+enabled = false
+model = "prisma-v3.0"
+min_silence_ms = 2000
+commit_timeout_s = 1.5
+max_stream_seconds = 3000

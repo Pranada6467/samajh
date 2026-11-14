@@ -1,0 +1,587 @@
+{
+ "customer_id": "ACQ-C130",
+ "kind": "misled",
+ "customer_kind": "misled",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 0.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "d5f0b08e01f46d0ba4d29329ff269f0446c810a32a0a29d9f8afaa6ce9946380",
+ "router_instruction_sha256": "3e35d362aa1b50da238de610527576b25573639569eb86fd3e8caeca5272f8a0",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्रीमती अशा नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्रीमती अशा नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states": null,
+     "confirm": false
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states": null,
+     "confirm": false
+    }
+   ],
+   "router_usd": 2.738e-05,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ। हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैं नमूना बैंक से बोल रहा हूँ। क्या आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया है?",
+   "agent_usd": 0.00012872,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states": null,
+     "confirm": false
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": false,
+     "states": "other",
+     "confirm": false
+    }
+   ],
+   "router_usd": 2.744e-05,
+   "reply": "हाँ जी, सही है। हाँ जी, मैं ही बोल रही हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "stated",
+     "stated": "other",
+     "stated_value": "other",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.7907404492143542,
+     "draw_r": 0.7165512721985579,
+     "source_topic": "what_did_you_take",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "आपने लोन के साथ एक क्रेडिट-लाइफ इंश्योरेंस भी लिया है। क्या आप बता सकती हैं कि यह क्या है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "आपने लोन के साथ एक क्रेडिट-लाइफ इंश्योरेंस भी लिया है। क्या आप बता सकती हैं कि यह क्या है?",
+   "agent_usd": 0.00015108,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states": "insurance",
+     "confirm": false
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states": null,
+     "confirm": false
+    }
+   ],
+   "router_usd": 2.928e-05,
+   "reply": "वो loan processing fee है, एक charge। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "insurance",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.7907404492143542,
+     "draw_r": 0.7165512721985579,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "वो loan processing fee है, एक charge।"
+    },
+    {
+     "item": 1,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "नहीं जी, यह लोन प्रोसेसिंग फीस नहीं है। यह एक क्रेडिट-लाइफ इंश्योरेंस है। अगर आपकी मृत्यु हो जाती है, तो यह इंश्योरेंस लोन की रकम चुका देगी। क्या आपको यह जानकारी थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नहीं जी, यह लोन प्रोसेसिंग फीस नहीं है। यह एक क्रेडिट-लाइफ इंश्योरेंस है। अगर आपकी मृत्यु हो जाती है, तो यह इंश्योरेंस लोन की रकम चुका देगी। क्या आपको यह जानकारी थी?",
+   "agent_usd": 0.00023288,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states": "insurance",
+     "confirm": false
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states": "loan_amount",
+     "confirm": false
+    },
+    {
+     "kind": "needed_or_choice",
+     "asks": false,
+     "states": "yes",
+     "confirm": false
+    },
+    {
+     "kind": "any_questions",
+     "asks": true,
+     "states": null,
+     "confirm": false
+    }
+   ],
+   "router_usd": 4.798e-05,
+   "reply": "वो loan processing fee है, एक charge। मरने पर loan के लिए छह लाख साठ हज़ार तक देता है। बोला था ये मेरी choice है, loan के लिए ज़रूरी नहीं। नहीं जी, कोई सवाल नहीं।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "insurance",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.7907404492143542,
+     "draw_r": 0.7165512721985579,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "वो loan processing fee है, एक charge।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "rule": "stated",
+     "stated": "loan_amount",
+     "stated_value": null,
+     "belief_state": "correct",
+     "belief_value": 660000,
+     "record_value": 660000,
+     "draw_a": 0.7770242928527296,
+     "draw_r": 0.7316158174071461,
+     "source_topic": "what_it_gives",
+     "decided": "unreadable",
+     "variant": "own",
+     "text": "मरने पर loan के लिए छह लाख साठ हज़ार तक देता है।"
+    },
+    {
+     "item": 2,
+     "kind": "needed_or_choice",
+     "rule": "stated",
+     "stated": "yes",
+     "stated_value": "yes",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.9322690900880843,
+     "draw_r": 0.3328807116486132,
+     "source_topic": "needed_or_choice",
+     "decided": "neither",
+     "variant": "own",
+     "text": "बोला था ये मेरी choice है, loan के लिए ज़रूरी नहीं।"
+    },
+    {
+     "item": 3,
+     "kind": "any_questions",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "नहीं जी, कोई सवाल नहीं।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "क्या आपको पता है कि इंश्योरेंस की प्रीमियम 8,000 रुपये थी और वो लोन अमाउंट से कटी थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि इंश्योरेंस की प्रीमियम 8,000 रुपये थी और वो लोन अमाउंट से कटी थी?",
+   "agent_usd": 0.00020062,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states": "insurance",
+     "confirm": false
+    },
+    {
+     "kind": "how_much",
+     "asks": false,
+     "states": "8000",
+     "confirm": false
+    },
+    {
+     "kind": "how_paid",
+     "asks": false,
+     "states": "from_loan",
+     "confirm": false
+    }
+   ],
+   "router_usd": 3.858e-05,
+   "reply": "हाँ जी, सही है। वो loan processing fee है, एक charge।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "insurance",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.7907404492143542,
+     "draw_r": 0.7165512721985579,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "वो loan processing fee है, एक charge।"
+    },
+    {
+     "item": 1,
+     "kind": "how_much",
+     "rule": "stated",
+     "stated": "8000",
+     "stated_value": 8000,
+     "belief_state": "correct",
+     "belief_value": 8000,
+     "record_value": 8000,
+     "draw_a": 0.9533448009751737,
+     "draw_r": 0.4257273734547198,
+     "source_topic": "how_much",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "how_paid",
+     "rule": "stated",
+     "stated": "from_loan",
+     "stated_value": "from_loan",
+     "belief_state": "correct",
+     "belief_value": "from_loan",
+     "record_value": "from_loan",
+     "draw_a": 0.8136407567653805,
+     "draw_r": 0.1676772644277662,
+     "source_topic": "how_paid",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "क्या आपको बताया गया था कि इंश्योरेंस कवर 36 महीने के लिए है और 15 दिन के अंदर इसे कैंसल कर सकते हैं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको बताया गया था कि इंश्योरेंस कवर 36 महीने के लिए है और 15 दिन के अंदर इसे कैंसल कर सकते हैं?",
+   "agent_usd": 0.00017736,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states": "insurance",
+     "confirm": false
+    },
+    {
+     "kind": "how_long",
+     "asks": false,
+     "states": "36 months",
+     "confirm": false
+    },
+    {
+     "kind": "can_cancel",
+     "asks": false,
+     "states": "15 days",
+     "confirm": false
+    }
+   ],
+   "router_usd": 3.828e-05,
+   "reply": "हाँ जी, सही है। वो loan processing fee है, एक charge।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "stated",
+     "stated": "insurance",
+     "stated_value": "insurance",
+     "belief_state": "false",
+     "belief_value": "other",
+     "record_value": "insurance",
+     "draw_a": 0.7907404492143542,
+     "draw_r": 0.7165512721985579,
+     "source_topic": "what_is_it",
+     "decided": "false_record_a",
+     "variant": "own",
+     "text": "वो loan processing fee है, एक charge।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "rule": "stated",
+     "stated": "36 months",
+     "stated_value": 36,
+     "belief_state": "correct",
+     "belief_value": 36,
+     "record_value": 36,
+     "draw_a": 0.6594748280476779,
+     "draw_r": 0.7286751384381205,
+     "source_topic": "how_long",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    },
+    {
+     "item": 2,
+     "kind": "can_cancel",
+     "rule": "stated",
+     "stated": "15 days",
+     "stated_value": 15,
+     "belief_state": "correct",
+     "belief_value": 15,
+     "record_value": 15,
+     "draw_a": 0.033392147393897176,
+     "draw_r": 0.30116797098889947,
+     "source_topic": "can_cancel",
+     "decided": "equals_belief",
+     "variant": "yes",
+     "text": "हाँ जी, सही है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "क्या आपको पता है कि इंश्योरेंस की अवधि के बाद या कैंसिल करने पर पैसे वापस नहीं मिलते?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि इंश्योरेंस की अवधि के बाद या कैंसिल करने पर पैसे वापस नहीं मिलते?",
+   "agent_usd": 0.00017396,
+   "router_items": [
+    {
+     "kind": "money_back",
+     "asks": true,
+     "states": null,
+     "confirm": false
+    }
+   ],
+   "router_usd": 6.725e-05,
+   "reply": "पैसे वापस नहीं आते, ये savings नहीं है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "money_back",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7525637880899012,
+     "source_topic": "money_back",
+     "text": "पैसे वापस नहीं आते, ये savings नहीं है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "धन्यवाद, अब कोई सवाल नहीं है। आपका दिन शुभ हो।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "बorrower believes the insurance is a loan processing fee, which contradicts the record.",
+     "findings": [
+      {
+       "field": "kind",
+       "belief": "false",
+       "quote": "वो loan processing fee है, एक charge।"
+      },
+      {
+       "field": "cover",
+       "belief": "does_not_know",
+       "quote": "मरने पर loan के लिए छह लाख साठ हज़ार तक देता है।"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "बोला था ये मेरी choice है, loan के लिए ज़रूरी नहीं।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "वो loan processing fee है, एक charge।"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "वो loan processing fee है, एक charge।"
+      },
+      {
+       "field": "term",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "हाँ जी, सही है।"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "पैसे वापस नहीं आते, ये savings नहीं है।"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद, अब कोई सवाल नहीं है। आपका दिन शुभ हो।",
+   "agent_usd": 0.00050902
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "बorrower believes the insurance is a loan processing fee, which contradicts the record.",
+  "findings": [
+   {
+    "field": "kind",
+    "belief": "false",
+    "quote": "वो loan processing fee है, एक charge।"
+   },
+   {
+    "field": "cover",
+    "belief": "does_not_know",
+    "quote": "मरने पर loan के लिए छह लाख साठ हज़ार तक देता है।"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "बोला था ये मेरी choice है, loan के लिए ज़रूरी नहीं।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "वो loan processing fee है, एक charge।"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "वो loan processing fee है, एक charge।"
+   },
+   {
+    "field": "term",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "हाँ जी, सही है।"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "पैसे वापस नहीं आते, ये savings नहीं है।"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0015736399999999998,
+  "router": 0.00027619
+ },
+ "cache_hits": {
+  "agent": 1,
+  "router": 0
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T21:30:32+00:00",
+ "agent_turns": 8,
+ "usd_total": 0.0018498299999999998,
+ "finished_utc": "2026-11-13T21:31:17+00:00"
+}

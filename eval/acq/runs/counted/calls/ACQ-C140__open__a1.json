@@ -1,0 +1,624 @@
+{
+ "customer_id": "ACQ-C140",
+ "arm": "open",
+ "kind": "misled",
+ "gold_class": "problem",
+ "language": "hi-en",
+ "gender": "f",
+ "record_id": "acq-c140",
+ "writer_model": "google/gemini-3.7-flash",
+ "a": 1.0,
+ "second_reading": null,
+ "status": "ok",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "Hello, क्या आप Pooja जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी।",
+    "line_key": "right_party.ask"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "acknowledges",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "right_party.reask",
+     "text": "यह Pooja जी के लिए एक automated customer care call है। क्या आप ख़ुद Pooja जी हैं?",
+     "step": "right_party_check",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी, मैं ख़ुद ही बात कर रही हूँ।",
+    "line_key": "right_party.reask"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "identity",
+     "intent": "said",
+     "settled": false,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "disclosure.who",
+     "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.not_sales",
+     "text": "यह sales नहीं, feedback call है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.recording",
+     "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.never_ask",
+     "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "verify.short",
+     "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+     "step": "disclosure",
+     "asks": null
+    },
+    {
+     "key": "disclosure.go_ahead",
+     "text": "क्या दो-तीन minute बात करें?",
+     "step": "disclosure",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "entry",
+    "variant": "fixed",
+    "field": null,
+    "text": "हाँ जी, बोलिए।",
+    "line_key": "disclosure.go_ahead"
+   },
+   "field": null,
+   "variant": "fixed",
+   "readings": [
+    {
+     "expecting": "go_ahead",
+     "intent": "yes",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": null,
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": false
+  },
+  {
+   "bot": [
+    {
+     "key": "context.loan",
+     "text": "Thank you। आपने हाल ही में नमूना फ़ाइनेंस से जो loan लिया, उसके बारे में कुछ questions हैं।",
+     "step": "context",
+     "asks": null
+    },
+    {
+     "key": "disclosure.rights",
+     "text": "रुकना हो या किसी इंसान से बात करनी हो, तो कभी भी बोल दीजिए।",
+     "step": "context",
+     "asks": null
+    },
+    {
+     "key": "open_recall.ask",
+     "text": "Loan के साथ आपने कुछ और भी लिया था क्या? अगर हाँ, तो क्या, और कितने का?",
+     "step": "open_recall",
+     "asks": null
+    }
+   ],
+   "reply": {
+    "topic": "what_did_you_take",
+    "variant": "defer",
+    "text": "आप अपने records में देख लीजिए।",
+    "line_key": "open_recall.ask",
+    "mapped": true,
+    "note": null,
+    "field": "kind",
+    "draw_a": 0.7733677099458873,
+    "readback": null,
+    "recall_rule": "defer",
+    "source_topic": "what_did_you_take"
+   },
+   "field": "kind",
+   "variant": "defer",
+   "readings": [
+    {
+     "expecting": "open",
+     "intent": "decline",
+     "settled": true,
+     "degraded": false,
+     "classifier_label": "refuse",
+     "amount_inr": null,
+     "approx": null
+    }
+   ],
+   "degraded": false,
+   "scored": true
+  }
+ ],
+ "unmapped": [],
+ "errors": [],
+ "anything_else_turns": 0,
+ "scored_from_turn": 3,
+ "final_bot": [
+  {
+   "key": "end.declined",
+   "text": "ठीक है, कोई problem नहीं। आपके time के लिए thank you। नमस्ते।",
+   "step": "close",
+   "asks": null
+  }
+ ],
+ "outcome": "declined",
+ "speaker_confirmed": true,
+ "degraded_turns": 0,
+ "unresolved": [],
+ "tier": "incomplete",
+ "flags": [
+  {
+   "rule_id": "recall",
+   "reason": "recall_not_named",
+   "tier": "understanding_gap",
+   "basis": "customer_statement",
+   "product_id": "P1",
+   "quote": "आप अपने records में देख लीजिए।",
+   "field": "kind"
+  }
+ ],
+ "gaps": [
+  {
+   "rule_id": "kind",
+   "reason": "not_asked",
+   "tier": "incomplete",
+   "quote": null,
+   "field": "kind"
+  },
+  {
+   "rule_id": "premium",
+   "reason": "not_asked",
+   "tier": "incomplete",
+   "quote": null,
+   "field": "premium"
+  },
+  {
+   "rule_id": "cover",
+   "reason": "not_asked",
+   "tier": "understanding_gap",
+   "quote": null,
+   "field": "cover"
+  },
+  {
+   "rule_id": "term",
+   "reason": "not_asked",
+   "tier": "understanding_gap",
+   "quote": null,
+   "field": "term"
+  },
+  {
+   "rule_id": "cancel_window",
+   "reason": "not_asked",
+   "tier": "understanding_gap",
+   "quote": null,
+   "field": "cancel"
+  },
+  {
+   "rule_id": "consent",
+   "reason": "not_asked",
+   "tier": "incomplete",
+   "quote": null,
+   "field": "consent"
+  },
+  {
+   "rule_id": "loan_funded",
+   "reason": "not_asked",
+   "tier": "incomplete",
+   "quote": null,
+   "field": "source"
+  },
+  {
+   "rule_id": "bundling",
+   "reason": "not_asked",
+   "tier": "incomplete",
+   "quote": null,
+   "field": "required"
+  },
+  {
+   "rule_id": "belief_mismatch",
+   "reason": "not_asked",
+   "tier": "incomplete",
+   "quote": null,
+   "field": "money_back"
+  }
+ ],
+ "referral_basis": null,
+ "summary": {
+  "loan_id": "TEST-ACQ-LN-140",
+  "call_id": "acq-ACQ-C140-a1",
+  "tier": "incomplete",
+  "lines": [
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: what the product is.",
+    "record_value": "credit-life insurance from Namoona Life (synthetic)",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "kind"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: the premium.",
+    "record_value": "premium ₹32,500, deducted from the loan",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "premium"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how they agreed to it.",
+    "record_value": "consent on record: click or tick on a screen on 2026-10-31",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101G"
+    ],
+    "rule_ids": [
+     "consent"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: how it was paid for.",
+    "record_value": "premium ₹32,500, deducted from the loan",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101W"
+    ],
+    "rule_ids": [
+     "loan_funded"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: whether it was required and the choice of provider.",
+    "record_value": "required for the loan: no; risk mitigant: yes; choice of provider offered: yes",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101V"
+    ],
+    "rule_ids": [
+     "bundling"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "incomplete",
+    "title": "The call did not get to: getting the money back.",
+    "record_value": "features on record: a single payment",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "6(9A)(ii)"
+    ],
+    "rule_ids": [
+     "belief_mismatch"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "Customer did not name this product unprompted.",
+    "record_value": "credit-life insurance from Namoona Life (synthetic)",
+    "quote": "आप अपने records में देख लीजिए।",
+    "turn_id": 15,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "recall"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cover.",
+    "record_value": "cover ₹6,10,000",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cover"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the term.",
+    "record_value": "term 12 months",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "term"
+    ],
+    "record_only": false,
+    "note": false
+   },
+   {
+    "product_id": "P1",
+    "tier": "understanding_gap",
+    "title": "The call did not get to: the cancellation window.",
+    "record_value": "cancellation window 30 days",
+    "quote": null,
+    "turn_id": null,
+    "clauses": [
+     "101Y"
+    ],
+    "rule_ids": [
+     "cancel_window"
+    ],
+    "record_only": false,
+    "note": false
+   }
+  ]
+ },
+ "transcript": {
+  "call_id": "acq-ACQ-C140-a1",
+  "loan_id": "TEST-ACQ-LN-140",
+  "language": "hi-en",
+  "turns": [
+   {
+    "id": 1,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "Hello, क्या आप Pooja जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 2,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "हाँ जी।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 3,
+    "speaker": "bot",
+    "step": "right_party_check",
+    "text": "यह Pooja जी के लिए एक automated customer care call है। क्या आप ख़ुद Pooja जी हैं?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 4,
+    "speaker": "customer",
+    "step": "right_party_check",
+    "text": "हाँ जी, मैं ख़ुद ही बात कर रही हूँ।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 5,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "मैं नमूना फ़ाइनेंस customer care से computer से चलने वाली आवाज़ हूँ, इंसान नहीं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 6,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "यह sales नहीं, feedback call है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 7,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "बातचीत record हो रही है; जानकारी नमूना फ़ाइनेंस के written notice में है।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 8,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "हम आपसे कभी O-T-P, PIN, password या account number नहीं माँगेंगे।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 9,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "Doubt हो तो phone रखकर नमूना फ़ाइनेंस customer care पर ख़ुद पूछ सकते हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 10,
+    "speaker": "bot",
+    "step": "disclosure",
+    "text": "क्या दो-तीन minute बात करें?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 11,
+    "speaker": "customer",
+    "step": "disclosure",
+    "text": "हाँ जी, बोलिए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 12,
+    "speaker": "bot",
+    "step": "context",
+    "text": "Thank you। आपने हाल ही में नमूना फ़ाइनेंस से जो loan लिया, उसके बारे में कुछ questions हैं।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 13,
+    "speaker": "bot",
+    "step": "context",
+    "text": "रुकना हो या किसी इंसान से बात करनी हो, तो कभी भी बोल दीजिए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 14,
+    "speaker": "bot",
+    "step": "open_recall",
+    "text": "Loan के साथ आपने कुछ और भी लिया था क्या? अगर हाँ, तो क्या, और कितने का?",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 15,
+    "speaker": "customer",
+    "step": "open_recall",
+    "text": "आप अपने records में देख लीजिए।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   },
+   {
+    "id": 16,
+    "speaker": "bot",
+    "step": "close",
+    "text": "ठीक है, कोई problem नहीं। आपके time के लिए thank you। नमस्ते।",
+    "asks": null,
+    "product_id": null,
+    "start_s": null,
+    "end_s": null
+   }
+  ]
+ },
+ "llm_requests": 4,
+ "llm_cache_hits": 4,
+ "usd_this_call": 0.0,
+ "degraded_turn_count": 0,
+ "finished_utc": "2026-11-13T21:29:41+00:00"
+}

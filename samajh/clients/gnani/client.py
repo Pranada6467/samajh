@@ -33,6 +33,7 @@ from samajh.clients._runtime import (
     state_dir,
 )
 from samajh.clients.errors import ApiError, BadResponse, CapExceeded, ClientError, ConfigError, InvalidRequest
+from samajh.clients.gnani.tally import tally_for
 from samajh.clients.gnani.types import (
     AudioFormat,
     BatchOptions,
@@ -235,6 +236,9 @@ def _file_part(audio: bytes, audio_format: AudioFormat) -> tuple[str, bytes, str
     )
 
 
+_TtsDecode = Callable[[Mapping[str, Any], bytes], tuple[Mapping[str, Any], bytes, float | None]]
+
+
 class GnaniClient:
     def __init__(
         self,
@@ -272,6 +276,7 @@ class GnaniClient:
         )
         self._cache = Cache(self._state / "cache" / "gnani")
         self._ledger = Ledger(self._state / "ledger.jsonl")
+        self._tally = tally_for(self._ledger.path)
         self._lock = self._state / "gnani.lock"
         self._last_batch = float("-inf")
 
@@ -288,7 +293,11 @@ class GnaniClient:
         return cls(**overrides)
 
     def credits_spent(self) -> float:
-        return self._ledger.total_credits()
+        return self._tally.gnani_credits()
+
+    def warm_ledger(self) -> None:
+        """Read the whole ledger once now, so the first capped request pays only for new rows."""
+        self._tally.totals()
 
     # ------------------------------------------------------------ public calls
 
@@ -335,7 +344,8 @@ class GnaniClient:
             call=call,
         )
 
-    def tts(self, text: str, options: Timbre) -> Speech:
+    def _tts_request(self, text: str, options: Timbre) -> tuple[dict[str, Any], str, _TtsDecode]:
+        """The body, cache key and decoder of a Timbre request: shared by `tts` and `tts_cached`."""
         if not text.strip():
             raise InvalidRequest("text is empty")
         body = {
@@ -364,6 +374,23 @@ class GnaniClient:
                 return meta, audio, len(audio) / 8000  # one byte per sample at 8000 Hz
             return meta, audio, None
 
+        return body, key, decode
+
+    def tts_cached(self, text: str, options: Timbre) -> bool:
+        """True if `tts(text, options)` would be answered from the cache. No request, no lock, no
+        ledger row. An entry that no longer parses is a miss, as it is for `tts`."""
+        _, key, decode = self._tts_request(text, options)
+        entry = self._cache.get(key)
+        if entry is None:
+            return False
+        try:
+            decode(entry.meta, entry.body)
+        except BadResponse:
+            return False
+        return True
+
+    def tts(self, text: str, options: Timbre) -> Speech:
+        body, key, decode = self._tts_request(text, options)
         (meta, audio, seconds), call = self._rest(
             kind="tts",
             model=options.model,
@@ -478,7 +505,7 @@ class GnaniClient:
         return value, CallInfo(cache_hit=True, cache_key=key, seconds=0.0, est_credits=0.0, attempts=0)
 
     def _check_cap(self, estimate: float) -> None:
-        spent = self._ledger.total_credits()
+        spent = self._tally.gnani_credits()
         if spent + estimate > self._credit_cap:
             raise CapExceeded(unit="credits", cap=self._credit_cap, spent=spent, estimate=estimate)
 

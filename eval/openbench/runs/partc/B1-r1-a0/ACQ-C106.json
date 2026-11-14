@@ -1,0 +1,575 @@
+{
+ "customer_id": "ACQ-C106",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi-en",
+ "arm": "B1",
+ "cell": {
+  "r": 1.0,
+  "a": 0.0,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "92d52bcf86ffde2bd0e49c137efb12e1eadbcd1ff56228bc8c38364662517ca0",
+ "system_prompt_sha256": "68defa5dc39c724cf1749d03044b71738524cbb865ed9427bdc763806e456ca3",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं लता जी से बात कर रहा हूँ?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं लता जी से बात कर रहा हूँ?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रही हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रही हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था। क्या आप बता सकती हैं कि आपने वो पैसा किस चीज़ पर इस्तेमाल किया?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में एक लोन लिया था। क्या आप बता सकती हैं कि आपने वो पैसा किस चीज़ पर इस्तेमाल किया?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ, loan के साथ insurance cover लिया था, पर amount मुझे नहीं पता।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9641821554396302,
+     "recall_rule": "own_recall",
+     "source_topic": "what_did_you_take",
+     "text": "हाँ, loan के साथ insurance cover लिया था, पर amount मुझे नहीं पता।"
+    },
+    {
+     "item": 1,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "ठीक है। क्या आप बता सकती हैं कि ये insurance किस चीज़ के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आप बता सकती हैं कि ये insurance किस चीज़ के लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "वो loan के लिए एक insurance cover है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9641821554396302,
+     "source_topic": "what_is_it",
+     "text": "वो loan के लिए एक insurance cover है।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "अच्छा। क्या आप बता सकती हैं कि ये insurance कितने समय के लिए है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अच्छा। क्या आप बता सकती हैं कि ये insurance कितने समय के लिए है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जब तक loan चलेगा, तब तक insurance रहेगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_long",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5796848146710545,
+     "source_topic": "how_long",
+     "text": "जब तक loan चलेगा, तब तक insurance रहेगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि insurance की रकम कितनी थी और कैसे चुकाई गई?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि insurance की रकम कितनी थी और कैसे चुकाई गई?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "how_much",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_paid",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मुझे exact amount नहीं मालूम जी। मैंने अलग से pay किया था, loan money से कुछ नहीं कटा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "how_much",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.7955825764220208,
+     "source_topic": "how_much",
+     "text": "मुझे exact amount नहीं मालूम जी।"
+    },
+    {
+     "item": 1,
+     "kind": "how_paid",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.03779994533397257,
+     "source_topic": "how_paid",
+     "text": "मैंने अलग से pay किया था, loan money से कुछ नहीं कटा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "समझ गया। क्या आप बता सकती हैं कि क्या ये insurance लेना ज़रूरी था या आपने खुद चुना था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "समझ गया। क्या आप बता सकती हैं कि क्या ये insurance लेना ज़रूरी था या आपने खुद चुना था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "needed_or_choice",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "मेरी अपनी choice थी, loan के लिए जरूरी नहीं था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "needed_or_choice",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.5209191655740142,
+     "source_topic": "needed_or_choice",
+     "text": "मेरी अपनी choice थी, loan के लिए जरूरी नहीं था।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि अगर कुछ हो जाए तो ये insurance कितना पैसा देगी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि अगर कुछ हो जाए तो ये insurance कितना पैसा देगी?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "अगर मैं मर जाऊँ, तो loan के one lakh rupees तक pay करेगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9304624933283776,
+     "source_topic": "what_it_gives",
+     "text": "अगर मैं मर जाऊँ, तो loan के one lakh rupees तक pay करेगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "क्या आपको पता है कि इसे कैंसल करने का कोई विकल्प था और कितने दिनों के अंदर?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "क्या आपको पता है कि इसे कैंसल करने का कोई विकल्प था और कितने दिनों के अंदर?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "can_cancel",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "how_long",
+     "asks": true,
+     "states_span": "कितने दिनों के अंदर"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ, fifteen days के अंदर cancel कर सकते हैं। जितने time का loan है, उतने time तक चलेगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "can_cancel",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.6853898642584682,
+     "source_topic": "can_cancel",
+     "text": "हाँ, fifteen days के अंदर cancel कर सकते हैं।"
+    },
+    {
+     "item": 1,
+     "kind": "how_long",
+     "span_dropped": "कितने दिनों के अंदर",
+     "rule": "open",
+     "variant": "again",
+     "draw_a": 0.5796848146710545,
+     "source_topic": "how_long",
+     "text": "जितने time का loan है, उतने time तक चलेगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 8,
+   "agent": {
+    "say": "ठीक है। क्या आपको पता है कि अगर loan चुका दिया जाए या insurance खत्म हो जाए, तो कोई पैसा वापस मिलता है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "ठीक है। क्या आपको पता है कि अगर loan चुका दिया जाए या insurance खत्म हो जाए, तो कोई पैसा वापस मिलता है?",
+   "agent_usd": 0.00031844,
+   "router_items": [
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "money_back",
+     "asks": false,
+     "states_span": "कोई पैसा वापस मिलता है"
+    },
+    {
+     "kind": "understood_check",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.557e-05,
+   "reply": "पैसे वापस नहीं मिलते, ये कोई savings नहीं है।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_it_gives",
+     "rule": "mention",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "money_back",
+     "rule": "stated",
+     "stated": "कोई पैसा वापस मिलता है",
+     "stated_value": "yes",
+     "belief_state": "correct",
+     "belief_value": "no",
+     "record_value": "no",
+     "draw_a": 0.41997657832689583,
+     "draw_r": 0.6906566922552884,
+     "source_topic": "money_back",
+     "decided": "neither",
+     "variant": "own",
+     "text": "पैसे वापस नहीं मिलते, ये कोई savings नहीं है।"
+    },
+    {
+     "item": 2,
+     "kind": "understood_check",
+     "rule": "covered_by_stated",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 9,
+   "agent": {
+    "say": "अंतिम बात — क्या आपने इस insurance के लिए कोई OTP डाला था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अंतिम बात — क्या आपने इस insurance के लिए कोई OTP डाला था?",
+   "agent_usd": 0.0003077,
+   "router_items": [
+    {
+     "kind": "what_you_agreed_to",
+     "asks": true,
+     "states_span": "OTP डाला था"
+    },
+    {
+     "kind": "what_is_it",
+     "asks": false,
+     "states_span": null
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 3.551e-05,
+   "reply": "loan और insurance दोनों के लिए mobile पर आए OTP से yes किया था।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_you_agreed_to",
+     "span_dropped": "OTP डाला था",
+     "rule": "open",
+     "variant": "own",
+     "draw_a": 0.9966670307330787,
+     "source_topic": "what_you_agreed_to",
+     "text": "loan और insurance दोनों के लिए mobile पर आए OTP से yes किया था।"
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "kind_refer_back",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 2,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 10,
+   "agent": {
+    "say": "धन्यवाद, लता जी। अब कोई सवाल नहीं है।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "refer",
+     "reason": "borrower's belief about cover amount is incorrect and premium is unknown",
+     "findings": [
+      {
+       "field": "cover",
+       "belief": "false",
+       "quote": "अगर मैं मर जाऊँ, तो loan के one lakh rupees तक pay करेगा।"
+      },
+      {
+       "field": "premium",
+       "belief": "does_not_know",
+       "quote": "मुझे exact amount नहीं मालूम जी।"
+      },
+      {
+       "field": "term",
+       "belief": "false",
+       "quote": "जितने time का loan है, उतने time तक चलेगा।"
+      },
+      {
+       "field": "kind",
+       "belief": "does_not_know",
+       "quote": "insurance cover"
+      },
+      {
+       "field": "source",
+       "belief": "does_not_know",
+       "quote": "अलग से pay किया था, loan money से कुछ नहीं कटा"
+      },
+      {
+       "field": "frequency",
+       "belief": "does_not_know",
+       "quote": "अलग से pay किया था, loan money से कुछ नहीं कटा"
+      },
+      {
+       "field": "required",
+       "belief": "does_not_know",
+       "quote": "मेरी अपनी choice थी, loan के लिए जरूरी नहीं था"
+      },
+      {
+       "field": "cancel",
+       "belief": "does_not_know",
+       "quote": "fifteen days के अंदर cancel कर सकते हैं"
+      },
+      {
+       "field": "money_back",
+       "belief": "does_not_know",
+       "quote": "पैसे वापस नहीं मिलते, ये कोई savings नहीं है"
+      },
+      {
+       "field": "consent",
+       "belief": "does_not_know",
+       "quote": "loan और insurance दोनों के लिए mobile पर आए OTP से yes किया था"
+      }
+     ]
+    }
+   },
+   "say": "धन्यवाद, लता जी। अब कोई सवाल नहीं है।",
+   "agent_usd": 0.00056536
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "refer",
+  "reason": "borrower's belief about cover amount is incorrect and premium is unknown",
+  "findings": [
+   {
+    "field": "cover",
+    "belief": "false",
+    "quote": "अगर मैं मर जाऊँ, तो loan के one lakh rupees तक pay करेगा।"
+   },
+   {
+    "field": "premium",
+    "belief": "does_not_know",
+    "quote": "मुझे exact amount नहीं मालूम जी।"
+   },
+   {
+    "field": "term",
+    "belief": "false",
+    "quote": "जितने time का loan है, उतने time तक चलेगा।"
+   },
+   {
+    "field": "kind",
+    "belief": "does_not_know",
+    "quote": "insurance cover"
+   },
+   {
+    "field": "source",
+    "belief": "does_not_know",
+    "quote": "अलग से pay किया था, loan money से कुछ नहीं कटा"
+   },
+   {
+    "field": "frequency",
+    "belief": "does_not_know",
+    "quote": "अलग से pay किया था, loan money से कुछ नहीं कटा"
+   },
+   {
+    "field": "required",
+    "belief": "does_not_know",
+    "quote": "मेरी अपनी choice थी, loan के लिए जरूरी नहीं था"
+   },
+   {
+    "field": "cancel",
+    "belief": "does_not_know",
+    "quote": "fifteen days के अंदर cancel कर सकते हैं"
+   },
+   {
+    "field": "money_back",
+    "belief": "does_not_know",
+    "quote": "पैसे वापस नहीं मिलते, ये कोई savings नहीं है"
+   },
+   {
+    "field": "consent",
+    "belief": "does_not_know",
+    "quote": "loan और insurance दोनों के लिए mobile पर आए OTP से yes किया था"
+   }
+  ]
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.0011915,
+  "router": 7.108e-05
+ },
+ "cache_hits": {
+  "agent": 8,
+  "router": 8
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:37:41+00:00",
+ "agent_turns": 11,
+ "usd_total": 0.0012625800000000001,
+ "finished_utc": "2026-11-13T22:37:59+00:00"
+}

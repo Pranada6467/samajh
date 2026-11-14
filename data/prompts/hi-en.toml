@@ -267,8 +267,12 @@ design = "§5 step 2: the customer asked for another time; no time is promised"
 text = "ठीक है, हम बाद में call करने की कोशिश करेंगे। Thank you, नमस्ते।"
 
 [lines."end.language"]
-design = "§5: the customer asked for another language; the call does not switch live"
-text = "ठीक है, हम आपकी language में दोबारा call करने की कोशिश करेंगे। Thank you, नमस्ते।"
+design = "§5, W4: the customer asked for a language the call has no lines for, or past the switch limit; the call ends and a call in that language is tried later"
+text = "Sorry, यह call अभी उस language में नहीं हो सकती। हम आपकी language में दोबारा call करने की कोशिश करेंगे। Thank you, नमस्ते।"
+
+[lines."language.switched"]
+design = "§5, W4: said in the new language when the call switches live, before the pending question is put again"
+text = "ठीक है, अब English और हिंदी मिलाकर बात करते हैं।"
 
 [lines."end.no_response"]
 design = "§5: nothing heard twice in a row; the call ends and says nothing about a loan"
@@ -297,3 +301,19 @@ text = "कोई doubt हो, तो loan papers पर छपे {lender} cus
 [lines."close.bye"]
 design = "§5 step 9"
 text = "नमस्ते।"
+
+[lines."consent.follow_what"]
+design = "§9, W4: the one follow-up when the consent reply said only how; asks only what the yes was for"
+text = "और वो हाँ किस चीज़ के लिए थी?"
+
+[lines."consent.follow_how"]
+design = "§9, W4: the one follow-up when the consent reply said only what; asks only how, naming no way"
+text = "और वो हाँ आपने किस तरह दी थी?"
+
+[lines."kind.follow_what"]
+design = "§8, W4: the one follow-up when the kind reply gave a figure or what it does but no name for it"
+text = "और उस चीज़ को आप क्या कहेंगे, वो actually क्या है?"
+
+[lines."defer.reask"]
+design = "§8, W4: said once before the re-ask when the customer defers to the lender or the record; asks for their own memory"
+text = "हम ये जानना चाहते हैं कि आपको ख़ुद क्या याद है, record में क्या है वो नहीं।"

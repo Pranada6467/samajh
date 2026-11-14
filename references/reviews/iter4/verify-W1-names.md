@@ -1,0 +1,43 @@
+# Independent check of W1 (names), 2026-11-14
+Written before the fix round, by a worker that wrote none of the code.
+
+What I did: I wrote 256 held-out opening cases (147 genuine borrowers, 109 third parties, 7 marked ambiguous) to data/names/heldout-checker-openings.jsonl before reading any matcher code, names data or the builder's report, then ran score_openings.py once with word lists only and once with --llm (about USD 0.065 by the LLM ledger, 4.471 -> 4.536; no Gnani calls). What I found: no unambiguous third party had the loan or lender named in either run (0 of 103), and 6.8 per 100 genuine borrowers were falsely rejected, all with the same cause: a variant spelling, or part of a compound name, that is itself a known first name is judged "positively another name" and the call ends wrong_party on the first reply. What is left: the builder should fix the compound-name and spelling-variant classes listed below; nothing was edited except the one JSONL file (a __pycache__ my probe created in data/names was removed).
+
+== RESULTS (scorer's own definitions; Wilson 95%) ==
+Word lists only:
+- False rejections: 10 of 147 genuine = 6.8 per 100 [3.7-12.1]. Without the 1 ambiguous case: 9 of 146 = 6.2 [3.3-11.3].
+- Loan or lender named to a third party: 1 of 109 = 0.9 [0.2-5.0]. The 1 is an ambiguous case; without the 6 ambiguous: 0 of 103 = 0.0 [0.0-3.6].
+Classifier on (--llm): identical false rejections, 10 of 147 = 6.8 [3.7-12.1]. Named: 2 of 109 = 1.8 [0.5-6.4], both ambiguous; 0 of 103 unambiguous [0.0-3.6]. The cached rerun was identical, with no classifier timeouts (the first run had at least 3 TimeoutErrors read by the word lists; the scorer does not void degraded turns as the server does). The classifier changed the outcome of 6 cases: 4 safe endings moved between not_confirmed and wrong_party, and 1 ambiguous third party (राजू) passed.
+Coverage: north, south (th/dh/zh), Bengali, Marathi, Gujarati, Punjabi, Muslim, Christian, short and compound names; Devanagari, Latin with a different spelling, mixed script; chatter, honorifics, speaking, bol raha/rahi, main hi, questions back; men and women. Every genuine case gives up to 2 replies (a natural one, then an ordinary confirmation); every third party gives 3 replies, the last pushing ("aap mujhe bata dijiye").
+
+== EVERY FAILING CASE (same in both runs unless marked) ==
+Genuine borrowers rejected (all end wrong_party after reply 1; the second reply is never heard):
+1 chk-g-058 Jothi: "हाँ जी, ज्योति बोल रही हूँ" (Tamil Jothi = Jyoti; key jyoti vs joti, distance 1.0, ज्योति is a known name, so "other"). The Latin "haan Jyothi hoon" (g-059) passed through a weaker frame: the outcome depends on script and frame.
+2 chk-g-077 Dnyaneshwar: "हाँ जी, ज्ञानेश्वर बोल रहा हूँ" (ज्ञ -> gy; Marathi Latin dny; distance 2.0). The Latin "haan Gyaneshwar hoon" passed through the weak frame.
+3 chk-g-101 Ayesha: "haan Aisha here" (distance 2.0)
+4 chk-g-107 Mary: "हाँ जी, मैरी बोल रही हूँ" (mairi vs mari, 1.0)
+5 chk-g-111 Francis: "हाँ, फ्रांसिस बोल रहा हूँ" (the Latin c is always folded to k: prankis vs praNsis)
+6 chk-g-120 Lakshminarayan: "haan Laxmi Narayan bol raha hoon" (split compound; "Laxmi" is judged other)
+7 chk-g-122 Shivashankar: "haan Shiv Shankar speaking" (split compound)
+8 chk-g-124 Balasubramanian: "हाँ, बालसुब्रमण्यम बोल रहा हूँ" (-ian vs -ण्यम, distance 2.0)
+9 chk-g-126 Venkataramana: "हाँ, वेंकट रमणा बोल रहा हूँ" (split compound)
+10 chk-g-125 Balasubramanian: "haan Bala here" (nickname; ambiguous)
+Third parties who passed (all ambiguous by my own gold, reported apart):
+A chk-t-094 Kavitha: "हाँ बोल रहा हूँ" (a masculine verb for a female record name), "हाँ जी" -> passed in both runs. A man saying yes twice is accepted, which is the stated design ("a person who says yes twice is taken as the borrower"); gender agreement is not used.
+B chk-t-091 Rajesh: "हाँ जी", then "राजू" -> classifier run only: passed (word lists: not_confirmed). Raju is a common short form of Rajesh. A post-hoc probe found that a bare name at the direct question goes to the classifier and not to judge_name, and the classifier refused रमेश, सुनील, Ramesh and सविता (wrong_party) but accepted राजू.
+The other ambiguous cases (Ravi for Ravindra, प्रिया for Priyanka, शिवा for Shivakumar, लक्ष्मी for Jayalakshmi) ended wrong_party: safe, though each could be a genuine borrower using a short name.
+
+== NEAR-MISS TABLE (record / spoken; outcome the same in both scripts and both runs; matcher distance) ==
+Ramesh/Rajesh 1.0, Rajesh/Ramesh 1.0, Rakesh/Rajesh 1.0, Sunita/Sunil 2.0, Sunil/Sunita 2.0, Amit/Amita 1.0, Amita/Amit 1.0, Meena/Meenal 1.5, Meenal/Meena 1.5, Kavita/Savita 1.0, Savita/Kavita 1.0, Suresh/Naresh 2.0, Naresh/Suresh 2.0, Mahesh/Mukesh 2.0, Rohit/Mohit 1.0, Anil/Sunil 2.0, Neha/Sneha 1.0, Deepa/Deepak 1.5, Deepak/Deepa 1.5, Arun/Aruna 1.0, Vijay/Vijaya 1.0, Mohan/Mohini 2.0, Gita/Sita 1.0, Manoj/Manish 2.0, Kavitha/Kavya 2.0, Anjali/Anjana 2.0, Shiva/Shivani 2.5, Harish/Girish 2.0, Gurpreet/Manpreet 3.0, Imran/Irfan 2.0, Farheen/Farhana 2.0, Zaheer/Zakir 1.0, Pankaj/Pankaja 1.0, Rekha/Renu 2.0, Senthil/Selvam 4.0: all judged "other", and every played call ended wrong_party after reply 1, nothing named (36 played near-miss calls plus 4 variants: a Latin one, "yes again", a vague yes, a spouse naming the borrower). Joseph/Josephine: "unknown" (Josephine is not in the lexicon), ended not_confirmed (word lists) or wrong_party (classifier): safe. Pooja/Puja and Puja/Pooja: "same", 0.0, passed (correct). Vague yes then another name (हाँ जी -> हाँ, मैं सविता; -> मैं सुनील हूँ; -> I am Selvi, his wife; and 8 more): 11 of 11 ended wrong_party at reply 2. Role words with and without a name, "the borrower is out", the borrower's name as a possessive ("Rajesh ki wife") or with a negation, "main hi hoon ... unki beti", a deceased borrower, wrong numbers: all ended wrong_party or not_confirmed, nothing named.
+
+== FIX OR ACCEPT ==
+Fix (genuine borrowers lost; each fix is safe because none needs a looser distance):
+- Split compounds (Laxmi Narayan, Shiv Shankar, वेंकट रमणा; 3 of 147): before judging a token, join it with the next name token and test the join against the record name. My cases where a relative's name is part of a compound (wife "लक्ष्मी" for Lakshminarayan, brother "शंकर" for Shivashankar) still end wrong_party if only the joined pair counts.
+- Spelling folds that are a convention, not a different name: Latin dny = ज्ञ (gy); Latin c before e/i/y = s (Francis, Cecil); Tamil j for jy (Jothi = Jyoti, Jothika); Devanagari ऐ before r for an English "a" (Mary). The -ian/-am ending (Balasubramanian) and Ayesha/Aisha are less safe as general rules; a per-name alias list (known-misses.tsv already holds the class) is the safer route.
+- The same name should not get a different outcome by script (Jothi: Devanagari rejected, Latin passed).
+Acceptable costs: nicknames and short forms (Bala, Ravi, Priya, Shiva for Shivakumar, Lakshmi for Jayalakshmi): a hard rejection loses a genuine call, but accepting them would let a relative with that name through. A better ending than wrong_party may be "ask for the borrower by full name", but that is a design change.
+Risks to note, not regressions: the yes-twice default lets t-094 through (known and stated); the classifier alone decides a bare name at the direct question (राजू passed); I would run that bare name through judge_name as well, so that an "other" name ends the call, and accept losing the occasional genuine Raju.
+Distances do not separate the classes: Jothi/Jyoti, Mary/मैरी and Francis sit at the same 1.0 as Ramesh/Rajesh, Kavita/Savita and Gita/Sita. So SAME_MAX must not be raised, and a re-ask on "other" at distance 1.0 would let a near-miss third party who answers "haan" through (t-038 and t-039 answer that way). The fixes have to be targeted folds or aliases.
+
+== DESIGN VERDICT ==
+The asymmetry ("an unknown name is not doubt; doubt needs a positively different known name") is sound on the safety side: in 103 unambiguous third-party calls nothing was named, and every near miss was caught, because a near miss is almost always a real name in a 16,420-token lexicon. The hole is on the other side and comes from that same breadth: almost every spelling variant of a real name (Jyoti, Aisha, Gyaneshwar, Laxmi in a compound) is also some person's first token, so "known" is not evidence of "another person". A variant just outside SAME_MAX, or a part of a compound, becomes a hard wrong_party with no re-ask. The design needs the record name's own variants and compounds handled before the "other" test, not a looser threshold.

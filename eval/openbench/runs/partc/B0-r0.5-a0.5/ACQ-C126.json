@@ -1,0 +1,380 @@
+{
+ "customer_id": "ACQ-C126",
+ "kind": "misled_with_gaps",
+ "customer_kind": "misled_with_gaps",
+ "language": "hi-en",
+ "arm": "B0",
+ "cell": {
+  "r": 0.5,
+  "a": 0.5,
+  "third_party": false
+ },
+ "models": {
+  "agent": "qwen/qwen3-235b-a22b-2507",
+  "router": "mistralai/mistral-small-3.2-24b-instruct"
+ },
+ "prompt_sha256": "e48fb40a6ce0b60de0eb020cde61551375f8b19add706688ad4af66fbc3e6de3",
+ "system_prompt_sha256": "4c0e9e714e91c67e059ddd2419e8000ac2d7f3468f4eadfaa71d24094ef1ea38",
+ "router_instruction_sha256": "c0b95c092ba654954f9eae426639ddf95dddc3734538803a6ae57ef34f222ee8",
+ "conversation_shape": "system; user '[call connected]'; assistant = the agent's JSON; user = reply text",
+ "turns": [
+  {
+   "n": 0,
+   "agent": {
+    "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्री अनिल नमूना से?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "नमस्ते, क्या मैं बात कर रहा हूँ श्री अनिल नमूना से?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, मैं ही बोल रहा हूँ।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, मैं ही बोल रहा हूँ।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 1,
+   "agent": {
+    "say": "जी अनिल जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आप थोड़ा समय देंगे एक छोटी सी बातचीत के लिए?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी अनिल जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था। क्या आप थोड़ा समय देंगे एक छोटी सी बातचीत के लिए?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "can_we_talk",
+     "asks": true,
+     "states_span": "क्या आप थोड़ा समय देंगे एक छोटी सी बातचीत के लिए?"
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": "जी अनिल जी, मैं नमूना फ़ाइनेंस से बोल रहा हूँ। आपने हाल ही में हमारे यहाँ से गोल्ड लोन लिया था।"
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "हाँ जी, बोलिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "can_we_talk",
+     "rule": "canned",
+     "variant": "canned",
+     "text": "हाँ जी, बोलिए।"
+    },
+    {
+     "item": 2,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 2,
+   "agent": {
+    "say": "आपने लोन के साथ एक इंश्योरेंस प्रोडक्ट भी लिया था। क्या आप बता सकते हैं कि आपको लगता है आपने क्या खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "आपने लोन के साथ एक इंश्योरेंस प्रोडक्ट भी लिया था। क्या आप बता सकते हैं कि आपको लगता है आपने क्या खरीदा था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "explains_only",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आपके पास जो details हैं, उसी से देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08644767082296312,
+     "source_topic": "what_is_it",
+     "text": "आपके पास जो details हैं, उसी से देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "explains_only",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 3,
+   "agent": {
+    "say": "जी अनिल जी, मैं आपकी जानकारी की पुष्टि करना चाह रहा हूँ। कृपया बताएं, आपको लगता है आपने लोन के साथ क्या खरीदा था?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "जी अनिल जी, मैं आपकी जानकारी की पुष्टि करना चाह रहा हूँ। कृपया बताएं, आपको लगता है आपने लोन के साथ क्या खरीदा था?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जो आपके records में है, वही सही होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08644767082296312,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "जो आपके records में है, वही सही होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 4,
+   "agent": {
+    "say": "अनिल जी, मैं आपकी समझ की जाँच कर रहा हूँ। क्या आप बता सकते हैं कि आपने लोन के साथ इंश्योरेंस खरीदी थी या नहीं?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, मैं आपकी समझ की जाँच कर रहा हूँ। क्या आप बता सकते हैं कि आपने लोन के साथ इंश्योरेंस खरीदी थी या नहीं?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_did_you_take",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "जो आपके records में है, वही सही होगा।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_did_you_take",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08644767082296312,
+     "recall_rule": "defer",
+     "source_topic": "what_did_you_take",
+     "text": "जो आपके records में है, वही सही होगा।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 5,
+   "agent": {
+    "say": "अनिल जी, क्या आपको याद है कि आपने लोन के साथ क्रेडिट-लाइफ इंश्योरेंस खरीदी थी, जो आपकी मृत्यु की स्थिति में लोन का भुगतान करती है?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, क्या आपको याद है कि आपने लोन के साथ क्रेडिट-लाइफ इंश्योरेंस खरीदी थी, जो आपकी मृत्यु की स्थिति में लोन का भुगतान करती है?",
+   "agent_usd": 0.0,
+   "router_items": [
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": "क्रेडिट-लाइफ इंश्योरेंस"
+    },
+    {
+     "kind": "what_it_gives",
+     "asks": false,
+     "states_span": "आपकी मृत्यु की स्थिति में लोन का भुगतान करती है"
+    },
+    {
+     "kind": "other",
+     "asks": false,
+     "states_span": null
+    }
+   ],
+   "router_usd": 0.0,
+   "reply": "आपके पास जो details हैं, उसी से देख लीजिए। जो आपके records में हो, वही बताइए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "what_is_it",
+     "span_dropped": "क्रेडिट-लाइफ इंश्योरेंस",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08644767082296312,
+     "source_topic": "what_is_it",
+     "text": "आपके पास जो details हैं, उसी से देख लीजिए।"
+    },
+    {
+     "item": 1,
+     "kind": "what_it_gives",
+     "asks_inferred": true,
+     "span_dropped": "आपकी मृत्यु की स्थिति में लोन का भुगतान करती है",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.23491604602895677,
+     "source_topic": "what_it_gives",
+     "text": "जो आपके records में हो, वही बताइए।"
+    },
+    {
+     "item": 2,
+     "kind": "other",
+     "rule": "low_priority",
+     "variant": "skipped",
+     "text": ""
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 6,
+   "agent": {
+    "say": "अनिल जी, मैं आपकी जानकारी की पुष्टि करना चाहता हूँ। कृपया बताएं, क्या आपको लगता है कि आपने लोन के साथ इंश्योरेंस खरीदी थी?",
+    "end_call": false,
+    "transfer_to_human": false,
+    "report": null
+   },
+   "say": "अनिल जी, मैं आपकी जानकारी की पुष्टि करना चाहता हूँ। कृपया बताएं, क्या आपको लगता है कि आपने लोन के साथ इंश्योरेंस खरीदी थी?",
+   "agent_usd": 0.0002594,
+   "router_items": [
+    {
+     "kind": "identity",
+     "asks": true,
+     "states_span": null
+    },
+    {
+     "kind": "what_is_it",
+     "asks": true,
+     "states_span": null
+    }
+   ],
+   "router_usd": 8.4475e-05,
+   "reply": "आपके पास जो details हैं, उसी से देख लीजिए।",
+   "choices": [
+    {
+     "item": 0,
+     "kind": "identity",
+     "rule": "identity_already_answered",
+     "variant": "skipped",
+     "text": ""
+    },
+    {
+     "item": 1,
+     "kind": "what_is_it",
+     "rule": "open",
+     "variant": "defer",
+     "draw_a": 0.08644767082296312,
+     "source_topic": "what_is_it",
+     "text": "आपके पास जो details हैं, उसी से देख लीजिए।"
+    }
+   ],
+   "unmapped": false
+  },
+  {
+   "n": 7,
+   "agent": {
+    "say": "अनिल जी, आपके पास थोड़ा समय नहीं है, तो मैं कॉल समाप्त करता हूँ। धन्यवाद।",
+    "end_call": true,
+    "transfer_to_human": false,
+    "report": {
+     "outcome": "incomplete",
+     "reason": "borrower did not confirm any understanding of the product",
+     "findings": []
+    }
+   },
+   "say": "अनिल जी, आपके पास थोड़ा समय नहीं है, तो मैं कॉल समाप्त करता हूँ। धन्यवाद।",
+   "agent_usd": 0.00027414
+  }
+ ],
+ "status": "reported",
+ "report": {
+  "outcome": "incomplete",
+  "reason": "borrower did not confirm any understanding of the product",
+  "findings": []
+ },
+ "ended_by": "end_call",
+ "usd": {
+  "agent": 0.00053354,
+  "router": 8.4475e-05
+ },
+ "cache_hits": {
+  "agent": 6,
+  "router": 6
+ },
+ "errors": [],
+ "started_utc": "2026-11-13T22:32:00+00:00",
+ "agent_turns": 8,
+ "usd_total": 0.000618015,
+ "finished_utc": "2026-11-13T22:32:09+00:00"
+}

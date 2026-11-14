@@ -13,6 +13,9 @@ const VAD_MIN_SPEECH_MS = 120;
 const MAX_CARRIED_NOISE_RMS = 0.02;
 // The speaker is still sounding for a moment after the buffer ends; do not hear the bot as the customer.
 const ECHO_GUARD_MS = 150;
+const VAD_PAUSE_MS = 150; // unvoiced gaps inside speech worth a mark in the turn's report
+const MAX_MARKS = 400;
+const MAX_TALK_OVER = 200;
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -53,7 +56,72 @@ let state = "idle";
 let epoch = 0;
 let call = newCall();
 let listen = null; // capture state of the current customer turn
-const audio = { ctx: null, workletReady: false, mic: null, playing: null, ring: null };
+const audio = { ctx: null, workletReady: false, mic: null, playing: null, ring: null, talk: null };
+
+// ---- measurement reports -------------------------------------------------------------------
+// The phone tells the server how it took each turn and played each prompt. Logged by the server,
+// never acted on: a failed report only warns and never touches the call.
+
+const boundedMs = (x) => (Number.isFinite(x) ? Math.min(600000, Math.max(0, x)) : null);
+
+function postReport(sessionId, seq, body) {
+  if (!sessionId || seq == null) return;
+  const url = `/api/sessions/${encodeURIComponent(sessionId)}/events/${seq}/browser`;
+  fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+    .then((res) => {
+      if (!res.ok) console.warn(`[samajh] report for event ${seq} refused: HTTP ${res.status}`);
+    })
+    .catch((e) => console.warn(`[samajh] report for event ${seq} not sent: ${e.message}`));
+}
+
+// One customer turn's marks, from when listening opened.
+function newListenReport() {
+  return { openedAt: performance.now(), marks: [], takes: 0, graceUsed: false };
+}
+
+function mark(report, type, ms = null) {
+  if (!report || report.marks.length >= MAX_MARKS) return;
+  const m = { type, at_ms: boundedMs(performance.now() - report.openedAt) ?? 0 };
+  if (ms != null && boundedMs(ms) != null) m.ms = boundedMs(ms);
+  report.marks.push(m);
+}
+
+// Voiced runs on the mic while bot audio plays, for the playback report. Never a turn.
+function startTalkOver() {
+  if (!audio.mic || !audio.ctx) return (audio.talk = null);
+  audio.talk = {
+    startAt: performance.now(),
+    vad: createVad({ sampleRate: audio.ctx.sampleRate, hangoverMs: 300, minSpeechMs: 120, initialNoiseRms: call.noiseRms ?? 0 }),
+    open: null, // { start_ms, from } of the run being heard
+    runs: [],
+  };
+}
+
+function hearTalkOver(samples) {
+  const T = audio.talk;
+  for (const ev of T.vad.push(samples)) {
+    if (ev.type === "speech_start") {
+      T.open = { start_ms: performance.now() - T.startAt - (ev.atMs - ev.voicedFromMs), from: ev.voicedFromMs };
+    } else if (ev.type === "speech_end" && T.open) {
+      closeTalkRun(T, ev.lastVoicedMs);
+    }
+  }
+}
+
+function closeTalkRun(T, untilMs) {
+  if (T.runs.length < MAX_TALK_OVER) {
+    T.runs.push({ start_ms: boundedMs(T.open.start_ms) ?? 0, ms: boundedMs(untilMs - T.open.from) ?? 0 });
+  }
+  T.open = null;
+}
+
+function stopTalkOver() {
+  const T = audio.talk;
+  audio.talk = null;
+  if (!T) return [];
+  if (T.open) closeTalkRun(T, T.vad.state().timeMs);
+  return T.runs;
+}
 
 function newCall() {
   return {
@@ -66,6 +134,7 @@ function newCall() {
       identityAttempts: Number($("identity-attempts").value),
     },
     sessionId: null,
+    streaming: false, // the server streams this call's primary readings (session create says)
     bot: null,
     turns: [],
     pending: null,
@@ -109,6 +178,8 @@ const LEAVE = {
     // only between utterances, so a loud turn cannot deafen the detector.
     const heard = listen?.vad?.state();
     if (heard && !heard.speaking) call.noiseRms = Math.min(heard.noiseRms, MAX_CARRIED_NOISE_RMS);
+    listen?.streamer?.close();
+    call.lastListen = listen;
     listen = null;
   },
 };
@@ -141,6 +212,7 @@ const ENTER = {
       call.sessionId = s.session_id;
       call.settings.lineRate = s.line_rate;
       call.dialogue = s.dialogue;
+      call.streaming = s.streaming === true;
       call.bot = s.bot;
       dispatch("SESSION");
     } catch (e) {
@@ -151,20 +223,82 @@ const ENTER = {
   async bot_speaking(_, from, event) {
     const live = guard();
     const bot = call.bot;
+    const sessionId = call.sessionId;
     if (event !== "RETRY") addBotBubble(bot);
-    try {
-      const bytes = await api.bytes(bot.audio_url);
-      if (!live()) return;
-      await play(bytes, live, () => {
-        // End of the customer's speech (or of the upload) to the first sample of the reply.
-        const last = call.turns.at(-1);
-        if (last && last.botSeq === bot.seq && last.latency.bot_start_ms == null) {
-          last.latency.bot_start_ms = performance.now() - last.voiceEndAt;
-          render();
-        }
+    // One file per line when the server offers it, so line 0 plays as soon as it is made; an older
+    // server's utterance is the one joined file.
+    const perLine = bot.lines?.length > 0 && bot.lines.every((line) => line.audio_url);
+    const urls = perLine ? bot.lines.map((line) => line.audio_url) : [bot.audio_url];
+    const gapMs = perLine ? (bot.line_gap_ms ?? 150) : 0;
+    // Line k+1 is fetched as soon as line k's fetch returns, so it is on its way while k plays.
+    // Nothing more is fetched once the call has moved on (a hang-up); a fetch in flight is dropped.
+    const fetches = [];
+    const fetchLine = (k) => {
+      fetches[k] = api.bytes(urls[k]).then((bytes) => {
+        if (k + 1 < urls.length && live()) fetchLine(k + 1);
+        return bytes;
       });
-      if (live()) dispatch("BOT_DONE");
+      fetches[k].catch(() => {}); // awaited below, in order; a failure no one awaits is not unhandled
+    };
+    fetchLine(0);
+    let botStartMs = null;
+    let started = false;
+    let playedMs = 0;
+    let completed = false;
+    let reported = false;
+    // One report per utterance, across all its lines, once line 0 has begun.
+    const report = () => {
+      if (!started || reported) return;
+      reported = true;
+      const talkOver = stopTalkOver();
+      const sent = {
+        bot_start_ms: boundedMs(botStartMs),
+        output_latency_ms: boundedMs((audio.ctx?.outputLatency ?? NaN) * 1000),
+        played_ms: boundedMs(playedMs),
+        completed,
+        talk_over: talkOver,
+      };
+      console.info(
+        `[samajh] bot ${bot.seq}: lines=${urls.length} bot_start_ms=${sent.bot_start_ms == null ? "n/a" : Math.round(sent.bot_start_ms)} played_ms=${Math.round(playedMs)} completed=${completed} talk_over=${talkOver.length}`,
+      );
+      postReport(sessionId, bot.seq, sent);
+    };
+    try {
+      for (let k = 0; k < urls.length; k += 1) {
+        if (k > 0) await new Promise((done) => setTimeout(done, gapMs));
+        if (!live()) break;
+        const bytes = await fetches[k];
+        if (!live()) break;
+        let lineCompleted = false;
+        await play(
+          bytes,
+          live,
+          () => {
+            if (k > 0) return;
+            started = true;
+            // End of the customer's speech (or of the upload) to the first sample of the reply.
+            const last = call.turns.at(-1);
+            if (last && last.botSeq === bot.seq) {
+              if (last.latency.bot_start_ms == null) {
+                last.latency.bot_start_ms = performance.now() - last.voiceEndAt;
+                render();
+              }
+              botStartMs = last.latency.bot_start_ms;
+            }
+            startTalkOver();
+          },
+          ({ playedMs: ms, completed: done }) => {
+            playedMs += ms;
+            lineCompleted = done;
+          },
+        );
+        if (!lineCompleted) break;
+        if (k === urls.length - 1) completed = true;
+      }
+      report();
+      if (completed && live()) dispatch("BOT_DONE");
     } catch (e) {
+      report();
       if (live()) dispatch("FAIL", e);
     }
   },
@@ -180,9 +314,11 @@ const ENTER = {
             minSpeechMs: VAD_MIN_SPEECH_MS,
             hangoverMs: patience.cut_ms,
             initialNoiseRms: call.noiseRms ?? 0,
+            pauseMs: VAD_PAUSE_MS,
           })
         : null,
       patience,
+      report: newListenReport(),
       started: false, // speech has begun in this turn: from then on nothing captured is dropped
       take: null, // the take sent at the last cut, waiting out the grace window
       part: 0,
@@ -197,6 +333,10 @@ const ENTER = {
       pttAt: 0,
       silenceTimer: handsFree,
       level: 0,
+      // Hands-free only: the reply's audio also goes to the server's stream from the pre-roll on,
+      // and the first cut commits it. The take's WAV is uploaded as before; the server reads it
+      // by REST when the stream fails, and a later take is always read by REST.
+      streamer: handsFree && call.streaming ? openStreamer(call.sessionId, call.bot.seq, audio.ctx.sampleRate, call.settings.lineRate) : null,
     };
     note("");
   },
@@ -242,6 +382,7 @@ const ENTER = {
         pauses: c.pauses,
       };
       call.turns.push(record);
+      reportListen(call.sessionId, c.seq, turn, eosWaitMs, postMs);
       call.outcome = reply.outcome;
       call.speakerConfirmed = reply.speaker_confirmed;
       addCustomerBubble(record, call.bot.language);
@@ -294,12 +435,42 @@ async function followCase(live) {
   if (call === mine) render();
 }
 
+function reportListen(sessionId, seq, turn, eosWaitMs, postMs) {
+  const r = turn.report ?? newListenReport();
+  const p = turn.patience;
+  const vadMode = turn.source !== "file" && call.settings.mode !== "ptt";
+  const report = {
+    mode: turn.source === "file" ? "file" : call.settings.mode === "ptt" ? "ptt" : "vad",
+    cut_ms: vadMode ? boundedMs(p?.cut_ms) : null,
+    grace_ms: vadMode ? boundedMs(p?.grace_ms) : null,
+    marks: r.marks,
+    takes: r.takes,
+    grace_used: r.graceUsed,
+    eos_wait_ms: boundedMs(eosWaitMs),
+    post_ms: boundedMs(postMs),
+    echo_cancellation: audio.mic?.stream.getAudioTracks()[0]?.getSettings().echoCancellation ?? null,
+  };
+  console.info(
+    `[samajh] customer ${seq}: takes=${report.takes} grace_used=${report.grace_used} marks=${report.marks.length} eos_wait_ms=${report.eos_wait_ms == null ? "n/a" : Math.round(report.eos_wait_ms)} post_ms=${Math.round(postMs)}`,
+  );
+  postReport(sessionId, seq, report);
+}
+
 function newTake(source, body, voiceEndAt, part) {
-  return { source, body, voiceEndAt, part, tries: 0, request: null, sentAt: 0, eosWaitMs: null, botSeq: call.bot.seq };
+  // The turn's report and patience go with the take: listening has closed by the time it is answered.
+  const L = listen ?? call.lastListen;
+  return {
+    source, body, voiceEndAt, part, tries: 0, request: null, sentAt: 0, eosWaitMs: null, botSeq: call.bot.seq,
+    report: L?.report ?? null, patience: L?.patience ?? call.bot.listen,
+  };
 }
 
 function sendTake(take) {
   take.tries += 1;
+  if (take.report) {
+    if (take.tries === 1) take.report.takes += 1;
+    mark(take.report, "send");
+  }
   take.sentAt = performance.now();
   // Measured once: a second send after an error screen must not count the time spent on it.
   if (take.eosWaitMs == null) take.eosWaitMs = take.source === "mic" ? take.sentAt - take.voiceEndAt : null;
@@ -324,7 +495,8 @@ function asApiError(e) {
 
 // ---- audio out -----------------------------------------------------------------------------
 
-async function play(bytes, live, onStart = () => {}) {
+// onEnd({ playedMs, completed }) runs once when the audio ends or is stopped.
+async function play(bytes, live, onStart = () => {}, onEnd = () => {}) {
   const ctx = audio.ctx;
   if (ctx.state !== "running") {
     await Promise.race([ctx.resume(), new Promise((done) => setTimeout(done, 1000))]);
@@ -353,15 +525,25 @@ async function play(bytes, live, onStart = () => {}) {
     const source = ctx.createBufferSource();
     source.buffer = buffer;
     source.connect(ctx.destination);
-    source.onended = done;
+    let startedAt = 0;
+    source.onended = () => {
+      try {
+        onEnd({ playedMs: performance.now() - startedAt, completed: !source.stopped });
+      } catch (e) {
+        console.warn(`[samajh] playback report failed: ${e.message}`);
+      }
+      done();
+    };
     audio.playing = source;
     source.start();
+    startedAt = performance.now();
     onStart();
   });
 }
 
 function stopPlayback() {
   try {
+    if (audio.playing) audio.playing.stopped = true;
     audio.playing?.stop();
   } catch {
     // already stopped
@@ -446,6 +628,8 @@ function closeMic() {
 
 // Half duplex: frames only count while it is the customer's turn.
 function onFrame(samples) {
+  // While the bot plays, frames are only measured for talk-over, never kept or sent.
+  if (state === "bot_speaking" && audio.talk) return hearTalkOver(samples);
   const L = listen;
   if (state !== "listening" || !L || performance.now() < L.openAt) return;
   const rate = audio.ctx.sampleRate;
@@ -469,8 +653,15 @@ function onFrame(samples) {
     if (ev.type === "speech_start") {
       L.speaking = true;
       L.started = true;
-      if (L.take) resumed(L);
+      mark(L.report, "speech_start");
+      if (L.take) {
+        mark(L.report, "resume");
+        L.report.graceUsed = true;
+        resumed(L);
+      }
       render();
+    } else if (ev.type === "pause") {
+      mark(L.report, "pause", ev.toMs - ev.fromMs);
     } else if (L.speaking) {
       L.speaking = false;
       const keepUntil = Math.round(((ev.lastVoicedMs + TAIL_MS) * rate) / 1000);
@@ -478,6 +669,14 @@ function onFrame(samples) {
       const voiceEndAt = performance.now() - (ev.atMs - ev.lastVoicedMs);
       cut(L, L.buffered - drop, voiceEndAt);
       render();
+    }
+  }
+  if (L.streamer && L.started) {
+    if (!L.streamer.began) {
+      L.streamer.began = true;
+      for (const c of L.chunks) L.streamer.push(c); // the pre-roll and this frame
+    } else {
+      L.streamer.push(samples);
     }
   }
   if (L.silenceTimer && !L.started && toMs(L.stream) >= NO_SPEECH_MS) {
@@ -489,7 +688,9 @@ function onFrame(samples) {
 // The detector heard a pause as long as the cut: send what was said so far at once, so its
 // readings are under way, and wait out the grace window before the bot may answer it.
 function cut(L, sampleCount, voiceEndAt) {
+  mark(L.report, "cut", L.patience.cut_ms);
   L.part += 1;
+  if (L.part === 1) L.streamer?.commit();
   const take = newTake("mic", encodeWav(L.chunks, audio.ctx.sampleRate, sampleCount), voiceEndAt, L.part);
   take.request = sendTake(take);
   take.request.catch(() => {}); // a take that is replaced may fail unread
@@ -497,7 +698,10 @@ function cut(L, sampleCount, voiceEndAt) {
   clearTimeout(L.graceTimer);
   const wait = Math.max(0, L.patience.grace_ms - (performance.now() - voiceEndAt));
   L.graceTimer = setTimeout(() => {
-    if (listen === L && state === "listening" && L.take === take) dispatch("TURN", { source: "mic", take });
+    if (listen === L && state === "listening" && L.take === take) {
+      mark(L.report, "grace_expired");
+      dispatch("TURN", { source: "mic", take });
+    }
   }, wait);
 }
 
@@ -508,9 +712,91 @@ function resumed(L) {
   L.take = null;
 }
 
+// ---- streaming ------------------------------------------------------------------------------
+
+// Float32 frames at the AudioContext rate to PCM s16le at the line rate. Cheap on purpose: a
+// running box filter as wide as the rate ratio (its first null is at the output rate, so it damps
+// what would alias) and then linear interpolation, with the state carried across frames.
+function createResampler(inRate, outRate) {
+  const step = inRate / outRate;
+  const taps = Math.max(1, Math.round(step));
+  const hist = new Float32Array(taps);
+  let at = 0, sum = 0, prev = 0, pos = 0; // pos: next output time, in input samples of this frame
+  return (samples) => {
+    const out = new Int16Array(Math.ceil((samples.length - pos) / step) + 1);
+    let n = 0;
+    for (let i = 0; i < samples.length; i++) {
+      sum += samples[i] - hist[at];
+      hist[at] = samples[i];
+      at = (at + 1) % taps;
+      const cur = sum / taps;
+      for (; pos <= i; pos += step) {
+        const v = prev + (cur - prev) * (pos - (i - 1));
+        out[n++] = Math.max(-1, Math.min(1, v)) * 32767;
+      }
+      prev = cur;
+    }
+    pos -= samples.length;
+    return out.subarray(0, n);
+  };
+}
+
+// One reply's stream: frames before the socket opens are held, then sent in order.
+function openStreamer(sessionId, replyTo, inRate, lineRate) {
+  const scheme = location.protocol === "https:" ? "wss" : "ws";
+  const ws = new WebSocket(`${scheme}://${location.host}/api/sessions/${encodeURIComponent(sessionId)}/stream?reply_to=${replyTo}`);
+  ws.binaryType = "arraybuffer";
+  const resample = createResampler(inRate, lineRate);
+  const held = [];
+  const S = { began: false, committed: false, closed: false, sentBytes: 0 };
+  const out = (m) => {
+    if (ws.readyState === WebSocket.OPEN) ws.send(m);
+    else if (ws.readyState === WebSocket.CONNECTING) held.push(m);
+  };
+  ws.onopen = () => held.splice(0).forEach((m) => ws.send(m));
+  ws.onmessage = (e) => {
+    try {
+      const m = JSON.parse(e.data);
+      console.info(`[samajh] stream ${replyTo}: ${m.type}${m.reason ? ` (${m.reason})` : ""} after ${S.sentBytes} bytes`);
+    } catch {}
+  };
+  ws.onclose = () => (S.closed = true);
+  // About 40 ms per message, not one per render quantum (~375 tiny messages a second).
+  const batchSamples = Math.round(lineRate * 0.04);
+  let parts = [], partSamples = 0;
+  const flush = () => {
+    if (!partSamples) return;
+    const pcm = new Int16Array(partSamples);
+    let at = 0;
+    for (const p of parts) { pcm.set(p, at); at += p.length; }
+    parts = []; partSamples = 0;
+    S.sentBytes += pcm.byteLength;
+    out(pcm.buffer);
+  };
+  S.push = (samples) => {
+    if (S.committed || S.closed) return;
+    const pcm = resample(samples);
+    parts.push(pcm.slice());
+    partSamples += pcm.length;
+    if (partSamples >= batchSamples) flush();
+  };
+  S.commit = () => {
+    if (S.committed || S.closed) return;
+    flush();
+    S.committed = true;
+    out(JSON.stringify({ type: "commit" }));
+  };
+  // Leaving the turn: an uncommitted stream is dropped; a committed one is closed by the server.
+  S.close = () => {
+    if (!S.committed && !S.closed) ws.close();
+  };
+  return S;
+}
+
 // voiceEndAt: when the customer stopped (push to talk: release; a turn at the length limit: now).
 function sendMic(sampleCount, voiceEndAt) {
   listen.part += 1;
+  if (listen.part === 1) listen.streamer?.commit();
   const take = newTake("mic", encodeWav(listen.chunks, audio.ctx.sampleRate, sampleCount), voiceEndAt, listen.part);
   dispatch("TURN", { source: "mic", take });
 }

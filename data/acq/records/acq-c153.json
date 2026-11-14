@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C153. Neha took a gold loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c153",
+  "label": "Synthetic ACQ record. Neha: a gold loan and one add-on",
+  "lender_name": "नमूना फ़ाइनेंस",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1974-06-24",
+      "language": "hi-en",
+      "name": "Neha Namoona"
+    },
+    "disbursed_inr": 357000,
+    "disbursed_on": "2026-10-14",
+    "lender_type": "nbfc",
+    "loan_id": "TEST-ACQ-LN-153",
+    "loan_kind": "gold",
+    "products": [
+      {
+        "cancel_window_days": 30,
+        "consent": {
+          "at": "2026-10-14",
+          "method": "signed_form"
+        },
+        "cover_inr": 380000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 23000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 12
+      }
+    ],
+    "sanctioned_inr": 380000,
+    "tenure_months": 12
+  }
+}

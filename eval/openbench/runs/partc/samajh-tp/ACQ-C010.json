@@ -1,0 +1,61 @@
+{
+ "customer_id": "ACQ-C010",
+ "kind": "third_party",
+ "language": "hi",
+ "system": "samajh",
+ "turns": [
+  {
+   "bot": [
+    {
+     "key": "right_party.ask",
+     "text": "नमस्ते, क्या आप Ravi जी हैं?"
+    }
+   ],
+   "reply": "नहीं जी, मैं उनका भाई बोल रहा हूँ, वो अभी घर पर नहीं हैं।"
+  }
+ ],
+ "status": "ended",
+ "errors": [],
+ "final_bot": [
+  {
+   "key": "end.third_party",
+   "text": "हम Ravi जी से बाद में बात कर लेंगे। धन्यवाद।"
+  }
+ ],
+ "outcome": "wrong_party",
+ "bot_lines": [
+  {
+   "key": "right_party.ask",
+   "text": "नमस्ते, क्या आप Ravi जी हैं?"
+  },
+  {
+   "key": "end.third_party",
+   "text": "हम Ravi जी से बाद में बात कर लेंगे। धन्यवाद।"
+  }
+ ],
+ "disclosure_candidates": [],
+ "named_loan_product_or_figure": false,
+ "interpreter": {
+  "class": "LlmFallbackInterpreter",
+  "rules": "RuleInterpreter",
+  "model": "mistralai/mistral-small-3.2-24b-instruct",
+  "timeout_s": null,
+  "entry_too": true
+ },
+ "identity": "default (no second check)",
+ "samajh_dialogue_sha256": "2e66d0ce123077aba7e0a5f6c10e28580c30b5a5a43f42151012198a13f65090",
+ "samajh_dialogue_files": {
+  "__init__.py": "b491de87f57e7c330e8f91d825ea6b5b3dee90091b0e8d7a748f22ddffb3effd",
+  "__main__.py": "babb4d2a9dc8a0639a281624ae7182c0c9b0c270c23d10f8c715d3ae6ddcdbfc",
+  "_lexicon.py": "b3c174dd9a6ce383dbb31303d4d8c541dc8f5ceab63531614c0ec0e14ba7a655",
+  "_names.py": "bc607e34f245a4d32c2c0a5ce5bd605c09793299998aa3a5ea9cb2ac760bf64e",
+  "halves.py": "9a6aeec63ce38737e7c3685430ba43a8383623efb90f977748ec85a767afc2ae",
+  "interpret.py": "acd4a4ee690b396a478d8976ec444f1eb9178cb0177414aac9df3cd099da129a",
+  "lint.py": "f9e22b7bce6d99f806b08cfa37f859b7071c5aa53cca7fb7f0e12e1f4fe9654f",
+  "llm_fallback.py": "5f0edee8a9d362d4725c8cb508b7848c93770a69ada09ff7d1ade7baa670e2a9",
+  "machine.py": "9b7a78a7deec22f180dc3c5170a7bd0c3c1c180ad93da62c656021535be4b0c7",
+  "prompts.py": "d7c47839063a4b9a86b1247e9b7ec3433ee7ea59414afef9036e23ee204439a4"
+ },
+ "git_status_samajh_dialogue": " M samajh/dialogue/interpret.py\n M samajh/dialogue/llm_fallback.py\n M samajh/dialogue/machine.py\n M samajh/dialogue/prompts.py\n?? samajh/dialogue/halves.py\n",
+ "usd": 0.0
+}

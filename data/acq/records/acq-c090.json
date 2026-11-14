@@ -1,0 +1,43 @@
+{
+  "description": "Synthetic ACQ record for ACQ-C090. Amit took a personal loan with one credit-life add-on. For the ACQ evaluation only.",
+  "id": "acq-c090",
+  "label": "Synthetic ACQ record. Amit: a personal loan and one add-on",
+  "lender_name": "नमूना बैंक",
+  "readings_note": null,
+  "record": {
+    "borrower": {
+      "dob": "1992-05-06",
+      "language": "hi",
+      "name": "Amit Namoona"
+    },
+    "disbursed_inr": 722000,
+    "disbursed_on": "2026-10-14",
+    "lender_type": "bank",
+    "loan_id": "TEST-ACQ-LN-090",
+    "loan_kind": "personal",
+    "products": [
+      {
+        "cancel_window_days": 15,
+        "consent": {
+          "at": "2026-10-14",
+          "method": "recorded_call"
+        },
+        "cover_inr": 730000,
+        "features": [
+          "one_time_payment"
+        ],
+        "id": "P1",
+        "kind": "credit_life",
+        "paid_from_loan": true,
+        "premium_inr": 8000,
+        "provider": "Namoona Life (synthetic)",
+        "provider_choice_offered": true,
+        "required_for_loan": false,
+        "risk_mitigant": true,
+        "term_months": 24
+      }
+    ],
+    "sanctioned_inr": 730000,
+    "tenure_months": 24
+  }
+}
